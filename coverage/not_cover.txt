@@ -1,0 +1,13 @@
+[23:37] RESEARCHER:The more detail, the better.
+[26:45] RESEARCHER:Ok, fantastic. It doesn't always go rosy and happy. There are certainly some negative stories. Would you like to share with us a negative story?
+[28:36] RESEARCHER:Yes. And the lack of engagement.
+[33:06] RESEARCHER:Okay. Fantastic. That was interesting. What do you think of this statement? This is a little bit provocative, but I think you are a very mature professional, so you would understand what we're trying to do here. We're just trying to get you to talk. So, what do you think of this statement: Agile produces poor software?
+So does Agile deliver bad software? I don't think so. I think poor teams, poor management, poor everything can produce poor software. And using Agile by itself is an excuse for software is misguided at best.
+
+[36:53] RESEARCHER:That's what well said. I think it has to do with the performance of the team and it has to do with the people in a great extent. Blaming the methodology, it's easy. It's easy to blame the process or the methodology itself when you are not capable of implementing it, right?
+
+Yes, I agree with you.
+[38:30] RESEARCHER:Because they experience the failures, I guess. So that's why they disagree. So, we shouldn't blame them. Yeah. Yeah, it is. It is normal. It is acceptable. But it's usually not the process failure. It's again, the people and the team failure. It's not the process. The process maybe in some instances not a good fit. Because as I said, it's also a culture. It's a way of work and a way of behaving and the way... If you don't like to collaborate, so why would you work in an Agile environment, for example? You're just an obstacle to the whole process. So, you may want to work for somebody else.
+[40:53] RESEARCHER:I don't have a further question. Thank you. That was a very interesting chat. Do you have any questions for me?
+
+[41:02] PARTICIPANT 1:Yes. So where is this going? I mean, I read that it's going in a paper and you're kind of researching about QA and Agile.

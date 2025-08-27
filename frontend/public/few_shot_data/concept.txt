@@ -1,0 +1,75 @@
+Few-shot example：
+{
+  "metadata": {
+    "what_llm_did": {
+      "main_actions": "Developed high-level themes by grouping related sub-themes based on shared conceptual patterns and created clear definitions",
+      "examples": "Theme 'Learning' includes Sub-Theme 'Professional Development' and 'Assessment' because they both relate to educational growth and improvement processes"
+    },
+    "self_reflection": {
+      "confident_results": "High confidence in Theme 1 'Learning' which shows clear conceptual coherence around educational development",
+      "uncertain_results": "Some uncertainty about Theme 2 boundaries which may need refinement between management and pedagogical approaches",
+      "recommended_review": "Validate final thematic boundaries and ensure themes are externally distinct, especially the overlap between learning strategies and management approaches"
+    }
+  },
+  
+  "Concept 1": {
+    "name": "Learning",
+    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "subthemes": {
+      "Sub-Theme 1": {
+        "name": "Professional Development",
+        "codes": {
+          "Code 4": {
+            "name": "Professional Growth Strategies",
+            "chunks": [
+              "Continuous professional development is key to staying updated with the latest educational research and teaching strategies. Engaging in workshops, online courses, and peer observations can provide fresh perspectives and new ideas for the classroom.",
+              "Participating in teacher exchanges or shadowing programs can offer insights into different teaching methods and classroom management techniques, broadening one's perspective and approach to education."
+            ]
+          },
+          "Code 2": {
+            "name": "Curriculum Planning",
+            "chunks": [
+              "A well-structured lesson plan is the backbone of effective teaching. Start by outlining clear objectives and planning activities that align with these goals, ensuring that each part of the lesson builds towards a comprehensive understanding of the topic.",
+              "Curriculum development should focus on creating a balanced approach that integrates both foundational knowledge and critical thinking skills. Incorporating varied resources and assessment methods helps cater to different learning styles and keeps students motivated.",
+              "Regularly updating your curriculum to include current events, technology, and interdisciplinary connections can make learning more relevant and exciting for students. This approach also encourages them to make connections beyond the classroom."
+            ]
+          }
+        }
+      },
+      "Sub-Theme3": {
+        "name": "Assessment",
+        "codes": {#content}
+      }
+      # more codes added as needed
+    }
+  },
+  "Theme 2": {
+    "name": "Management Strategies",
+    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "subthemes": {
+      "Sub-Theme 2": {
+        "name": "Classroom Management",
+        "codes": {
+          "Code 1": {
+            "name": "Classroom Environment",
+            "chunks": [
+              "Effective classroom management starts with establishing clear expectations and consistent routines. When students know what to expect, they're more likely to stay engaged and participate actively in the lesson.",
+              "Engagement isn't just about keeping students busy; it's about fostering a love for learning. By incorporating interactive activities and real-world examples, you can capture their interest and make the material more relatable."
+            ]
+          },
+          "Code 5": {
+            "name": "Technology Integration",
+            "chunks": [
+              "Integrating technology in the classroom isn't just about using the latest gadgets; it's about enhancing the learning experience. Tools like interactive whiteboards, digital textbooks, and educational apps can make lessons more engaging and accessible.",
+              "Blended learning models that combine traditional teaching with online resources provide flexibility and cater to different learning paces. By incorporating digital platforms, teachers can offer personalized learning experiences and track student progress more effectively."
+            ]
+          }
+        }
+      }
+    }
+  },
+    "metadata": {
+    "Example": "Example of Theme 【xx】. 1) Sub-Theme 【yy】, because ... 2) Sub-Theme 【zz】,  because ... ",
+    "Reflect": "1) Confident Results. xx \n 2) Uncertain Results. xx \n 3) Recommended Human Review Focus. xx \n ",
+  },
+}

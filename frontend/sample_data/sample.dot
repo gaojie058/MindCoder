@@ -1,0 +1,30 @@
+digraph G {
+    // Set general graph styles
+    graph [bgcolor=white, splines=true];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    // Define the central nodes
+    "Startup Challenges and Strategies" [fillcolor="#d5e7c8"]; // Light Green
+    "Mental Health and Well-Being in Professional Settings" [fillcolor="#a4c8e1"]; // Light Blue
+
+    // Define the first level nodes for "Startup Challenges and Strategies"
+    "**Navigating Startup Growth: Effectively Achieving Product-Market Fit and Competing Against Incumbents**" [fillcolor="#d0c6e3"]; // Pale Purple
+    "Challenges in Hard Tech Startups" [fillcolor="#ffebd2"]; // Peach
+    "Mental Health and Work-Life Balance" [fillcolor="#f4c6d6"]; // Pale Pink
+
+    // Connect central node to first level nodes with rounded edges
+    "Startup Challenges and Strategies" -> "**Navigating Startup Growth: Effectively Achieving Product-Market Fit and Competing Against Incumbents**" [style="rounded"];
+    "Startup Challenges and Strategies" -> "Challenges in Hard Tech Startups" [style="rounded"];
+    "Startup Challenges and Strategies" -> "Mental Health and Work-Life Balance" [style="rounded"];
+
+    // Define the first level nodes for "Mental Health and Well-Being in Professional Settings"
+    "**Navigating Startup Growth: Effectively Achieving Product-Market Fit and Competing Against Incumbents**" [fillcolor="#d0c6e3"]; // Pale Purple
+    "Challenges in Hard Tech Startups" [fillcolor="#ffebd2"]; // Peach
+    "Mental Health and Work-Life Balance" [fillcolor="#f4c6d6"]; // Pale Pink
+
+    // Connect central node to first level nodes with rounded edges
+    "Mental Health and Well-Being in Professional Settings" -> "**Navigating Startup Growth: Effectively Achieving Product-Market Fit and Competing Against Incumbents**" [style="rounded"];
+    "Mental Health and Well-Being in Professional Settings" -> "Challenges in Hard Tech Startups" [style="rounded"];
+    "Mental Health and Well-Being in Professional Settings" -> "Mental Health and Work-Life Balance" [style="rounded"];
+}

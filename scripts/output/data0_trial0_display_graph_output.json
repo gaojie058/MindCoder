@@ -1,0 +1,171 @@
+
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    // ===== Concept Level =====
+    "Concept 1:
+Climate Change
+Solutions" [fillcolor="#ffd79d"];
+    "Concept 2:
+Generational
+Awareness" [fillcolor="#d5d4f0"];
+    "Concept 3:
+Resource Management
+Education" [fillcolor="#e4b0b0"];
+
+    // Connect root to Concepts
+    "Research
+Question" -> "Concept 1:
+Climate Change
+Solutions";
+    "Research
+Question" -> "Concept 2:
+Generational
+Awareness";
+    "Research
+Question" -> "Concept 3:
+Resource Management
+Education";
+
+    // ===== Code Level under Concept 1 =====
+    "Code 1:
+Climate Change
+Engagement and
+Solutions" [fillcolor="#cbe7f2"];
+    "Concept 1:
+Climate Change
+Solutions" -> "Code 1:
+Climate Change
+Engagement and
+Solutions";
+
+    // Cluster level under Climate Change Engagement and Solutions
+    "Cluster 1:
+Climate Change
+Urgency" [fillcolor="#d3f0d3"];
+    "Cluster 3:
+Earthshot Prize
+Goals" [fillcolor="#d3f0d3"];
+    "Cluster 4:
+Moonshot
+Inspiration" [fillcolor="#d3f0d3"];
+    "Cluster 5:
+Technological
+Optimism" [fillcolor="#d3f0d3"];
+    "Code 1:
+Climate Change
+Engagement and
+Solutions" -> "Cluster 1:
+Climate Change
+Urgency";
+    "Code 1:
+Climate Change
+Engagement and
+Solutions" -> "Cluster 3:
+Earthshot Prize
+Goals";
+    "Code 1:
+Climate Change
+Engagement and
+Solutions" -> "Cluster 4:
+Moonshot
+Inspiration";
+    "Code 1:
+Climate Change
+Engagement and
+Solutions" -> "Cluster 5:
+Technological
+Optimism";
+
+    // ===== Code Level under Concept 2 =====
+    "Code 2:
+Generational
+Perspectives on
+Climate" [fillcolor="#cbe7f2"];
+    "Concept 2:
+Generational
+Awareness" -> "Code 2:
+Generational
+Perspectives on
+Climate";
+
+    // Cluster level under Generational Perspectives on Climate
+    "Cluster 6:
+Youth and
+Climate Anxiety" [fillcolor="#d3f0d3"];
+    "Cluster 8:
+Parental
+Perspective" [fillcolor="#d3f0d3"];
+    "Cluster 9:
+Generational
+Responsibility" [fillcolor="#d3f0d3"];
+    "Cluster 10:
+Future
+Generations" [fillcolor="#d3f0d3"];
+    "Cluster 11:
+Environmental
+Disconnection" [fillcolor="#d3f0d3"];
+    "Code 2:
+Generational
+Perspectives on
+Climate" -> "Cluster 6:
+Youth and
+Climate Anxiety";
+    "Code 2:
+Generational
+Perspectives on
+Climate" -> "Cluster 8:
+Parental
+Perspective";
+    "Code 2:
+Generational
+Perspectives on
+Climate" -> "Cluster 9:
+Generational
+Responsibility";
+    "Code 2:
+Generational
+Perspectives on
+Climate" -> "Cluster 10:
+Future
+Generations";
+    "Code 2:
+Generational
+Perspectives on
+Climate" -> "Cluster 11:
+Environmental
+Disconnection";
+
+    // ===== Code Level under Concept 3 =====
+    "Code 3:
+Resource Management
+and Education" [fillcolor="#cbe7f2"];
+    "Concept 3:
+Resource Management
+Education" -> "Code 3:
+Resource Management
+and Education";
+
+    // Cluster level under Resource Management and Education
+    "Cluster 12:
+Resource
+Awareness" [fillcolor="#d3f0d3"];
+    "Cluster 2:
+Community
+Conservation" [fillcolor="#d3f0d3"];
+    "Code 3:
+Resource Management
+and Education" -> "Cluster 12:
+Resource
+Awareness";
+    "Code 3:
+Resource Management
+and Education" -> "Cluster 2:
+Community
+Conservation";
+}

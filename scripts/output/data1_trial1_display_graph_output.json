@@ -1,0 +1,149 @@
+
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    // Root node
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    // ===== Concept Level =====
+    "Concept 1" [label="Concept 1:
+Sleep
+Practices", fillcolor="#ffd79d"];
+    "Concept 2" [label="Concept 2:
+Sleep
+Disruptions", fillcolor="#d5d4f0"];
+    "Concept 3" [label="Concept 3:
+Health and
+Lifestyle
+Factors", fillcolor="#e4b0b0"];
+
+    // Connect root to Concepts
+    "Research
+Question" -> "Concept 1";
+    "Research
+Question" -> "Concept 2";
+    "Research
+Question" -> "Concept 3";
+
+    // ===== Code Level under Sleep Practices =====
+    "Code 1" [label="Code 1:
+Sleep Monitoring
+and Diary
+Practices", fillcolor="#cbe7f2"];
+    "Code 2" [label="Code 2:
+Sleep Routine
+and Environment
+Factors", fillcolor="#cbe7f2"];
+    "Concept 1" -> "Code 1";
+    "Concept 1" -> "Code 2";
+
+    // Cluster level under Sleep Monitoring and Diary Practices
+    "Cluster 1" [label="Cluster 1:
+Sleep Diary
+Intake", fillcolor="#d3f0d3"];
+    "Cluster 2" [label="Cluster 2:
+Sleep Quality
+Rating", fillcolor="#d3f0d3"];
+    "Code 1" -> "Cluster 1";
+    "Code 1" -> "Cluster 2";
+
+    // Cluster level under Sleep Routine and Environment Factors
+    "Cluster 3" [label="Cluster 3:
+Bedtime
+Routines", fillcolor="#d3f0d3"];
+    "Cluster 10" [label="Cluster 10:
+Sleep
+Environment", fillcolor="#d3f0d3"];
+    "Code 2" -> "Cluster 3";
+    "Code 2" -> "Cluster 10";
+
+    // ===== Code Level under Sleep Disruptions =====
+    "Code 3" [label="Code 3:
+Sleep
+Disruptions
+and Experiences", fillcolor="#cbe7f2"];
+    "Concept 2" -> "Code 3";
+
+    // Cluster level under Sleep Disruptions and Experiences
+    "Cluster 4" [label="Cluster 4:
+Sleep
+Disruptions", fillcolor="#d3f0d3"];
+    "Cluster 14" [label="Cluster 14:
+Waking Up
+Experience", fillcolor="#d3f0d3"];
+    "Code 3" -> "Cluster 4";
+    "Code 3" -> "Cluster 14";
+
+    // ===== Code Level under Health and Lifestyle Factors =====
+    "Code 4" [label="Code 4:
+Daily Lifestyle
+and Health
+Factors", fillcolor="#cbe7f2"];
+    "Code 5" [label="Code 5:
+Sleep Duration
+and Timing
+Insights", fillcolor="#cbe7f2"];
+    "Code 6" [label="Code 6:
+Hydration and
+Overall
+Well-being", fillcolor="#cbe7f2"];
+    "Concept 3" -> "Code 4";
+    "Concept 3" -> "Code 5";
+    "Concept 3" -> "Code 6";
+
+    // Cluster level under Daily Lifestyle and Health Factors
+    "Cluster 5" [label="Cluster 5:
+Caffeine
+Intake", fillcolor="#d3f0d3"];
+    "Cluster 6" [label="Cluster 6:
+Alcohol
+Consumption", fillcolor="#d3f0d3"];
+    "Cluster 7" [label="Cluster 7:
+Medication
+Usage", fillcolor="#d3f0d3"];
+    "Cluster 8" [label="Cluster 8:
+Exercise
+Activity", fillcolor="#d3f0d3"];
+    "Cluster 17" [label="Cluster 17:
+Daily
+Activities", fillcolor="#d3f0d3"];
+    "Code 4" -> "Cluster 5";
+    "Code 4" -> "Cluster 6";
+    "Code 4" -> "Cluster 7";
+    "Code 4" -> "Cluster 8";
+    "Code 4" -> "Cluster 17";
+
+    // Cluster level under Sleep Duration and Timing Insights
+    "Cluster 12" [label="Cluster 12:
+Sleep
+Duration", fillcolor="#d3f0d3"];
+    "Cluster 13" [label="Cluster 13:
+Time to
+Sleep", fillcolor="#d3f0d3"];
+    "Cluster 11" [label="Cluster 11:
+Final
+Awakening", fillcolor="#d3f0d3"];
+    "Code 5" -> "Cluster 12";
+    "Code 5" -> "Cluster 13";
+    "Code 5" -> "Cluster 11";
+
+    // Cluster level under Hydration and Overall Well-being
+    "Cluster 15" [label="Cluster 15:
+Sleep Aids
+Usage", fillcolor="#d3f0d3"];
+    "Cluster 16" [label="Cluster 16:
+Hydration
+Before Sleep", fillcolor="#d3f0d3"];
+    "Cluster 9" [label="Cluster 9:
+Daily Fatigue
+Levels", fillcolor="#d3f0d3"];
+    "Cluster 18" [label="Cluster 18:
+Overall Mood", fillcolor="#d3f0d3"];
+    "Code 6" -> "Cluster 15";
+    "Code 6" -> "Cluster 16";
+    "Code 6" -> "Cluster 9";
+    "Code 6" -> "Cluster 18";
+}

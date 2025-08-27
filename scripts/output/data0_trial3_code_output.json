@@ -1,0 +1,90 @@
+{
+  "Code1": {
+    "name": "Urgency and Action on Climate Change",
+    "clusters": {
+      "Cluster 1": {
+        "name": "Climate Change Urgency",
+        "chunks": [
+          "It's been in the back of my mind for quite a while, the whole climate change debate, environmental issues, growing pollution. So I've always felt very strongly about it and I've been watching very carefully what others have been doing. And for me, over the last few years, the urgency and the positivity, particularly the positivity around the debate has been missing. It's been very negative. Understandably, it's such a large issue that everyone feels completely overwhelmed by the facts, the scale of the problems and things like that.",
+          "We all get that there's a really big urgent message. And I'm not saying we shouldn't talk about the urgency or the big issues, but ultimately if we want to tackle this, if we want to get on the front foot we've got to bring people with us and people have got to feel like there's hope, there's a chance we can fix this."
+        ]
+      },
+      "Cluster 3": {
+        "name": "Earthshot Prize Concept",
+        "chunks": [
+          "And that's what the Earthshot Prize is about, is providing those solutions to some of the world's biggest environmental problems.",
+          "Well, I think it should go Earthshot, BAFTA's, Oscar's, but hey, it depends-",
+          "Exactly. No, the idea is to make the Earthshot Prize the biggest global environment prize in history. And I think we've got time on our side. This is the right time to do this. We've got 10 years of critical time where we have to be making inroads and finding these solutions and inspiring people that we can fix these solutions."
+        ]
+      },
+      "Cluster 4": {
+        "name": "Space Exploration Comparison",
+        "chunks": [
+          "Absolutely. So the original genesis of this is to try to capture the ingenuity and the problem solving and the ambition of the Moonshot. And so based on JFK's idea to get a man on the moon all those years ago and all the technology and all the advancements that came out of trying to get a man on the moon, like solar panels, CAT scanners, all that sort of stuff, we are trying to galvanize and push solutions forwards.",
+          "It's the idea that we need some of the world's greatest brains and minds fixed on trying to repair this planet, not trying to find the next place to go and live."
+        ]
+      }
+    }
+  },
+  "Code2": {
+    "name": "Community and Youth Engagement",
+    "clusters": {
+      "Cluster 2": {
+        "name": "Community Conservation",
+        "chunks": [
+          "I love community conservation and Namibia have been some of the world leaders in community conservation. For people who don't know what that is, it's effectively the locals, wherever you are in the world, taking an interest and management of the wildlife nature, the environmental assets around them. So they very much manage them. They protect them, they nurture them for their own prosperity. And for me that, I came away having met loads of good people there and I felt really inspired, really energized by what I'd seen."
+        ]
+      },
+      "Cluster 6": {
+        "name": "Youth Climate Awareness",
+        "chunks": [
+          "I think they're living and then growing up in a world where it's much more talked about than when we were growing up. So that has benefits and that has negatives as well, because we are seeing a rise in climate anxiety. People, young people now are growing up where their futures are basically being threatened the whole time.",
+          "Now, I also believe that the younger generation are going to lead this and are going to dominate this. We can't not. And wherever we go and speak to young people, they're all very concerned about the environment."
+        ]
+      },
+      "Cluster 10": {
+        "name": "Family Legacy in Conservation",
+        "chunks": [
+          "Yeah, absolutely. I think it's been a hard road for him. My grandfather started off helping out WWF a long time ago with its nature work and biodiversity. And I think that my father progressed that on and talked about climate change and lot more, very early on before anyone else thought it was a topic.",
+          "So yes, he's had a really rough ride on that and I think he's been proven to have been well ahead of the curve well beyond his time in warning about some of these dangers."
+        ]
+      }
+    }
+  },
+  "Code3": {
+    "name": "Childhood Perspectives on Environment",
+    "clusters": {
+      "Cluster 7": {
+        "name": "Childhood Connection",
+        "chunks": [
+          "And I think they have a truer appreciation of what we're going to miss and what we're letting down own than actually many of the adults. And that's where a bit of the disconnects happening, is that those adults in positions of responsibility are not channeling their inner child to remind themselves, remember how much it meant to be outdoors and what ... We're robbing those future generations of that outdoor childhood."
+        ]
+      },
+      "Cluster 8": {
+        "name": "Children's Environmental Impact",
+        "chunks": [
+          "So George at school recently has been doing litter picking, and I didn't realize. But talking to him the other day, he was already showing that he was getting a bit confused and a bit annoyed by the fact that he went out litter picking one day and then the very next day they did the same route, same time, and pretty much all the same litter, they picked it up back again.",
+          "And if we look at it like that, you start to realize if you go back to the childhood, wow, yeah, this is where we should be at. We've got to be asking ourselves these questions. Why is that okay for that litter to come straight back and 24 hours later?"
+        ]
+      },
+      "Cluster 9": {
+        "name": "Education on Resources",
+        "chunks": [
+          "I think a definite sense of realization and understanding. So the education piece is really key. So, for instance, not overusing water, being careful with our resources, turning off light switches. Things like that, which was instilled in me growing up.",
+          "These things we're now having to extrapolate them bigger and bigger. So yes, he's acutely aware, more so than the other two at the moment."
+        ]
+      }
+    }
+  },
+  "Code4": {
+    "name": "Concerns for Future Generations",
+    "clusters": {
+      "Cluster 11": {
+        "name": "Concerns for Future",
+        "chunks": [
+          "But it shouldn't be that there's a third generation now coming along having to ramp it up even more. And for me, it'll be an absolute disaster if George is sat here talking to you or your successor, Adam, in another 30 years time, whatever, still saying the same thing, because by then we'll be too late."
+        ]
+      }
+    }
+  }
+}

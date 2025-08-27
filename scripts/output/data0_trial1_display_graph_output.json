@@ -1,0 +1,178 @@
+
+digraph G {
+    // Set general graph styles and layout (rankdir=LR positions the root on the left)
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    // Root node
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    // ===== Concept Level =====
+    "Concept 1:
+Urgency and
+Responsibility" [fillcolor="#ffd79d"];
+    "Concept 2:
+Community
+Engagement and
+Nature Connection" [fillcolor="#d5d4f0"];
+    "Concept 3:
+Innovation and
+Awareness" [fillcolor="#e4b0b0"];
+
+    // Connect root to Concepts
+    "Research
+Question" -> "Concept 1:
+Urgency and
+Responsibility";
+    "Research
+Question" -> "Concept 2:
+Community
+Engagement and
+Nature Connection";
+    "Research
+Question" -> "Concept 3:
+Innovation and
+Awareness";
+
+    // ===== Code Level under Urgency and Responsibility =====
+    "Code 1:
+Urgency and
+Future Focus" [fillcolor="#cbe7f2"];
+    "Code 3:
+Youth, Anxiety,
+and Responsibility" [fillcolor="#cbe7f2"];
+    "Concept 1:
+Urgency and
+Responsibility" -> "Code 1:
+Urgency and
+Future Focus";
+    "Concept 1:
+Urgency and
+Responsibility" -> "Code 3:
+Youth, Anxiety,
+and Responsibility";
+
+    // Cluster level under Urgency and Future Focus
+    "Cluster 1:
+Climate Change
+Urgency" [fillcolor="#d3f0d3"];
+    "Cluster 4:
+Future Focus" [fillcolor="#d3f0d3"];
+    "Code 1:
+Urgency and
+Future Focus" -> "Cluster 1:
+Climate Change
+Urgency";
+    "Code 1:
+Urgency and
+Future Focus" -> "Cluster 4:
+Future Focus";
+
+    // Cluster level under Youth, Anxiety, and Responsibility
+    "Cluster 9:
+Generational
+Responsibility" [fillcolor="#d3f0d3"];
+    "Code 3:
+Youth, Anxiety,
+and Responsibility" -> "Cluster 9:
+Generational
+Responsibility";
+
+    // ===== Code Level under Community Engagement and Nature Connection =====
+    "Code 2:
+Community and
+Nature Engagement" [fillcolor="#cbe7f2"];
+    "Concept 2:
+Community
+Engagement and
+Nature Connection" -> "Code 2:
+Community and
+Nature Engagement";
+
+    // Cluster level under Community and Nature Engagement
+    "Cluster 2:
+Community
+Conservation" [fillcolor="#d3f0d3"];
+    "Cluster 10:
+Nature
+Connection" [fillcolor="#d3f0d3"];
+    "Code 2:
+Community and
+Nature Engagement" -> "Cluster 2:
+Community
+Conservation";
+    "Code 2:
+Community and
+Nature Engagement" -> "Cluster 10:
+Nature
+Connection";
+
+    // ===== Code Level under Innovation and Awareness =====
+    "Code 4:
+Innovative
+Environmental
+Solutions" [fillcolor="#cbe7f2"];
+    "Code 5:
+Awareness and
+Education" [fillcolor="#cbe7f2"];
+    "Concept 3:
+Innovation and
+Awareness" -> "Code 4:
+Innovative
+Environmental
+Solutions";
+    "Concept 3:
+Innovation and
+Awareness" -> "Code 5:
+Awareness and
+Education";
+
+    // Cluster level under Innovative Environmental Solutions
+    "Cluster 3:
+Earthshot Prize
+Goals" [fillcolor="#d3f0d3"];
+    "Cluster 5:
+Technological
+Optimism" [fillcolor="#d3f0d3"];
+    "Cluster 11:
+Environmental
+Solutions" [fillcolor="#d3f0d3"];
+    "Code 4:
+Innovative
+Environmental
+Solutions" -> "Cluster 3:
+Earthshot Prize
+Goals";
+    "Code 4:
+Innovative
+Environmental
+Solutions" -> "Cluster 5:
+Technological
+Optimism";
+    "Code 4:
+Innovative
+Environmental
+Solutions" -> "Cluster 11:
+Environmental
+Solutions";
+
+    // Cluster level under Awareness and Education
+    "Cluster 7:
+Environmental
+Awareness" [fillcolor="#d3f0d3"];
+    "Cluster 12:
+Space vs
+Earth" [fillcolor="#d3f0d3"];
+    "Code 5:
+Awareness and
+Education" -> "Cluster 7:
+Environmental
+Awareness";
+    "Code 5:
+Awareness and
+Education" -> "Cluster 12:
+Space vs
+Earth";
+}

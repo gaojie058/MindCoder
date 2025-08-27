@@ -1,0 +1,61 @@
+Here is the few-shot example in DOT language (must included in ```dot ```):
+```dot
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    "Research \nQuestion: \nEmployee\nInteractions and\nManagement\nin Theatres" [fillcolor="#a9a9a9", fontcolor="#000000", fontsize=14];
+
+    // ===== Theme Level =====
+    "Theme 1:\nImpression\nManagement" [fillcolor="#ffd79d"];
+    "Theme 2:\nPositive\nInteractions" [fillcolor="#e4b0b0"];
+
+    "Research \nQuestion: \nEmployee\nInteractions and\nManagement\nin Theatres" -> "Theme 1:\nImpression\nManagement";
+    "Research \nQuestion: \nEmployee\nInteractions and\nManagement\nin Theatres" -> "Theme 2:\nPositive\nInteractions";
+
+    // ===== Sub-Theme Level under Impression Management =====
+    "Sub-Theme 1:\nOnscreen\nPolicy" [fillcolor="#d5d4f0"];
+    "Sub-Theme 2:\nBehind\nthe Facade" [fillcolor="#d5d4f0"];
+    "Theme 1:\nImpression\nManagement" -> "Sub-Theme 1:\nOnscreen\nPolicy";
+    "Theme 1:\nImpression\nManagement" -> "Sub-Theme 2:\nBehind\nthe Facade";
+
+    // Code level under Onscreen Policy
+    "Code 1:\nProfessional\nDemeanor\n(6)" [fillcolor="#cbe7f2"];
+    "Code 2:\nVisual\nPresentation\n(3)" [fillcolor="#cbe7f2"];
+    "Sub-Theme 1:\nOnscreen\nPolicy" -> "Code 1:\nProfessional\nDemeanor\n(6)";
+    "Sub-Theme 1:\nOnscreen\nPolicy" -> "Code 2:\nVisual\nPresentation\n(3)";
+
+    // Code for Behind the Facade
+    "Code 3:\nBackstage\nBehavior\n(4)" [fillcolor="#cbe7f2"];
+    "Code 4:\nHidden\nAttitudes\n(2)" [fillcolor="#cbe7f2"];
+    "Sub-Theme 2:\nBehind\nthe Facade" -> "Code 3:\nBackstage\nBehavior\n(4)";
+    "Sub-Theme 2:\nBehind\nthe Facade" -> "Code 4:\nHidden\nAttitudes\n(2)";
+
+    // ===== Sub-Theme Level under Positive Interactions =====
+    "Sub-Theme 3:\nCordiality" [fillcolor="#cbe7f2"];
+    "Sub-Theme 4:\nApologetic" [fillcolor="#cbe7f2"];
+    "Sub-Theme 5:\nIntegrity" [fillcolor="#cbe7f2"];
+    "Theme 2:\nPositive\nInteractions" -> "Sub-Theme 3:\nCordiality";
+    "Theme 2:\nPositive\nInteractions" -> "Sub-Theme 4:\nApologetic";
+    "Theme 2:\nPositive\nInteractions" -> "Sub-Theme 5:\nIntegrity";
+
+    // Code under Cordiality
+    "Code 5:\nFriendly\nTone\n(4)" [fillcolor="#d3f0d3"];
+    "Code 6:\nWarm\nGestures\n(2)" [fillcolor="#d3f0d3"];
+    "Sub-Theme 3:\nCordiality" -> "Code 5:\nFriendly\nTone\n(4)";
+    "Sub-Theme 3:\nCordiality" -> "Code 6:\nWarm\nGestures\n(2)";
+
+    // Code for Apologetic
+    "Code 7:\nEmpathetic\nLanguage\n(3)" [fillcolor="#d3f0d3"];
+    "Code 8:\nAdmission\nof Fault\n(2)" [fillcolor="#d3f0d3"];
+    "Sub-Theme 4:\nApologetic" -> "Code 7:\nEmpathetic\nLanguage\n(3)";
+    "Sub-Theme 4:\nApologetic" -> "Code 8:\nAdmission\nof Fault\n(2)";
+
+    // Code for Integrity
+    "Code 9:\nHonest\nCommunication\n(3)" [fillcolor="#d3f0d3"];
+    "Code 10:\nFollow-through\non Promises\n(2)" [fillcolor="#d3f0d3"];
+    "Sub-Theme 5:\nIntegrity" -> "Code 9:\nHonest\nCommunication\n(3)";
+    "Sub-Theme 5:\nIntegrity" -> "Code 10:\nFollow-through\non Promises\n(2)";
+}
+```

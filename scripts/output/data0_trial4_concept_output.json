@@ -1,0 +1,89 @@
+
+{
+  "Concept 1": {
+    "name": "Urgency and Hope in Climate Action",
+    "definition": "This group emphasizes the pressing need for climate action, highlighting the urgency of addressing environmental issues while also focusing on fostering positivity and hope through solutions and community engagement.",
+    "codes": {
+      "Code1": {
+        "name": "Urgency and Positivity in Climate Action",
+        "clusters": {
+          "Cluster 1": {
+            "name": "Climate Change Urgency",
+            "chunks": [
+              "It's been in the back of my mind for quite a while, the whole climate change debate, environmental issues, growing pollution. So I've always felt very strongly about it and I've been watching very carefully what others have been doing. And for me, over the last few years, the urgency and the positivity, particularly the positivity around the debate has been missing. It's been very negative. Understandably, it's such a large issue that everyone feels completely overwhelmed by the facts, the scale of the problems and things like that."
+            ]
+          },
+          "Cluster 4": {
+            "name": "Hope and Solutions",
+            "chunks": [
+              "We all get that there's a really big urgent message. And I'm not saying we shouldn't talk about the urgency or the big issues, but ultimately if we want to tackle this, if we want to get on the front foot we've got to bring people with us and people have got to feel like there's hope, there's a chance we can fix this. And that's what the Earthshot Prize is about, is providing those solutions to some of the world's biggest environmental problems."
+            ]
+          }
+        }
+      },
+      "Code3": {
+        "name": "Innovative Solutions for Environmental Challenges",
+        "clusters": {
+          "Cluster 5": {
+            "name": "Earthshot Prize Goals",
+            "chunks": [
+              "Well, I think it should go Earthshot, BAFTA's, Oscar's, but hey, it depends- Exactly. No, the idea is to make the Earthshot Prize the biggest global environment prize in history. And I think we've got time on our side. This is the right time to do this. We've got 10 years of critical time where we have to be making inroads and finding these solutions and inspiring people that we can fix these solutions."
+            ]
+          },
+          "Cluster 8": {
+            "name": "Technological Optimism",
+            "chunks": [
+              "Absolutely, Adam. So that is the key, is it's about inspiring and finding solutions that can be around us right now and hopefully in the future. Rather than just the debate, concentrating on what we need to give up, what we can't do, which is very negative. And all of us, as much as we will try, even if all of us did a little bit here and there to change our ways, it still isn't going to be enough."
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Concept 2": {
+    "name": "Community and Youth Engagement",
+    "definition": "This group centers on the role of community involvement and youth perspectives in climate action, emphasizing the importance of education, advocacy, and the legacy of conservation efforts to inspire future generations.",
+    "codes": {
+      "Code2": {
+        "name": "Community Engagement and Conservation",
+        "clusters": {
+          "Cluster 2": {
+            "name": "Community Conservation",
+            "chunks": [
+              "So we wanted to break it down and try and work out how could we add something that was going to create action, create positivity, create energy towards actually solving some of these problems? And I think for me it formulates and cemented itself a bit in my mind in Namibia about three years ago. I love community conservation and Namibia have been some of the world leaders in community conservation. For people who don't know what that is, it's effectively the locals, wherever you are in the world, taking an interest and management of the wildlife nature, the environmental assets around them. So they very much manage them. They protect them, they nurture them for their own prosperity. And for me that, I came away having met loads of good people there and I felt really inspired, really energized by what I'd seen."
+            ]
+          },
+          "Cluster 10": {
+            "name": "Future Generations",
+            "chunks": [
+              "Now, I also believe that the younger generation are going to lead this and are going to dominate this. We can't not. And wherever we go and speak to young people, they're all very concerned about the environment."
+            ]
+          },
+          "Cluster 11": {
+            "name": "Family and Education",
+            "chunks": [
+              "So George at school recently has been doing litter picking, and I didn't realize. But talking to him the other day, he was already showing that he was getting a bit confused and a bit annoyed by the fact that he went out litter picking one day and then the very next day they did the same route, same time, and pretty much all the same litter, they picked it up back again."
+            ]
+          }
+        }
+      },
+      "Code4": {
+        "name": "Youth Perspectives on Climate Issues",
+        "clusters": {
+          "Cluster 9": {
+            "name": "Youth and Climate Anxiety",
+            "chunks": [
+              "I think they're living and then growing up in a world where it's much more talked about than when we were growing up. So that has benefits and that has negatives as well, because we are seeing a rise in climate anxiety. People, young people now are growing up where their futures are basically being threatened the whole time. It's very unnerving and it's very anxiety making."
+            ]
+          },
+          "Cluster 12": {
+            "name": "Legacy of Advocacy",
+            "chunks": [
+              "Yeah, absolutely. I think it's been a hard road for him. My grandfather started off helping out WWF a long time ago with its nature work and biodiversity. And I think that my father progressed that on and talked about climate change and a lot more, very early on before anyone else thought it was a topic."
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    // Root node
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    // ===== Concept Level =====
+    "Concept 1: Hydration
+and Sleep" [fillcolor="#ffd79d"];
+    "Concept 2: Sleep
+Quality Factors" [fillcolor="#e4b0b0"];
+    "Concept 3: Lifestyle
+and Sleep
+Interactions" [fillcolor="#f7bfbf"];
+
+    // Connect root to Concepts
+    "Research
+Question" -> "Concept 1: Hydration
+and Sleep";
+    "Research
+Question" -> "Concept 2: Sleep
+Quality Factors";
+    "Research
+Question" -> "Concept 3: Lifestyle
+and Sleep
+Interactions";
+
+    // ===== Code Level under Hydration and Sleep =====
+    "Code 1: Hydration
+and Health
+Habits" [fillcolor="#cbe7f2"];
+    "Code 2: Sleep
+Quality and
+Timing" [fillcolor="#cbe7f2"];
+    "Concept 1: Hydration
+and Sleep" -> "Code 1: Hydration
+and Health
+Habits";
+    "Concept 1: Hydration
+and Sleep" -> "Code 2: Sleep
+Quality and
+Timing";
+
+    // Cluster level under Hydration and Health Habits
+    "Cluster 1: Bedtime
+Routines" [fillcolor="#d3f0d3"];
+    "Cluster 18: Daily
+Hydration" [fillcolor="#d3f0d3"];
+    "Code 1: Hydration
+and Health
+Habits" -> "Cluster 1: Bedtime
+Routines";
+    "Code 1: Hydration
+and Health
+Habits" -> "Cluster 18: Daily
+Hydration";
+
+    // Cluster level under Sleep Quality and Timing
+    "Cluster 3: Sleep
+Quality Rating" [fillcolor="#d3f0d3"];
+    "Cluster 7: Sleep
+Timing" [fillcolor="#d3f0d3"];
+    "Cluster 17: Sleep
+Duration" [fillcolor="#d3f0d3"];
+    "Code 2: Sleep
+Quality and
+Timing" -> "Cluster 3: Sleep
+Quality Rating";
+    "Code 2: Sleep
+Quality and
+Timing" -> "Cluster 7: Sleep
+Timing";
+    "Code 2: Sleep
+Quality and
+Timing" -> "Cluster 17: Sleep
+Duration";
+
+    // ===== Code Level under Sleep Quality Factors =====
+    "Code 3: Disruptions
+and Quality
+of Sleep" [fillcolor="#cbe7f2"];
+    "Code 5: Mental
+and Emotional
+State" [fillcolor="#cbe7f2"];
+    "Concept 2: Sleep
+Quality Factors" -> "Code 3: Disruptions
+and Quality
+of Sleep";
+    "Concept 2: Sleep
+Quality Factors" -> "Code 5: Mental
+and Emotional
+State";
+
+    // Cluster level under Disruptions and Quality of Sleep
+    "Cluster 4: Sleep
+Disruptions" [fillcolor="#d3f0d3"];
+    "Cluster 9: Fatigue
+Levels" [fillcolor="#d3f0d3"];
+    "Code 3: Disruptions
+and Quality
+of Sleep" -> "Cluster 4: Sleep
+Disruptions";
+    "Code 3: Disruptions
+and Quality
+of Sleep" -> "Cluster 9: Fatigue
+Levels";
+
+    // Cluster level under Mental and Emotional State
+    "Cluster 8: Feeling
+Before Bed" [fillcolor="#d3f0d3"];
+    "Cluster 15: Stress
+Levels" [fillcolor="#d3f0d3"];
+    "Cluster 16: General
+Feelings" [fillcolor="#d3f0d3"];
+    "Code 5: Mental
+and Emotional
+State" -> "Cluster 8: Feeling
+Before Bed";
+    "Code 5: Mental
+and Emotional
+State" -> "Cluster 15: Stress
+Levels";
+    "Code 5: Mental
+and Emotional
+State" -> "Cluster 16: General
+Feelings";
+
+    // ===== Code Level under Lifestyle and Sleep Interactions =====
+    "Code 4: Daily
+Lifestyle
+Factors" [fillcolor="#cbe7f2"];
+    "Code 6: Sleep
+Aids and
+Assistance" [fillcolor="#cbe7f2"];
+    "Concept 3: Lifestyle
+and Sleep
+Interactions" -> "Code 4: Daily
+Lifestyle
+Factors";
+    "Concept 3: Lifestyle
+and Sleep
+Interactions" -> "Code 6: Sleep
+Aids and
+Assistance";
+
+    // Cluster level under Daily Lifestyle Factors
+    "Cluster 6: Daily
+Activities" [fillcolor="#d3f0d3"];
+    "Cluster 10: Caffeine
+Consumption" [fillcolor="#d3f0d3"];
+    "Cluster 11: Exercise
+Activity" [fillcolor="#d3f0d3"];
+    "Cluster 12: Naps
+Taken" [fillcolor="#d3f0d3"];
+    "Cluster 13: Alcohol
+Consumption" [fillcolor="#d3f0d3"];
+    "Cluster 14: Medication
+Use" [fillcolor="#d3f0d3"];
+    "Code 4: Daily
+Lifestyle
+Factors" -> "Cluster 6: Daily
+Activities";
+    "Code 4: Daily
+Lifestyle
+Factors" -> "Cluster 10: Caffeine
+Consumption";
+    "Code 4: Daily
+Lifestyle
+Factors" -> "Cluster 11: Exercise
+Activity";
+    "Code 4: Daily
+Lifestyle
+Factors" -> "Cluster 12: Naps
+Taken";
+    "Code 4: Daily
+Lifestyle
+Factors" -> "Cluster 13: Alcohol
+Consumption";
+    "Code 4: Daily
+Lifestyle
+Factors" -> "Cluster 14: Medication
+Use";
+
+    // Cluster level under Sleep Aids and Assistance
+    "Cluster 5: Sleep
+Aids" [fillcolor="#d3f0d3"];
+    "Code 6: Sleep
+Aids and
+Assistance" -> "Cluster 5: Sleep
+Aids";
+}

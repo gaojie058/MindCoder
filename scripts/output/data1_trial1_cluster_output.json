@@ -1,0 +1,134 @@
+
+{
+  "Cluster 1": {
+    "name": "Sleep Diary Intake",
+    "chunks": [
+      "USER: Start morning sleep diary intake",
+      "USER: Start evening sleep diary intake",
+      "USER: Start morning sleep diary intake",
+      "USER: Start evening sleep diary intake",
+      "USER: Start morning sleep diary intake",
+      "USER: Start evening sleep diary intake"
+    ]
+  },
+  "Cluster 2": {
+    "name": "Sleep Quality Rating",
+    "chunks": [
+      "USER: user query: Eight undefined",
+      "USER: user query: Ten undefined"
+    ]
+  },
+  "Cluster 3": {
+    "name": "Bedtime Routines",
+    "chunks": [
+      "USER: smallTalk question asked:As I am getting that, what are some things you usually do to help yourself wind down before bed? smallTalk response: smallTalk question asked:As I am getting that, what are some things you usually do to help yourself wind down before bed? smallTalk response: start where we left off and repeat last thing you said.. user query: just drink some water and then lay down.",
+      "USER: smallTalk question asked:  smallTalk response:  user query: I go to sleep I use the restroom and I drink some water to stay hydrated while I'm asleep.",
+      "USER: smallTalk question asked:  smallTalk response:  user query: I told you last time I drink water to stay hydrated before I go to sleep"
+    ]
+  },
+  "Cluster 4": {
+    "name": "Sleep Disruptions",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: think I woke up once",
+      "USER: smallTalk question asked:  smallTalk response:  user query: think it was because of a scary dream"
+    ]
+  },
+  "Cluster 5": {
+    "name": "Caffeine Intake",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No I have not had any caffeinated drinks I just had 1 protein shake",
+      "USER: smallTalk question asked:  smallTalk response:  user query: No I haven't had any caffeinated drinks during the day"
+    ]
+  },
+  "Cluster 6": {
+    "name": "Alcohol Consumption",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No not at all",
+      "USER: smallTalk question asked:  smallTalk response:  user query: No no alcohol"
+    ]
+  },
+  "Cluster 7": {
+    "name": "Medication Usage",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No I haven't",
+      "USER: smallTalk question asked:  smallTalk response:  user query: No no medicine were taken"
+    ]
+  },
+  "Cluster 8": {
+    "name": "Exercise Activity",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No not much",
+      "USER: smallTalk question asked:  smallTalk response:  user query: No no physical activities"
+    ]
+  },
+  "Cluster 9": {
+    "name": "Daily Fatigue Levels",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: almost fell asleep during the class but other than that I felt pretty well",
+      "USER: smallTalk question asked:  smallTalk response:  user query: say 3"
+    ]
+  },
+  "Cluster 10": {
+    "name": "Sleep Environment",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No nothing",
+      "USER: smallTalk question asked:  smallTalk response:  user query: No"
+    ]
+  },
+  "Cluster 11": {
+    "name": "Final Awakening",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: 940",
+      "USER: smallTalk question asked:  smallTalk response:  user query: 11"
+    ]
+  },
+  "Cluster 12": {
+    "name": "Sleep Duration",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: fell asleep around 130",
+      "USER: smallTalk question asked:  smallTalk response:  user query: went to bed around 1:00 in the morning"
+    ]
+  },
+  "Cluster 13": {
+    "name": "Time to Sleep",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: was around 115",
+      "USER: smallTalk question asked:  smallTalk response:  user query: probably like 9:55 minutes"
+    ]
+  },
+  "Cluster 14": {
+    "name": "Waking Up Experience",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: Yes",
+      "USER: smallTalk question asked:  smallTalk response:  user query: got out right away"
+    ]
+  },
+  "Cluster 15": {
+    "name": "Sleep Aids Usage",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No I haven't",
+      "USER: smallTalk question asked:  smallTalk response:  user query: No"
+    ]
+  },
+  "Cluster 16": {
+    "name": "Hydration Before Sleep",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: just drink some water and then lay down.",
+      "USER: smallTalk question asked:  smallTalk response:  user query: I go to sleep I use the restroom and I drink some water to stay hydrated while I'm asleep."
+    ]
+  },
+  "Cluster 17": {
+    "name": "Daily Activities",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: No specifically I just went to class as usual and that's it",
+      "USER: smallTalk question asked:  smallTalk response:  user query: didn't take any naps"
+    ]
+  },
+  "Cluster 18": {
+    "name": "Overall Mood",
+    "chunks": [
+      "USER: smallTalk question asked:  smallTalk response:  user query: was pretty good I was pretty happy throughout the whole day",
+      "USER: smallTalk question asked:  smallTalk response:  user query: feeling kind of tired"
+    ]
+  }
+}

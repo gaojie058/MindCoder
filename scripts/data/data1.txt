@@ -1,0 +1,146 @@
+P1
+* USER: Start morning sleep diary intake
+* GPT: Good morning! I hope you had a restful night. How are you feeling today?
+* USER: smallTalk question asked:While I am getting that, how are you today? smallTalk response: start where we left off and repeat last thing you said.. user query: feeling great thank you
+* GPT: That's wonderful to hear! Let's dive into last night. Did you manage to unwind a bit before bed? About what time did you settle in?
+* USER: smallTalk question asked:As I am getting that, what are some things you usually do to help yourself wind down before bed? smallTalk response: smallTalk question asked:As I am getting that, what are some things you usually do to help yourself wind down before bed? smallTalk response: start where we left off and repeat last thing you said.. user query: just drink some water and then lay down. user query: went to bed around 1:00 in the morning
+* GPT: Got it, you went to bed around 1:00 AM. Did you try to fall asleep right away, or did you spend some time doing something else before turning off the lights?
+* USER: smallTalk question asked:As I am getting that, do you have any particular bedtime routines that help you relax? smallTalk response: smallTalk question asked:As I am getting that, do you have any particular bedtime routines that help you relax? smallTalk response: smallTalk question asked:As I am getting that, what are some things you usually do to help yourself wind down before bed? smallTalk response: start where we left off and repeat last thing you said.. user query: just drink some water and then lay down. user query: just drink some I just drink some water that's it. user query: was on my phone for like around 10 minutes
+* GPT: Thanks for sharing that. So, after spending about 10 minutes on your phone, did you turn off the lights and try to sleep right away? If so, around what time was that?
+* USER: smallTalk question asked:  smallTalk response:  user query: was around 115
+* GPT: Alright, so you tried to sleep around 1:15 AM. Do you recall how long it took you to fall asleep after that?
+* USER: smallTalk question asked:  smallTalk response:  user query: fell asleep around 130
+* GPT: Great, so it took about 15 minutes to fall asleep. Did you wake up at all during the night, or was it a straight sleep through until morning?
+* USER: smallTalk question asked:  smallTalk response:  user query: think I woke up once
+* GPT: Got it, you woke up once. Do you remember what might have caused you to wake up, or was it just one of those random awakenings?
+* USER: smallTalk question asked:  smallTalk response:  user query: think it was because of a scary dream
+* GPT: Ah, those can be unsettling. I'm sorry to hear that. Were you able to fall back asleep quickly after waking up from the dream?
+* USER: smallTalk question asked:  smallTalk response:  user query: Yes 
+* GPT: I'm glad to hear you were able to get back to sleep. When did you have your final awakening this morning?
+* USER: smallTalk question asked:  smallTalk response:  user query: 940
+* GPT: Thanks for sharing that. Did you get out of bed right after waking up at 9:40, or did you stay in bed for a while?
+* USER: smallTalk question asked:  smallTalk response:  user query: got out right away
+* GPT: Alright, you got out of bed right away at 9:40. Were there any disruptions in your sleep environment last night, like light, noise, or temperature?
+* USER: smallTalk question asked:  smallTalk response:  user query: No nothing
+* GPT: That's good to hear. Did you use any sleep aids last night, like medication or herbal teas?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I haven't
+* GPT: Alright, no sleep aids. How would you rate your overall sleep quality last night on a scale from 1 to 10?
+* USER: smallTalk question asked:  smallTalk response:  user query: Eight undefined
+* GPT: An eight sounds like a pretty good night overall! What do you think contributed to that rating?
+* USER: smallTalk question asked:  smallTalk response:  user query: don't know just could sleep
+* GPT: Sometimes it just works out that way, doesn't it? Thanks for sharing all of that with me. Is there anything else on your mind about your sleep last night?
+* USER: smallTalk question asked:  smallTalk response:  user query: No that will be it
+* GPT: Got it! Thanks for checking in today! Have a great day!
+* USER: smallTalk question asked:  smallTalk response:  user query: you you too bye
+* GPT: goodbye
+* USER: Start evening sleep diary intake
+* GPT: Good evening! I hope you had a good day. How are you feeling right now?
+* USER: smallTalk question asked:It's taking me a bit longer, Hang in there. Alright?  smallTalk response:  user query: feeling kind of tired
+* GPT: I understand, feeling tired at the end of the day can be tough. Did you happen to take any naps today, or was it just a busy day that wore you out?
+* USER: smallTalk question asked:As I am getting that, what are some things you usually do to unwind before bed? smallTalk response: smallTalk question asked:As I am getting that, what are some things you usually do to unwind before bed? smallTalk response:  user query: I go to sleep I use the restroom and I drink some water to stay hydrated while I'm asleep. user query:  
+* GPT: That sounds like a simple and effective routine. Staying hydrated is always a good idea. Earlier, you mentioned feeling tired—was there anything specific that contributed to that fatigue today?
+* USER: smallTalk question asked:  smallTalk response:  user query: No specifically I just went to class as usual and that's it
+* GPT: Got it, sometimes just the usual routine can be tiring. Did you have any caffeinated drinks today, like coffee or tea?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I have not had any caffeinated drinks I just had 1 protein shake
+* GPT: Thanks for letting me know. Protein shakes can be a nice energy boost. Did you have any alcohol today?
+* USER: smallTalk question asked:  smallTalk response:  user query: No not at all
+* GPT: Alright, thanks for sharing that. Did you take any medications today, either over-the-counter or prescription?
+* USER: smallTalk question asked:  smallTalk response:  user query: No no medicine were taken
+* GPT: Thanks for confirming that. Did you manage to fit in any exercise or physical activity today?
+* USER: smallTalk question asked:  smallTalk response:  user query: No not much
+* GPT: That's alright, some days are just like that. On a scale from 1 to 10, how would you rate your stress level before bed tonight?
+* USER: smallTalk question asked:  smallTalk response:  user query:  
+* GPT: If you're not sure about the stress level, that's okay. Just let me know if anything specific is on your mind that might be causing stress. Meanwhile, how would you rate your fatigue level during the day on a scale from 1 to 10?
+* USER: smallTalk question asked:  smallTalk response:  user query: almost fell asleep during the class but other than that I felt pretty well
+* GPT: It sounds like you had a moment of tiredness in class, but otherwise, you managed well. Thanks for sharing that. Is there anything else you'd like to mention about your day or any other nightly habits you have before we wrap up?
+* USER: smallTalk question asked:  smallTalk response:  user query: No that will be it
+* GPT: Thanks for checking in today! I hope you have a restful night!
+* USER: smallTalk question asked:  smallTalk response:  user query: you you too
+* GPT: goodbye
+* 
+* USER: Start morning sleep diary intake
+* GPT: Good morning! I hope you had a restful night. How are you feeling today?
+* USER: start where we left off and repeat last thing you said.
+* GPT: Good morning! I hope you had a restful night. How are you feeling today?
+* USER: Start evening sleep diary intake
+* GPT: Good evening! I hope you had a good day. How are you feeling right now?
+* USER: smallTalk question asked:While I am getting that, how are you today? smallTalk response: start where we left off and repeat last thing you said.. user query: feeling fine
+* GPT: I'm glad to hear you're feeling fine. Let's ease into your day a bit. How was your mood throughout the day?
+* USER: smallTalk question asked:  smallTalk response:  user query: was pretty good I was pretty happy throughout the whole day
+* GPT: That's wonderful to hear that you had a happy day! Did you happen to take any naps today?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I haven't take I haven't taken any naps today
+* GPT: Alright, no naps today. Did you have any caffeinated drinks during the day?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I haven't had any caffeinated drinks during the day
+* GPT: Got it, no caffeine today. How about alcohol? Did you have any drinks?
+* USER: smallTalk question asked:  smallTalk response:  user query: No no alcohol
+* GPT: Thanks for letting me know. Did you take any medications, either over-the-counter or prescription, today?
+* USER: smallTalk question asked:  smallTalk response:  user query: No
+* GPT: Alright, no medications today. Did you engage in any exercise or physical activity?
+* USER: smallTalk question asked:  smallTalk response:  user query:  
+* GPT: No worries if you didn't get to exercise today. Let's talk about how you're feeling before bed. On a scale of 1 to 10, how stressed are you feeling right now?
+* USER: smallTalk question asked:  smallTalk response:  user query:  
+* GPT: If you're not feeling stressed, that's great! If you are, feel free to share what's been on your mind. Now, how would you rate your fatigue level during the day on a scale of 1 to 10?
+* USER: smallTalk question asked:As I am getting that, is there anything in particular that's been on your mind lately? smallTalk response: smallTalk question asked:As I am getting that, is there anything in particular that's been on your mind lately? smallTalk response:  user query: No nothing in particular. user query:  
+* GPT: Alright, it's good to hear there's nothing weighing on your mind. Now, let's talk about your bedtime routine. Do you have any nightly habits or rituals before bed?
+* USER: smallTalk question asked:  smallTalk response:  user query: I told you last time I drink water to stay hydrated before I go to sleep
+* GPT: That's right, you did mention that! Staying hydrated is a great habit. Is there anything else you'd like to mention about your day before we finish up?
+* USER: smallTalk question asked:  smallTalk response:  user query: No that'll be it thank you
+* GPT: Thanks for checking in today! I hope you have a restful night!
+* USER: smallTalk question asked:  smallTalk response:  user query: too
+* GPT: goodbye
+* USER: Start morning sleep diary intake
+* GPT: Good morning! I hope you had a restful night. How are you feeling today?
+* USER: smallTalk question asked:Just a little longer, stay with me. Alright?  smallTalk response:  user query: feeling well
+* GPT: I'm glad to hear you're feeling well today! Let's dive into your sleep details. Did you manage to unwind a bit before bed last night? About what time did you settle in?
+* USER: smallTalk question asked:  smallTalk response:  user query: went to bed around 130
+* GPT: Thanks for sharing that. It sounds like it was a late night. Was there anything specific that kept you up, or was it just one of those nights?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I just I just was on my phone
+* GPT: Got it, those screens can be quite captivating! After you put your phone down, about what time did you try to fall asleep?
+* USER: smallTalk question asked:  smallTalk response:  user query: like to
+* GPT: Thanks for letting me know. So, after putting your phone away, do you remember how long it took you to drift off to sleep?
+* USER: smallTalk question asked:  smallTalk response:  user query: probably like 9:55 minutes
+* GPT: That's pretty specific, thanks for sharing! Did you go to bed as planned, or was it a bit later than you intended?
+* USER: smallTalk question asked:  smallTalk response:  user query: didn't plan anything but I think it was a bit later than I expected
+* GPT: Got it, sometimes the night just slips away, doesn't it? During the night, do you recall waking up at all?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I haven't
+* GPT: That's great to hear! A solid night's sleep without interruptions can make a big difference. What time did you have your final awakening this morning?
+* USER: smallTalk question asked:  smallTalk response:  user query: 11
+* GPT: Thanks for letting me know. Did you wake up at 11 as planned, or was it earlier or later than you intended?
+* USER: smallTalk question asked:  smallTalk response:  user query: didn't plan anything
+* GPT: Alright, it's nice to have a relaxed morning sometimes. When did you actually get out of bed to start your day?
+* USER: smallTalk question asked:  smallTalk response:  user query: 1130
+* GPT: Thanks for sharing that. Was there anything in your sleep environment, like light or noise, that disrupted your sleep last night?
+* USER: smallTalk question asked:  smallTalk response:  user query: No
+* GPT: That's good to hear! A peaceful environment can really help with sleep. Did you use any sleep aids or devices before bed last night?
+* USER: smallTalk question asked:  smallTalk response:  user query: No
+* GPT: Alright, thanks for letting me know. On a scale from 1 to 10, how would you rate your sleep quality last night?
+* USER: smallTalk question asked:  smallTalk response:  user query: Ten undefined
+* GPT: Wow, a perfect ten! That's fantastic. What do you think contributed to such a great night's sleep?
+* USER: smallTalk question asked:  smallTalk response:  user query: No really I don't know I'm just slut
+* GPT: No worries, sometimes everything just aligns perfectly for a good night's sleep. Thanks for sharing all of that with me. Is there anything else on your mind about your sleep last night?
+* USER: smallTalk question asked:  smallTalk response:  user query: No that will be it
+* GPT: Got it! Thanks for checking in today! Have a great day!
+* USER: smallTalk question asked:  smallTalk response:  user query: Yes 
+* GPT: goodbye
+* USER: Start evening sleep diary intake
+* GPT: Good evening! I hope you had a good day. How are you feeling right now?
+* USER: smallTalk question asked:I'm still working on it, Hang in there. Alright?  smallTalk response:  user query: feeling kind of tired
+* GPT: I hear you. Feeling tired at the end of the day can be quite common. Did you manage to take any naps today, or was it just a busy day all around?
+* USER: smallTalk question asked:  smallTalk response:  user query: didn't take any naps
+* GPT: Got it, no naps today. Did you have any caffeinated drinks that might have kept you going through the day?
+* USER: smallTalk question asked:  smallTalk response:  user query: No I haven't had any caffeinated drinks
+* GPT: Alright, no caffeine today. How about any alcohol? Did you have any drinks today?
+* USER: smallTalk question asked:  smallTalk response:  user query: No no alcohol
+* GPT: Thanks for letting me know. Did you take any medications today, either over-the-counter or prescription?
+* USER: smallTalk question asked:  smallTalk response:  user query: No no medication
+* GPT: Alright, no medications today. Did you get a chance to do any exercise or physical activity?
+* USER: smallTalk question asked:  smallTalk response:  user query: No no physical activities
+* GPT: Thanks for sharing that. How would you rate your stress level before bed on a scale from 1 to 10?
+* USER: smallTalk question asked:  smallTalk response:  user query:  
+* GPT: If you're unsure about your stress level, that's completely okay. We can move on to how fatigued you felt during the day. On a scale from 1 to 10, how would you rate your fatigue today?
+* USER: smallTalk question asked:  smallTalk response:  user query: say 3
+* GPT: A fatigue level of 3 sounds like you had a bit of energy to spare. What do you think contributed to feeling that way today?
+* USER: smallTalk question asked:  smallTalk response:  user query: haven't done much
+* GPT: I see, sometimes a quieter day can leave us feeling a bit more rested. Lastly, do you have any bedtime routines or habits that you follow before going to sleep?
+* USER: smallTalk question asked:  smallTalk response:  user query: told you this a couple of times but I just drink water to stay hydrated
+* 

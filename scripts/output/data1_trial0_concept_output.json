@@ -1,0 +1,181 @@
+
+{
+  "Concept 1": {
+    "name": "Hydration and Sleep",
+    "definition": "This group focuses on the relationship between hydration habits and sleep quality, highlighting how pre-sleep hydration routines and daily hydration practices can influence sleep patterns.",
+    "codes": {
+      "Code1": {
+        "name": "Hydration and Health Habits",
+        "clusters": {
+          "Cluster 1": {
+            "name": "Bedtime Routines",
+            "chunks": [
+              "USER: just drink some water and then lay down.",
+              "USER: just drink some I just drink some water that's it.",
+              "USER: I go to sleep I use the restroom and I drink some water to stay hydrated while I'm asleep.",
+              "USER: I told you last time I drink water to stay hydrated before I go to sleep."
+            ]
+          },
+          "Cluster 18": {
+            "name": "Daily Hydration",
+            "chunks": [
+              "USER: drink some water",
+              "USER: drink some water"
+            ]
+          }
+        }
+      },
+      "Code2": {
+        "name": "Sleep Quality and Timing",
+        "clusters": {
+          "Cluster 3": {
+            "name": "Sleep Quality Rating",
+            "chunks": [
+              "USER: Eight undefined",
+              "USER: Ten undefined"
+            ]
+          },
+          "Cluster 7": {
+            "name": "Sleep Timing",
+            "chunks": [
+              "USER: went to bed around 1:00 in the morning",
+              "USER: was around 115",
+              "USER: fell asleep around 130",
+              "USER: I went to bed around 130",
+              "USER: I didn't plan anything but I think it was a bit later than I expected",
+              "USER: 940",
+              "USER: 11",
+              "USER: 1130"
+            ]
+          },
+          "Cluster 17": {
+            "name": "Sleep Duration",
+            "chunks": [
+              "USER: 940",
+              "USER: 11"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Concept 2": {
+    "name": "Sleep Quality Factors",
+    "definition": "This group explores various factors affecting sleep quality, including sleep disruptions, fatigue levels, and emotional states that influence overall sleep experiences.",
+    "codes": {
+      "Code3": {
+        "name": "Disruptions and Quality of Sleep",
+        "clusters": {
+          "Cluster 4": {
+            "name": "Sleep Disruptions",
+            "chunks": [
+              "USER: think I woke up once",
+              "USER: think it was because of a scary dream"
+            ]
+          },
+          "Cluster 9": {
+            "name": "Fatigue Levels",
+            "chunks": [
+              "USER: almost fell asleep during the class but other than that I felt pretty well",
+              "USER: haven't done much"
+            ]
+          }
+        }
+      },
+      "Code5": {
+        "name": "Mental and Emotional State",
+        "clusters": {
+          "Cluster 8": {
+            "name": "Feeling Before Bed",
+            "chunks": [
+              "USER: feeling kind of tired",
+              "USER: feeling well",
+              "USER: was pretty good I was pretty happy throughout the whole day",
+              "USER: say 3"
+            ]
+          },
+          "Cluster 15": {
+            "name": "Stress Levels",
+            "chunks": [
+              "USER: If you're not feeling stressed, that's great! If you are, feel free to share what's been on your mind."
+            ]
+          },
+          "Cluster 16": {
+            "name": "General Feelings",
+            "chunks": [
+              "USER: feeling great thank you",
+              "USER: feeling fine"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "Concept 3": {
+    "name": "Lifestyle and Sleep Interactions",
+    "definition": "This group examines the impact of daily lifestyle choices, such as caffeine consumption, alcohol use, and exercise activity, on sleep quality and overall health.",
+    "codes": {
+      "Code4": {
+        "name": "Daily Lifestyle Factors",
+        "clusters": {
+          "Cluster 6": {
+            "name": "Daily Activities",
+            "chunks": [
+              "USER: No specifically I just went to class as usual and that's it",
+              "USER: didn't take any naps",
+              "USER: No I haven't had any caffeinated drinks during the day",
+              "USER: No no alcohol",
+              "USER: No no medication",
+              "USER: No no physical activities"
+            ]
+          },
+          "Cluster 10": {
+            "name": "Caffeine Consumption",
+            "chunks": [
+              "USER: No I have not had any caffeinated drinks I just had 1 protein shake"
+            ]
+          },
+          "Cluster 11": {
+            "name": "Exercise Activity",
+            "chunks": [
+              "USER: No not much"
+            ]
+          },
+          "Cluster 12": {
+            "name": "Naps Taken",
+            "chunks": [
+              "USER: No I haven't take I haven't taken any naps today",
+              "USER: didn't take any naps"
+            ]
+          },
+          "Cluster 13": {
+            "name": "Alcohol Consumption",
+            "chunks": [
+              "USER: No not at all",
+              "USER: No no alcohol"
+            ]
+          },
+          "Cluster 14": {
+            "name": "Medication Use",
+            "chunks": [
+              "USER: No no medicine were taken",
+              "USER: No medications today"
+            ]
+          }
+        }
+      },
+      "Code6": {
+        "name": "Sleep Aids and Assistance",
+        "clusters": {
+          "Cluster 5": {
+            "name": "Sleep Aids",
+            "chunks": [
+              "USER: No I haven't",
+              "USER: No"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,160 @@
+
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    "Concept 1:
+Urgency and
+Hope in
+Climate Action" [fillcolor="#ffd79d"];
+    "Concept 2:
+Community and
+Youth Engagement" [fillcolor="#d5d4f0"];
+
+    "Research
+Question" -> "Concept 1:
+Urgency and
+Hope in
+Climate Action";
+    "Research
+Question" -> "Concept 2:
+Community and
+Youth Engagement";
+
+    "Code 1:
+Urgency and
+Positivity in
+Climate Action" [fillcolor="#cbe7f2"];
+    "Code 3:
+Innovative
+Solutions for
+Environmental
+Challenges" [fillcolor="#cbe7f2"];
+    "Concept 1:
+Urgency and
+Hope in
+Climate Action" -> "Code 1:
+Urgency and
+Positivity in
+Climate Action";
+    "Concept 1:
+Urgency and
+Hope in
+Climate Action" -> "Code 3:
+Innovative
+Solutions for
+Environmental
+Challenges";
+
+    "Cluster 1:
+Climate Change
+Urgency" [fillcolor="#d3f0d3"];
+    "Cluster 4:
+Hope and
+Solutions" [fillcolor="#d3f0d3"];
+    "Code 1:
+Urgency and
+Positivity in
+Climate Action" -> "Cluster 1:
+Climate Change
+Urgency";
+    "Code 1:
+Urgency and
+Positivity in
+Climate Action" -> "Cluster 4:
+Hope and
+Solutions";
+
+    "Cluster 5:
+Earthshot Prize
+Goals" [fillcolor="#d3f0d3"];
+    "Cluster 8:
+Technological
+Optimism" [fillcolor="#d3f0d3"];
+    "Code 3:
+Innovative
+Solutions for
+Environmental
+Challenges" -> "Cluster 5:
+Earthshot Prize
+Goals";
+    "Code 3:
+Innovative
+Solutions for
+Environmental
+Challenges" -> "Cluster 8:
+Technological
+Optimism";
+
+    "Code 2:
+Community
+Engagement and
+Conservation" [fillcolor="#cbe7f2"];
+    "Code 4:
+Youth
+Perspectives on
+Climate Issues" [fillcolor="#cbe7f2"];
+    "Concept 2:
+Community and
+Youth Engagement" -> "Code 2:
+Community
+Engagement and
+Conservation";
+    "Concept 2:
+Community and
+Youth Engagement" -> "Code 4:
+Youth
+Perspectives on
+Climate Issues";
+
+    "Cluster 2:
+Community
+Conservation" [fillcolor="#d3f0d3"];
+    "Cluster 10:
+Future
+Generations" [fillcolor="#d3f0d3"];
+    "Cluster 11:
+Family and
+Education" [fillcolor="#d3f0d3"];
+    "Code 2:
+Community
+Engagement and
+Conservation" -> "Cluster 2:
+Community
+Conservation";
+    "Code 2:
+Community
+Engagement and
+Conservation" -> "Cluster 10:
+Future
+Generations";
+    "Code 2:
+Community
+Engagement and
+Conservation" -> "Cluster 11:
+Family and
+Education";
+
+    "Cluster 9:
+Youth and
+Climate Anxiety" [fillcolor="#d3f0d3"];
+    "Cluster 12:
+Legacy of
+Advocacy" [fillcolor="#d3f0d3"];
+    "Code 4:
+Youth
+Perspectives on
+Climate Issues" -> "Cluster 9:
+Youth and
+Climate Anxiety";
+    "Code 4:
+Youth
+Perspectives on
+Climate Issues" -> "Cluster 12:
+Legacy of
+Advocacy";
+}

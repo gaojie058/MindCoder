@@ -1,0 +1,176 @@
+
+{
+  "Code1": {
+    "name": "Sleep Patterns and Timing",
+    "clusters": {
+      "Cluster 1": {
+        "name": "Sleep Timing",
+        "chunks": [
+          "USER: went to bed around 1:00 in the morning",
+          "USER: tried to sleep around 1:15 AM",
+          "USER: fell asleep around 1:30",
+          "USER: went to bed around 1:30",
+          "USER: went to bed around 130",
+          "USER: didn't plan anything but I think it was a bit later than I expected",
+          "USER: didn't plan anything"
+        ]
+      },
+      "Cluster 18": {
+        "name": "Final Awakening",
+        "chunks": [
+          "USER: got out right away",
+          "USER: got out of bed right away at 9:40",
+          "USER: 940",
+          "USER: 11",
+          "USER: 1130"
+        ]
+      }
+    }
+  },
+  "Code2": {
+    "name": "Sleep Quality and Disruptions",
+    "clusters": {
+      "Cluster 3": {
+        "name": "Sleep Quality",
+        "chunks": [
+          "USER: think I woke up once",
+          "USER: Yes",
+          "USER: No nothing",
+          "USER: No I haven't",
+          "USER: Eight undefined",
+          "USER: Ten undefined",
+          "USER: No really I don't know I'm just slut"
+        ]
+      },
+      "Cluster 4": {
+        "name": "Sleep Disruptions",
+        "chunks": [
+          "USER: think it was because of a scary dream",
+          "USER: no nothing"
+        ]
+      }
+    }
+  },
+  "Code3": {
+    "name": "Pre-sleep Habits and Environment",
+    "clusters": {
+      "Cluster 2": {
+        "name": "Pre-sleep Activities",
+        "chunks": [
+          "USER: just drink some water and then lay down.",
+          "USER: just drink some I just drink some water that's it.",
+          "USER: was on my phone for like around 10 minutes",
+          "USER: I just drink water to stay hydrated while I'm asleep."
+        ]
+      },
+      "Cluster 5": {
+        "name": "Hydration",
+        "chunks": [
+          "USER: I drink some water and then lay down.",
+          "USER: I drink water to stay hydrated while I'm asleep."
+        ]
+      },
+      "Cluster 13": {
+        "name": "Bedtime Routines",
+        "chunks": [
+          "USER: I go to sleep I use the restroom",
+          "USER: I told you last time I drink water to stay hydrated before I go to sleep"
+        ]
+      },
+      "Cluster 12": {
+        "name": "Sleep Environment",
+        "chunks": [
+          "USER: No nothing"
+        ]
+      }
+    }
+  },
+  "Code4": {
+    "name": "Lifestyle Factors Affecting Sleep",
+    "clusters": {
+      "Cluster 6": {
+        "name": "Caffeine Intake",
+        "chunks": [
+          "USER: No I have not had any caffeinated drinks",
+          "USER: No I haven't had any caffeinated drinks during the day"
+        ]
+      },
+      "Cluster 7": {
+        "name": "Alcohol Consumption",
+        "chunks": [
+          "USER: No not at all",
+          "USER: No no alcohol"
+        ]
+      },
+      "Cluster 8": {
+        "name": "Medication Use",
+        "chunks": [
+          "USER: No I haven't",
+          "USER: No no medicine were taken",
+          "USER: No"
+        ]
+      },
+      "Cluster 9": {
+        "name": "Exercise Activity",
+        "chunks": [
+          "USER: No not much",
+          "USER: No no physical activities"
+        ]
+      }
+    }
+  },
+  "Code5": {
+    "name": "Physical and Mental Well-being",
+    "clusters": {
+      "Cluster 10": {
+        "name": "Fatigue Levels",
+        "chunks": [
+          "USER: almost fell asleep during the class but other than that I felt pretty well",
+          "USER: say 3"
+        ]
+      },
+      "Cluster 11": {
+        "name": "Stress Levels",
+        "chunks": [
+          "USER: "
+        ]
+      },
+      "Cluster 14": {
+        "name": "General Mood",
+        "chunks": [
+          "USER: feeling great thank you",
+          "USER: feeling kind of tired",
+          "USER: feeling fine",
+          "USER: was pretty good I was pretty happy throughout the whole day",
+          "USER: feeling well"
+        ]
+      },
+      "Cluster 15": {
+        "name": "Napping",
+        "chunks": [
+          "USER: No I haven't take I haven't taken any naps today",
+          "USER: didn't take any naps"
+        ]
+      },
+      "Cluster 16": {
+        "name": "Daily Activities",
+        "chunks": [
+          "USER: I just went to class as usual and that's it",
+          "USER: haven't done much"
+        ]
+      }
+    }
+  },
+  "Code6": {
+    "name": "Sleep Insights and Analysis",
+    "clusters": {
+      "Cluster 17": {
+        "name": "Sleep Analysis",
+        "chunks": [
+          "USER: No that will be it",
+          "USER: No that will be it thank you"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,173 @@
+
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    // Root node
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    // ===== Concept Level =====
+    "Concept 1:
+Urgency for
+Climate Action" [fillcolor="#ffd79d"];
+    "Concept 2:
+Engagement and
+Legacy" [fillcolor="#d5d4f0"];
+    "Concept 3:
+Childhood
+Perspectives" [fillcolor="#e4b0b0"];
+
+    // Connect root to Concepts
+    "Research
+Question" -> "Concept 1:
+Urgency for
+Climate Action";
+    "Research
+Question" -> "Concept 2:
+Engagement and
+Legacy";
+    "Research
+Question" -> "Concept 3:
+Childhood
+Perspectives";
+
+    // ===== Code Level under Urgency for Climate Action =====
+    "Code 1:
+Urgency and
+Action on
+Climate Change" [fillcolor="#cbe7f2"];
+    "Concept 1:
+Urgency for
+Climate Action" -> "Code 1:
+Urgency and
+Action on
+Climate Change";
+
+    // Cluster level under Urgency and Action on Climate Change
+    "Cluster 1:
+Climate Change
+Urgency" [fillcolor="#d3f0d3"];
+    "Cluster 3:
+Earthshot Prize
+Concept" [fillcolor="#d3f0d3"];
+    "Cluster 4:
+Space Exploration
+Comparison" [fillcolor="#d3f0d3"];
+    "Code 1:
+Urgency and
+Action on
+Climate Change" -> "Cluster 1:
+Climate Change
+Urgency";
+    "Code 1:
+Urgency and
+Action on
+Climate Change" -> "Cluster 3:
+Earthshot Prize
+Concept";
+    "Code 1:
+Urgency and
+Action on
+Climate Change" -> "Cluster 4:
+Space Exploration
+Comparison";
+
+    // ===== Code Level under Engagement and Legacy =====
+    "Code 2:
+Community and
+Youth Engagement" [fillcolor="#cbe7f2"];
+    "Concept 2:
+Engagement and
+Legacy" -> "Code 2:
+Community and
+Youth Engagement";
+
+    // Cluster level under Community and Youth Engagement
+    "Cluster 2:
+Community
+Conservation" [fillcolor="#d3f0d3"];
+    "Cluster 6:
+Youth Climate
+Awareness" [fillcolor="#d3f0d3"];
+    "Cluster 10:
+Family Legacy
+in Conservation" [fillcolor="#d3f0d3"];
+    "Code 2:
+Community and
+Youth Engagement" -> "Cluster 2:
+Community
+Conservation";
+    "Code 2:
+Community and
+Youth Engagement" -> "Cluster 6:
+Youth Climate
+Awareness";
+    "Code 2:
+Community and
+Youth Engagement" -> "Cluster 10:
+Family Legacy
+in Conservation";
+
+    // ===== Code Level under Childhood Perspectives =====
+    "Code 3:
+Childhood
+Perspectives on
+Environment" [fillcolor="#cbe7f2"];
+    "Code 4:
+Concerns for
+Future Generations" [fillcolor="#cbe7f2"];
+    "Concept 3:
+Childhood
+Perspectives" -> "Code 3:
+Childhood
+Perspectives on
+Environment";
+    "Concept 3:
+Childhood
+Perspectives" -> "Code 4:
+Concerns for
+Future Generations";
+
+    // Cluster level under Childhood Perspectives on Environment
+    "Cluster 7:
+Childhood
+Connection" [fillcolor="#d3f0d3"];
+    "Cluster 8:
+Children's
+Environmental
+Impact" [fillcolor="#d3f0d3"];
+    "Cluster 9:
+Education on
+Resources" [fillcolor="#d3f0d3"];
+    "Code 3:
+Childhood
+Perspectives on
+Environment" -> "Cluster 7:
+Childhood
+Connection";
+    "Code 3:
+Childhood
+Perspectives on
+Environment" -> "Cluster 8:
+Children's
+Environmental
+Impact";
+    "Code 3:
+Childhood
+Perspectives on
+Environment" -> "Cluster 9:
+Education on
+Resources";
+
+    // Cluster level under Concerns for Future Generations
+    "Cluster 11:
+Concerns for
+Future" [fillcolor="#d3f0d3"];
+    "Code 4:
+Concerns for
+Future Generations" -> "Cluster 11:
+Concerns for
+Future";
+}

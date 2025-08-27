@@ -1,0 +1,190 @@
+
+digraph G {
+    graph [bgcolor=white, splines=true, rankdir=LR];
+    node [shape=ellipse, style=filled, fontname="Arial", fontsize=12];
+    edge [penwidth=2, style=rounded];
+
+    // Root node
+    "Research
+Question" [fillcolor="#a9a9a9", fontcolor="#000", fontsize=14];
+
+    // ===== Concept Level =====
+    "Concept 1: 
+Environmental
+Awareness" [fillcolor="#ffd79d"];
+    "Concept 2: 
+Climate Action
+Initiatives" [fillcolor="#d5d4f0"];
+    "Concept 3: 
+Intergenerational
+Legacy" [fillcolor="#e4b0b0"];
+
+    // Connect root to Concepts
+    "Research
+Question" -> "Concept 1: 
+Environmental
+Awareness";
+    "Research
+Question" -> "Concept 2: 
+Climate Action
+Initiatives";
+    "Research
+Question" -> "Concept 3: 
+Intergenerational
+Legacy";
+
+    // ===== Code Level under Environmental Awareness =====
+    "Code 1: 
+Environmental
+Awareness and
+Education" [fillcolor="#cbe7f2"];
+    "Concept 1: 
+Environmental
+Awareness" -> "Code 1: 
+Environmental
+Awareness and
+Education";
+
+    // Cluster level under Environmental Awareness and Education
+    "Cluster 6: 
+Future
+Generations" [fillcolor="#d3f0d3"];
+    "Cluster 7: 
+Childhood
+Connection" [fillcolor="#d3f0d3"];
+    "Cluster 8: 
+Children's
+Awareness" [fillcolor="#d3f0d3"];
+    "Cluster 9: 
+Environmental
+Education" [fillcolor="#d3f0d3"];
+    "Code 1: 
+Environmental
+Awareness and
+Education" -> "Cluster 6: 
+Future
+Generations";
+    "Code 1: 
+Environmental
+Awareness and
+Education" -> "Cluster 7: 
+Childhood
+Connection";
+    "Code 1: 
+Environmental
+Awareness and
+Education" -> "Cluster 8: 
+Children's
+Awareness";
+    "Code 1: 
+Environmental
+Awareness and
+Education" -> "Cluster 9: 
+Environmental
+Education";
+
+    // ===== Code Level under Climate Action Initiatives =====
+    "Code 2: 
+Climate Change
+Solutions and
+Initiatives" [fillcolor="#cbe7f2"];
+    "Concept 2: 
+Climate Action
+Initiatives" -> "Code 2: 
+Climate Change
+Solutions and
+Initiatives";
+
+    // Cluster level under Climate Change Solutions and Initiatives
+    "Cluster 1: 
+Climate Change
+Urgency" [fillcolor="#d3f0d3"];
+    "Cluster 3: 
+Earthshot
+Prize Goals" [fillcolor="#d3f0d3"];
+    "Cluster 4: 
+NASA Moonshot
+Comparison" [fillcolor="#d3f0d3"];
+    "Cluster 5: 
+Technological
+Optimism" [fillcolor="#d3f0d3"];
+    "Code 2: 
+Climate Change
+Solutions and
+Initiatives" -> "Cluster 1: 
+Climate Change
+Urgency";
+    "Code 2: 
+Climate Change
+Solutions and
+Initiatives" -> "Cluster 3: 
+Earthshot
+Prize Goals";
+    "Code 2: 
+Climate Change
+Solutions and
+Initiatives" -> "Cluster 4: 
+NASA Moonshot
+Comparison";
+    "Code 2: 
+Climate Change
+Solutions and
+Initiatives" -> "Cluster 5: 
+Technological
+Optimism";
+
+    // ===== Code Level under Intergenerational Legacy =====
+    "Code 3: 
+Intergenerational
+Responsibility and
+Legacy" [fillcolor="#cbe7f2"];
+    "Code 4: 
+Community
+Engagement in
+Conservation" [fillcolor="#cbe7f2"];
+    "Concept 3: 
+Intergenerational
+Legacy" -> "Code 3: 
+Intergenerational
+Responsibility and
+Legacy";
+    "Concept 3: 
+Intergenerational
+Legacy" -> "Code 4: 
+Community
+Engagement in
+Conservation";
+
+    // Cluster level under Intergenerational Responsibility and Legacy
+    "Cluster 10: 
+Family
+Environmental
+History" [fillcolor="#d3f0d3"];
+    "Cluster 11: 
+Generational
+Responsibility" [fillcolor="#d3f0d3"];
+    "Code 3: 
+Intergenerational
+Responsibility and
+Legacy" -> "Cluster 10: 
+Family
+Environmental
+History";
+    "Code 3: 
+Intergenerational
+Responsibility and
+Legacy" -> "Cluster 11: 
+Generational
+Responsibility";
+
+    // Cluster level under Community Engagement in Conservation
+    "Cluster 2: 
+Community
+Conservation" [fillcolor="#d3f0d3"];
+    "Code 4: 
+Community
+Engagement in
+Conservation" -> "Cluster 2: 
+Community
+Conservation";
+}

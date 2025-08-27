@@ -1,0 +1,42 @@
+{ 
+  "metadata": {
+    "what_llm_did": {
+      "main_actions": "Analyzed qualitative data and generated open codes by dividing text into meaningful chunks based on topic similarity",
+      "examples": "Code 1 contains chunks about classroom management because they share similar themes about student engagement strategies"
+    },
+    "self_reflection": {
+      "confident_results": "Most confident about Code 1 and Code 2 due to clear thematic coherence and strong recurring concepts",
+      "uncertain_results": "Less confident about Code 3 which may overlap with multiple topics and needs boundary clarification",
+      "recommended_review": "Focus on reviewing boundary clarity between overlapping codes, especially Code 3 classification for human validation"
+    }
+  },
+
+  "Code 1": {
+    "name": "Classroom Management",
+    "chunks": [
+      "Effective classroom management starts with establishing clear expectations and consistent routines. When students know what to expect, they're more likely to stay engaged and participate actively in the lesson",
+      "Engagement isn't just about keeping students busy; it's about fostering a love for learning. By incorporating interactive activities and real-world examples, you can capture their interest and make the material more relatable."
+    ]
+  },
+  "Code 2": {
+    "name": "Curriculum Planning",
+    "chunks": [
+      "A well-structured lesson plan is the backbone of effective teaching. Start by outlining clear objectives and planning activities that align with these goals, ensuring that each part of the lesson builds towards a comprehensive understanding of the topic.",
+      "Curriculum development should focus on creating a balanced approach that integrates both foundational knowledge and critical thinking skills. Incorporating varied resources and assessment methods helps cater to different learning styles and keeps students motivated.",
+      "Regularly updating your curriculum to include current events, technology, and interdisciplinary connections can make learning more relevant and exciting for students. This approach also encourages them to make connections beyond the classroom.",
+      "Effective lesson planning also involves anticipating potential challenges and preparing alternative activities or strategies to address diverse learning needs. This ensures that all students have equal opportunities to succeed."
+    ]
+  },
+  "Code 3": {
+    "name": "Assessment Strategies",
+    "chunks": [
+      "Formative assessments are crucial for understanding students' progress and identifying areas where they may need additional support. Frequent, low-stakes assessments provide valuable insights without adding unnecessary stress."
+    ]
+  },
+  "metadata": {
+    "Example": "Example of Code 【xx】: \n 1) Chunk "yy", because ... 2) Chunk "zz",  because ... ",
+    "Reflect": "1) Confident Results. xx \n 2) Uncertain Results. xx \n 3) Recommended Human Review Focus. xx \n",
+  }
+
+}
+

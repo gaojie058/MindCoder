@@ -1,0 +1,30 @@
+Here is the few-shot example in JSON format (must start with ```json\n):
+```json
+{
+  "Report": {
+    "Title": "MindCoder Trustworthy Codebook with a Transparent Trajectory",
+    "Sections": [
+      {
+        "Title": "Introduction",
+        "Content": "The data described factors that contribute to effective teaching and enhanced student engagement in the classroom. To answer the research question, “What are the important factors for effective teaching?” four key findings were identified."
+      },
+      {
+        "Title": "Key Finding 1: [Professional Development and Continuous Learning {Theme 1}] could be important for effective teaching.",
+        "Content": "Since teaching can span a long period in a teacher’s life, changes are inevitable, and teachers may also need to adopt the role of a 'student' to learn new teaching skills and reflect on their practices. For example, under [Professional Development {Sub-Theme1}], it is revealed that engaging in continuous professional development activities—such as workshops, online courses, and peer observations—is essential for educators to stay updated with the latest teaching strategies and educational research. As noted in [Mentorship {Code 2}], 'Mentorship is an invaluable part of professional development. Experienced teachers can provide guidance and support to new educators, helping them navigate challenges and refine their teaching skills.'"
+      },
+      {
+        "Title": "Key Finding 2: [Classroom Management and Engagement Strategies {Theme 2}] is important for student engagement skills.",
+        "Content": "Effective classroom management begins with establishing clear expectations and consistent routines. For example, [Classroom Management {Code 3}], under [Classroom {Sub-Theme2}], emphasized that 'Effective classroom management starts with establishing clear expectations and consistent routines. When students know what to expect, they’re more likely to stay engaged and participate actively in the lesson.'"
+      },
+      {
+        "Title": "Key Finding 3: [Student-Centered Pedagogy {Theme 3}] encourages deeper learning.",
+        "Content": "Teachers who use student-centered methods foster greater participation and ownership of learning. For instance, under [Active Learning {Sub-Theme3}], one participant mentioned that 'Involving students in discussions and projects makes them feel more connected to the material.' This is echoed in [Collaborative Learning {Code 4}], which suggests that 'When students work together to solve problems, they not only understand content better but also develop communication and teamwork skills.'"
+      },
+      {
+        "Title": "Key Finding 4: [Use of Technology in Teaching {Theme 4}] enhances instructional effectiveness.",
+        "Content": "The integration of technology can support diverse learning needs and provide access to dynamic resources. Under [Digital Tools {Sub-Theme4}], participants shared that 'Technology allows me to tailor instruction and offer interactive content that keeps students motivated.' As highlighted in [Multimedia Resources {Code 5}], 'Videos, simulations, and educational apps help clarify abstract Themes and engage different learning styles.'"
+      }
+    ]
+  }
+}
+```

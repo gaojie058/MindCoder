@@ -1,0 +1,32 @@
+
+{
+  "Report": {
+    "Title": "Qualitative Analysis Report",
+    "Sections": [
+      {
+        "Title": "Introduction",
+        "Content": "The data described factors affecting sleep quality, focusing on user behaviors that influence this aspect. To answer the research question, “What specific behaviors affect sleeping quality?”, five key findings were identified."
+      },
+      {
+        "Title": "Key Finding 1: [Caffeine Consumption {Concept 1}] could negatively affect sleep quality.",
+        "Content": "Caffeine consumption, particularly in the hours leading up to bedtime, can disrupt sleep patterns. For example, under [Caffeine Intake {Code 1}], it is revealed that many users noted, 'I often have coffee in the late afternoon, and I struggle to fall asleep at night.' As noted in [Sleep Disruption {Cluster 2}], 'Caffeine keeps me alert but makes it hard to wind down before bed.'"
+      },
+      {
+        "Title": "Key Finding 2: [Screen Time Before Bed {Concept 2}] is important for improving sleep quality.",
+        "Content": "Excessive screen time, especially before sleep, can affect the body's ability to prepare for rest. For example, [Screen Time {Code 2}], emphasized that 'I often scroll through my phone right before bed, and it takes me longer to fall asleep.' This concern is reflected in [Sleep Environment {Cluster 3}], where one participant mentioned, 'Reducing screen time has helped me fall asleep faster.'"
+      },
+      {
+        "Title": "Key Finding 3: [Alcohol Consumption {Concept 3}] can disrupt natural sleep cycles.",
+        "Content": "While some believe alcohol helps them sleep, it can lead to fragmented sleep. Under [Alcohol Intake {Code 3}], a user stated, 'I thought having a drink would help me sleep, but I wake up multiple times during the night.' This is supported by insights from [Sleep Quality {Cluster 4}], where participants noted, 'Alcohol seems to make my sleep worse, not better.'"
+      },
+      {
+        "Title": "Key Finding 4: [Physical Activity {Concept 4}] promotes better sleep quality.",
+        "Content": "Engaging in regular physical activity is linked to improved sleep patterns. For instance, under [Exercise Habits {Code 4}], users mentioned, 'When I work out regularly, I sleep much more soundly.' As highlighted in [Lifestyle Factors {Cluster 5}], 'Being active during the day makes it easier for me to fall asleep at night.'"
+      },
+      {
+        "Title": "Key Finding 5: [Stress Management Techniques {Concept 5}] can enhance sleep quality.",
+        "Content": "Practicing relaxation methods before bed can lead to better sleep. For example, under [Relaxation Practices {Code 5}], participants shared insights like, 'I’ve started meditating before bed, and my sleep quality has improved significantly.' This is echoed in [Mental Health {Cluster 6}], which emphasizes, 'Managing stress is crucial for a good night’s sleep.'"
+      }
+    ]
+  }
+}

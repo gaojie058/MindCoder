@@ -24,7 +24,7 @@ export const handleOpenAIRequest = async (prompt: string, fileContents?: string[
         ];
 
         const stream = await openai.responses.create({
-            model: "gpt-5",
+            model: "gpt-5-2025-08-07",
             input: messages,
             reasoning: { effort: "minimal" },
             stream: true,

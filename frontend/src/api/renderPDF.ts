@@ -12,6 +12,7 @@ import useCodeStore from "@/stores/useCodeStore"
 import useConceptStore from "@/stores/useConceptStore"
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore"
 import { calculateFileCoverageFromCardData } from "./coverageCalculator"
+import useEditStore from "@/stores/useEditStore"
 
 // https://github.com/bpampuch/pdfmake/issues/2654
 (<any>pdfMake).fonts = {
@@ -93,7 +94,8 @@ function generateOpenCodesProcessContent(): Content[] {
 
   // Get data from stores
   const { whatLLMDid: cardWhatLLMDid, rationale: cardRationale, llmDescription: cardLlmDescription } = useCardStore.getState();
-  const { researchQuestion, numberOfTopicClusters, clusteringStyle, topicMemo } = useAppStore.getState();
+  const { researchQuestion, numberOfTopicClusters, clusteringStyle } = useAppStore.getState();
+  const { topicMemo } = useEditStore.getState();
 
   // Check if there's any open codes process content
   const hasTopicProcessContent = (cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) ||
@@ -429,7 +431,8 @@ function generateSubThemesProcessContent(): Content[] {
 
   // Get data from stores
   const { whatLLMDid: codeWhatLLMDid, rationale: codeRationale, llmDescription: codeLlmDescription } = useCodeStore.getState();
-  const { codingStyle, codeMemo } = useAppStore.getState();
+  const { codingStyle } = useAppStore.getState();
+  const { codeMemo } = useEditStore.getState();
 
   // Always show Sub-themes section
   result.push({
@@ -445,7 +448,7 @@ function generateSubThemesProcessContent(): Content[] {
   });
 
   // Check if there's any code labeling process content
-    (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
+  (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
     (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim()) ||
     (codingStyle && typeof codingStyle === 'string' && codingStyle.trim()) ||
     (codeMemo && typeof codeMemo === 'string' && codeMemo.trim());
@@ -748,7 +751,8 @@ function generateThemesProcessContent(): Content[] {
 
   // Get data from stores
   const { whatLLMDid: conceptWhatLLMDid, rationale: conceptRationale, llmDescription: conceptLlmDescription } = useConceptStore.getState();
-  const { conceptualizingStyle, conceptMemo } = useAppStore.getState();
+  const { conceptualizingStyle } = useAppStore.getState();
+  const { conceptMemo } = useEditStore.getState();
 
   // Always show Themes section
   result.push({
@@ -995,7 +999,16 @@ function generateThemesProcessContent(): Content[] {
         }
       );
     });
+  } else if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
+    // If no LLM history and no current user input, use current input
+    themesHumanInterpretationContent.push({
+      text: cleanContent(conceptualizingStyle),
+      fontSize: 8,
+      marginLeft: 5,
+      marginBottom: 4
+    });
   } else {
+    // If no LLM history and no current user input, show backup message
     themesHumanInterpretationContent.push({
       text: "No customized prompt yet",
       fontSize: 8,

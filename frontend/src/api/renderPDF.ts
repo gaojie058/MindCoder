@@ -1273,15 +1273,16 @@ interface CardDataForPDF {
 // Function to calculate coverage for a file using the unified algorithm
 function calculateFileCoverage(
   file: File,
-  cardData: CardDataForPDF[]
-): Promise<{ totalWords: number; coveredWords: number; coveragePercentage: number }> {
+  cardData: CardDataForPDF[],
+  fileCardMap: Record<string, string[]>
+) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileContent = (event.target?.result as string) || "";
 
       // Use the unified coverage calculation algorithm
-      const coverage = calculateFileCoverageFromCardData(fileContent, file.name, cardData);
+      const coverage = calculateFileCoverageFromCardData(fileContent, file.name, cardData, fileCardMap);
 
       resolve({
         totalWords: coverage.totalWords,
@@ -1299,7 +1300,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
 
   // Get data from stores
   const { fileCoverageData, uploadedFiles, setFileCoverageData } = useAppStore.getState();
-  const { cardData } = useCardStore.getState();
+  const { cardData, fileCardMap } = useCardStore.getState();
 
   console.log('PDF Coverage Calculation - Store data:', {
     uploadedFileNames: uploadedFiles.map(f => f.name),
@@ -1307,7 +1308,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
     allCardIds: cardData.map(c => c.id),
   });
 
-  // Use existing coverage data from store, only calculate if missing
+  // Use existing coverage data, only calculate if missing
   const coveragePromises = uploadedFiles.map(async (file) => {
     const existingCoverage = fileCoverageData[file.name];
 
@@ -1319,7 +1320,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
     // Only calculate if no existing data
     try {
       console.log(`No existing coverage data for ${file.name}, calculating...`);
-      const coverage = await calculateFileCoverage(file, cardData);
+      const coverage = await calculateFileCoverage(file, cardData, fileCardMap);
       setFileCoverageData(file.name, coverage);
       return { fileName: file.name, coverage };
     } catch (error) {
@@ -1328,7 +1329,10 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
     }
   });
 
-  // Get updated coverage data from store
+  // Wait for all coverage calculations to complete
+  await Promise.all(coveragePromises);
+
+  // Get updated coverage data
   const updatedFileCoverageData = useAppStore.getState().fileCoverageData;
 
   // Create coverage list for all files

@@ -101,7 +101,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
     return () => {
       onCodeToggle(null);
     };
-  }, [onCodeToggle]);
+  }, []);
 
   return (
     <div

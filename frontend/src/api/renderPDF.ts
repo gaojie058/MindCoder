@@ -1152,9 +1152,6 @@ function generateThemesContent(): Content[] {
   if (hasConceptDataContent) {
     // Themes Data subsection
     if (conceptData && conceptData.length > 0) {
-      // Track processed cards to avoid duplicates
-      const processedCards = new Set<string>();
-
       conceptData.forEach((concept, index) => {
         result.push(
           {
@@ -1185,6 +1182,9 @@ function generateThemesContent(): Content[] {
         for (const codeKey in concept.codes) {
           const codes = concept.codes[codeKey];
           codes.forEach((code) => {
+            // Use more specific ID to avoid duplicates
+            const codeId = `themes_code_${concept.nanoid || concept.id}_${code.nanoid || code.id}`;
+
             result.push(
               {
                 text: cleanTitle(code.name),
@@ -1195,7 +1195,7 @@ function generateThemesContent(): Content[] {
                 marginLeft: 10,
                 headlineLevel: 5,
                 tocItem: true,
-                id: `themes_code_${code.nanoid || code.id}`,
+                id: codeId,
                 tocStyle: 'tocLevel4',
                 tocMargin: [20, 0, 0, 0]
               }
@@ -1216,39 +1216,34 @@ function generateThemesContent(): Content[] {
               const clusters = code.data[dataKey];
               clusters.forEach((cluster) => {
                 if (cluster.active !== false) {
-                  const cardId = `themes_card_${cluster.id}`;
+                  const cardId = `themes_card_${concept.nanoid || concept.id}_${code.nanoid || code.id}_${cluster.id}`;
 
-                  // Only add card if it hasn't been processed yet
-                  if (!processedCards.has(cardId)) {
-                    processedCards.add(cardId);
-
-                    result.push(
-                      {
-                        text: cleanTitle(cluster.name),
-                        fontSize: 9,
-                        bold: true,
-                        marginTop: 3,
-                        marginBottom: 2,
-                        marginLeft: 15,
-                        headlineLevel: 6,
-                        tocItem: true,
-                        id: cardId,
-                        tocStyle: 'tocLevel5',
-                        tocMargin: [40, 0, 0, 0]
-                      }
-                    );
-
-                    if (cluster.topics && cluster.topics.length > 0) {
-                      const topicItems = cluster.topics.map(topic => ({
-                        text: topic.content,
-                        fontSize: 7,
-                        marginBottom: 1
-                      }));
-                      result.push({
-                        ul: topicItems,
-                        marginLeft: 25
-                      });
+                  result.push(
+                    {
+                      text: cleanTitle(cluster.name),
+                      fontSize: 9,
+                      bold: true,
+                      marginTop: 3,
+                      marginBottom: 2,
+                      marginLeft: 15,
+                      headlineLevel: 6,
+                      tocItem: true,
+                      id: cardId,
+                      tocStyle: 'tocLevel5',
+                      tocMargin: [40, 0, 0, 0]
                     }
+                  );
+
+                  if (cluster.topics && cluster.topics.length > 0) {
+                    const topicItems = cluster.topics.map(topic => ({
+                      text: topic.content,
+                      fontSize: 7,
+                      marginBottom: 1
+                    }));
+                    result.push({
+                      ul: topicItems,
+                      marginLeft: 25
+                    });
                   }
                 }
               });

@@ -107,7 +107,7 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
     return () => {
       onCardToggle(null);
     };
-  }, [onCardToggle]);
+  }, []); 
 
   return (
     <div

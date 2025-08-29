@@ -15,6 +15,7 @@ import useHistoryStore from "@/stores/useHistoryStore";
 import { getWithExpiry, setWithExpiry } from "@/stores/utils";
 import useCardStore from "@/stores/useCardStore";
 import useEditorStore from "@/stores/useEditorStore";
+import { manuallyTriggerCoverageCalculation } from "./coverageCalculator";
 
 interface GenerateState {
   hasFullGenerated: boolean;
@@ -154,6 +155,9 @@ export const useGenerate = () => {
           // Mark this file as processed
           addProcessedFile(file.name);
         }
+
+        // After all files are processed, trigger coverage recalculation for all files
+        await triggerCoverageRecalculationForAllFiles();
       } else {
         // No files case - still need to make a request
         const response = await axios.post(
@@ -190,6 +194,39 @@ export const useGenerate = () => {
 
     if (storeType === 'display' && taskType === 'graph') {
       window.dispatchEvent(new CustomEvent('graph-regenerated'));
+    }
+  };
+
+  // Add this new function to trigger coverage recalculation for all files
+  const triggerCoverageRecalculationForAllFiles = async () => {
+    const { uploadedFiles, setFileCoverageData } = useAppStore.getState();
+    const { cardData, fileCardMap } = useCardStore.getState();
+
+    console.log('Triggering coverage recalculation for all files after card regeneration');
+
+    // Process each file
+    for (const file of uploadedFiles) {
+      try {
+        // Read file content
+        const fileContent = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve((e.target?.result as string) || "");
+          reader.readAsText(file);
+        });
+
+        // Trigger coverage calculation
+        manuallyTriggerCoverageCalculation(
+          file.name,
+          fileContent,
+          cardData,
+          fileCardMap,
+          setFileCoverageData
+        );
+
+        console.log(`Coverage recalculation triggered for ${file.name}`);
+      } catch (error) {
+        console.error(`Error triggering coverage recalculation for ${file.name}:`, error);
+      }
     }
   };
 

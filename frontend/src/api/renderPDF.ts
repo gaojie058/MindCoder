@@ -12,6 +12,7 @@ import useCodeStore from "@/stores/useCodeStore"
 import useConceptStore from "@/stores/useConceptStore"
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore"
 import { calculateFileCoverageFromCardData } from "./coverageCalculator"
+import useEditStore from "@/stores/useEditStore"
 
 // https://github.com/bpampuch/pdfmake/issues/2654
 (<any>pdfMake).fonts = {
@@ -93,7 +94,8 @@ function generateOpenCodesProcessContent(): Content[] {
 
   // Get data from stores
   const { whatLLMDid: cardWhatLLMDid, rationale: cardRationale, llmDescription: cardLlmDescription } = useCardStore.getState();
-  const { researchQuestion, numberOfTopicClusters, clusteringStyle, topicMemo } = useAppStore.getState();
+  const { researchQuestion, numberOfTopicClusters, clusteringStyle } = useAppStore.getState();
+  const { topicMemo } = useEditStore.getState();
 
   // Check if there's any open codes process content
   const hasTopicProcessContent = (cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) ||
@@ -429,7 +431,8 @@ function generateSubThemesProcessContent(): Content[] {
 
   // Get data from stores
   const { whatLLMDid: codeWhatLLMDid, rationale: codeRationale, llmDescription: codeLlmDescription } = useCodeStore.getState();
-  const { codingStyle, codeMemo } = useAppStore.getState();
+  const { codingStyle } = useAppStore.getState();
+  const { codeMemo } = useEditStore.getState();
 
   // Always show Sub-themes section
   result.push({
@@ -445,7 +448,7 @@ function generateSubThemesProcessContent(): Content[] {
   });
 
   // Check if there's any code labeling process content
-    (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
+  (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
     (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim()) ||
     (codingStyle && typeof codingStyle === 'string' && codingStyle.trim()) ||
     (codeMemo && typeof codeMemo === 'string' && codeMemo.trim());
@@ -748,7 +751,8 @@ function generateThemesProcessContent(): Content[] {
 
   // Get data from stores
   const { whatLLMDid: conceptWhatLLMDid, rationale: conceptRationale, llmDescription: conceptLlmDescription } = useConceptStore.getState();
-  const { conceptualizingStyle, conceptMemo } = useAppStore.getState();
+  const { conceptualizingStyle } = useAppStore.getState();
+  const { conceptMemo } = useEditStore.getState();
 
   // Always show Themes section
   result.push({
@@ -995,7 +999,16 @@ function generateThemesProcessContent(): Content[] {
         }
       );
     });
+  } else if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
+    // If no LLM history and no current user input, use current input
+    themesHumanInterpretationContent.push({
+      text: cleanContent(conceptualizingStyle),
+      fontSize: 8,
+      marginLeft: 5,
+      marginBottom: 4
+    });
   } else {
+    // If no LLM history and no current user input, show backup message
     themesHumanInterpretationContent.push({
       text: "No customized prompt yet",
       fontSize: 8,
@@ -1260,15 +1273,16 @@ interface CardDataForPDF {
 // Function to calculate coverage for a file using the unified algorithm
 function calculateFileCoverage(
   file: File,
-  cardData: CardDataForPDF[]
-): Promise<{ totalWords: number; coveredWords: number; coveragePercentage: number }> {
+  cardData: CardDataForPDF[],
+  fileCardMap: Record<string, string[]>
+) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       const fileContent = (event.target?.result as string) || "";
 
       // Use the unified coverage calculation algorithm
-      const coverage = calculateFileCoverageFromCardData(fileContent, file.name, cardData);
+      const coverage = calculateFileCoverageFromCardData(fileContent, file.name, cardData, fileCardMap);
 
       resolve({
         totalWords: coverage.totalWords,
@@ -1286,7 +1300,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
 
   // Get data from stores
   const { fileCoverageData, uploadedFiles, setFileCoverageData } = useAppStore.getState();
-  const { cardData } = useCardStore.getState();
+  const { cardData, fileCardMap } = useCardStore.getState();
 
   console.log('PDF Coverage Calculation - Store data:', {
     uploadedFileNames: uploadedFiles.map(f => f.name),
@@ -1294,7 +1308,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
     allCardIds: cardData.map(c => c.id),
   });
 
-  // Use existing coverage data from store, only calculate if missing
+  // Use existing coverage data, only calculate if missing
   const coveragePromises = uploadedFiles.map(async (file) => {
     const existingCoverage = fileCoverageData[file.name];
 
@@ -1306,7 +1320,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
     // Only calculate if no existing data
     try {
       console.log(`No existing coverage data for ${file.name}, calculating...`);
-      const coverage = await calculateFileCoverage(file, cardData);
+      const coverage = await calculateFileCoverage(file, cardData, fileCardMap);
       setFileCoverageData(file.name, coverage);
       return { fileName: file.name, coverage };
     } catch (error) {
@@ -1315,7 +1329,10 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
     }
   });
 
-  // Get updated coverage data from store
+  // Wait for all coverage calculations to complete
+  await Promise.all(coveragePromises);
+
+  // Get updated coverage data
   const updatedFileCoverageData = useAppStore.getState().fileCoverageData;
 
   // Create coverage list for all files

@@ -25,14 +25,6 @@ interface AppStore {
   conceptualizingStyle: string;
   setConceptualizingStyle: (style: string) => void;
 
-  // Memo fields for each step
-  topicMemo: string;
-  setTopicMemo: (memo: string) => void;
-  codeMemo: string;
-  setCodeMemo: (memo: string) => void;
-  conceptMemo: string;
-  setConceptMemo: (memo: string) => void;
-
   // Coverage data storage
   fileCoverageData: Record<string, { totalWords: number; coveredWords: number; coveragePercentage: number }>;
   setFileCoverageData: (fileName: string, coverageData: { totalWords: number; coveredWords: number; coveragePercentage: number }) => void;
@@ -97,25 +89,6 @@ const useAppStore = create<AppStore>((set, get) => ({
     get().saveChangesToStore();
   },
 
-  // Memo implementations
-  topicMemo: getWithExpiry('topicMemo') || '',
-  setTopicMemo: (memo) => {
-    setWithExpiry('topicMemo', memo);
-    set({ topicMemo: memo });
-    get().saveChangesToStore();
-  },
-  codeMemo: getWithExpiry('codeMemo') || '',
-  setCodeMemo: (memo) => {
-    setWithExpiry('codeMemo', memo);
-    set({ codeMemo: memo });
-    get().saveChangesToStore();
-  },
-  conceptMemo: getWithExpiry('conceptMemo') || '',
-  setConceptMemo: (memo) => {
-    setWithExpiry('conceptMemo', memo);
-    set({ conceptMemo: memo });
-    get().saveChangesToStore();
-  },
   fileCoverageData: (() => {
     const stored = getWithExpiry('fileCoverageData');
     if (stored) {
@@ -167,9 +140,6 @@ const useAppStore = create<AppStore>((set, get) => ({
       clusteringStyle: '',
       codingStyle: '',
       conceptualizingStyle: '',
-      topicMemo: '',
-      codeMemo: '',
-      conceptMemo: '',
       fileCoverageData: {},
       codingButtonStatus: false,
     });
@@ -188,9 +158,6 @@ const useAppStore = create<AppStore>((set, get) => ({
       clusteringStyle: '',
       codingStyle: '',
       conceptualizingStyle: '',
-      topicMemo: '',
-      codeMemo: '',
-      conceptMemo: '',
       fileCoverageData: {},
       codingButtonStatus: false,
     });
@@ -204,7 +171,11 @@ const useAppStore = create<AppStore>((set, get) => ({
     const { uploadedFiles } = get();
     const filesInfo = uploadedFiles.map(file => ({
       name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
     }));
+
     setWithExpiry('uploadedFilesInfo', JSON.stringify(filesInfo));
   },
   getUploadedFilesInfo: () => {
@@ -226,9 +197,6 @@ const useAppStore = create<AppStore>((set, get) => ({
       clusteringStyle,
       codingStyle,
       conceptualizingStyle,
-      topicMemo,
-      codeMemo,
-      conceptMemo,
       codingButtonStatus
     } = get();
 
@@ -237,13 +205,7 @@ const useAppStore = create<AppStore>((set, get) => ({
     setWithExpiry('clusteringStyle', clusteringStyle);
     setWithExpiry('codingStyle', codingStyle);
     setWithExpiry('conceptualizingStyle', conceptualizingStyle);
-    setWithExpiry('topicMemo', topicMemo);
-    setWithExpiry('codeMemo', codeMemo);
-    setWithExpiry('conceptMemo', conceptMemo);
     setWithExpiry('codingButtonStatus', codingButtonStatus.toString());
-
-    // Don't automatically save uploaded files info here to prevent overwriting
-    // Uploaded files should only be saved when they actually change
   },
 }));
 

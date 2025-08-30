@@ -85,7 +85,7 @@ export default function Concept({
       return;
     }
 
-    // 打印保存前的 conceptData 和 tempCodes
+    // Print conceptData and tempCodes before save
     console.log("Concept Data before save:", conceptData);
     console.log("Temp Codes:", tempCodes);
 
@@ -105,7 +105,7 @@ export default function Concept({
           }, {} as Record<string, code[]>)
         );
 
-      // 打印每个 conceptItem 的更新状态
+      // Print the update status of each conceptItem
       console.log(`Concept ${conceptItem.id} update status:`, {
         isNameChanged,
         isColorChanged,

@@ -139,7 +139,7 @@ const PromptHistorySection = memo(({ step }: { step: string }) => {
 
 PromptHistorySection.displayName = "PromptHistorySection";
 
-// StyleInputs Component - 需要用forwardRef包装
+// StyleInputs Component - need to wrap with forwardRef
 const StyleInputs = React.forwardRef<
   { saveChangesToStore: () => void },
   StyleInputsProps
@@ -147,7 +147,7 @@ const StyleInputs = React.forwardRef<
   // Get current step as fallback
   const { step } = useGenerate();
   const currentStoreType = storeType || stepToName[step] || "data";
-  const currentStepName = stepToName[step] || "data";
+  // const currentStepName = stepToName[step] || "data";
 
   // Store state - only subscribe to needed fields
   const {
@@ -397,7 +397,7 @@ const StyleInputs = React.forwardRef<
     setNumberOfTopicClusters,
   ]);
 
-  // 暴露保存函数给父组件 - 使用正确的ref参数
+  // Expose saveChangesToStore function to parent component
   React.useImperativeHandle(
     ref,
     () => ({
@@ -808,7 +808,7 @@ const StyleInputs = React.forwardRef<
       <div className="gap-4 flex flex-col">
         {/* Clustering input - only show in card step */}
         <div className={currentStoreType === "card" ? "block" : "hidden"}>
-          <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
+          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
               <span className="font-semibold">Prompt to LLM</span>
             </div>
@@ -817,7 +817,7 @@ const StyleInputs = React.forwardRef<
               defaultValue={clusteringStyle || ""}
               onChange={handleClusterChange}
               className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
-              style={{ minHeight: "60px", maxHeight: "300px" }}
+              style={{ minHeight: "100px", maxHeight: "300px" }}
             />
             <div className="mt-2 px-4">
               <p className="mb-2 text-sm font-semibold">Suggestions:</p>
@@ -857,7 +857,7 @@ const StyleInputs = React.forwardRef<
             </div>
           </div>
 
-          <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
+          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
               <span className="font-semibold">Writing Memo</span>
             </div>
@@ -867,7 +867,7 @@ const StyleInputs = React.forwardRef<
               onChange={handleTopicMemoChange}
               placeholder="Write your thoughts, observations, or notes about the open coding process..."
               className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
-              style={{ minHeight: "80px", maxHeight: "300px" }}
+              style={{ minHeight: "300px", maxHeight: "36px" }}
             />
             <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl mt-2">
               <p className="p-4">Write why you perform such interpretation.</p>
@@ -877,7 +877,7 @@ const StyleInputs = React.forwardRef<
 
         {/* Coding input - only show in code step */}
         <div className={currentStoreType === "code" ? "block" : "hidden"}>
-          <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
+          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
               <span className="font-semibold">Prompt to LLM</span>
             </div>
@@ -887,7 +887,7 @@ const StyleInputs = React.forwardRef<
                 defaultValue={codingStyle || ""}
                 onChange={handleCodeChange}
                 className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "60px", maxHeight: "300px" }}
+                style={{ minHeight: "100px", maxHeight: "300px" }}
               />
             </div>
             <div className="mt-2 px-4">
@@ -930,7 +930,7 @@ const StyleInputs = React.forwardRef<
             </div>
           </div>
 
-          <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
+          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
               <span className="font-semibold">Writing Memo</span>
             </div>
@@ -941,7 +941,7 @@ const StyleInputs = React.forwardRef<
                 onChange={handleCodeMemoChange}
                 placeholder="Write your thoughts, observations, or notes about the sub-theme labeling process..."
                 className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "80px", maxHeight: "300px" }}
+                style={{ minHeight: "240px", maxHeight: "300px" }}
               />
             </div>
             <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
@@ -952,7 +952,7 @@ const StyleInputs = React.forwardRef<
 
         {/* Concept input - only show in concept step */}
         <div className={currentStoreType === "concept" ? "block" : "hidden"}>
-          <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
+          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
               <span className="font-semibold">Prompt to LLM</span>
             </div>
@@ -962,7 +962,7 @@ const StyleInputs = React.forwardRef<
                 defaultValue={conceptualizingStyle || ""}
                 onChange={handleConceptChange}
                 className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "60px", maxHeight: "300px" }}
+                style={{ minHeight: "100px", maxHeight: "300px" }}
               />
             </div>
             <div className="mt-2 px-4">
@@ -1004,7 +1004,7 @@ const StyleInputs = React.forwardRef<
             </div>
           </div>
 
-          <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
+          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
               <span className="font-semibold">Writing Memo</span>
             </div>
@@ -1015,7 +1015,7 @@ const StyleInputs = React.forwardRef<
                 onChange={handleConceptMemoChange}
                 placeholder="Write your thoughts, observations, or notes about the theme process..."
                 className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "80px", maxHeight: "300px" }}
+                style={{ minHeight: "240px", maxHeight: "300px" }}
               />
             </div>
             <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
@@ -1030,7 +1030,6 @@ const StyleInputs = React.forwardRef<
 
 StyleInputs.displayName = "StyleInputs";
 
-// 简化StyleInputsWithRef，直接使用StyleInputs
 export const StyleInputsWithRef = StyleInputs;
 
 StyleInputsWithRef.displayName = "StyleInputsWithRef";

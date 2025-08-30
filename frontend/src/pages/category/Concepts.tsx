@@ -75,7 +75,7 @@ export default function Concept({
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const newValue = event.target.value;
-    setDefinition && setDefinition(newValue);
+    // setDefinition && setDefinition(newValue);
     setLocalDefinition(newValue);
   };
 
@@ -233,6 +233,8 @@ export default function Concept({
   const handleCancel = () => {
     setTempCodes([]);
     setTempColor(color);
+    setLocalDefinition(definition);
+    setValue(name);
     setDrawerOpen(null);
     onDrawerToggle(false, {});
   };
@@ -258,7 +260,7 @@ export default function Concept({
 
     if (generatedResult) {
       console.log("Generated Definition:", generatedResult);
-      setDefinition && setDefinition(generatedResult);
+      // setDefinition && setDefinition(generatedResult);
       setLocalDefinition(generatedResult);
     }
   };

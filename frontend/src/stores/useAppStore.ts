@@ -50,12 +50,12 @@ const useAppStore = create<AppStore>((set, get) => ({
     } else if (typeof stored === 'string') {
       try {
         const parsed = JSON.parse(stored);
-        return Array.isArray(parsed) ? parsed : [15, 20];
+        return Array.isArray(parsed) ? parsed : [5, 10];
       } catch {
-        return [15, 20];
+        return [5, 10];
       }
     }
-    return [15, 20];
+    return [5, 10];
   })(),
   setNumberOfTopicClusters: (clusters) => {
     if (Array.isArray(clusters)) {
@@ -63,7 +63,7 @@ const useAppStore = create<AppStore>((set, get) => ({
       set({ numberOfTopicClusters: clusters });
     } else if (clusters === 0) {
       localStorage.removeItem('numberOfTopicClusters');
-      set({ numberOfTopicClusters: [15, 20] });
+      set({ numberOfTopicClusters: [5, 10] });
     } else {
       setWithExpiry('numberOfTopicClusters', clusters.toString());
       set({ numberOfTopicClusters: [clusters, clusters] });
@@ -136,7 +136,7 @@ const useAppStore = create<AppStore>((set, get) => ({
       researchQuestion: '',
       storeType: 'card',
       uploadedFiles: currentUploadedFiles,
-      numberOfTopicClusters: [15, 20],
+      numberOfTopicClusters: [5, 10],
       clusteringStyle: '',
       codingStyle: '',
       conceptualizingStyle: '',
@@ -145,7 +145,7 @@ const useAppStore = create<AppStore>((set, get) => ({
     });
 
     // Force save the default values to localStorage
-    setWithExpiry('numberOfTopicClusters', JSON.stringify([15, 20]));
+    setWithExpiry('numberOfTopicClusters', JSON.stringify([5, 10]));
   },
   clearAllData: () => {
     // Clear everything including uploaded files
@@ -154,7 +154,7 @@ const useAppStore = create<AppStore>((set, get) => ({
       researchQuestion: '',
       storeType: 'card',
       uploadedFiles: [], // Clear uploaded files
-      numberOfTopicClusters: [15, 20],
+      numberOfTopicClusters: [5, 10],
       clusteringStyle: '',
       codingStyle: '',
       conceptualizingStyle: '',

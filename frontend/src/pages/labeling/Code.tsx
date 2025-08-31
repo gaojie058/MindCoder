@@ -66,7 +66,7 @@ export default function Code({
     event: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
     const newValue = event.target.value;
-    setDefinition && setDefinition(newValue);
+    // setDefinition && setDefinition(newValue);
     setLocalDefinition(newValue);
   };
 
@@ -203,6 +203,8 @@ export default function Code({
   const handleCancel = () => {
     setTempCards([]);
     setTempColor(color);
+    setLocalDefinition(definition);
+    setValue(name);
     setDrawerOpen(null);
     onDrawerToggle(false, {});
   };
@@ -224,7 +226,7 @@ export default function Code({
     setLoadingDefinition(false);
     if (generatedResult) {
       console.log("Generated Rationale:", generatedResult);
-      setDefinition && setDefinition(generatedResult);
+      // setDefinition && setDefinition(generatedResult);
       setLocalDefinition(generatedResult);
     }
   };

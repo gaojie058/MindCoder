@@ -431,11 +431,7 @@ const StyleInputs = React.forwardRef<
         </h1>
         <div className="text-sm mb-2">
           <p className="font-semibold mb-2">
-            In this stage, the LLM offers an exploratory coding draft, while you
-            should bring critical interpretation, contextual knowledge, and
-            methodological rigor. Your revisions, notes, and reflections ensure
-            that the analysis stays trustworthy and grounded in both the data
-            and the research aims. Specifically, this involves:
+            In this stage, LLMs generates initial codes, and you should bring critical interpretation, contextual knowledge to make final decisions.
           </p>
           <ol className="list-decimal list-outside pl-5 space-y-2">
             <li>
@@ -444,17 +440,8 @@ const StyleInputs = React.forwardRef<
               </span>
               <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
                 <li>
-                  Read and re-read both the original data chunks and the
+                  Read both the original data chunks and the
                   LLM-generated codes.
-                </li>
-                <li>
-                  Pay attention to recurring concepts, surprising details, or
-                  emotionally charged expressions.
-                </li>
-                <li>
-                  Jot down early impressions, insights, or questions directly in
-                  your memos. These notes help capture your evolving
-                  interpretation of the data.
                 </li>
               </ul>
             </li>
@@ -465,40 +452,8 @@ const StyleInputs = React.forwardRef<
               <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
                 <li>
                   Compare the LLM's suggested codes with your own understanding
-                  of the data.
-                </li>
-                <li>
-                  If a code feels too broad, vague, or misleading, revise its
-                  name or definition to better capture the nuance.
-                </li>
-                <li>
-                  You can also merge or split codes by re-assigning clusters, or
-                  use the system to regenerate codes with a different style
-                  prompt (e.g., more theory-driven or more descriptive).
-                </li>
-                <li>
-                  For each adjustment, record a short memo explaining your
-                  reasoning (e.g., "Code X was too generic; renamed to highlight
-                  participants' focus on emotional impact"). These memos will
-                  later be included in the final report for transparency.
-                </li>
-              </ul>
-            </li>
-            <li>
-              <span className="font-semibold">
-                Focus on Your Research Questions
-              </span>
-              <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
-                <li>
-                  Remember that coding is not just about labeling text—it is
-                  about systematically reducing the data in ways that remain
-                  meaningful for your specific research questions.
-                </li>
-                <li>
-                  As you refine the LLM's output, ensure that the codes are
-                  relevant, interpretable, and sufficiently detailed to serve as
-                  a foundation for later theme development.
-                </li>
+                  of the data, make adjustment to those broad, vague or misleading codes.
+                </li>         
               </ul>
             </li>
           </ol>
@@ -572,83 +527,26 @@ const StyleInputs = React.forwardRef<
         </h1>
         <div className="text-sm mb-2">
           <p className="font-semibold mb-2">
-            In this stage, the LLM provides an initial map of sub-themes, while
-            you should bring judgment, contextual understanding, and
-            methodological rigor to confirm, adjust, or expand the map. Your
-            engagement ensures that the sub-themes stay trustworthy, relevant,
-            and analytically useful. Specifically, this involves:
+            In this stage, LLMs generates initial subthemes by grouping similar codes, and you should bring critical interpretation, contextual knowledge to make final decisions.
           </p>
           <ol className="list-decimal list-outside pl-5 space-y-2">
             <li>
-              <span className="font-semibold">Examine and Connect Codes</span>
+              <span className="font-semibold">Review each subtheme and codes</span>
               <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
-                <li>Review each sub-theme and the codes grouped within it.</li>
                 <li>
-                  Ask: Do these codes really belong together? Do they reflect a
-                  coherent pattern that is significant to my research question?
+                  Do these codes really belong together? 
                 </li>
+                <li>
+                  Do they reflect a coherent pattern that is significant to my research question?
+                </li>
+              </ul>
+            </li>
+            <li>
+              <span className="font-semibold">Refine subtheme boundaries</span>
+              <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
                 <li>
                   Merge, split, or reassign codes if the grouping feels forced,
                   too broad, or too fragmented.
-                </li>
-              </ul>
-            </li>
-            <li>
-              <span className="font-semibold">Refine Sub-Theme Boundaries</span>
-              <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
-                <li>
-                  Consider whether a sub-theme is internally consistent and
-                  externally distinct from others.
-                </li>
-                <li>
-                  Some codes may naturally overlap across more than one
-                  sub-theme; document these overlaps rather than forcing a
-                  single fit.
-                </li>
-                <li>
-                  If certain codes do not align with any sub-theme, temporarily
-                  place them in a miscellaneous category for further review
-                  later.
-                </li>
-              </ul>
-            </li>
-            <li>
-              <span className="font-semibold">
-                Iterative Adjustment with the System
-              </span>
-              <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
-                <li>
-                  Use the system's functionality to regenerate sub-themes by
-                  adjusting prompts (e.g., ask for more theory-driven groupings
-                  or more descriptive groupings).
-                </li>
-                <li>
-                  Edit sub-theme names and definitions directly when the LLM's
-                  wording does not align with your interpretation.
-                </li>
-                <li>
-                  For each revision, write a memo explaining your reasoning
-                  (e.g., "Codes merged under Sub-theme A because they all
-                  describe the emotional dimension of feedback"). These memos
-                  ensure transparency and will be reflected in the final report.
-                </li>
-              </ul>
-            </li>
-            <li>
-              <span className="font-semibold">
-                Maintain Research Question Focus
-              </span>
-              <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
-                <li>
-                  Ensure that each sub-theme not only describes patterns in the
-                  data but also connects back to your guiding research
-                  question(s).
-                </li>
-                <li>
-                  At this stage, themes may still be descriptive rather than
-                  fully interpretive, but they should already highlight
-                  meaningful trends that prepare for the next stage of defining
-                  and naming themes.
                 </li>
               </ul>
             </li>
@@ -666,16 +564,12 @@ const StyleInputs = React.forwardRef<
           Human Interpretation & Testing
         </h1>
         <div className="text-sm text-gray-500">
-          <p className="mb-2">
-            This stage transforms the analysis from a preliminary structure into
-            a coherent thematic framework. The LLM offers a draft map of themes,
-            and you should provide the critical review, interpretive judgment,
-            and theoretical alignment necessary to produce a trustworthy and
-            meaningful set of final themes. Specifically, this involves:
+          <p className="font-semibold mb-2">
+            In this stage, LLMs generates initial themes by grouping similar subthemes, and you should bring critical interpretation, contextual knowledge to make final decisions.
           </p>
           <ol className="list-decimal list-inside space-y-2">
             <li>
-              <strong>Review Each Theme Against the Data</strong>
+              <strong>Review Each Theme</strong>
               <ul className="list-disc list-inside ml-4">
                 <li>
                   Carefully read through the original chunks, codes, and
@@ -685,78 +579,20 @@ const StyleInputs = React.forwardRef<
                   Ask: Does the data really support this theme? Do the included
                   elements fit together coherently?
                 </li>
-                <li>
-                  Eliminate weak themes with insufficient supporting data, merge
-                  overlapping ones, and identify potential sub-themes where
-                  finer distinctions are meaningful.
-                </li>
               </ul>
-            </li>
-            <li>
-              <strong>Refine Theme Boundaries and Relationships</strong>
-              <ul className="list-disc list-inside ml-4">
-                <li>
-                  Ensure that each theme is internally coherent and externally
-                  distinct from others.
-                </li>
-                <li>
-                  Consider whether some themes work better as sub-themes nested
-                  within a broader one.
-                </li>
-                <li>
-                  Reflect on how themes relate to each other across the entire
-                  dataset: Are they complementary, contrasting, or hierarchical?
-                </li>
-              </ul>
-            </li>
-            <li>
-              <strong>Define and Name Themes Clearly</strong>
+              <strong>2. Define Themes Names Clearly</strong>
               <ul className="list-disc list-inside ml-4">
                 <li>
                   Assign concise, descriptive names (4–8 words) that capture the
                   essence of each theme.
                 </li>
-                <li>
-                  Write a short definition for each, making explicit what the
-                  theme includes and excludes.
-                </li>
-                <li>
-                  If necessary, regenerate theme suggestions in the system using
-                  a different style prompt (e.g., more interpretive, more
-                  descriptive).
-                </li>
               </ul>
             </li>
             <li>
-              <strong>Document Human Interpretation with Memos</strong>
-              <ul className="list-disc list-inside ml-4">
-                <li>
-                  Record your reasoning for any modifications, merges, splits,
-                  or renaming of themes (e.g., "Merged Theme A and Theme B into
-                  'Use of Feedback' because both addressed how students engaged
-                  with feedback practices").
-                </li>
-                <li>
-                  These memos provide transparency and will appear in the final
-                  report, ensuring that the analytical decisions are traceable.
-                </li>
-              </ul>
+              <strong>3. Write down Reasons for modifications, e.g., merges, splits,
+                  or renaming of themes</strong>
             </li>
-            <li>
-              <strong>Check Alignment with Research Questions</strong>
-              <ul className="list-disc list-inside ml-4">
-                <li>
-                  Finally, ensure that the refined themes not only make sense
-                  internally but also contribute to answering your research
-                  questions.
-                </li>
-                <li>
-                  Consider prevalence (how often a theme occurs) and
-                  significance (why it matters), and reflect on whether the
-                  final themes capture the key stories in the data.
-                </li>
-              </ul>
-            </li>
+            
           </ol>
         </div>
         <div className="gap-4 flex flex-col">

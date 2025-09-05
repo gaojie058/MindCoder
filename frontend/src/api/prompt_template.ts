@@ -1,24 +1,13 @@
 
 export const llm_did_description = {
   card: `
-    In this initial stage, the LLM functions as an exploratory reader—immersing itself in your uploaded qualitative data and generating open codes that emerge organically from the content itself. \n
-    The key responsibilities of the LLM at this stage are: \n
-    1) Immersion and attentive reading: The LLM reads through all text segments without preconceived hypotheses, allowing meanings to surface from the data itself. \n
-    2）Open code assignment: For each meaningful snippet, it generates a succinct, descriptive label (code) that encapsulates the essence of that segment. \n
-    3) Inductive Reasoning: It avoids imposing external frameworks, instead staying open to novel or unexpected insights. \n" as much as possible, only adapt with the research questions and data necessarily.\n
+    At this stage, the LLM carefully reads the data with an open mind. It gives short labels (codes) to important parts.\n
     `,
   code: `
-    In this stage, the LLM builds upon the initial open codes by searching for and reviewing sub-themes that connect related codes together. \n
-    The key responsibilities of the LLM at this stage are: \n
-    1) Pattern recognition across codes: The LLM systematically compares open codes, identifying recurring ideas or concepts that appear across multiple data segments. \n
-    2）Sub-theme grouping: It clusters related codes into sub-themes that reflect higher-level categories, while still staying close to the data. \n
-    3) Iterative review: It checks whether the grouping preserves nuance, ensuring that the sub-themes remain grounded in the original content and relevant to the research questions."
+    At this stage, the LLM groups similar codes into sub-themes by spotting patterns and connections in the open codes.\n
   `,
   concept: `
-    In this stage, the LLM moves from organizing sub-themes to developing well-defined themes that capture the broader patterns in the data. \n
-    The key responsibilities of the LLM at this stage are: \n
-    1) Theme construction: The LLM integrates related sub-themes into coherent themes, each representing a significant and interpretable aspect of the data. \n
-    2）Critical review: It evaluates whether themes are internally consistent (coherence across included sub-themes) and externally distinct (clearly differentiated from other themes). \n
+    At this stage, the LLM turns sub-themes into clear themes that show the bigger patterns in the data.\n
   `,
 }
 

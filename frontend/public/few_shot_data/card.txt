@@ -34,7 +34,7 @@
     ]
   },
   "metadata": {
-    "Example": "Example of Code 【xx】: \n 1) Chunk "yy", because ... 2) Chunk "zz",  because ... ",
+    "Example": "Example of Code [xx]: \n 1) Chunk "yy", because ... 2) Chunk "zz",  because ... ",
     "Reflect": "1) Confident Results. xx \n 2) Uncertain Results. xx \n 3) Recommended Human Review Focus. xx \n",
   }
 

@@ -13,7 +13,7 @@
   
   "Sub-Theme 1": {
     "name": "Professional Development",
-    "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
+    "definition": "This sub-theme describes XXX. Examples:  1) Code [Code Name PlaceHolder], because yyy. 2) Code [Code Name PlaceHolder], because yyy. 3) Code [Code Name PlaceHolder], because yyy.",
     "codes": {
       "Code 4": {
         "name": "Professional Growth Strategies",
@@ -34,7 +34,7 @@
   },
   "Sub-Theme 2": {
     "name": "Classroom Management",
-    "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
+    "definition": "This sub-theme describes XXX. Examples:  1) Code [Code Name PlaceHolder], because yyy. 2) Code [Code Name PlaceHolder], because yyy. 3) Code [Code Name PlaceHolder], because yyy.",
     "codes": {
       "Code 1": {
         "name": "Classroom Environment",
@@ -54,7 +54,7 @@
   },
   # add more entries as needed
    "metadata": {
-    "Example": "Example of Sub-Theme 【xx】. 1) Code 【yy】, because ... 2) Code 【zz】,  because ... ",
+    "Example": "Example of Sub-Theme [xx]. 1) Code [yy], because ... 2) Code [zz],  because ... ",
     "Reflect": "The self reflect part for the actions you did. 1) Confident Results. xx \n 2) Uncertain Results. xx \n 3) Recommended Human Review Focus. xx \n ",
   }
 }

@@ -14,7 +14,7 @@ Few-shot example：
   
   "Concept 1": {
     "name": "Learning",
-    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "definition": "This theme describes XXX. Examples:  1) Sub-Theme [Sub-Theme Name PlaceHolder], because yyy. 2) Sub-Theme [Sub-Theme Name PlaceHolder], because yyy. 3) Sub-Theme [Sub-Theme Name PlaceHolder], because yyy.",
     "subthemes": {
       "Sub-Theme 1": {
         "name": "Professional Development",
@@ -45,7 +45,7 @@ Few-shot example：
   },
   "Theme 2": {
     "name": "Management Strategies",
-    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "definition": "This theme describes XXX. Examples:  1) Sub-Theme [Sub-Theme Name PlaceHolder], because yyy. 2) Sub-Theme [Sub-Theme Name PlaceHolder], because yyy. 3) Sub-Theme [Sub-Theme Name PlaceHolder], because yyy.",
     "subthemes": {
       "Sub-Theme 2": {
         "name": "Classroom Management",
@@ -69,7 +69,7 @@ Few-shot example：
     }
   },
     "metadata": {
-    "Example": "Example of Theme 【xx】. 1) Sub-Theme 【yy】, because ... 2) Sub-Theme 【zz】,  because ... ",
+    "Example": "Example of Theme [xx]. 1) Sub-Theme [yy], because ... 2) Sub-Theme [zz],  because ... ",
     "Reflect": "1) Confident Results. xx \n 2) Uncertain Results. xx \n 3) Recommended Human Review Focus. xx \n ",
   },
 }

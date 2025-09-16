@@ -230,52 +230,25 @@ function generateOpenCodesProcessContent(): Content[] {
         marginLeft: 5
       },
       {
-        ol: [
-          {
-            text: [
-              { text: "Familiarize Yourself with the Data", bold: true },
-              {
-                text: [
-                  "\n• Read and re-read both the original data chunks and the LLM-generated codes.",
-                  "\n• Pay attention to recurring concepts, surprising details, or emotionally charged expressions.",
-                  "\n• Jot down early impressions, insights, or questions directly in your memos. These notes help capture your evolving interpretation of the data."
-                ],
-                fontSize: 8
-              }
-            ],
-            fontSize: 9,
-            marginBottom: 3
-          },
-          {
-            text: [
-              { text: "Review and Adjust Initial Codes", bold: true },
-              {
-                text: [
-                  "\n• Compare the LLM's suggested codes with your own understanding of the data.",
-                  "\n• If a code feels too broad, vague, or misleading, revise its name or definition to better capture the nuance.",
-                  "\n• You can also merge or split codes by re-assigning clusters, or use the system to regenerate codes with a different style prompt (e.g., more theory-driven or more descriptive).",
-                  "\n• For each adjustment, record a short memo explaining your reasoning (e.g., \"Code X was too generic; renamed to highlight participants' focus on emotional impact\"). These memos will later be included in the final report for transparency."
-                ],
-                fontSize: 8
-              }
-            ],
-            fontSize: 9,
-            marginBottom: 3
-          },
-          {
-            text: [
-              { text: "Focus on Your Research Questions", bold: true },
-              {
-                text: [
-                  "\n• Remember that coding is not just about labeling text—it is about systematically reducing the data in ways that remain meaningful for your specific research questions.",
-                  "\n• As you refine the LLM's output, ensure that the codes are relevant, interpretable, and sufficiently detailed to serve as a foundation for later theme development."
-                ],
-                fontSize: 8
-              }
-            ],
-            fontSize: 9,
-            marginBottom: 5
-          }
+        text: [
+          { text: "Familiarize Yourself with the Data", bold: true, fontSize: 9 },
+          { text: "\n• Read and re-read both the original data chunks and the LLM-generated codes.\n• Pay attention to recurring concepts, surprising details, or emotionally charged expressions.\n• Jot down early impressions, insights, or questions directly in your memos. These notes help capture your evolving interpretation of the data.", fontSize: 8 }
+        ],
+        marginLeft: 5,
+        marginBottom: 8
+      },
+      {
+        text: [
+          { text: "Review and Adjust Initial Codes", bold: true, fontSize: 9 },
+          { text: "\n• Compare the LLM's suggested codes with your own understanding of the data.\n• If a code feels too broad, vague, or misleading, revise its name or definition to better capture the nuance.\n• You can also merge or split codes by re-assigning clusters, or use the system to regenerate codes with a different style prompt (e.g., more theory-driven or more descriptive).\n• For each adjustment, record a short memo explaining your reasoning (e.g., \"Code X was too generic; renamed to highlight participants' focus on emotional impact\"). These memos will later be included in the final report for transparency.", fontSize: 8 }
+        ],
+        marginLeft: 5,
+        marginBottom: 8
+      },
+      {
+        text: [
+          { text: "Focus on Your Research Questions", bold: true, fontSize: 9 },
+          { text: "\n• Remember that coding is not just about labeling text—it is about systematically reducing the data in ways that remain meaningful for your specific research questions.\n• As you refine the LLM's output, ensure that the codes are relevant, interpretable, and sufficiently detailed to serve as a foundation for later theme development.", fontSize: 8 }
         ],
         marginLeft: 5,
         marginBottom: 8
@@ -564,66 +537,25 @@ function generateSubThemesProcessContent(): Content[] {
       marginLeft: 5
     },
     {
-      ol: [
-        {
-          text: [
-            { text: "Examine and Connect Codes", bold: true },
-            {
-              text: [
-                "\n• Review each sub-theme and the codes grouped within it.",
-                "\n• Ask: Do these codes really belong together? Do they reflect a coherent pattern that is significant to my research question?",
-                "\n• Merge, split, or reassign codes if the grouping feels forced, too broad, or too fragmented."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Refine Sub-Theme Boundaries", bold: true },
-            {
-              text: [
-                "\n• Consider whether a sub-theme is internally consistent and externally distinct from others.",
-                "\n• Some codes may naturally overlap across more than one sub-theme; document these overlaps rather than forcing a single fit.",
-                "\n• If certain codes do not align with any sub-theme, temporarily place them in a miscellaneous category for further review later."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Iterative Adjustment with the System", bold: true },
-            {
-              text: [
-                "\n• Use the system's functionality to regenerate sub-themes by adjusting prompts (e.g., ask for more theory-driven groupings or more descriptive groupings).",
-                "\n• Edit sub-theme names and definitions directly when the LLM's wording does not align with your interpretation.",
-                "\n• For each revision, write a memo explaining your reasoning (e.g., \"Codes merged under Sub-theme A because they all describe the emotional dimension of feedback\"). These memos ensure transparency and will be reflected in the final report."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Maintain Research Question Focus", bold: true },
-            {
-              text: [
-                "\n• Ensure that each sub-theme not only describes patterns in the data but also connects back to your guiding research question(s).",
-                "\n• At this stage, themes may still be descriptive rather than fully interpretive, but they should already highlight meaningful trends that prepare for the next stage of defining and naming themes."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 5
-        }
+      text: [
+        { text: "Examine and Connect Codes", bold: true, fontSize: 9 },
+        { text: "\n• Review each sub-theme and the codes grouped within it.\n• Ask: Do these codes really belong together? Do they reflect a coherent pattern that is significant to my research question?\n• Merge, split, or reassign codes if the grouping feels forced, too broad, or too fragmented.", fontSize: 8 }
+      ],
+      marginLeft: 5,
+      marginBottom: 8
+    },
+    {
+      text: [
+        { text: "Refine Sub-theme Names and Descriptions", bold: true, fontSize: 9 },
+        { text: "\n• Ensure that each sub-theme has a clear, descriptive name that accurately captures the essence of its codes.\n• Write a brief description or definition for each sub-theme to clarify its scope and meaning.\n• Document any changes you make and the reasoning behind them in your memos.", fontSize: 8 }
+      ],
+      marginLeft: 5,
+      marginBottom: 8
+    },
+    {
+      text: [
+        { text: "Consider Relationships Between Sub-themes", bold: true, fontSize: 9 },
+        { text: "\n• Look for patterns, connections, or tensions between different sub-themes.\n• Note these relationships in your memos as they may inform the next stage of theme development.\n• Ensure that the sub-themes collectively address your research questions and provide a comprehensive view of the data.", fontSize: 8 }
       ],
       marginLeft: 5,
       marginBottom: 8
@@ -885,80 +817,25 @@ function generateThemesProcessContent(): Content[] {
       marginLeft: 5
     },
     {
-      ol: [
-        {
-          text: [
-            { text: "Review Each Theme Against the Data", bold: true },
-            {
-              text: [
-                "\n• Carefully read through the original chunks, codes, and sub-themes grouped under each theme.",
-                "\n• Ask: Does the data really support this theme? Do the included elements fit together coherently?",
-                "\n• Eliminate weak themes with insufficient supporting data, merge overlapping ones, and identify potential sub-themes where finer distinctions are meaningful."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Refine Theme Boundaries and Relationships", bold: true },
-            {
-              text: [
-                "\n• Ensure that each theme is internally coherent and externally distinct from others.",
-                "\n• Consider whether some themes work better as sub-themes nested within a broader one.",
-                "\n• Reflect on how themes relate to each other across the entire dataset: Are they complementary, contrasting, or hierarchical?"
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Define and Name Themes Clearly", bold: true },
-            {
-              text: [
-                "\n• Assign concise, descriptive names (4–8 words) that capture the essence of each theme.",
-                "\n• Write a short definition for each, making explicit what the theme includes and excludes.",
-                "\n• If necessary, regenerate theme suggestions in the system using a different style prompt (e.g., more interpretive, more descriptive)."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Document Human Interpretation with Memos", bold: true },
-            {
-              text: [
-                "\n• Record your reasoning for any modifications, merges, splits, or renaming of themes (e.g., \"Merged Theme A and Theme B into 'Use of Feedback' because both addressed how students engaged with feedback practices\").",
-                "\n• These memos provide transparency and will appear in the final report, ensuring that the analytical decisions are traceable."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Check Alignment with Research Questions", bold: true },
-            {
-              text: [
-                "\n• Finally, ensure that the refined themes not only make sense internally but also contribute to answering your research questions.",
-                "\n• Consider prevalence (how often a theme occurs) and significance (why it matters), and reflect on whether the final themes capture the key stories in the data."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 5
-        }
+      text: [
+        { text: "Review Each Theme Against the Data", bold: true, fontSize: 9 },
+        { text: "\n• Carefully read through the original chunks, codes, and sub-themes grouped under each theme.\n• Ask: Does the data really support this theme? Do the included elements fit together coherently?\n• Eliminate weak themes with insufficient supporting data, merge overlapping ones, and identify potential sub-themes where finer distinctions are meaningful.", fontSize: 8 }
+      ],
+      marginLeft: 5,
+      marginBottom: 8
+    },
+    {
+      text: [
+        { text: "Ensure Themes Address Your Research Questions", bold: true, fontSize: 9 },
+        { text: "\n• Check that each theme is relevant to your research questions and contributes meaningfully to your analysis.\n• Consider whether the themes collectively provide a comprehensive understanding of your research topic.\n• Refine theme names and descriptions to ensure they are clear, precise, and theoretically informed.", fontSize: 8 }
+      ],
+      marginLeft: 5,
+      marginBottom: 8
+    },
+    {
+      text: [
+        { text: "Document Your Analytical Decisions", bold: true, fontSize: 9 },
+        { text: "\n• Record detailed memos explaining your decisions about theme development, including what you changed and why.\n• These memos will be included in the final report to demonstrate the transparency and rigor of your analytical process.\n• Consider the theoretical and practical implications of your final thematic framework.", fontSize: 8 }
       ],
       marginLeft: 5,
       marginBottom: 8

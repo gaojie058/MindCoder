@@ -139,6 +139,107 @@ const PromptHistorySection = memo(({ step }: { step: string }) => {
 
 PromptHistorySection.displayName = "PromptHistorySection";
 
+// Modified CollapsibleSection component
+const CollapsibleSection = memo(
+  ({
+    children,
+    defaultExpanded = false,
+  }: {
+    children: React.ReactNode;
+    defaultExpanded?: boolean;
+  }) => {
+    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+    return (
+      <div className="text-sm mb-2">
+        <div className="ml-0">
+          {isExpanded ? (
+            <div>
+              {children}
+              <div
+                className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-800 mt-2"
+                onClick={() => setIsExpanded(false)}
+              >
+                <span className="text-xs font-zen font-bold">Read Less</span>
+                <svg
+                  className="w-3 h-3 transition-transform -rotate-90"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Show preview with preserved formatting */}
+              <div className="text-sm">
+                {React.Children.map(children, (child, index) => {
+                  if (index === 0 && React.isValidElement(child)) {
+                    // For the first child (usually the main paragraph), show truncated version
+                    if (child.type === "p") {
+                      const getTextContent = (
+                        node: React.ReactNode
+                      ): string => {
+                        if (typeof node === "string") return node;
+                        if (typeof node === "number") return String(node);
+                        if (React.isValidElement(node)) {
+                          return getTextContent(node.props.children);
+                        }
+                        if (Array.isArray(node)) {
+                          return node.map(getTextContent).join("");
+                        }
+                        return "";
+                      };
+
+                      const childText = getTextContent(child.props.children);
+                      const truncatedText =
+                        childText.length > 200
+                          ? childText.substring(0, 200) + "..."
+                          : childText;
+                      return React.cloneElement(child, {
+                        ...child.props,
+                        children: truncatedText,
+                      });
+                    }
+                  }
+                  // Hide other children (like ordered lists) in preview
+                  return null;
+                })}
+              </div>
+              <div
+                className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-800 mt-2"
+                onClick={() => setIsExpanded(true)}
+              >
+                <span className="text-xs font-zen font-bold">Read More</span>
+                <svg
+                  className="w-3 h-3 transition-transform rotate-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+);
+
 // StyleInputs Component - need to wrap with forwardRef
 const StyleInputs = React.forwardRef<
   { saveChangesToStore: () => void },
@@ -436,14 +537,83 @@ const StyleInputs = React.forwardRef<
             <h1 className="text-lg font-bold">
               Human Interpretation & Testing
             </h1>
-            <div className="text-sm mb-2">
+            <CollapsibleSection defaultExpanded={false}>
               <p className="font-semibold mb-2">
-                In this stage, the LLM provides an initial map of sub-themes
-                that you should review and judgment, critique, or expand the
-                map...
+                In this stage, the LLM offers an exploratory coding draft, while
+                you should bring critical interpretation, contextual knowledge,
+                and methodological rigor. Your revisions, notes, and reflections
+                ensure that the analysis stays trustworthy and grounded in both
+                the data and the research aims. Specifically, this involves:
               </p>
-              {/* ... existing instruction content ... */}
-            </div>
+              <ol className="list-decimal list-outside pl-5 space-y-2">
+                <li>
+                  <span className="font-semibold">
+                    Familiarize Yourself with the Data
+                  </span>
+                  <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
+                    <li>
+                      Read and re-read both the original data chunks and the
+                      LLM-generated codes.
+                    </li>
+                    <li>
+                      Pay attention to recurring concepts, surprising details,
+                      or emotionally charged expressions.
+                    </li>
+                    <li>
+                      Jot down early impressions, insights, or questions
+                      directly in your memos. These notes help capture your
+                      evolving interpretation of the data.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-semibold">
+                    Review and Adjust Initial Codes
+                  </span>
+                  <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
+                    <li>
+                      Compare the LLM's suggested codes with your own
+                      understanding of the data.
+                    </li>
+                    <li>
+                      If a code feels too broad, vague, or misleading, revise
+                      its name or definition to better capture the nuance.
+                    </li>
+                    <li>
+                      You can also merge or split codes by re-assigning
+                      clusters, or use the system to regenerate codes with a
+                      different style prompt (e.g., more theory-driven or more
+                      descriptive).
+                    </li>
+                    <li>
+                      For each adjustment, record a short memo explaining your
+                      reasoning (e.g., "Code X was too generic; renamed to
+                      highlight participants' focus on emotional impact"). These
+                      memos will later be included in the final report for
+                      transparency.
+                    </li>
+                  </ul>
+                </li>
+                <li>
+                  <span className="font-semibold">
+                    Focus on Your Research Questions
+                  </span>
+                  <ul className="list-disc list-outside pl-5 mt-1 space-y-1">
+                    <li>
+                      Ensure that each code not only describes what is in the
+                      data but also connects back to your guiding research
+                      question(s).
+                    </li>
+                    <li>
+                      At this stage, codes may still be descriptive rather than
+                      fully interpretive, but they should already highlight
+                      meaningful patterns that prepare for the next stage of
+                      sub-theme development.
+                    </li>
+                  </ul>
+                </li>
+              </ol>
+            </CollapsibleSection>
             <div className="gap-4 flex flex-col">
               <PromptHistorySection step="card" />
 
@@ -594,7 +764,7 @@ const StyleInputs = React.forwardRef<
             <h1 className="text-lg font-bold">
               Human Interpretation & Testing
             </h1>
-            <div className="text-sm mb-2">
+            <CollapsibleSection>
               <p className="font-semibold mb-2">
                 In this stage, the LLM provides an initial map of sub-themes,
                 while you should bring judgment, contextual understanding, and
@@ -685,7 +855,7 @@ const StyleInputs = React.forwardRef<
                   </ul>
                 </li>
               </ol>
-            </div>
+            </CollapsibleSection>
             <div className="gap-4 flex flex-col">
               <PromptHistorySection step="code" />
 
@@ -782,7 +952,7 @@ const StyleInputs = React.forwardRef<
             <h1 className="text-lg font-bold">
               Human Interpretation & Testing
             </h1>
-            <div className="text-sm text-gray-500">
+            <CollapsibleSection>
               <p className="mb-2">
                 This stage transforms the analysis from a preliminary structure
                 into a coherent thematic framework. The LLM offers a draft map
@@ -878,7 +1048,7 @@ const StyleInputs = React.forwardRef<
                   </ul>
                 </li>
               </ol>
-            </div>
+            </CollapsibleSection>
             <div className="gap-4 flex flex-col">
               <PromptHistorySection step="concept" />
 

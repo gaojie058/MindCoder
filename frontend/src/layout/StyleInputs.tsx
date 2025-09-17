@@ -370,44 +370,44 @@ const StyleInputs = React.forwardRef<
   // Event handlers - use useCallback to avoid re-creating
   const handleClusterChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      clusteringValueRef.current = e.target.value;
+      setClusteringStyle(e.target.value);
     },
-    []
+    [setClusteringStyle]
   );
 
   const handleCodeChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      codingValueRef.current = e.target.value;
+      setCodingStyle(e.target.value);
     },
-    []
+    [setCodingStyle]
   );
 
   const handleConceptChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      conceptualizingValueRef.current = e.target.value;
+      setConceptualizingStyle(e.target.value);
     },
-    []
+    [setConceptualizingStyle]
   );
 
   const handleTopicMemoChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      topicMemoRef.current = e.target.value;
+      setTopicMemo(e.target.value);
     },
-    []
+    [setTopicMemo]
   );
 
   const handleCodeMemoChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      codeMemoRef.current = e.target.value;
+      setCodeMemo(e.target.value);
     },
-    []
+    [setCodeMemo]
   );
 
   const handleConceptMemoChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      conceptMemoRef.current = e.target.value;
+      setConceptMemo(e.target.value);
     },
-    []
+    [setConceptMemo]
   );
 
   const handleTopicClusterRangeChange = useCallback(
@@ -456,47 +456,14 @@ const StyleInputs = React.forwardRef<
 
   // Save changes function - exposed to parent component
   const saveChangesToStore = useCallback(() => {
-    if (clusteringValueRef.current !== clusteringStyle) {
-      setClusteringStyle(clusteringValueRef.current);
-    }
-    if (codingValueRef.current !== codingStyle) {
-      setCodingStyle(codingValueRef.current);
-    }
-    if (conceptualizingValueRef.current !== conceptualizingStyle) {
-      setConceptualizingStyle(conceptualizingValueRef.current);
-    }
-    if (topicMemoRef.current !== topicMemo) {
-      setTopicMemo(topicMemoRef.current);
-    }
-    if (codeMemoRef.current !== codeMemo) {
-      setCodeMemo(codeMemoRef.current);
-    }
-    if (conceptMemoRef.current !== conceptMemo) {
-      setConceptMemo(conceptMemoRef.current);
-    }
+    // Only save the slider value since prompt/memo inputs now save directly to store
     if (
       JSON.stringify(localTopicClusterRange) !==
       JSON.stringify(numberOfTopicClusters)
     ) {
       setNumberOfTopicClusters(localTopicClusterRange);
     }
-  }, [
-    localTopicClusterRange,
-    clusteringStyle,
-    codingStyle,
-    conceptualizingStyle,
-    topicMemo,
-    codeMemo,
-    conceptMemo,
-    numberOfTopicClusters,
-    setClusteringStyle,
-    setCodingStyle,
-    setConceptualizingStyle,
-    setTopicMemo,
-    setCodeMemo,
-    setConceptMemo,
-    setNumberOfTopicClusters,
-  ]);
+  }, [localTopicClusterRange, numberOfTopicClusters, setNumberOfTopicClusters]);
 
   // Expose saveChangesToStore function to parent component
   React.useImperativeHandle(
@@ -864,12 +831,12 @@ const StyleInputs = React.forwardRef<
                 <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
                   <span className="font-semibold">Prompt to LLM</span>
                 </div>
-                <div className="px-6 py-8">
+                <div className="px-2 py-4">
                   <textarea
                     ref={codingTextAreaRef}
                     value={codingStyle}
                     onChange={handleCodeChange}
-                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
+                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
                     style={{ minHeight: "100px", maxHeight: "300px" }}
                   />
                 </div>
@@ -918,16 +885,14 @@ const StyleInputs = React.forwardRef<
                 <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
                   <span className="font-semibold">Writing Memo</span>
                 </div>
-                <div className="px-6 py-8">
-                  <textarea
-                    ref={codeMemoTextAreaRef}
-                    value={codeMemo}
-                    onChange={handleCodeMemoChange}
-                    placeholder="Write your thoughts, observations, or notes about the sub-theme labeling process..."
-                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                    style={{ minHeight: "240px", maxHeight: "300px" }}
-                  />
-                </div>
+                <textarea
+                  ref={codeMemoTextAreaRef}
+                  value={codeMemo}
+                  onChange={handleCodeMemoChange}
+                  placeholder="Write your thoughts, observations, or notes about the sub-theme labeling process..."
+                  className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
+                  style={{ minHeight: "240px", maxHeight: "300px" }}
+                />
                 <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
                   <p className="p-4">
                     Write why you perform such interpretation.
@@ -1057,12 +1022,12 @@ const StyleInputs = React.forwardRef<
                 <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
                   <span className="font-semibold">Prompt to LLM</span>
                 </div>
-                <div className="px-6 py-8">
+                <div className="px-2 py-4">
                   <textarea
                     ref={conceptualizingTextAreaRef}
                     value={conceptualizingStyle}
                     onChange={handleConceptChange}
-                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
+                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
                     style={{ minHeight: "100px", maxHeight: "300px" }}
                   />
                 </div>
@@ -1110,16 +1075,14 @@ const StyleInputs = React.forwardRef<
                 <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
                   <span className="font-semibold">Writing Memo</span>
                 </div>
-                <div className="px-6 py-8">
-                  <textarea
-                    ref={conceptMemoTextAreaRef}
-                    value={conceptMemo}
-                    onChange={handleConceptMemoChange}
-                    placeholder="Write your thoughts, observations, or notes about the theme process..."
-                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                    style={{ minHeight: "240px", maxHeight: "300px" }}
-                  />
-                </div>
+                <textarea
+                  ref={conceptMemoTextAreaRef}
+                  value={conceptMemo}
+                  onChange={handleConceptMemoChange}
+                  placeholder="Write your thoughts, observations, or notes about the theme process..."
+                  className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
+                  style={{ minHeight: "240px", maxHeight: "300px" }}
+                />
                 <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
                   <p className="p-4">
                     Write why you perform such interpretation.

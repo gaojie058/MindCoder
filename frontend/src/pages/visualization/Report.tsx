@@ -135,24 +135,46 @@ const Report: React.FC<props> = ({
       const target = event.target as HTMLSpanElement;
       const link = target.dataset.link;
 
-      // console.log("Clicked element:", target);
-      // console.log("Data link:", link);
+      console.log("Clicked element:", target);
+      console.log("Data link:", link);
 
       if (link) {
         let parsedId: number | null = null;
-        if (link.startsWith("Concept")) {
-          setActiveType("Concept");
+        let activeType: "Concept" | "Card" | "Code" | "" = "";
+
+        if (link.startsWith("Theme ")) {
+          activeType = "Concept";
+          parsedId = parseInt(link.replace("Theme ", "").trim());
+        } else if (link.startsWith("Sub-Theme ")) {
+          activeType = "Code";
+          parsedId = parseInt(link.replace("Sub-Theme ", "").trim());
+        } else if (link.startsWith("Open Code ")) {
+          activeType = "Code";
+          parsedId = parseInt(link.replace("Open Code ", "").trim());
+        } else if (link.startsWith("Code ")) {
+          activeType = "Card";
+          parsedId = parseInt(link.replace("Code ", "").trim());
+        } else if (link.startsWith("Concept")) {
+          activeType = "Concept";
           parsedId = parseInt(link.replace("Concept", "").trim());
         } else if (link.startsWith("Code")) {
-          setActiveType("Code");
+          activeType = "Card";
           parsedId = parseInt(link.replace("Code", "").trim());
         } else {
-          setActiveType("Card");
-          parsedId = parseInt(link.replace("Card", "").trim());
+          activeType = "Card";
+          const numberMatch = link.match(/(\d+)/);
+          parsedId = numberMatch ? parseInt(numberMatch[1]) : null;
         }
 
         // console.log("Parsed ID:", parsedId);
-        setActiveId(parsedId);
+        // console.log("Active Type:", activeType);
+
+        if (parsedId !== null && !isNaN(parsedId)) {
+          setActiveType(activeType);
+          setActiveId(parsedId);
+        } else {
+          console.warn("Could not parse ID from link:", link);
+        }
       }
     },
     [setActiveType, setActiveId]
@@ -184,8 +206,6 @@ const Report: React.FC<props> = ({
       id="report"
     >
       <div className="flex flex-col mb-4 gap-4">
-
-
         {/* Disclaimer */}
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
           <div className="flex">
@@ -215,7 +235,7 @@ const Report: React.FC<props> = ({
             {!isFullScreen ? <FullscreenIcon /> : <MinimizeIcon />}
           </div> */}
         </div>
-        
+
         <div ref={containerRef}>
           {/* <div className="text-md font-semibold text-[#707070]">{title}</div>
           {sections.map((section, index) => (

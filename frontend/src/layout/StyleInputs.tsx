@@ -139,6 +139,107 @@ const PromptHistorySection = memo(({ step }: { step: string }) => {
 
 PromptHistorySection.displayName = "PromptHistorySection";
 
+// Modified CollapsibleSection component
+const CollapsibleSection = memo(
+  ({
+    children,
+    defaultExpanded = false,
+  }: {
+    children: React.ReactNode;
+    defaultExpanded?: boolean;
+  }) => {
+    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
+
+    return (
+      <div className="text-sm mb-2">
+        <div className="ml-0">
+          {isExpanded ? (
+            <div>
+              {children}
+              <div
+                className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-800 mt-2"
+                onClick={() => setIsExpanded(false)}
+              >
+                <span className="text-xs font-zen font-bold">Read Less</span>
+                <svg
+                  className="w-3 h-3 transition-transform -rotate-90"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {/* Show preview with preserved formatting */}
+              <div className="text-sm">
+                {React.Children.map(children, (child, index) => {
+                  if (index === 0 && React.isValidElement(child)) {
+                    // For the first child (usually the main paragraph), show truncated version
+                    if (child.type === "p") {
+                      const getTextContent = (
+                        node: React.ReactNode
+                      ): string => {
+                        if (typeof node === "string") return node;
+                        if (typeof node === "number") return String(node);
+                        if (React.isValidElement(node)) {
+                          return getTextContent(node.props.children);
+                        }
+                        if (Array.isArray(node)) {
+                          return node.map(getTextContent).join("");
+                        }
+                        return "";
+                      };
+
+                      const childText = getTextContent(child.props.children);
+                      const truncatedText =
+                        childText.length > 200
+                          ? childText.substring(0, 200) + "..."
+                          : childText;
+                      return React.cloneElement(child, {
+                        ...child.props,
+                        children: truncatedText,
+                      });
+                    }
+                  }
+                  // Hide other children (like ordered lists) in preview
+                  return null;
+                })}
+              </div>
+              <div
+                className="flex items-center gap-2 cursor-pointer text-gray-600 hover:text-gray-800 mt-2"
+                onClick={() => setIsExpanded(true)}
+              >
+                <span className="text-xs font-zen font-bold">Read More</span>
+                <svg
+                  className="w-3 h-3 transition-transform rotate-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+);
+
 // StyleInputs Component - need to wrap with forwardRef
 const StyleInputs = React.forwardRef<
   { saveChangesToStore: () => void },
@@ -269,44 +370,44 @@ const StyleInputs = React.forwardRef<
   // Event handlers - use useCallback to avoid re-creating
   const handleClusterChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      clusteringValueRef.current = e.target.value;
+      setClusteringStyle(e.target.value);
     },
-    []
+    [setClusteringStyle]
   );
 
   const handleCodeChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      codingValueRef.current = e.target.value;
+      setCodingStyle(e.target.value);
     },
-    []
+    [setCodingStyle]
   );
 
   const handleConceptChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      conceptualizingValueRef.current = e.target.value;
+      setConceptualizingStyle(e.target.value);
     },
-    []
+    [setConceptualizingStyle]
   );
 
   const handleTopicMemoChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      topicMemoRef.current = e.target.value;
+      setTopicMemo(e.target.value);
     },
-    []
+    [setTopicMemo]
   );
 
   const handleCodeMemoChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      codeMemoRef.current = e.target.value;
+      setCodeMemo(e.target.value);
     },
-    []
+    [setCodeMemo]
   );
 
   const handleConceptMemoChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      conceptMemoRef.current = e.target.value;
+      setConceptMemo(e.target.value);
     },
-    []
+    [setConceptMemo]
   );
 
   const handleTopicClusterRangeChange = useCallback(
@@ -355,47 +456,14 @@ const StyleInputs = React.forwardRef<
 
   // Save changes function - exposed to parent component
   const saveChangesToStore = useCallback(() => {
-    if (clusteringValueRef.current !== clusteringStyle) {
-      setClusteringStyle(clusteringValueRef.current);
-    }
-    if (codingValueRef.current !== codingStyle) {
-      setCodingStyle(codingValueRef.current);
-    }
-    if (conceptualizingValueRef.current !== conceptualizingStyle) {
-      setConceptualizingStyle(conceptualizingValueRef.current);
-    }
-    if (topicMemoRef.current !== topicMemo) {
-      setTopicMemo(topicMemoRef.current);
-    }
-    if (codeMemoRef.current !== codeMemo) {
-      setCodeMemo(codeMemoRef.current);
-    }
-    if (conceptMemoRef.current !== conceptMemo) {
-      setConceptMemo(conceptMemoRef.current);
-    }
+    // Only save the slider value since prompt/memo inputs now save directly to store
     if (
       JSON.stringify(localTopicClusterRange) !==
       JSON.stringify(numberOfTopicClusters)
     ) {
       setNumberOfTopicClusters(localTopicClusterRange);
     }
-  }, [
-    localTopicClusterRange,
-    clusteringStyle,
-    codingStyle,
-    conceptualizingStyle,
-    topicMemo,
-    codeMemo,
-    conceptMemo,
-    numberOfTopicClusters,
-    setClusteringStyle,
-    setCodingStyle,
-    setConceptualizingStyle,
-    setTopicMemo,
-    setCodeMemo,
-    setConceptMemo,
-    setNumberOfTopicClusters,
-  ]);
+  }, [localTopicClusterRange, numberOfTopicClusters, setNumberOfTopicClusters]);
 
   // Expose saveChangesToStore function to parent component
   React.useImperativeHandle(
@@ -548,12 +616,86 @@ const StyleInputs = React.forwardRef<
                   Merge, split, or reassign codes if the grouping feels forced,
                   too broad, or too fragmented.
                 </li>
-              </ul>
-            </li>
-          </ol>
-        </div>
-        <div className="gap-4 flex flex-col">
-          <PromptHistorySection step="code" />
+              </ol>
+            </CollapsibleSection>
+            <div className="gap-4 flex flex-col">
+              <PromptHistorySection step="code" />
+
+              {/* Prompt to LLM - moved to Human Interpretation */}
+              <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
+                <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
+                  <span className="font-semibold">Prompt to LLM</span>
+                </div>
+                <div className="px-2 py-4">
+                  <textarea
+                    ref={codingTextAreaRef}
+                    value={codingStyle}
+                    onChange={handleCodeChange}
+                    className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
+                    style={{ minHeight: "100px", maxHeight: "300px" }}
+                  />
+                </div>
+                <div className="mt-2 px-4">
+                  <p className="mb-2 text-sm font-semibold">Suggestions:</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
+                      onClick={() =>
+                        handleSuggestionClick(
+                          "In-Vivo coding: Use the direct words and phrases of raw data as sub-themes rather than researcher-generated words and phrases",
+                          "coding"
+                        )
+                      }
+                    >
+                      In-Vivo coding: Use the direct words and phrases of raw
+                      data as sub-themes rather than researcher-generated words
+                      and phrases
+                    </button>
+                    <button
+                      className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
+                      onClick={() =>
+                        handleSuggestionClick(
+                          "Descriptive coding: Assign basic labels to data to describe the main topic",
+                          "coding"
+                        )
+                      }
+                    >
+                      Descriptive coding: Assign basic labels to data to
+                      describe the main sub-theme
+                    </button>
+                  </div>
+                </div>
+                <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
+                  <p className="p-4">
+                    "Sub-themes" represent different "groups of open codes"
+                    sharing similar higher level topics. Tell us how you want to
+                    label sub-themes. This will influence how your open codes
+                    are categorized and assigned sub-theme names.
+                  </p>
+                </div>
+              </div>
+
+              {/* Writing Memo - moved to Human Interpretation */}
+              <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
+                <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
+                  <span className="font-semibold">Writing Memo</span>
+                </div>
+                <textarea
+                  ref={codeMemoTextAreaRef}
+                  value={codeMemo}
+                  onChange={handleCodeMemoChange}
+                  placeholder="Write your thoughts, observations, or notes about the sub-theme labeling process..."
+                  className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
+                  style={{ minHeight: "240px", maxHeight: "300px" }}
+                />
+                <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
+                  <p className="p-4">
+                    Write why you perform such interpretation.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -635,227 +777,6 @@ const StyleInputs = React.forwardRef<
                   {conceptualizingStyle || "Default"}
                 </p>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* All input forms */}
-      <div className="gap-4 flex flex-col">
-        {/* Clustering input - only show in card step */}
-        <div className={currentStoreType === "card" ? "block" : "hidden"}>
-          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
-            <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
-              <span className="font-semibold">Prompt to LLM</span>
-            </div>
-            <textarea
-              ref={clusteringTextAreaRef}
-              defaultValue={clusteringStyle || ""}
-              onChange={handleClusterChange}
-              className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
-              style={{ minHeight: "100px", maxHeight: "300px" }}
-            />
-            <div className="mt-2 px-4">
-              <p className="mb-2 text-sm font-semibold">Suggestions:</p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
-                  onClick={() =>
-                    handleSuggestionClick(
-                      "In-Vivo coding: Use the direct language of raw data as codes rather than researcher-generated words and phrases",
-                      "clustering"
-                    )
-                  }
-                >
-                  In-Vivo coding: Use the direct words and phrases of raw data
-                  as open codes rather than researcher-generated words and
-                  phrases
-                </button>
-                <button
-                  className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
-                  onClick={() =>
-                    handleSuggestionClick(
-                      "Descriptive coding: Assign basic labels to data to describe the main topic",
-                      "clustering"
-                    )
-                  }
-                >
-                  Descriptive coding: Assign basic labels to data to describe
-                  the open codes
-                </button>
-              </div>
-            </div>
-            <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl mt-2">
-              <p className="p-4">
-                Tell us how you want to cluster your topics. This will guide the
-                initial open coding of your data.
-              </p>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
-            <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
-              <span className="font-semibold">Writing Memo</span>
-            </div>
-            <textarea
-              ref={topicMemoTextAreaRef}
-              defaultValue={topicMemo || ""}
-              onChange={handleTopicMemoChange}
-              placeholder="Write your thoughts, observations, or notes about the open coding process..."
-              className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin px-6 text-sm"
-              style={{ minHeight: "300px", maxHeight: "36px" }}
-            />
-            <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl mt-2">
-              <p className="p-4">Write why you perform such interpretation.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Coding input - only show in code step */}
-        <div className={currentStoreType === "code" ? "block" : "hidden"}>
-          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
-            <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
-              <span className="font-semibold">Prompt to LLM</span>
-            </div>
-            <div className="px-6 py-8">
-              <textarea
-                ref={codingTextAreaRef}
-                defaultValue={codingStyle || ""}
-                onChange={handleCodeChange}
-                className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "100px", maxHeight: "300px" }}
-              />
-            </div>
-            <div className="mt-2 px-4">
-              <p className="mb-2 text-sm font-semibold">Suggestions:</p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
-                  onClick={() =>
-                    handleSuggestionClick(
-                      "In-Vivo coding: Use the direct words and phrases of raw data as sub-themes rather than researcher-generated words and phrases",
-                      "coding"
-                    )
-                  }
-                >
-                  In-Vivo coding: Use the direct words and phrases of raw data
-                  as sub-themes rather than researcher-generated words and
-                  phrases
-                </button>
-                <button
-                  className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
-                  onClick={() =>
-                    handleSuggestionClick(
-                      "Descriptive coding: Assign basic labels to data to describe the main topic",
-                      "coding"
-                    )
-                  }
-                >
-                  Descriptive coding: Assign basic labels to data to describe
-                  the main sub-theme
-                </button>
-              </div>
-            </div>
-            <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
-              <p className="p-4">
-                "Sub-themes" represent different "groups of open codes" sharing
-                similar higher level topics. Tell us how you want to label
-                sub-themes. This will influence how your open codes are
-                categorized and assigned sub-theme names.
-              </p>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
-            <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
-              <span className="font-semibold">Writing Memo</span>
-            </div>
-            <div className="px-6 py-8">
-              <textarea
-                ref={codeMemoTextAreaRef}
-                defaultValue={codeMemo || ""}
-                onChange={handleCodeMemoChange}
-                placeholder="Write your thoughts, observations, or notes about the sub-theme labeling process..."
-                className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "240px", maxHeight: "300px" }}
-              />
-            </div>
-            <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
-              <p className="p-4">Write why you perform such interpretation.</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Concept input - only show in concept step */}
-        <div className={currentStoreType === "concept" ? "block" : "hidden"}>
-          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
-            <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
-              <span className="font-semibold">Prompt to LLM</span>
-            </div>
-            <div className="px-6 py-8">
-              <textarea
-                ref={conceptualizingTextAreaRef}
-                defaultValue={conceptualizingStyle || ""}
-                onChange={handleConceptChange}
-                className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "100px", maxHeight: "300px" }}
-              />
-            </div>
-            <div className="mt-2 px-4">
-              <p className="mb-2 text-sm font-semibold">Suggestions:</p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
-                  onClick={() =>
-                    handleSuggestionClick(
-                      "Thematic analysis: Identify patterns and themes across sub-themes",
-                      "conceptualizing"
-                    )
-                  }
-                >
-                  Thematic analysis: Identify patterns and themes across
-                  sub-themes
-                </button>
-                <button
-                  className="px-2 py-1 border border-black rounded-lg hover:bg-gray-100 text-sm text-left"
-                  onClick={() =>
-                    handleSuggestionClick(
-                      "Theoretical conceptualization: Link findings to established theories",
-                      "conceptualizing"
-                    )
-                  }
-                >
-                  Theoretical conceptualization: Link findings to established
-                  theories
-                </button>
-              </div>
-            </div>
-            <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
-              <p className="p-4">
-                "Themes" represent high-level categories of sub-themes, sharing
-                similar higher level topics. Tell us how you want to
-                conceptualize your findings. This will shape the final
-                interpretation of your data.
-              </p>
-            </div>
-          </div>
-
-          <div className="w-full flex flex-col mt-4 border rounded-xl border-black relative pt-6 mx-0">
-            <div className="absolute -top-3 left-4 bg-white px-2 text-lg">
-              <span className="font-semibold">Writing Memo</span>
-            </div>
-            <div className="px-6 py-8">
-              <textarea
-                ref={conceptMemoTextAreaRef}
-                defaultValue={conceptMemo || ""}
-                onChange={handleConceptMemoChange}
-                placeholder="Write your thoughts, observations, or notes about the theme process..."
-                className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm"
-                style={{ minHeight: "240px", maxHeight: "300px" }}
-              />
-            </div>
-            <div className="bg-[#FFF4EF] text-sm text-gray-600 rounded-xl">
-              <p className="p-4">Write why you perform such interpretation.</p>
             </div>
           </div>
         </div>

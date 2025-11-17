@@ -48,7 +48,7 @@ Requirements:
 - Follow this with an item labeled "chunks," which includes all chunks relevant to the Code name. Group chunks by shared topics to maintain thematic consistency within each Code.
 - All data should be put into chunks, but prioritize those most relevant and meaningful words to the research questions to Codes.
 - In self reflect section, any reference to codes should not alter the oiginal code number and name.
-- Avoid Code number in "metadata" section, use Code 【Code Name PlaceHolder】 instead.
+- Avoid Code number in "metadata" section, use Code [Code Name PlaceHolder】 instead.
 
 Output Format:
 Provide the output strictly in JSON format without any additional text or explanations. 
@@ -73,11 +73,11 @@ Code Example:
   "metadata": {
     "what_llm_did": {
       "main_actions": "Analyzed qualitative data and generated open codes by dividing text into meaningful chunks",
-      "examples": "Code【Code Name PlaceHolder】 contains chunks about classroom management because they share similar themes about student engagement strategies"
+      "examples": "Code[Code Name PlaceHolder】 contains chunks about classroom management because they share similar themes about student engagement strategies"
     },
     "self_reflection": {
-      "confident_results": "Most confident about Code【Code Name PlaceHolder】 and Code 【Code Name PlaceHolder】 due to clear thematic coherence",
-      "uncertain_results": "Less confident about Code 【Code Name PlaceHolder】 which may overlap with multiple topics", 
+      "confident_results": "Most confident about Code[Code Name PlaceHolder】 and Code [Code Name PlaceHolder】 due to clear thematic coherence",
+      "uncertain_results": "Less confident about Code [Code Name PlaceHolder】 which may overlap with multiple topics", 
       "recommended_review": "Focus on reviewing boundary clarity between overlapping codes for human validation"
     }
   }
@@ -121,10 +121,10 @@ Requirement:
 - ALL Codes from the input data MUST be grouped. No Codes can be omitted.
 - Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters). 
     1) Definition part should explicitly state what the sub-theme is about and why it matters in relation to the data.
-    2) Follow this output style: "This sub-theme captures XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.".
+    2) Follow this output style: "This sub-theme captures XXX. Examples:  1) Code [Code Name PlaceHolder】, because yyy. 2) Code [Code Name PlaceHolder】, because yyy. 3) Code [Code Name PlaceHolder】, because yyy.".
     3）Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
 - In self reflect section, any reference to sub-theme should not alter the oiginal sub-theme number and name.
-- Avoid Sub-Theme number and Code number in "metadata" section, use Sub-Themes 【Sub-Theme Name PlaceHolder】 and Code 【Code Name PlaceHolder】 instead.
+- Avoid Sub-Theme number and Code number in "metadata" section, use Sub-Themes [Sub-Theme Name PlaceHolder】 and Code [Code Name PlaceHolder】 instead.
 
 
 Output Format:
@@ -137,7 +137,7 @@ Follow the structure below:
 {
     "Sub-Theme 1": {
       "name": "xxxx",
-      "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
+      "definition": "This sub-theme describes XXX. Examples:  1) Code [Code Name PlaceHolder】, because yyy. 2) Code [Code Name PlaceHolder】, because yyy. 3) Code [Code Name PlaceHolder】, because yyy.",
       "codes": {
         "Code 1": { 
             "name": "placeholder",
@@ -157,7 +157,7 @@ Follow the structure below:
     },
     "Sub-Theme 2": {
       "name": "xxxx",
-      "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
+      "definition": "This sub-theme describes XXX. Examples:  1) Code [Code Name PlaceHolder】, because yyy. 2) Code [Code Name PlaceHolder】, because yyy. 3) Code [Code Name PlaceHolder】, because yyy.",
       "codes": {
         "Code 3": { 
             "name": "placeholder",
@@ -174,11 +174,11 @@ Follow the structure below:
     "metadata": {
     "what_llm_did": {
       "main_actions": "Performed axial coding to group codes into sub-themes based on thematic overlap",
-      "examples": "Sub-Theme 【Sub-Theme Name PlaceHolder】 includes Code 【Code Name PlaceHolder】 and Code 【Code Name PlaceHolder】 because they both relate to similar conceptual patterns"
+      "examples": "Sub-Theme [Sub-Theme Name PlaceHolder】 includes Code [Code Name PlaceHolder】 and Code [Code Name PlaceHolder】 because they both relate to similar conceptual patterns"
     },
     "self_reflection": {
-      "confident_results": "Strong confidence in Sub-Theme 【Sub-Theme Name PlaceHolder】 and Sub-Theme 【Sub-Theme Name PlaceHolder】 due to clear thematic coherence",
-      "uncertain_results": "Less confident about Code 【Code Name PlaceHolder】 placement which could fit multiple sub-themes",
+      "confident_results": "Strong confidence in Sub-Theme [Sub-Theme Name PlaceHolder】 and Sub-Theme [Sub-Theme Name PlaceHolder】 due to clear thematic coherence",
+      "uncertain_results": "Less confident about Code [Code Name PlaceHolder】 placement which could fit multiple sub-themes",
       "recommended_review": "Review grouping decisions for codes with potential overlap between sub-themes"
     }
   }
@@ -216,11 +216,11 @@ Requirement:
 - ALL sub-themes from the input data MUST be grouped. No sub-themes can be omitted.
 - Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters). 
     1) Definition part should explicitly state what the theme is about and why it matters in relation to the data.
-    2) Follow this output style: "This theme captures XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.".
+    2) Follow this output style: "This theme captures XXX. Examples:  1) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy.".
     3）Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
 - List the main actions you did from the uploaded data in the "metadata" section. And the rationale for the actions you did.
 - In self reflect section, any reference to theme should not alter the oiginal theme number and name.
-- Avoid Theme number, Sub-Thme number, and code number in "metadata" section, use Theme 【Theme Name PlaceHolder, Sub-Theme 【Sub-Theme Name PlaceHolder】 and Code 【Code Name PlaceHolder】 instead.
+- Avoid Theme number, Sub-Thme number, and code number in "metadata" section, use Theme [Theme Name PlaceHolder, Sub-Theme [Sub-Theme Name PlaceHolder】 and Code [Code Name PlaceHolder】 instead.
 
 
 Output Format:
@@ -228,7 +228,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
 {
   "Theme 1": {
     "name": "xxx",
-    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "definition": "This theme describes XXX. Examples:  1) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy.",
     "subthemes": {
       "Sub-Theme 1": {
         "name": "xxxx",
@@ -266,7 +266,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
     },
     "Theme 2": {
     "name": "xxx",
-    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "definition": "This theme describes XXX. Examples:  1) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme [Sub-Theme Name PlaceHolder】, because yyy.",
     "subthemes": {
       "Sub-Theme 3": {
         "name": "xxxx",
@@ -292,11 +292,11 @@ Generate the output strictly in JSON format with NO additional text or explanati
   "metadata": {
     "what_llm_did": {
       "main_actions": "Developed high-level themes by grouping related sub-themes based on shared patterns",
-      "examples": "Theme 【Theme Name PlaceHolder】 includes Sub-Theme 【Sub-Theme Name PlaceHolder】 and Sub-Theme 【Sub-Theme Name PlaceHolder】 because they represent similar higher-level concepts"
+      "examples": "Theme [Theme Name PlaceHolder】 includes Sub-Theme [Sub-Theme Name PlaceHolder】 and Sub-Theme [Sub-Theme Name PlaceHolder】 because they represent similar higher-level concepts"
     },
     "self_reflection": {
-      "confident_results": "High confidence in Theme 【Theme Name PlaceHolder】 which shows clear conceptual coherence and internal consistency",
-      "uncertain_results": "Some uncertainty about Theme 【Theme Name PlaceHolder】 boundaries which may need refinement",
+      "confident_results": "High confidence in Theme [Theme Name PlaceHolder】 which shows clear conceptual coherence and internal consistency",
+      "uncertain_results": "Some uncertainty about Theme [Theme Name PlaceHolder】 boundaries which may need refinement",
       "recommended_review": "Validate final thematic boundaries and ensure themes are externally distinct for research validity"
     }
   }

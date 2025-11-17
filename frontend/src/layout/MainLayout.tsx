@@ -288,56 +288,57 @@ export default function MainLayout({
       )}
 
       {stepToName[step] !== "data" && stepToName[step] !== "display" && (
-        <div className="w-full flex flex-row items-start px-4 gap-6 h-[calc(100vh-60px)] overflow-hidden">
-          {/* Left side - Style Inputs */}
-          <div
-            className="w-1/3 min-w-[350px] max-w-[700px] overflow-y-scroll scrollbar-thin h-full"
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "#4a5568 #edf2f7",
-              maxHeight: "calc(100vh - 60px)",
-            }}
-          >
-            <div className="p-4 pb-8">
-              <StyleInputs
-                ref={styleInputsRef}
-                storeType={stepToName[step] || "data"}
-                className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
-              />
-            </div>
-          </div>
-
-          {/* Right side - Content Area */}
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
+        <>
+          <div className="w-full flex flex-row items-start px-4 gap-4 h-[calc(100vh-120px)] overflow-hidden">
+            {/* Middle column - StyleInputs (contains both LLM Mechanism and Human Interpretation) */}
             <div
-              className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
-              {...props}
+              className="w-1/2 min-w-[360px] overflow-y-scroll scrollbar-thin h-full"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "#4a5568 #edf2f7",
+              }}
             >
-              {children || <Outlet />}
-            </div>
-
-            {/* Bottom buttons for non-data/non-display pages */}
-            <div className="w-full flex justify-between items-center p-6 border-t border-gray-300 flex-shrink-0">
-              <div className="w-full flex justify-between gap-4">
-                <button
-                  onClick={handleSaveToHistory}
-                  disabled={pdfLoading || showSuccessAlert}
-                  className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-6 py-2 rounded-md text-sm font-semibold font-zen ${
-                    (pdfLoading || showSuccessAlert) &&
-                    "opacity-50 cursor-not-allowed"
-                  }`}
-                >
-                  {pdfLoading ? "Adding..." : "Save Current Version"}
-                </button>
-                <Bottom
-                  bottomType={stepName === "display" ? "display" : "regenerate"}
-                  regenerate={handleRegenerate}
-                  regenerateSubsequent={handleRegenerateRest}
+              <div className="p-4 pb-8">
+                <StyleInputs
+                  ref={styleInputsRef}
+                  storeType={stepToName[step] || "data"}
+                  className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
                 />
               </div>
             </div>
+
+            {/* Right column - Coding Area (Main Content) */}
+            <div className="flex-1 flex flex-col h-full overflow-hidden">
+              <div
+                className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
+                {...props}
+              >
+                {children || <Outlet />}
+              </div>
+            </div>
           </div>
-        </div>
+
+          {/* Bottom buttons for the entire page */}
+          <div className="w-full flex justify-between items-center p-6 border-t border-gray-300 flex-shrink-0">
+            <div className="w-full flex justify-between gap-4">
+              <button
+                onClick={handleSaveToHistory}
+                disabled={pdfLoading || showSuccessAlert}
+                className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-6 py-2 rounded-md text-sm font-semibold font-zen ${
+                  (pdfLoading || showSuccessAlert) &&
+                  "opacity-50 cursor-not-allowed"
+                }`}
+              >
+                {pdfLoading ? "Adding..." : "Save Current Version"}
+              </button>
+              <Bottom
+                bottomType={stepName === "display" ? "display" : "regenerate"}
+                regenerate={handleRegenerate}
+                regenerateSubsequent={handleRegenerateRest}
+              />
+            </div>
+          </div>
+        </>
       )}
 
       {stepToName[step] === "data" || stepToName[step] === "display" ? (

@@ -110,24 +110,11 @@ function HomePage() {
     setProjectname(projectName);
     setResearchQuestion(localResearchQuestion);
     setNumberOfTopicClusters([minCodes, maxCodes]);
-    navigate(`/defineneeds/${projectName}/0`);
+    navigate(`/progress/${projectName}/1`);
   };
 
-  const handleLoadSample = async () => {
-    try {
-      const response = await fetch("/sample_data/sample_data0.json");
-      const text = await response.text();
-      const blob = new Blob([text], { type: "text/plain" });
-      const sampleFile = new File([blob], "sample_data.txt", { type: "text/plain" });
-      setUploadedFiles([sampleFile]);
-      const projectName = `sample-${Date.now()}`;
-      setNickname("user");
-      setProjectname(projectName);
-      navigate(`/defineneeds/${projectName}/0`);
-    } catch (error) {
-      console.error("Error loading sample data:", error);
-      alert("Failed to load sample data");
-    }
+  const handleLoadSample = () => {
+    navigate("/sample-preview");
   };
 
   const stepLabels: Record<string, string> = {

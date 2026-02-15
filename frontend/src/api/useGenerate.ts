@@ -93,7 +93,6 @@ export const useGenerate = () => {
           ]);
         }
         setHasFullGenerated(true);
-        navigate(`/defineneeds/${project}/0`);
         return;
       }
 

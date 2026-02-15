@@ -17,11 +17,16 @@ import Discovering from "@/pages/category/Discovering";
 import Visualization from "@/pages/visualization/Visualize";
 // Input Area
 import InputArea from "@/pages/defineneeds/InputArea";
+import SampleDataPreview from "@/pages/SampleDataPreview";
 
 const router = createHashRouter([
   {
     path: "/",
     element: <HomePage />,
+  },
+  {
+    path: "/sample-preview",
+    element: <SampleDataPreview />,
   },
   {
     path: "/:project/complete",

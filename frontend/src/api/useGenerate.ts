@@ -15,6 +15,7 @@ import useHistoryStore from "@/stores/useHistoryStore";
 import { getWithExpiry, setWithExpiry } from "@/stores/utils";
 import useCardStore from "@/stores/useCardStore";
 import useEditorStore from "@/stores/useEditorStore";
+import useInfoStore from "@/stores/useInfoStore";
 import { manuallyTriggerCoverageCalculation } from "./coverageCalculator";
 
 interface GenerateState {
@@ -62,8 +63,9 @@ export const useGenerate = () => {
 
     try {
       if (!targetStep) {
-        // Full generation case
-        console.log("Starting full generation from beginning");
+        // Full generation case - respect selected steps
+        const { selectedSteps } = useInfoStore.getState();
+        console.log("Starting generation with selected steps:", selectedSteps);
 
         // Clear the card data BEFORE regeneration
         useCardStore.getState().setCardData([]);
@@ -75,13 +77,21 @@ export const useGenerate = () => {
           activeGraphType: "mindmap"
         });
 
-        await executeGenerationStep("card");
-        await executeGenerationStep("code");
-        await executeGenerationStep("concept");
-        await Promise.all([
-          executeGenerationStep("display", "report"),
-          executeGenerationStep("display", "graph")
-        ]);
+        if (selectedSteps.includes("card")) {
+          await executeGenerationStep("card");
+        }
+        if (selectedSteps.includes("code")) {
+          await executeGenerationStep("code");
+        }
+        if (selectedSteps.includes("concept")) {
+          await executeGenerationStep("concept");
+        }
+        if (selectedSteps.includes("display")) {
+          await Promise.all([
+            executeGenerationStep("display", "report"),
+            executeGenerationStep("display", "graph")
+          ]);
+        }
         setHasFullGenerated(true);
         navigate(`/defineneeds/${project}/0`);
         return;

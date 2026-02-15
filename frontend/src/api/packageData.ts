@@ -3,6 +3,7 @@ import useAppStore from "@/stores/useAppStore";
 import useCardStore from "@/stores/useCardStore";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
+import useInfoStore from "@/stores/useInfoStore";
 
 import { card, concept } from "@/types/stores";
 
@@ -269,6 +270,10 @@ function formulatePrompt(
   });
 
   formData.append('templateProps', JSON.stringify(templateProps));
+
+  // Include model selection
+  const { model } = useInfoStore.getState();
+  formData.append('model', model);
 
   console.log("FormData message:", JSON.stringify(message));
 

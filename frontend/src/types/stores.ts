@@ -4,6 +4,10 @@ export type infoStore = {
   projectname: string, // project name
   setNickname: (value: string) => void,
   setProjectname: (value: string) => void,
+  model: string,
+  setModel: (value: string) => void,
+  selectedSteps: string[],
+  setSelectedSteps: (value: string[]) => void,
 }
 
 export type datapoint = {
@@ -109,5 +113,3 @@ export type graph = {
   id: string;
   dot: string;
 };
-
-

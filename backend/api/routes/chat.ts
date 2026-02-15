@@ -45,8 +45,11 @@ chatRouter.post('/chat', upload.array('files'), async (req: Request, res) => {
                 console.log("Received file:", file.originalname);
             });
         }
-        // gpt5
-        const result = await handleOpenAIRequest(prompt, fileContents, 1);
+        // Parse model from request
+        const model = req.body.model || 'gpt-5-2025-08-07';
+        console.log("Using model:", model);
+
+        const result = await handleOpenAIRequest(prompt, fileContents, 1, model);
 
         // gpt4.1
         // const result = await handleOpenAIRequestCompletion(prompt, fileContents);

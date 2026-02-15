@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -11,7 +12,11 @@ const openai = new OpenAI({
     apiKey: apiKey
 });
 
-export const handleOpenAIRequest = async (prompt: string, fileContents?: string[], temperature: number = 0) => {
+const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY || '',
+});
+
+export const handleOpenAIRequest = async (prompt: string, fileContents?: string[], temperature: number = 0, model: string = 'gpt-5-2025-08-07') => {
     try {
         let fullPrompt = prompt;
 
@@ -19,29 +24,31 @@ export const handleOpenAIRequest = async (prompt: string, fileContents?: string[
             fullPrompt += `\n\n### Uploaded Files Content:\n${fileContents.join('\n\n')}`;
         }
 
+        // Route to Anthropic if model starts with "claude"
+        if (model.startsWith('claude')) {
+            return await handleAnthropicRequest(fullPrompt, model, temperature);
+        }
+
         const messages: { role: 'system' | 'user'; content: string }[] = [
             { role: 'user', content: fullPrompt }
         ];
 
         const stream = await openai.responses.create({
-            model: "gpt-5-2025-08-07",
+            model: model,
             input: messages,
             reasoning: { effort: "minimal" },
             stream: true,
         });
 
-      // 修改后的代码
         let outputText = "";
         for await (const chunk of stream) {
-        // 使用类型断言(as any)来绕过可能不正确的SDK类型定义
-        const anyChunk = chunk as any;
-        if (anyChunk.type === 'response.output_text.delta' && anyChunk.delta) {
-            outputText += anyChunk.delta;
+            const anyChunk = chunk as any;
+            if (anyChunk.type === 'response.output_text.delta' && anyChunk.delta) {
+                outputText += anyChunk.delta;
             }
         }
         
         console.log('OpenAI response (from stream):', outputText);
-
         return outputText;
     } catch (error) {
         console.error('Error:', error);
@@ -49,32 +56,32 @@ export const handleOpenAIRequest = async (prompt: string, fileContents?: string[
     }
 };
 
-// export const handleOpenAIRequestCompletion = async (prompt: string, fileContents?: string[]) => {
-//     try {
-//         let fullPrompt = prompt;
+async function handleAnthropicRequest(prompt: string, model: string, temperature: number): Promise<string> {
+    try {
+        // Map friendly names to actual model IDs
+        const modelMap: Record<string, string> = {
+            'claude-sonnet': 'claude-sonnet-4-20250514',
+        };
+        const actualModel = modelMap[model] || model;
 
-//         if (fileContents && fileContents.length > 0) {
-//             fullPrompt += `\n\n### Uploaded Files Content:\n${fileContents.join('\n\n')}`;
-//         }
+        const response = await anthropic.messages.create({
+            model: actualModel,
+            max_tokens: 8192,
+            temperature: temperature,
+            messages: [
+                { role: 'user', content: prompt }
+            ],
+        });
 
+        const outputText = response.content
+            .filter((block: any) => block.type === 'text')
+            .map((block: any) => block.text)
+            .join('');
 
-//         console.log("Here is the final prompt sent to GPT-4.1:", fullPrompt)
-
-//         const messages: { role: 'system' | 'user'; content: string }[] = [
-//             { role: 'user', content: fullPrompt }
-//         ];
-
-//         const response = await openai.chat.completions.create({
-//             model: 'gpt-4.1',
-//             messages: messages,
-//         });
-
-//         console.log('OpenAI response:', response.output_text);
-//         const outputText = response.output_text;
-
-//         return outputText;
-//     } catch (error) {
-//         console.error('Error:', error);
-//         throw new Error('Failed to process the prompt');
-//     }
-// };
+        console.log('Anthropic response:', outputText);
+        return outputText;
+    } catch (error) {
+        console.error('Anthropic Error:', error);
+        throw new Error('Failed to process the prompt with Anthropic');
+    }
+}

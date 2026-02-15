@@ -21,10 +21,8 @@ export default function Step({
 }: StepProps) {
   const navigate = useNavigate();
   const { project } = useParams();
-  // const truthStep = Number(useParams().step);
 
   const addressMap: addressMap = {
-    // 0: `/defineneeds/${project}/${step}`,
     1: `/reconstruction/${project}/${step}/card`,
     2: `/labeling/${project}/${step}`,
     3: `/category/${project}/${step}`,
@@ -36,59 +34,73 @@ export default function Step({
     navigate(addressMap[step]);
   };
 
+  const stepColors: Record<number, string> = {
+    1: "#CB9180",
+    2: "#D39C83",
+    3: "#B8856F",
+    4: "#A67B6B",
+  };
+
+  const color = stepColors[step] || "#CB9180";
+
   return (
-    <div className="flex-1 flex flex-col items-center h-full">
+    <div className="flex-1 flex flex-col items-center h-full w-full">
+      {/* Step indicator */}
       <div
-        className={`text-center text mb-1 ${
-          active ? "text-deepbg" : "text-gray"
-        }`}
+        className="text-center text-sm font-zen font-semibold mb-2"
+        style={{ color: active ? color : "#999" }}
       >
         STEP {step}
       </div>
       <div className="w-full h-9 flex items-center justify-center">
         <div
-          className={`flex-1 h-[2px] ${
-            active ? "bg-deepbg" : "bg-gray"
-          } rounded-l-full`}
+          className="flex-1 h-[2px] rounded-l-full"
+          style={{ backgroundColor: active ? color : "#ddd" }}
         ></div>
         <div
-          className={`w-9 h-9 ${
-            active ? "border-[2px] border-deepbg" : "bg-gray"
-          } rounded-full`}
-        ></div>
+          className="w-9 h-9 rounded-full flex items-center justify-center"
+          style={{
+            border: active ? `2px solid ${color}` : "none",
+            backgroundColor: active ? "white" : "#ddd",
+          }}
+        >
+          {active && (
+            <span className="text-xs font-bold" style={{ color }}>
+              {step}
+            </span>
+          )}
+        </div>
         <div
-          className={`flex-1 h-[2px] ${
-            active ? "bg-deepbg" : "bg-gray"
-          } rounded-r-full`}
+          className="flex-1 h-[2px] rounded-r-full"
+          style={{ backgroundColor: active ? color : "#ddd" }}
         ></div>
       </div>
+
+      {/* Card */}
       <div
-        className={`mt-3 w-full h-96 flex justify-center border-[1.5px]
-          ${
-            active
-              ? "border-deepbg cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg"
-              : "shadow-[0px_4.41px_12.35px_0px_rgba(8, 15, 52, 0.04)]"
-          } rounded-[18px]`}
+        className={`mt-4 w-full h-80 flex flex-col items-center justify-center rounded-2xl border-[1.5px] transition-all ${
+          active
+            ? "border-[#CB9180]/30 cursor-pointer hover:-translate-y-1 hover:shadow-xl bg-white shadow-md"
+            : "border-gray-200 bg-gray-50 shadow-sm"
+        }`}
         onClick={handleClick}
       >
-        <div className="mt-[30%] flex flex-col items-center">
-          <div
-            className={`w-12 h-12 rounded-[8px] p-3 ${
-              active ? "bg-[#ff8b541a]" : "bg-[#efefef]"
-            }`}
-          >
-            <img src={imgSrc} alt="logo" />
-          </div>
-          <div
-            className={`mt-4 text ${
-              active ? "text-activeText font-semibold" : "text-[#707070]"
-            }`}
-          >
-            {title}
-          </div>
-          <div className="text-center text-sm p-4 text-slate-700">
-            {description}
-          </div>
+        <div
+          className={`w-14 h-14 rounded-xl p-3 mb-4 ${
+            active ? "bg-[#FFF3EE]" : "bg-[#efefef]"
+          }`}
+        >
+          <img src={imgSrc} alt="logo" className="w-full h-full object-contain" />
+        </div>
+        <div
+          className={`text-base font-zen px-4 text-center ${
+            active ? "text-gray-800 font-semibold" : "text-[#707070]"
+          }`}
+        >
+          {title}
+        </div>
+        <div className="text-center text-sm px-5 mt-3 text-gray-500 font-zen leading-relaxed">
+          {description}
         </div>
       </div>
     </div>

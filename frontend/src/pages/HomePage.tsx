@@ -104,12 +104,15 @@ function HomePage() {
     }
   };
 
+  const { setAutoRun } = useInfoStore();
+
   const handleRun = () => {
     const projectName = `project-${Date.now()}`;
     setNickname("user");
     setProjectname(projectName);
     setResearchQuestion(localResearchQuestion);
     setNumberOfTopicClusters([minCodes, maxCodes]);
+    setAutoRun(true);
     navigate(`/progress/${projectName}/1`);
   };
 

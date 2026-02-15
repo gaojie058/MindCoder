@@ -8,6 +8,8 @@ export type infoStore = {
   setModel: (value: string) => void,
   selectedSteps: string[],
   setSelectedSteps: (value: string[]) => void,
+  autoRun: boolean,
+  setAutoRun: (value: boolean) => void,
 }
 
 export type datapoint = {

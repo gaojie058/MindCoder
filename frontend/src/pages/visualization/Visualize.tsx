@@ -140,7 +140,14 @@ const Visualize = () => {
 
   return (
     <>
-      <div className="w-full h-full flex-1 flex flex-col overflow-auto">
+      <div className="w-full h-full flex-1 flex flex-col overflow-auto bg-[#FFFBF9]">
+        {/* Step Header */}
+        <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0">
+          <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
+            <span className="text-[#CB9180] mr-2">Step 4</span>Visualization
+          </h2>
+          <p className="text-xs text-gray-500 font-zen mt-0.5">Key finding summary and theme map</p>
+        </div>
         {!isFullScreen ? (
           <div className="justify-between items-center flex flex-row flex-1 overflow-hidden">
             <div className="flex flex-col w-[40%] h-full gap-2">

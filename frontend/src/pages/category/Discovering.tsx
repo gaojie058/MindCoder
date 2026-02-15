@@ -302,7 +302,14 @@ export default function Discover() {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-between items-center overflow-auto">
+    <div className="w-full h-full flex flex-col justify-between items-center overflow-auto bg-[#FFFBF9]">
+      {/* Step Header */}
+      <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-8 py-3 flex-shrink-0">
+        <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
+          <span className="text-[#CB9180] mr-2">Step 3</span>Themes
+        </h2>
+        <p className="text-xs text-gray-500 font-zen mt-0.5">Uncover patterns by grouping sub-themes into higher-level themes</p>
+      </div>
       {hasError && (
         <div
           className="w-full p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"

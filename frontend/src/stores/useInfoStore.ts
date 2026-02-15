@@ -7,6 +7,7 @@ const useInfoStore = create<infoStore>((set)=>({
   projectname:'',
   model: 'gpt-5-2025-08-07',
   selectedSteps: ['card', 'code', 'concept', 'display'],
+  autoRun: false,
   setNickname(value) {
       set(() => ({
           nickname: value,
@@ -25,6 +26,11 @@ const useInfoStore = create<infoStore>((set)=>({
   setSelectedSteps(value) {
       set(() => ({
           selectedSteps: value,
+      }))
+  },
+  setAutoRun(value) {
+      set(() => ({
+          autoRun: value,
       }))
   },
 }))

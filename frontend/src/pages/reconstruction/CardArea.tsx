@@ -44,8 +44,15 @@ export default function CardArea() {
 
   return (
     <>
-      <div className="w-full h-full flex flex-col">
-        <div className="w-full flex gap-4 bg-white z-20 px-6 py-4 flex-shrink-0">
+      <div className="w-full h-full flex flex-col bg-[#FFFBF9]">
+        {/* Step Header */}
+        <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0">
+          <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
+            <span className="text-[#CB9180] mr-2">Step 1</span>Open Coding
+          </h2>
+          <p className="text-xs text-gray-500 font-zen mt-0.5">Organize your data into open codes based on semantic meaning</p>
+        </div>
+        <div className="w-full flex gap-3 bg-white z-20 px-6 py-3 flex-shrink-0 border-b border-gray-100">
           <Button
             onClick={toggleViewMode}
             className="w-48 h-12 rounded-2xl !text-deepbg !bg-[#FFF3EE]"

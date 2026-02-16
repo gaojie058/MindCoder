@@ -374,8 +374,10 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
 
   return (
     <div className="p-4 stick">
-      <div className="pb-4 flex items-center justify-between sticky top-0 bg-white z-30 pt-4 -mt-4">
+      <div className="pb-2 flex items-center justify-between sticky top-0 bg-white z-30 pt-2 -mt-2 text-xs">
         <Select
+          size="small"
+          sx={{ fontSize: '0.75rem', height: 32, '& .MuiSelect-select': { py: '4px' } }}
           value={selectedFileLocal}
           onChange={async (e) => {
             const newFileName = e.target.value;

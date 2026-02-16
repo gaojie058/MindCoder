@@ -68,12 +68,12 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
   return (
     <div
       ref={labelRef}
-      className={`group relative rounded-lg transition-all cursor-pointer border ${
+      className={`group relative rounded-lg transition-all cursor-pointer ${
         isSelected
-          ? "border-current shadow-sm"
-          : "border-transparent hover:border-gray-200 hover:bg-gray-50/80"
+          ? "shadow-sm"
+          : "hover:bg-gray-50/80"
       }`}
-      style={isSelected ? { borderColor: color.bg, backgroundColor: color.bg + "18" } : undefined}
+      style={isSelected ? { backgroundColor: color.bg + "40" } : undefined}
       id={`card-${id}`}
       onClick={handleClick}
     >

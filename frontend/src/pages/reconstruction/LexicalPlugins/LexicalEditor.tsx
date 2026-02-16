@@ -295,7 +295,10 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
 
     const handleSelect = (e: CustomEvent) => {
       // Clear previous
-      activeElements.forEach(({ el, origOutline }) => { el.style.outline = origOutline; });
+      activeElements.forEach((item: any) => {
+        if (item.key === "opacity") item.el.style.opacity = item.origOutline;
+        else item.el.style.outline = item.origOutline;
+      });
       activeElements = [];
       if (penEl) { penEl.remove(); penEl = null; }
 
@@ -317,19 +320,28 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
       firstEl.appendChild(pen);
       penEl = pen;
 
-      // Outline all
-      elements.forEach((el: Element) => {
+      // Brighten selected code's segments, dim others
+      const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
+      allHighlighted.forEach((el: Element) => {
         const htmlEl = el as HTMLElement;
-        const origOutline = htmlEl.style.outline;
-        htmlEl.style.outline = `2px solid ${color}`;
-        activeElements.push({ el: htmlEl, origOutline });
+        const origOpacity = htmlEl.style.opacity;
+        const isThisCode = htmlEl.getAttribute("data-card-id") === codeId ||
+          htmlEl.style.cssText.includes(`--card-id: ${codeId}`) ||
+          htmlEl.style.cssText.includes(`--card-id:${codeId}`);
+        if (!isThisCode) {
+          htmlEl.style.opacity = "0.3";
+          activeElements.push({ el: htmlEl, origOutline: origOpacity, key: "opacity" } as any);
+        }
       });
     };
 
     window.addEventListener("selectCodeInEditor", handleSelect as EventListener);
     return () => {
       window.removeEventListener("selectCodeInEditor", handleSelect as EventListener);
-      activeElements.forEach(({ el, origOutline }) => { el.style.outline = origOutline; });
+      activeElements.forEach((item: any) => {
+        if (item.key === "opacity") item.el.style.opacity = item.origOutline;
+        else item.el.style.outline = item.origOutline;
+      });
       if (penEl) penEl.remove();
     };
   }, []);

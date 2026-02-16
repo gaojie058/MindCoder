@@ -52,6 +52,19 @@ export default function WordCoverage() {
   const [forceUpdate, setForceUpdate] = useState(false);
   const [isRecalculating, setIsRecalculating] = useState(false);
 
+  // Auto-trigger coverage calculation when file or cards change
+  useEffect(() => {
+    if (!selectedFile || !cardData.length) return;
+    const saved = fileCoverageData[selectedFile];
+    if (!saved || saved.coveragePercentage === 0 || saved.coveragePercentage === -1) {
+      // Auto-recalculate after a short delay
+      const timer = setTimeout(() => {
+        handleManualRecalculation();
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedFile, cardData, fileCardMap]);
+
   const handleManualRecalculation = async () => {
     if (!selectedFile || isRecalculating) return;
 

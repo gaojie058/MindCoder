@@ -1,14 +1,8 @@
 
 export const llm_did_description = {
-  card: `
-    At this stage, the LLM carefully reads the data with an open mind. It gives short labels (codes) to important parts.\n
-    `,
-  code: `
-    At this stage, the LLM groups similar codes into sub-themes by spotting patterns and connections in the open codes.\n
-  `,
-  concept: `
-    At this stage, the LLM turns sub-themes into clear themes that show the bigger patterns in the data.\n
-  `,
+  card: `Read your data and created initial open codes by grouping similar text chunks.`,
+  code: `Grouped similar open codes into sub-themes based on shared patterns.`,
+  concept: `Organized sub-themes into high-level themes that capture major patterns.`,
 }
 
 

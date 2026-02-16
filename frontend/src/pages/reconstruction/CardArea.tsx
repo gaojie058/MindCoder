@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import Button from "@/components/ui/Button";
 import logoAdd from "@/assets/icon/add.png";
 import logoTrash from "@/assets/icon/trash.png";
@@ -52,6 +52,13 @@ export default function CardArea() {
   const [selectedCodeId, setSelectedCodeId] = useState<string | null>(null);
   const handleSelect = useCallback((id: string | null) => setSelectedCodeId(id), []);
 
+  // Stats
+  const stats = useMemo(() => {
+    const total = activeCodes.length;
+    const aiGenerated = activeCodes.filter(c => c.isGPT === true).length;
+    return { total, aiGenerated, userEdited: total - aiGenerated };
+  }, [activeCodes]);
+
   // Filter codes by search query
   const filteredCodes = searchQuery.trim()
     ? activeCodes.filter((card) => {
@@ -73,6 +80,14 @@ export default function CardArea() {
             <span className="text-[#CB9180] mr-2">Step 1</span>Open Coding
           </h2>
           <p className="text-xs text-gray-500 font-zen mt-0.5">Organize your data into open codes based on semantic meaning</p>
+        </div>
+        {/* Stats Bar */}
+        <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
+          <span className="text-[#8B5E4B] font-medium">Total: {stats.total}</span>
+          <span className="text-[#CB9180]">•</span>
+          <span className="text-[#CB9180]">🤖 AI-generated: {stats.aiGenerated}</span>
+          <span className="text-[#CB9180]">•</span>
+          <span className="text-[#8B5E4B]">✏️ User edited: {stats.userEdited}</span>
         </div>
         <div className="w-full flex gap-2 bg-white z-20 px-6 py-2 flex-shrink-0 border-b border-gray-100 items-center">
           <Button

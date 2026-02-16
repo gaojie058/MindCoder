@@ -310,6 +310,14 @@ export default function Discover() {
         </h2>
         <p className="text-xs text-gray-500 font-zen mt-0.5">Uncover patterns by grouping sub-themes into higher-level themes</p>
       </div>
+      {/* Stats Bar */}
+      <div className="w-full px-8 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
+        <span className="text-[#8B5E4B] font-medium">Total: {Array.isArray(conceptData) ? conceptData.length : 0}</span>
+        <span className="text-[#CB9180]">•</span>
+        <span className="text-[#CB9180]">🤖 AI-generated: {Array.isArray(conceptData) ? conceptData.filter(c => c.isGPT === true).length : 0}</span>
+        <span className="text-[#CB9180]">•</span>
+        <span className="text-[#8B5E4B]">✏️ User edited: {Array.isArray(conceptData) ? conceptData.filter(c => c.isGPT !== true).length : 0}</span>
+      </div>
       {hasError && (
         <div
           className="w-full p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg"

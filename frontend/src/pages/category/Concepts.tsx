@@ -8,6 +8,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import useConceptStore from "@/stores/useConceptStore";
 import useCodeStore from "@/stores/useCodeStore";
+import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { concept, code } from "@/types/stores";
 import { useGenerateButton } from "@/api/useGenerateButton";
 function getContrastingTextColor(hexColor: string): string {
@@ -404,35 +405,14 @@ export default function Concept({
                 <div className="font-zen cursor-pointer">{definition}</div>
               </div>
               <div className="text-[#707070] text-lg px-4 pb-4 font-semibold rounded-md">
-                Sub-themes relating to themes
-                <div className="flex flex-row gap-4 mt-3 cursor-pointer flex-wrap">
-                  {codeData.map((code) => (
-                    <div
-                      className={`h-auto w-auto lg:max-w-[340px] 2xl:max-w-[430px] text-left p-2 justify-center bg-white rounded-lg text-[#C66B50] font-zen font-semibold text-sm flex items-center
-                        
-                        ${
-                          drawerOpen === "edit"
-                            ? "cursor-pointer"
-                            : "cursor-default"
-                        }
-                        ${
-                          (
-                            drawerOpen === "edit"
-                              ? tempCodes.includes(code.id)
-                              : selectedCodes.includes(code.id)
-                          )
-                            ? "border-2 border-[#C66B50] font-bold"
-                            : "border-none"
-                        }`}
-                      key={code.id}
-                      onClick={() =>
-                        drawerOpen === "edit" && toggleCodeSelection(code.id)
-                      }
-                    >
-                      {code.name}
-                    </div>
-                  ))}
-                </div>
+                <MultiSelectDropdown
+                  label="Sub-themes"
+                  options={codeData.map((code) => ({ id: code.id, label: code.name }))}
+                  selected={drawerOpen === "edit" ? tempCodes : selectedCodes}
+                  onChange={(id) => drawerOpen === "edit" && toggleCodeSelection(id)}
+                  disabled={drawerOpen !== "edit"}
+                  placeholder="Select sub-themes..."
+                />
               </div>
             </div>
           </div>

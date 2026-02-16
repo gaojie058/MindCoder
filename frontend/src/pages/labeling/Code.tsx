@@ -8,6 +8,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import useCodeStore from "@/stores/useCodeStore";
 import useCardStore from "@/stores/useCardStore";
+import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { code, card } from "@/types/stores";
 import { useGenerateButton } from "@/api/useGenerateButton";
 
@@ -367,34 +368,14 @@ export default function Code({
                 <div className="font-zen cursor-pointer">{localDefinition}</div>
               </div>
               <div className="text-[#707070] text-lg p-4 font-semibold rounded-md">
-                Open Codes
-                <div className="flex flex-row gap-4 mt-3 cursor-pointer flex-wrap">
-                  {cardData.map((card) => (
-                    <div
-                      className={`w-[360px] text-left justify-center bg-white rounded-lg text-[#C66B50] font-zen font-semibold flex items-center p-2
-                        ${
-                          drawerOpen === "edit"
-                            ? "cursor-pointer"
-                            : "cursor-default"
-                        }
-                        ${
-                          (
-                            drawerOpen === "edit"
-                              ? tempCards.includes(card.id)
-                              : selectedCards.includes(card.id)
-                          )
-                            ? "border-2 border-[#C66B50] font-bold"
-                            : "border-none"
-                        }`}
-                      key={card.id}
-                      onClick={() =>
-                        drawerOpen === "edit" && toggleCardSelection(card.id)
-                      }
-                    >
-                      Open Code {card.id}: {card.name}
-                    </div>
-                  ))}
-                </div>
+                <MultiSelectDropdown
+                  label="Open Codes"
+                  options={cardData.map((card) => ({ id: card.id, label: `#${card.id} ${card.name}` }))}
+                  selected={drawerOpen === "edit" ? tempCards : selectedCards}
+                  onChange={(id) => drawerOpen === "edit" && toggleCardSelection(id)}
+                  disabled={drawerOpen !== "edit"}
+                  placeholder="Select open codes..."
+                />
               </div>
             </div>
           </div>

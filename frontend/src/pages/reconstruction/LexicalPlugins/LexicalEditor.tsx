@@ -279,6 +279,66 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     return () => window.removeEventListener("highlightInEditor", handleHighlight as EventListener);
   }, []);
 
+  // Listen for selectCodeInEditor — persistent highlight with pen indicator
+  useEffect(() => {
+    // Track elements we've highlighted so we can clear them
+    let activeOverlays: HTMLElement[] = [];
+    let activeElements: { el: HTMLElement; origOutline: string }[] = [];
+
+    const handleSelect = (e: CustomEvent) => {
+      // Clear previous selection
+      activeOverlays.forEach((o) => o.remove());
+      activeOverlays = [];
+      activeElements.forEach(({ el, origOutline }) => { el.style.outline = origOutline; });
+      activeElements = [];
+
+      const { codeId, color, topics } = e.detail;
+      if (!codeId || !topics || !editorRef.current) return;
+
+      const editorEl = editorRef.current;
+
+      // For each topic/segment, find and persistently highlight in editor
+      for (const topic of topics) {
+        const text = topic.content?.trim().substring(0, 80).toLowerCase();
+        if (!text) continue;
+
+        const walker = document.createTreeWalker(editorEl, NodeFilter.SHOW_TEXT);
+        let node: Text | null;
+        while ((node = walker.nextNode() as Text)) {
+          if (node.textContent && node.textContent.toLowerCase().includes(text)) {
+            const parentEl = node.parentElement;
+            if (parentEl) {
+              // Add colored outline
+              const origOutline = parentEl.style.outline;
+              parentEl.style.outline = `2px solid ${color}`;
+              activeElements.push({ el: parentEl, origOutline });
+
+              // Add pen indicator on first segment only
+              if (activeOverlays.length === 0) {
+                parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+                const pen = document.createElement("span");
+                pen.textContent = "✏️";
+                pen.className = "select-pen-indicator";
+                pen.style.cssText = `position:absolute;margin-left:-20px;margin-top:-4px;font-size:14px;pointer-events:none;z-index:20;`;
+                parentEl.style.position = "relative";
+                parentEl.appendChild(pen);
+                activeOverlays.push(pen);
+              }
+            }
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("selectCodeInEditor", handleSelect as EventListener);
+    return () => {
+      window.removeEventListener("selectCodeInEditor", handleSelect as EventListener);
+      activeOverlays.forEach((o) => o.remove());
+      activeElements.forEach(({ el, origOutline }) => { el.style.outline = origOutline; });
+    };
+  }, []);
+
   // Call onHighlightReady only once
   useEffect(() => {
     onHighlightReady();

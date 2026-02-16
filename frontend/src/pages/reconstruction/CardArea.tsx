@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Button from "@/components/ui/Button";
 import logoAdd from "@/assets/icon/add.png";
 import logoEye from "@/assets/icon/eye.png";
@@ -40,6 +40,8 @@ export default function CardArea() {
   }, [editorInitialized]);
 
   const activeCodes = cardData.filter((card) => card.active);
+  const [selectedCodeId, setSelectedCodeId] = useState<string | null>(null);
+  const handleSelect = useCallback((id: string | null) => setSelectedCodeId(id), []);
 
   return (
     <>
@@ -116,6 +118,8 @@ export default function CardArea() {
                     active={card.active ?? true}
                     isGPT={card.isGPT ?? false}
                     colorIndex={index}
+                    selectedCodeId={selectedCodeId}
+                    onSelect={handleSelect}
                   />
                 ))}
               </div>

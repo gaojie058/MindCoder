@@ -25,7 +25,7 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
 
   useEffect(() => setLocalName(name), [name]);
 
-  // Listen for navigateToCard events
+  // Listen for navigateToCard events (clicking highlighted text in editor → select this code)
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       if (e.detail.cardId === id.toString() || e.detail.cardId === id) {
@@ -33,11 +33,17 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
         if (labelRef.current) {
           labelRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
         }
+        // Also trigger persistent editor highlight for this code
+        window.dispatchEvent(
+          new CustomEvent("selectCodeInEditor", {
+            detail: { codeId: id, color: color.bg, topics },
+          })
+        );
       }
     };
     window.addEventListener("navigateToCard", handler as EventListener);
     return () => window.removeEventListener("navigateToCard", handler as EventListener);
-  }, [id, onSelect]);
+  }, [id, onSelect, color.bg, topics]);
 
   const handleSaveName = useCallback(() => {
     updateCardName(id, localName);

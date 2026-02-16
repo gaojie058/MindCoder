@@ -21,7 +21,6 @@ export default function CardArea() {
   const [editorReady, setEditorReady] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
 
   const revealDialog = () => setIsHidden(false);
   const hideDialog = () => setIsHidden(true);
@@ -66,19 +65,6 @@ export default function CardArea() {
         </div>
         <div className="w-full flex gap-2 bg-white z-20 px-6 py-2 flex-shrink-0 border-b border-gray-100 items-center">
           <Button
-            onClick={toggleViewMode}
-            className="h-9 rounded-xl !text-deepbg !bg-[#FFF3EE] text-xs px-3"
-          >
-            <img src={logoDoc} alt="" className="w-4 h-4 mr-1.5" />
-            {viewMode === "split" ? "Expand Codes" : "Show Original"}
-          </Button>
-          <Button
-            onClick={() => { setShowSearch(!showSearch); if (showSearch) setSearchQuery(""); }}
-            className={`h-9 rounded-xl text-xs px-3 ${showSearch ? "!text-white !bg-[#CB9180]" : "!text-deepbg !bg-[#FFF3EE]"}`}
-          >
-            🔍 Search
-          </Button>
-          <Button
             onClick={revealDialog}
             className="h-9 rounded-xl !text-deepbg !bg-[#FFF3EE] text-xs px-3"
           >
@@ -92,18 +78,17 @@ export default function CardArea() {
             <img src={logoTrash} alt="" className="w-4 h-4 mr-1.5" />
             Trash
           </Button>
-
-          {/* Inline search input */}
-          {showSearch && (
+          {/* Always-visible search input */}
+          <div className="flex-1 relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search codes or segments..."
-              autoFocus
-              className="ml-2 flex-1 h-9 px-3 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#CB9180]"
+              placeholder="Search codes..."
+              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#CB9180] bg-gray-50/50"
             />
-          )}
+          </div>
         </div>
 
         <div className="w-full flex-1 flex flex-row overflow-hidden">
@@ -129,6 +114,13 @@ export default function CardArea() {
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Open Codes ({filteredCodes.length}{searchQuery ? ` / ${activeCodes.length}` : ""})
                 </span>
+                <button
+                  onClick={toggleViewMode}
+                  className="text-[11px] text-gray-400 hover:text-[#CB9180] transition-colors flex items-center gap-1"
+                >
+                  <img src={logoDoc} alt="" className="w-3.5 h-3.5 opacity-50" />
+                  {viewMode === "split" ? "Expand" : "Show Original"}
+                </button>
               </div>
               <div className={viewMode === "codes" ? "grid grid-cols-2 gap-2" : "space-y-0.5"}>
                 {filteredCodes.map((card, index) => {

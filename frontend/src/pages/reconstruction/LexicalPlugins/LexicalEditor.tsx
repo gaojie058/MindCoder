@@ -374,7 +374,7 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
 
   return (
     <div className="p-4 stick">
-      <div className="pb-4 flex items-center justify-between">
+      <div className="pb-4 flex items-center justify-between sticky top-0 bg-white z-30 pt-4 -mt-4">
         <Select
           value={selectedFileLocal}
           onChange={async (e) => {

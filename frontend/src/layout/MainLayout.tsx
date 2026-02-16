@@ -442,17 +442,12 @@ export default function MainLayout({
         </div>
       )}
       {loading && (
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center">
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
-            <div className="relative w-16 h-16 mx-auto mb-4">
-              <div className="absolute inset-0 border-4 border-[#CB9180]/20 rounded-full"></div>
-              <div className="absolute inset-0 border-4 border-transparent border-t-[#CB9180] rounded-full animate-spin"></div>
-            </div>
-            <h3 className="text-lg font-semibold font-zen text-gray-800 mb-2">
-              Running MindCoder
-            </h3>
-            <p className="text-sm text-[#CB9180] font-zen">{progress}</p>
+        <div className="fixed bottom-4 right-4 z-50 bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-3 flex items-center gap-3 max-w-xs">
+          <div className="relative w-5 h-5 shrink-0">
+            <div className="absolute inset-0 border-2 border-[#CB9180]/20 rounded-full"></div>
+            <div className="absolute inset-0 border-2 border-transparent border-t-[#CB9180] rounded-full animate-spin"></div>
           </div>
+          <p className="text-xs text-[#CB9180] font-zen font-semibold">{progress}</p>
         </div>
       )}
       <HistoryModal />

@@ -294,10 +294,11 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     let penEl: HTMLElement | null = null;
 
     const handleSelect = (e: CustomEvent) => {
-      // Clear previous
+      // Clear previous — restore all modified elements
       activeElements.forEach((item: any) => {
-        if (item.key === "opacity") item.el.style.opacity = item.origOutline;
-        else item.el.style.outline = item.origOutline;
+        if (item.key === "opacity") item.el.style.opacity = item.orig;
+        else if (item.key === "bg") item.el.style.backgroundColor = item.orig;
+        else if (item.key === "boxShadow") item.el.style.boxShadow = item.orig;
       });
       activeElements = [];
       if (penEl) { penEl.remove(); penEl = null; }
@@ -320,17 +321,27 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
       firstEl.appendChild(pen);
       penEl = pen;
 
-      // Brighten selected code's segments, dim others
+      // Apply persistent solid background to selected code's segments, dim others
+      const selectColor = color || "#E8B4B8";
       const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
       allHighlighted.forEach((el: Element) => {
         const htmlEl = el as HTMLElement;
-        const origOpacity = htmlEl.style.opacity;
         const isThisCode = htmlEl.getAttribute("data-card-id") === codeId ||
           htmlEl.style.cssText.includes(`--card-id: ${codeId}`) ||
           htmlEl.style.cssText.includes(`--card-id:${codeId}`);
-        if (!isThisCode) {
+        if (isThisCode) {
+          // Solid background highlight with the code's color (60% opacity)
+          const origBg = htmlEl.style.backgroundColor;
+          const origShadow = htmlEl.style.boxShadow;
+          htmlEl.style.backgroundColor = selectColor + "99";
+          htmlEl.style.boxShadow = `inset 0 -2px 0 0 ${selectColor}`;
+          activeElements.push({ el: htmlEl, orig: origBg, key: "bg" } as any);
+          activeElements.push({ el: htmlEl, orig: origShadow, key: "boxShadow" } as any);
+        } else {
+          // Dim non-selected codes
+          const origOpacity = htmlEl.style.opacity;
           htmlEl.style.opacity = "0.3";
-          activeElements.push({ el: htmlEl, origOutline: origOpacity, key: "opacity" } as any);
+          activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);
         }
       });
     };
@@ -339,8 +350,9 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     return () => {
       window.removeEventListener("selectCodeInEditor", handleSelect as EventListener);
       activeElements.forEach((item: any) => {
-        if (item.key === "opacity") item.el.style.opacity = item.origOutline;
-        else item.el.style.outline = item.origOutline;
+        if (item.key === "opacity") item.el.style.opacity = item.orig;
+        else if (item.key === "bg") item.el.style.backgroundColor = item.orig;
+        else if (item.key === "boxShadow") item.el.style.boxShadow = item.orig;
       });
       if (penEl) penEl.remove();
     };

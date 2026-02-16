@@ -276,7 +276,7 @@ export default function Labeling() {
         </h2>
         <p className="text-xs text-gray-500 font-zen mt-0.5">Group open codes into sub-themes that share high-level overlap</p>
       </div>
-      <div className="px-6 pt-4 pb-6 w-full flex-1 flex overflow-auto gap-4">
+      <div className="px-6 pt-6 pb-6 w-full flex-1 flex overflow-auto gap-4">
         <div className="flex-1 flex flex-col overflow-auto scrollbar-thin">
           <div className="flex flex-col gap-4">
             <div
@@ -315,7 +315,7 @@ export default function Labeling() {
         </div>
         <div
           ref={dragBoxRef}
-          className="flex-shrink-0 ml-4 h-full flex flex-col w-[320px] lg:max-w-[380px] 2xl:max-w-[430px] border-l border-gray-100 pl-4"
+          className="flex-shrink-0 ml-4 h-full flex flex-col w-[320px] lg:max-w-[380px] 2xl:max-w-[430px] border-l border-gray-100 pl-4 pt-2"
         >
           <div
             ref={topContainerRef}

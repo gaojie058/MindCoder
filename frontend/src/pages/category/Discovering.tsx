@@ -319,7 +319,7 @@ export default function Discover() {
           is missing or not an array.
         </div>
       )}
-      <div className="px-6 pt-4 pb-6 w-full flex-1 overflow-auto flex gap-4">
+      <div className="px-6 pt-6 pb-6 w-full flex-1 overflow-auto flex gap-4">
         <div className="flex-1 flex flex-col overflow-auto scrollbar-thin">
           <div className="flex flex-col gap-4">
             <div
@@ -351,7 +351,7 @@ export default function Discover() {
 
         <div
           ref={dragBoxRef}
-          className="flex-shrink-0 ml-4 h-full flex flex-col w-[320px] lg:max-w-[380px] 2xl:max-w-[430px] border-l border-gray-100 pl-4"
+          className="flex-shrink-0 ml-4 h-full flex flex-col w-[320px] lg:max-w-[380px] 2xl:max-w-[430px] border-l border-gray-100 pl-4 pt-2"
         >
           <div
             ref={topContainerRef}

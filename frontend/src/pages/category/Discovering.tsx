@@ -351,7 +351,7 @@ export default function Discover() {
 
         <div
           ref={dragBoxRef}
-          className="flex-shrink-0 ml-7 h-full flex flex-col w-[320px] lg:max-w-[380px] 2xl:max-w-[430px]"
+          className="flex-shrink-0 ml-4 h-full flex flex-col w-[320px] lg:max-w-[380px] 2xl:max-w-[430px] border-l border-gray-100 pl-4"
         >
           <div
             ref={topContainerRef}

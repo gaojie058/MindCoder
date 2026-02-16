@@ -97,11 +97,8 @@ export const useGenerate = () => {
       }
 
       if (targetStep === "card") {
-        useCardStore.getState().setCardData([]);
-        useCardStore.setState({ fileCardMap: {} });
-        useEditorStore.getState().resetEditorState();
-
-        // Then regenerate
+        // Don't clear data before regeneration — keep old codes visible
+        // Data will be replaced when new results arrive via updateStoreData
         await executeGenerationStep("card");
       } else if (targetStep === "display") {
         // Reset display store before regenerating display items

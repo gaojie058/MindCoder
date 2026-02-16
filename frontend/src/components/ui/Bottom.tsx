@@ -37,24 +37,7 @@ export default function Bottom({
             )}
             {loading ? "Generating…" : "Regenerate"}
           </button>
-          {bottomType === "regenerate" && regenerateSubsequent && (
-            <button
-              onClick={regenerateSubsequent}
-              disabled={loading}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white text-xs font-zen font-semibold transition-colors ${
-                loading ? "bg-[#E8C0B3]/60 cursor-wait" : "bg-[#E8C0B3] hover:bg-[#D1A696]"
-              }`}
-            >
-              {loading ? (
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
-                </svg>
-              )}
-              Regen All
-            </button>
-          )}
+          {/* Regen All removed */}
         </>
       )}
     </div>

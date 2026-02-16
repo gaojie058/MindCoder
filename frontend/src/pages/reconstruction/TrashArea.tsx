@@ -1,57 +1,46 @@
 import useCardStore from "@/stores/useCardStore";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "@/components/ui/Button";
-import logoCard from "@/assets/icon/doc.png";
-import logoSearch from "@/assets/icon/search.png";
-import logoTrash from "@/assets/icon/trash.png";
 
 export default function TrashArea() {
-  // 从 store 中获取 cardData 和 setCardData
-  const { cardData, setCardData } = useCardStore();
+  const { cardData } = useCardStore();
   const navigate = useNavigate();
   const { project, step } = useParams();
 
-  const goToCardArea = () =>
+  const goBack = () =>
     navigate(`/reconstruction/${project}/${step}/card`);
-  const goToSearchArea = () =>
-    navigate(`/reconstruction/${project}/${step}/search`);
-  const goToTrashArea = () =>
-    navigate(`/reconstruction/${project}/${step}/trash`);
+
+  const trashedCards = cardData.filter((card) => !card.active);
 
   return (
-    <div className="w-full h-full flex-1 flex flex-col justify-stretch overflow-hidden">
-      <div className="p-8 w-full flex-1">
-        <div className="flex justify-between items-center mb-8">
-          {/* <div className="text-3xl font-semibold">Trashed Cards</div> */}
-          <div className="flex gap-3">
-            <Button
-              onClick={goToCardArea}
-              className="w-40 h-12 rounded-2xl !text-deepbg !bg-[#FFF3EE]"
-            >
-              <img src={logoCard} alt="" className="w-6 h-6 mr-2" />
-              Card View
-            </Button>
-            <Button
-              onClick={goToSearchArea}
-              className="w-40 h-12 rounded-2xl !text-deepbg !bg-[#FFF3EE]"
-            >
-              <img src={logoSearch} alt="" className="w-6 h-6 mr-2" />
-              Search
-            </Button>
-            {/* <Button
-              onClick={goToTrashArea}
-              className="w-40 h-12 rounded-2xl !text-white !bg-[#CB9180]"
-            >
-              <img src={logoTrash} alt="" className="w-6 h-6 mr-2" />
-              Trash
-            </Button> */}
-          </div>
-        </div>
-        <div className="mt-3 flex flex-wrap overflow-auto scrollbar-thin gap-6">
-          {cardData
-            .filter((card) => !card.active)
-            .map((card) => (
+    <div className="w-full h-full flex flex-col bg-[#FFFBF9]">
+      {/* Step Header — matches CardArea style */}
+      <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0">
+        <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
+          <span className="text-[#CB9180] mr-2">🗑️</span>Trashed Codes
+        </h2>
+        <p className="text-xs text-gray-500 font-zen mt-0.5">
+          {trashedCards.length} deleted code{trashedCards.length !== 1 ? "s" : ""} — restore from here
+        </p>
+      </div>
+
+      {/* Toolbar */}
+      <div className="w-full flex gap-2 bg-white z-20 px-6 py-2 flex-shrink-0 border-b border-gray-100 items-center">
+        <button
+          onClick={goBack}
+          className="h-9 rounded-xl text-xs px-3 bg-[#FFF3EE] text-[#8B5E4B] hover:bg-[#CB9180]/20 transition-colors flex items-center gap-1.5"
+        >
+          ← Back
+        </button>
+      </div>
+
+      {/* Trashed cards list */}
+      <div className="flex-1 overflow-auto scrollbar-thin p-6">
+        {trashedCards.length === 0 ? (
+          <div className="text-center text-gray-400 text-sm mt-12">No trashed codes</div>
+        ) : (
+          <div className="flex flex-wrap gap-4">
+            {trashedCards.map((card) => (
               <div key={card.id} className="relative w-full">
                 <Card
                   topics={card.topics}
@@ -60,10 +49,10 @@ export default function TrashArea() {
                   active={card.active}
                   isGPT={card.isGPT}
                 />
-                <div className="absolute bottom-0 right-0 m-4"></div>
               </div>
             ))}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

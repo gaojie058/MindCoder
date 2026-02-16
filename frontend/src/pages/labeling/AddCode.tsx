@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import ColorSelector from "./ColorSelector";
 import useCodeStore from "@/stores/useCodeStore";
 import useCardStore from "@/stores/useCardStore";
+import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { card } from "@/types/stores";
 import { nanoid } from "nanoid";
 
@@ -152,24 +153,13 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
         <ColorSelector codeId="" onColorChange={setTempColor} />
       </div>
       <div className="w-full p-3">
-        <div className="text-[#707070] text-lg font-zen font-semibold rounded-md">
-          Choose Open Codes
-        </div>
-        <div className="flex flex-row gap-4 mt-3 cursor-pointer flex-wrap">
-          {cardData.map((card) => (
-            <div
-              key={card.id}
-              className={`w-[360px] text-left justify-center bg-white rounded-lg text-[#C66B50] font-zen font-semibold flex items-center p-2 ${
-                selectedCardIds.has(card.id)
-                  ? "border-4 border-[#C66B50] font-bold"
-                  : "border-none"
-              }`}
-              onClick={() => handleCardClick(card.id)}
-            >
-              Open Code {card.id}: {card.name}
-            </div>
-          ))}
-        </div>
+        <MultiSelectDropdown
+          label="Choose Open Codes"
+          options={cardData.map((card) => ({ id: card.id, label: `#${card.id} ${card.name}` }))}
+          selected={Array.from(selectedCardIds)}
+          onChange={(id) => handleCardClick(id)}
+          placeholder="Select open codes..."
+        />
       </div>
     </div>
   );

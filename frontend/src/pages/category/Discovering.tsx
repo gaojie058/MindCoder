@@ -319,11 +319,11 @@ export default function Discover() {
           is missing or not an array.
         </div>
       )}
-      <div className="p-8 w-full flex-1 overflow-auto flex">
+      <div className="px-6 pt-4 pb-6 w-full flex-1 overflow-auto flex gap-4">
         <div className="flex-1 flex flex-col overflow-auto scrollbar-thin">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <div
-              className="w-full py-4 text-[#C66B50] flex items-center justify-center shadow-lg rounded-xl border hover:-translate-y-[2px] hover:shadow-xl transition-all cursor-pointer"
+              className="w-full py-3 text-sm text-[#C66B50] flex items-center justify-center shadow-md rounded-xl border hover:-translate-y-[1px] hover:shadow-lg transition-all cursor-pointer"
               onClick={revealAddConcept}
             >
               + Add New Theme

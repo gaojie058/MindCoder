@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ColorSelector from "./ConceptColorSelector";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
+import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { code } from "@/types/stores";
 import { nanoid } from "nanoid";
 
@@ -148,24 +149,13 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
         <ColorSelector conceptId="" onColorChange={setTempColor} />
       </div>
       <div className="w-full p-3">
-        <div className="text-[#707070] text-lg font-zen font-semibold rounded-md">
-          Choose Sub-Theme(s) for this Theme
-        </div>
-        <div className="flex flex-row gap-4 mt-3 cursor-pointer flex-wrap">
-          {codeData.map((code) => (
-            <div
-              key={code.id}
-              className={`h-auto w-auto lg:max-w-[340px] 2xl:max-w-[430px] text-left p-2 justify-center bg-white rounded-lg text-[#C66B50] font-zen font-semibold text-sm flex items-center ${
-                selectedCodes.has(code.id)
-                  ? "border-4 border-[#C66B50] font-bold"
-                  : "border-none"
-              }`}
-              onClick={() => handleCodeClick(code.id)}
-            >
-              {code.name}
-            </div>
-          ))}
-        </div>
+        <MultiSelectDropdown
+          label="Choose Sub-Theme(s) for this Theme"
+          options={codeData.map((code) => ({ id: code.id, label: code.name }))}
+          selected={Array.from(selectedCodes)}
+          onChange={(id) => handleCodeClick(id)}
+          placeholder="Select sub-themes..."
+        />
       </div>
     </div>
   );

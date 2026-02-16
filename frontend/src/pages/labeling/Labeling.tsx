@@ -276,11 +276,11 @@ export default function Labeling() {
         </h2>
         <p className="text-xs text-gray-500 font-zen mt-0.5">Group open codes into sub-themes that share high-level overlap</p>
       </div>
-      <div className="p-8 w-full flex-1 flex overflow-auto">
+      <div className="px-6 pt-4 pb-6 w-full flex-1 flex overflow-auto gap-4">
         <div className="flex-1 flex flex-col overflow-auto scrollbar-thin">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <div
-              className="w-full py-4 text-[#C66B50] flex items-center justify-center shadow-lg rounded-xl border hover:-translate-y-[2px] hover:shadow-xl transition-all cursor-pointer"
+              className="w-full py-3 text-sm text-[#C66B50] flex items-center justify-center shadow-md rounded-xl border hover:-translate-y-[1px] hover:shadow-lg transition-all cursor-pointer"
               onClick={revealAddCode}
             >
               + Add New Sub-theme

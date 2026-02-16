@@ -282,7 +282,7 @@ export default function Concept({
       onClick={() => handleToggleDrawer("view")}
     >
       <div
-        className="shadow-lg rounded-xl p-4 text-lg cursor-pointer"
+        className="shadow-lg rounded-xl px-4 py-3 text-sm cursor-pointer"
         style={{
           position: "relative",
           zIndex: 10,
@@ -387,7 +387,7 @@ export default function Concept({
                 </div>
               </div>
 
-              <div className="text-[#707070] text-lg px-3 font-zen font-semibold rounded-md">
+              <div className="text-[#707070] text-sm px-3 font-zen font-semibold rounded-md">
                 <div className="mb-2">Choose sub-theme color</div>
                 <ColorSelector
                   conceptId={id}
@@ -399,12 +399,12 @@ export default function Concept({
           <div>
             <div className="w-full">
               <div className="p-4 mb-2 cursor-pointer">
-                <div className="text-[#707070] text-lg font-semibold rounded-md mb-2">
+                <div className="text-[#707070] text-sm font-semibold rounded-md mb-2">
                   Rationale
                 </div>
                 <div className="font-zen cursor-pointer">{definition}</div>
               </div>
-              <div className="text-[#707070] text-lg px-4 pb-4 font-semibold rounded-md">
+              <div className="text-[#707070] text-sm px-4 pb-4 font-semibold rounded-md">
                 <MultiSelectDropdown
                   label="Sub-themes"
                   options={codeData.map((code) => ({ id: code.id, label: code.name }))}

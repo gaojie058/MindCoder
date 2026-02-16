@@ -111,6 +111,14 @@ export default function DataPoint({
               className={`py-1 px-3 min-h-[8.5em] flex items-center justify-center text-sm rounded-[46px] text-center border cursor-pointer border-[#C66B50AB] mb-2 break-words ${
                 isHovering ? "bg-[#FFC6A9] bg-opacity-75" : ""
               }`}
+              onClick={() => {
+                // Dispatch event to highlight this chunk's text in the original data editor
+                window.dispatchEvent(
+                  new CustomEvent("highlightInEditor", {
+                    detail: { text: content, datapointId: id },
+                  })
+                );
+              }}
             >
               <div className="line-clamp-4 overflow-hidden">{content}</div>
             </div>

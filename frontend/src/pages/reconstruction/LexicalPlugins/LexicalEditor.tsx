@@ -243,6 +243,45 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     [selectedFileLocal, getEditorState, setEditorState]
   );
 
+  // Listen for highlightInEditor events from datapoint clicks
+  useEffect(() => {
+    const handleHighlight = (e: CustomEvent) => {
+      const { text } = e.detail;
+      if (!text || !editorRef.current) return;
+
+      // Find the text in the editor DOM
+      const editorEl = editorRef.current;
+      const walker = document.createTreeWalker(editorEl, NodeFilter.SHOW_TEXT);
+      const searchText = text.trim().substring(0, 80).toLowerCase(); // match first 80 chars
+
+      let node: Text | null;
+      while ((node = walker.nextNode() as Text)) {
+        if (node.textContent && node.textContent.toLowerCase().includes(searchText)) {
+          const parentEl = node.parentElement;
+          if (parentEl) {
+            // Scroll into view
+            parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+
+            // Flash highlight
+            const origBg = parentEl.style.backgroundColor;
+            parentEl.style.backgroundColor = "#FFD700";
+            parentEl.style.transition = "background-color 0.3s";
+            setTimeout(() => {
+              parentEl.style.backgroundColor = "#FFFACD";
+              setTimeout(() => {
+                parentEl.style.backgroundColor = origBg;
+              }, 2000);
+            }, 500);
+          }
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("highlightInEditor", handleHighlight as EventListener);
+    return () => window.removeEventListener("highlightInEditor", handleHighlight as EventListener);
+  }, []);
+
   // Call onHighlightReady only once
   useEffect(() => {
     onHighlightReady();

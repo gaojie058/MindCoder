@@ -18,7 +18,7 @@ export default function CardArea() {
 
   const navigate = useNavigate();
   const { project, step } = useParams();
-  const [viewMode, setViewMode] = useState("cards"); // "cards" or "split"
+  const [viewMode, setViewMode] = useState("split"); // "cards" or "split" — default to split view
   const [editorReady, setEditorReady] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
 

@@ -1,5 +1,6 @@
 import React from "react";
 import StepNav from "@/components/ui/StepNav";
+import BackgroundGenButton from "@/components/ui/BackgroundGenButton";
 import { useNavigate, useParams } from "react-router-dom";
 
 const TopLayout: React.FC = () => {
@@ -27,6 +28,9 @@ const TopLayout: React.FC = () => {
           Settings
         </button>
         <StepNav />
+        <div className="ml-auto shrink-0">
+          <BackgroundGenButton />
+        </div>
       </div>
     </div>
   );

@@ -8,10 +8,12 @@ import Dialog from "@/components/ui/Dialog";
 import { useNavigate, useParams } from "react-router-dom";
 import AddCard from "./AddCard";
 import useCardStore from "@/stores/useCardStore";
+import useEditorStore from "@/stores/useEditorStore";
 import LexicalEditor from "./LexicalPlugins/LexicalEditor";
 
 export default function CardArea() {
-  const { cardData } = useCardStore();
+  const { cardData, fileCardMap, getCardsForFile } = useCardStore();
+  const { selectedFile } = useEditorStore();
 
   const [isHidden, setIsHidden] = useState(true);
 
@@ -37,7 +39,16 @@ export default function CardArea() {
     }
   }, [editorInitialized]);
 
-  const activeCodes = cardData.filter((card) => card.active);
+  const allActiveCodes = cardData.filter((card) => card.active);
+  
+  // When a file is selected, only show codes belonging to that file
+  const activeCodes = selectedFile
+    ? (() => {
+        const fileCards = getCardsForFile(selectedFile);
+        const fileCardIds = new Set(fileCards.map(c => c.id));
+        return allActiveCodes.filter(card => fileCardIds.has(card.id));
+      })()
+    : allActiveCodes;
   const [selectedCodeId, setSelectedCodeId] = useState<string | null>(null);
   const handleSelect = useCallback((id: string | null) => setSelectedCodeId(id), []);
 
@@ -113,6 +124,11 @@ export default function CardArea() {
               <div className="flex items-center justify-between mb-2 px-2">
                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   Open Codes ({filteredCodes.length}{searchQuery ? ` / ${activeCodes.length}` : ""})
+                  {selectedFile && (
+                    <span className="ml-1 text-[10px] font-normal text-gray-400">
+                      — {selectedFile}
+                    </span>
+                  )}
                 </span>
                 <button
                   onClick={toggleViewMode}

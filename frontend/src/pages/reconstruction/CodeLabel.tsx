@@ -3,7 +3,6 @@ import { card } from "@/types";
 import useCardStore from "@/stores/useCardStore";
 import { CODE_COLORS } from "@/utils/codeColors";
 
-
 interface CodeLabelProps {
   id: string;
   name: string;
@@ -17,13 +16,13 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex 
   const { updateCardName, cardData, setCardData } = useCardStore();
   const [editing, setEditing] = useState(false);
   const [localName, setLocalName] = useState(name);
+  const [expanded, setExpanded] = useState(false);
   const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
-  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const labelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setLocalName(name), [name]);
 
-  // Listen for navigateToCard events (when user clicks highlighted text in editor)
+  // Listen for navigateToCard events
   useEffect(() => {
     const handler = (e: CustomEvent) => {
       if (e.detail.cardId === id.toString() || e.detail.cardId === id) {
@@ -48,23 +47,14 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex 
     setCardData(updated);
   }, [cardData, id, setCardData]);
 
-  // Hover → jump to text in editor
+  // Hover → highlight with matching color in editor
   const handleMouseEnter = () => {
-    hoverTimeout.current = setTimeout(() => {
-      if (topics.length > 0) {
-        window.dispatchEvent(
-          new CustomEvent("highlightInEditor", {
-            detail: { text: topics[0].content, datapointId: topics[0].id, codeId: id },
-          })
-        );
-      }
-    }, 300); // small delay to avoid accidental triggers
-  };
-
-  const handleMouseLeave = () => {
-    if (hoverTimeout.current) {
-      clearTimeout(hoverTimeout.current);
-      hoverTimeout.current = null;
+    if (topics.length > 0) {
+      window.dispatchEvent(
+        new CustomEvent("highlightInEditor", {
+          detail: { text: topics[0].content, datapointId: topics[0].id, codeId: id, color: color.bg },
+        })
+      );
     }
   };
 
@@ -76,16 +66,12 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex 
       className="group relative rounded-lg hover:bg-gray-50/80 transition-colors cursor-pointer border border-transparent hover:border-gray-200"
       id={`card-${id}`}
       onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
-      <div className="flex items-center gap-2.5 px-3 py-2.5">
+      <div className="flex items-center gap-2.5 px-3 py-2">
         {/* Color dot */}
-        <div
-          className="w-2.5 h-2.5 rounded-full shrink-0"
-          style={{ backgroundColor: color.bg }}
-        />
+        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color.bg }} />
 
-        {/* Code info — name wraps naturally */}
+        {/* Code info */}
         <div className="flex-1 min-w-0">
           {editing ? (
             <input
@@ -106,29 +92,53 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex 
               )}
             </div>
           )}
-          <div className="text-[11px] text-gray-400 mt-0.5">
-            {topics.length} segment{topics.length !== 1 ? "s" : ""}
-          </div>
+          {/* Expandable segments toggle */}
+          <button
+            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
+            className="text-[11px] text-gray-400 hover:text-gray-600 mt-0.5"
+          >
+            {topics.length} segment{topics.length !== 1 ? "s" : ""} {expanded ? "▴" : "▾"}
+          </button>
         </div>
 
-        {/* Edit button — visible on hover */}
+        {/* Actions on hover */}
         <div className="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 shrink-0">
           <button
             onClick={(e) => { e.stopPropagation(); setEditing(true); }}
             className="text-xs px-2 py-1 rounded bg-gray-100 hover:bg-gray-200 text-gray-600"
-            title="Edit name"
           >
-            ✏️ Edit
+            ✏️
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); handleDelete(); }}
             className="text-xs px-1.5 py-1 rounded hover:bg-red-50 text-gray-400 hover:text-red-500"
-            title="Delete"
           >
             ✕
           </button>
         </div>
       </div>
+
+      {/* Expanded segments */}
+      {expanded && (
+        <div className="px-3 pb-2 space-y-1">
+          {topics.map((t, i) => (
+            <div
+              key={t.uuid || i}
+              onClick={() => {
+                window.dispatchEvent(
+                  new CustomEvent("highlightInEditor", {
+                    detail: { text: t.content, datapointId: t.id, codeId: id, color: color.bg },
+                  })
+                );
+              }}
+              className="text-xs text-gray-600 py-1 px-2 rounded cursor-pointer hover:opacity-80 line-clamp-2"
+              style={{ backgroundColor: color.bg + "33" }}
+            >
+              {t.content}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

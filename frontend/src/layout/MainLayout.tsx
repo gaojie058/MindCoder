@@ -359,7 +359,7 @@ export default function MainLayout({
                 >
                   {pdfLoading ? "Adding..." : "Save Version"}
                 </button>
-                <Bottom
+                <Bottom loading={loading}
                   bottomType={stepName === "display" ? "display" : "regenerate"}
                   regenerate={handleRegenerate}
                   regenerateSubsequent={handleRegenerateRest}
@@ -432,7 +432,7 @@ export default function MainLayout({
               >
                 {pdfLoading ? "Adding..." : "Save Current Version"}
               </button>
-              <Bottom
+              <Bottom loading={loading}
                 bottomType={stepName === "display" ? "display" : "regenerate"}
                 regenerate={handleRegenerate}
                 regenerateSubsequent={handleRegenerateRest}
@@ -441,15 +441,7 @@ export default function MainLayout({
           )}
         </div>
       )}
-      {loading && (
-        <div className="fixed bottom-4 right-4 z-50 bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-3 flex items-center gap-3 max-w-xs">
-          <div className="relative w-5 h-5 shrink-0">
-            <div className="absolute inset-0 border-2 border-[#CB9180]/20 rounded-full"></div>
-            <div className="absolute inset-0 border-2 border-transparent border-t-[#CB9180] rounded-full animate-spin"></div>
-          </div>
-          <p className="text-xs text-[#CB9180] font-zen font-semibold">{progress}</p>
-        </div>
-      )}
+      {/* Loading indicator removed — spinner is now inline in the Regenerate button */}
       <HistoryModal />
       <LLMHistoryModal />
     </div>

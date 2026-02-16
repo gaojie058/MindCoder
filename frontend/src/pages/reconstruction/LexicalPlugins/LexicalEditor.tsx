@@ -243,37 +243,32 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     [selectedFileLocal, getEditorState, setEditorState]
   );
 
-  // Listen for highlightInEditor events from datapoint clicks
+  // Listen for highlightInEditor events from code hover / segment clicks
   useEffect(() => {
     const handleHighlight = (e: CustomEvent) => {
-      const { text } = e.detail;
+      const { text, color } = e.detail;
       if (!text || !editorRef.current) return;
 
-      // Find the text in the editor DOM
       const editorEl = editorRef.current;
       const walker = document.createTreeWalker(editorEl, NodeFilter.SHOW_TEXT);
-      const searchText = text.trim().substring(0, 80).toLowerCase(); // match first 80 chars
+      const searchText = text.trim().substring(0, 80).toLowerCase();
 
       let node: Text | null;
       while ((node = walker.nextNode() as Text)) {
         if (node.textContent && node.textContent.toLowerCase().includes(searchText)) {
           const parentEl = node.parentElement;
           if (parentEl) {
-            // Scroll into view
             parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
 
-            // Darken existing highlight color briefly
-            const origFilter = parentEl.style.filter;
-            const origTransition = parentEl.style.transition;
-            parentEl.style.transition = "filter 0.3s";
-            parentEl.style.filter = "brightness(0.7) saturate(1.5)";
+            // Use the code's matching color for highlight flash
+            const origBg = parentEl.style.backgroundColor;
+            const highlightColor = color || origBg || "#E8B4B8";
+            parentEl.style.transition = "background-color 0.2s";
+            parentEl.style.backgroundColor = highlightColor;
             setTimeout(() => {
-              parentEl.style.filter = "brightness(0.85) saturate(1.2)";
-              setTimeout(() => {
-                parentEl.style.filter = origFilter;
-                parentEl.style.transition = origTransition;
-              }, 1500);
-            }, 500);
+              parentEl.style.backgroundColor = origBg;
+              parentEl.style.transition = "";
+            }, 1800);
           }
           break;
         }

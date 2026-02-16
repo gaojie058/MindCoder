@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import CodeLabelReadonly from "@/pages/reconstruction/CodeLabelReadonly";
 import Code from "./Code";
 import AddCode from "./AddCode";
@@ -198,6 +198,37 @@ export default function Labeling() {
 
   const revealAddCode = () => setShow(true);
 
+  const [summaryOpen, setSummaryOpen] = useState(false);
+
+  // Stats
+  const stats = useMemo(() => {
+    const total = Array.isArray(codeData) ? codeData.length : 0;
+    const aiGenerated = Array.isArray(codeData) ? codeData.filter(c => c.isGPT === true).length : 0;
+    const userEdited = total - aiGenerated;
+
+    // Per-file stats: count how many codes reference each card
+    const perFile: Record<string, { name: string; codeCount: number; aiCount: number }> = {};
+    if (Array.isArray(cardData)) {
+      cardData.forEach(card => {
+        perFile[card.id] = { name: card.name || card.id, codeCount: 0, aiCount: 0 };
+      });
+    }
+    if (Array.isArray(codeData)) {
+      codeData.forEach(code => {
+        if (code && code.data) {
+          Object.keys(code.data).forEach(cardId => {
+            if (perFile[cardId]) {
+              perFile[cardId].codeCount++;
+              if (code.isGPT) perFile[cardId].aiCount++;
+            }
+          });
+        }
+      });
+    }
+
+    return { total, aiGenerated, userEdited, perFile };
+  }, [codeData, cardData]);
+
   // Delete code
   useEffect(() => {
     // Initialize unselected cards
@@ -276,6 +307,37 @@ export default function Labeling() {
         </h2>
         <p className="text-xs text-gray-500 font-zen mt-0.5">Group open codes into sub-themes that share high-level overlap</p>
       </div>
+      {/* Stats Bar */}
+      <div className="w-full px-8 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
+        <span className="text-[#8B5E4B] font-medium">Total: {stats.total}</span>
+        <span className="text-[#CB9180]">•</span>
+        <span className="text-[#CB9180]">🤖 AI-generated: {stats.aiGenerated}</span>
+        <span className="text-[#CB9180]">•</span>
+        <span className="text-[#8B5E4B]">✏️ User edited: {stats.userEdited}</span>
+        <button
+          className="ml-auto text-[#CB9180] hover:text-[#8B5E4B] transition-colors text-xs underline"
+          onClick={() => setSummaryOpen(!summaryOpen)}
+        >
+          {summaryOpen ? "Hide" : "Show"} per-file summary
+        </button>
+      </div>
+      {/* Per-file Summary Panel */}
+      {summaryOpen && (
+        <div className="w-full px-8 py-3 bg-[#FFFBF9] border-b border-[#CB9180]/10 flex-shrink-0">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 text-xs">
+            {Object.entries(stats.perFile)
+              .filter(([, v]) => v.codeCount > 0)
+              .map(([id, v]) => (
+                <div key={id} className="bg-white rounded-lg p-2 border border-[#CB9180]/15 shadow-sm">
+                  <div className="font-medium text-[#8B5E4B] truncate">{v.name}</div>
+                  <div className="text-gray-500 mt-0.5">
+                    {v.codeCount} codes ({v.aiCount} AI, {v.codeCount - v.aiCount} user)
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
       <div className="px-6 pt-6 pb-6 w-full flex-1 flex overflow-auto gap-4">
         <div className="flex-1 flex flex-col overflow-auto scrollbar-thin">
           <div className="flex flex-col gap-4">

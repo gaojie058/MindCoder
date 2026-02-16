@@ -7,17 +7,20 @@ const TopLayout: React.FC = () => {
   const navigate = useNavigate();
 
   const handleBackToHome = () => {
-    navigate("/defineneeds/current/0");
+    navigate("/");
   };
 
   return (
-    <div className="h-24 flex items-center p-3 w-full">
-      <div className="flex items-center gap-8 mx-auto">
+    <div className="h-16 flex items-center px-4 w-full border-b border-gray-100">
+      <div className="flex items-center gap-4 w-full">
         <button
           onClick={handleBackToHome}
-          className="p-4 rounded-xl bg-[#CB9180] text-white hover:bg-[#AA7667] font-zen font-semibold cursor-pointer"
+          className="px-4 py-2 rounded-lg bg-[#CB9180] text-white hover:bg-[#AA7667] font-zen font-semibold text-sm cursor-pointer flex items-center gap-2 shrink-0"
         >
-          Back to Home Page
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Settings
         </button>
         <StepNav />
       </div>

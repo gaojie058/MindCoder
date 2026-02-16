@@ -51,19 +51,19 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
   return (
     <div
       onClick={handleClick}
-      className={`px-5 h-16 rounded-2xl flex gap-2 items-center font-zen font-semibold cursor-pointer
+      className={`px-4 py-2 rounded-xl flex gap-2 items-center font-zen font-semibold cursor-pointer transition-all
         ${
           step === currentStep
-            ? "border-[1.5px] border-deepbg bg-white"
-            : "shadow-[0px_4.41px_12.35px_0px_rgba(0,0,0,0.04)]"
+            ? "border-[1.5px] border-[#CB9180] bg-white shadow-sm"
+            : "bg-gray-50 hover:bg-gray-100"
         }  `}
     >
-      <div className="w-10 h-10 bg-shallowbg flex items-center justify-center rounded-xl">
+      <div className="w-8 h-8 bg-shallowbg flex items-center justify-center rounded-lg">
         <img className="w-3/5" src={imgSrc} alt="Step Icon" />
       </div>
       <div
-        className={`text-lg font-zen font-semibold ${
-          step === currentStep ? "text-activeText" : "text-[#707070]"
+        className={`text-sm font-zen font-semibold ${
+          step === currentStep ? "text-[#CB9180]" : "text-[#707070]"
         }`}
       >
         {content}

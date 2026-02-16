@@ -113,7 +113,8 @@ function HomePage() {
     setResearchQuestion(localResearchQuestion);
     setNumberOfTopicClusters([minCodes, maxCodes]);
     setAutoRun(true);
-    navigate(`/progress/${projectName}/1`);
+    // Go directly to step 1 (Open Codes) — skip the progress page
+    navigate(`/reconstruction/${projectName}/1/card`);
   };
 
   const handleLoadSample = () => {

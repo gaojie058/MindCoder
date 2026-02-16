@@ -24,6 +24,7 @@ import useCardStore from "@/stores/useCardStore";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
+import useInfoStore from "@/stores/useInfoStore";
 
 type MainLayoutProps = {
   children?: React.ReactNode;
@@ -57,6 +58,17 @@ export default function MainLayout({
   const stepName = stepToName[step] || "data";
   const navigate = useNavigate();
   const [hasNoData, setHasNoData] = useState(false);
+  const autoRunTriggered = useRef(false);
+
+  // Auto-run generation when coming directly from HomePage
+  useEffect(() => {
+    const { autoRun, setAutoRun } = useInfoStore.getState();
+    if (autoRun && !autoRunTriggered.current && stepName === "card") {
+      autoRunTriggered.current = true;
+      setAutoRun(false);
+      handleGenerate("card");
+    }
+  }, [stepName]);
 
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
@@ -288,22 +300,40 @@ export default function MainLayout({
       )}
 
       {stepToName[step] !== "data" && stepToName[step] !== "display" && (
-        <div className="w-full flex flex-row items-start px-4 gap-6 h-[calc(100vh-60px)] overflow-hidden">
-          {/* Left side - Style Inputs */}
-          <div
-            className="w-1/3 min-w-[350px] max-w-[700px] overflow-y-scroll scrollbar-thin h-full"
-            style={{
-              scrollbarWidth: "thin",
-              scrollbarColor: "#4a5568 #edf2f7",
-              maxHeight: "calc(100vh - 60px)",
-            }}
-          >
-            <div className="p-4 pb-8">
-              <StyleInputs
-                ref={styleInputsRef}
-                storeType={stepToName[step] || "data"}
-                className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
-              />
+        <div className="w-full flex flex-row items-start px-2 gap-3 h-[calc(100vh-64px)] overflow-hidden">
+          {/* Left side - Collapsible Panel */}
+          <div className="relative flex h-full">
+            {/* Toggle button */}
+            <button
+              onClick={() => {
+                const panel = document.getElementById('left-panel');
+                if (panel) {
+                  panel.classList.toggle('hidden');
+                  const btn = document.getElementById('panel-toggle');
+                  if (btn) btn.textContent = panel.classList.contains('hidden') ? '☰' : '✕';
+                }
+              }}
+              id="panel-toggle"
+              className="absolute -right-4 top-3 z-10 w-8 h-8 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-sm hover:bg-[#AA7667] shadow-md cursor-pointer"
+              title="Toggle panel"
+            >
+              ✕
+            </button>
+            <div
+              id="left-panel"
+              className="w-[340px] overflow-y-auto scrollbar-thin h-full border-r border-gray-100"
+              style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "#4a5568 #edf2f7",
+              }}
+            >
+              <div className="p-3 pb-8">
+                <StyleInputs
+                  ref={styleInputsRef}
+                  storeType={stepToName[step] || "data"}
+                  className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
+                />
+              </div>
             </div>
           </div>
 
@@ -317,17 +347,17 @@ export default function MainLayout({
             </div>
 
             {/* Bottom buttons for non-data/non-display pages */}
-            <div className="w-full flex justify-between items-center p-6 border-t border-gray-300 flex-shrink-0">
+            <div className="w-full flex justify-between items-center py-3 px-4 border-t border-gray-200 flex-shrink-0">
               <div className="w-full flex justify-between gap-4">
                 <button
                   onClick={handleSaveToHistory}
                   disabled={pdfLoading || showSuccessAlert}
-                  className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-6 py-2 rounded-md text-sm font-semibold font-zen ${
+                  className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-5 py-2 rounded-md text-sm font-semibold font-zen ${
                     (pdfLoading || showSuccessAlert) &&
                     "opacity-50 cursor-not-allowed"
                   }`}
                 >
-                  {pdfLoading ? "Adding..." : "Save Current Version"}
+                  {pdfLoading ? "Adding..." : "Save Version"}
                 </button>
                 <Bottom
                   bottomType={stepName === "display" ? "display" : "regenerate"}

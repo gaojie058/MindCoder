@@ -20,22 +20,22 @@ const StepNav = () => {
     // },
     {
       step: 1,
-      content: "Understand & Assign Open Codes",
+      content: "Open Codes",
       imgSrc: logo1,
     },
     {
       step: 2,
-      content: "Search & Review Sub-themes",
+      content: "Sub-themes",
       imgSrc: logo2active,
     },
     {
       step: 3,
-      content: "Define & Review Themes",
+      content: "Themes",
       imgSrc: logo3active,
     },
     {
       step: 4,
-      content: "Key Finding Summary & Theme Map",
+      content: "Summary",
       imgSrc: logo4active,
     },
   ];

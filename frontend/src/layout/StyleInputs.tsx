@@ -28,6 +28,20 @@ interface StyleInputsProps {
   className?: string;
 }
 
+// AI Agent Icon
+const AIIcon = () => (
+  <svg className="w-5 h-5 text-[#6366F1] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+  </svg>
+);
+
+// Human Icon
+const HumanIcon = () => (
+  <svg className="w-5 h-5 text-[#CB9180] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+  </svg>
+);
+
 // LLM Task Section
 const LLMTaskSection = memo(
   ({
@@ -44,31 +58,31 @@ const LLMTaskSection = memo(
     }
 
     return (
-      <div className="bg-gray-50 rounded-xl p-4 mb-2">
-        <h1 className="text-lg font-bold mb-2">🤖 What MindCoder Did</h1>
+      <div className="bg-indigo-50/50 rounded-xl p-3 mb-2 border border-indigo-100">
+        <div className="flex items-center gap-2 mb-2">
+          <AIIcon />
+          <h2 className="text-sm font-bold text-indigo-700">AI Agent</h2>
+        </div>
         {llmDescription && (
-          <div className="text-sm whitespace-pre-line leading-4 font-zen font-semibold mb-2">
+          <div className="text-xs whitespace-pre-line leading-4 font-zen font-semibold mb-2 text-gray-700">
             {llmDescription}
           </div>
         )}
-        <div className="w-full flex flex-col">
-          {whatLLMDid && (
-            <div className="mb-3">
-              <p className="font-semibold text-sm mb-1">Actions Taken</p>
-              <div className="text-sm whitespace-pre-line leading-5 text-gray-700">
-                {whatLLMDid}
-              </div>
+        {whatLLMDid && (
+          <div className="mb-2">
+            <div className="text-xs whitespace-pre-line leading-4 text-gray-600">
+              {whatLLMDid}
             </div>
-          )}
-          {rationale && (
-            <div className="mb-1">
-              <p className="font-semibold text-sm mb-1">Self-Reflection</p>
-              <div className="text-sm whitespace-pre-line leading-5 text-gray-700">
-                {rationale}
-              </div>
+          </div>
+        )}
+        {rationale && (
+          <details className="text-xs">
+            <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800">Self-Reflection</summary>
+            <div className="mt-1 whitespace-pre-line leading-4 text-gray-600 pl-2 border-l-2 border-indigo-200">
+              {rationale}
             </div>
-          )}
-        </div>
+          </details>
+        )}
       </div>
     );
   }
@@ -420,22 +434,19 @@ const StyleInputs = React.forwardRef<
       {/* Card step content */}
       <div className={currentStoreType === "card" ? "block" : "hidden"}>
         <LLMTaskSection {...cardLLMInfo} />
-        <div className="bg-[#FFF8F4] rounded-xl p-4 mt-2 mb-2">
-          <h1 className="text-lg font-bold mb-2">✍️ Your Turn: Review & Refine</h1>
-          <p className="text-sm font-semibold mb-2">
-            Review the AI-generated open codes. Check if chunks are grouped correctly and rename vague codes.
-          </p>
-          <ol className="list-decimal list-outside pl-5 space-y-1 text-sm">
-            <li>Read the original data chunks alongside the LLM-generated codes.</li>
-            <li>Rename broad or vague codes to be more specific and descriptive.</li>
-          </ol>
+        <div className="bg-orange-50/50 rounded-xl p-3 mt-2 mb-2 border border-orange-100">
+          <div className="flex items-center gap-2 mb-2"><HumanIcon /><h2 className="text-sm font-bold text-[#CB9180]">Your Task</h2></div>
+          <ul className="space-y-1 text-xs text-gray-700">
+            <li>• Check if chunks are grouped correctly</li>
+            <li>• Rename vague codes to be more specific</li>
+          </ul>
         </div>
         <div className="gap-4 flex flex-col">
           <PromptHistorySection step="card" />
           <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-6 mx-0">
             <div className="absolute -top-3 left-4 bg-white px-2 text-lg ">
-              <span className="font-semibold">
-                How Many Initial "Open Codes" You Want to Create for Each File?
+              <span className="font-semibold text-sm">
+                Open Codes per File
               </span>
             </div>
             <div className="px-6 py-8">
@@ -494,15 +505,12 @@ const StyleInputs = React.forwardRef<
       {/* Code step content */}
       <div className={currentStoreType === "code" ? "block" : "hidden"}>
         <LLMTaskSection {...codeLLMInfo} />
-        <div className="bg-[#FFF8F4] rounded-xl p-4 mt-2 mb-2">
-          <h1 className="text-lg font-bold mb-2">✍️ Your Turn: Review & Refine</h1>
-          <p className="text-sm font-semibold mb-2">
-            Review sub-theme groupings. Merge overlapping sub-themes or split ones that are too broad.
-          </p>
-          <ol className="list-decimal list-outside pl-5 space-y-1 text-sm">
-            <li>Check if codes within each sub-theme truly belong together.</li>
-            <li>Merge, split, or reassign codes if groupings feel forced or fragmented.</li>
-          </ol>
+        <div className="bg-orange-50/50 rounded-xl p-3 mt-2 mb-2 border border-orange-100">
+          <div className="flex items-center gap-2 mb-2"><HumanIcon /><h2 className="text-sm font-bold text-[#CB9180]">Your Task</h2></div>
+          <ul className="space-y-1 text-xs text-gray-700">
+            <li>• Check if codes within each sub-theme belong together</li>
+            <li>• Merge or split sub-themes as needed</li>
+          </ul>
         </div>
         <div className="gap-4 flex flex-col">
           <PromptHistorySection step="code" />
@@ -512,16 +520,12 @@ const StyleInputs = React.forwardRef<
       {/* Concept step content */}
       <div className={currentStoreType === "concept" ? "block" : "hidden"}>
         <LLMTaskSection {...conceptLLMInfo} />
-        <div className="bg-[#FFF8F4] rounded-xl p-4 mt-2 mb-2">
-          <h1 className="text-lg font-bold mb-2">✍️ Your Turn: Review & Refine</h1>
-          <p className="text-sm font-semibold mb-2">
-            Review theme definitions. Ensure themes are distinct, well-named (4-8 words), and supported by data.
-          </p>
-          <ol className="list-decimal list-outside pl-5 space-y-1 text-sm">
-            <li>Check if sub-themes within each theme fit together coherently.</li>
-            <li>Rename themes with concise, descriptive labels (4-8 words).</li>
-            <li>Document reasons for any merges, splits, or renaming.</li>
-          </ol>
+        <div className="bg-orange-50/50 rounded-xl p-3 mt-2 mb-2 border border-orange-100">
+          <div className="flex items-center gap-2 mb-2"><HumanIcon /><h2 className="text-sm font-bold text-[#CB9180]">Your Task</h2></div>
+          <ul className="space-y-1 text-xs text-gray-700">
+            <li>• Ensure themes are distinct and well-named (4-8 words)</li>
+            <li>• Check sub-themes fit coherently within each theme</li>
+          </ul>
         </div>
         <div className="gap-4 flex flex-col">
           <PromptHistorySection step="concept" />

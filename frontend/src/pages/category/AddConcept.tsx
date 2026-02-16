@@ -8,6 +8,9 @@ import useConceptStore from "@/stores/useConceptStore";
 import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { code } from "@/types/stores";
 import { nanoid } from "nanoid";
+import { useGenerateButton } from "@/api/useGenerateButton";
+import Button from "@/components/ui/Button";
+import lightbulb from "@/assets/icon/lightbulb.png";
 
 type addConceptProps = {
   setShow: (show: boolean) => void;
@@ -20,6 +23,10 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
   const { codeData } = useCodeStore();
   const { conceptData, setConceptData } = useConceptStore();
   const [selectedCodes, setselectedCodes] = useState<Set<string>>(new Set());
+  const [definition, setDefinition] = useState("");
+  const [loadingName, setLoadingName] = useState(false);
+  const [loadingDef, setLoadingDef] = useState(false);
+  const { generateName } = useGenerateButton();
 
   const [unselectedCodes, setUnselectedCodes] = useState<code[]>([]);
 
@@ -58,7 +65,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
     const newId = generateNewId();
     const newConcept = {
       name: value.trim(),
-      definition: "",
+      definition: definition.trim(),
       id: newId,
       codes: relatedCodes,
       color: tempColor,
@@ -77,8 +84,23 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
   const handleCancel = () => {
     setShow(false);
     setValue("");
+    setDefinition("");
     setTempColor("#E3C8C0");
     setselectedCodes(new Set());
+  };
+
+  const handleAIGenerateName = async () => {
+    setLoadingName(true);
+    const result = await generateName(Array.from(selectedCodes), codeData, "concept");
+    setLoadingName(false);
+    if (result) setValue(result);
+  };
+
+  const handleAIGenerateDefinition = async () => {
+    setLoadingDef(true);
+    const result = await generateName(Array.from(selectedCodes), codeData, "conceptdefinition");
+    setLoadingDef(false);
+    if (result) setDefinition(result);
   };
 
   const handleCodeClick = (cardId: string) => {
@@ -127,20 +149,37 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
           </div>
         </div>
       </div>
-      <div className=" w-full p-3">
-        <div className="w-[96%] flex items-center flex-col rounded-lg shadow-sm mb-4 p-1 mx-auto gap-4">
+      <div className="w-full p-3">
+        <div className="w-[96%] flex items-center border rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
           <Input
             type="text"
+            className="text-ellipsis resize-none outline-none h-10 font-semibold border border-gray"
             value={value}
             onChange={handleChange}
             placeholder="Enter Theme name"
           />
-          {/* <Input
-            value=""
-            type="text"
+          <Button
+            onClick={handleAIGenerateName}
+            className="ml-3 flex-shrink-0 h-[36px] w-[140px] rounded-lg text-xs !text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-sm"
+          >
+            <img src={lightbulb} alt="" className="w-3.5 h-3.5 mr-1" />
+            {loadingName ? "Generating..." : "AI Generate"}
+          </Button>
+        </div>
+        <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
+          <textarea
+            className="rounded-lg text-ellipsis p-1 min-h-[50px] flex-grow outline-none font-semibold border border-gray text-sm"
+            value={definition}
             placeholder="Enter definition"
-            onChange={handleChange}
-          /> */}
+            onChange={(e) => setDefinition(e.target.value)}
+          />
+          <Button
+            onClick={handleAIGenerateDefinition}
+            className="ml-3 flex-shrink-0 h-[36px] w-[140px] rounded-lg text-xs !text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-sm"
+          >
+            <img src={lightbulb} alt="" className="w-3.5 h-3.5 mr-1" />
+            {loadingDef ? "Generating..." : "AI Generate"}
+          </Button>
         </div>
       </div>
 

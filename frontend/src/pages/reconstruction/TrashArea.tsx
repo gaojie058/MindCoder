@@ -1,9 +1,9 @@
 import useCardStore from "@/stores/useCardStore";
-import Card from "./Card";
+import CodeLabelReadonly from "./CodeLabelReadonly";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function TrashArea() {
-  const { cardData } = useCardStore();
+  const { cardData, setCardData } = useCardStore();
   const navigate = useNavigate();
   const { project, step } = useParams();
 
@@ -12,15 +12,20 @@ export default function TrashArea() {
 
   const trashedCards = cardData.filter((card) => !card.active);
 
+  const handleRestore = (id: string) => {
+    const updated = cardData.map((c) => c.id === id ? { ...c, active: true } : c);
+    setCardData(updated);
+  };
+
   return (
     <div className="w-full h-full flex flex-col bg-[#FFFBF9]">
-      {/* Step Header — matches CardArea style */}
+      {/* Step Header */}
       <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0">
         <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
           <span className="text-[#CB9180] mr-2">🗑️</span>Trashed Codes
         </h2>
         <p className="text-xs text-gray-500 font-zen mt-0.5">
-          {trashedCards.length} deleted code{trashedCards.length !== 1 ? "s" : ""} — restore from here
+          {trashedCards.length} deleted code{trashedCards.length !== 1 ? "s" : ""} — hover to restore
         </p>
       </div>
 
@@ -34,22 +39,23 @@ export default function TrashArea() {
         </button>
       </div>
 
-      {/* Trashed cards list */}
-      <div className="flex-1 overflow-auto scrollbar-thin p-6">
+      {/* Trashed codes list */}
+      <div className="flex-1 overflow-auto scrollbar-thin px-3 py-3">
         {trashedCards.length === 0 ? (
           <div className="text-center text-gray-400 text-sm mt-12">No trashed codes</div>
         ) : (
-          <div className="flex flex-wrap gap-4">
-            {trashedCards.map((card) => (
-              <div key={card.id} className="relative w-full">
-                <Card
-                  topics={card.topics}
-                  id={card.id}
-                  name={card.name}
-                  active={card.active}
-                  isGPT={card.isGPT}
-                />
-              </div>
+          <div className="space-y-0.5">
+            {trashedCards.map((card, index) => (
+              <CodeLabelReadonly
+                key={card.id}
+                id={card.id}
+                name={card.name}
+                topics={card.topics}
+                active={card.active}
+                isGPT={card.isGPT}
+                colorIndex={index}
+                onRestore={handleRestore}
+              />
             ))}
           </div>
         )}

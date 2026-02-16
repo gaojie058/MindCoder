@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
 import { code, card } from "@/types/stores";
-import Card from "@/pages/reconstruction/Card";
+import CodeLabelReadonly from "@/pages/reconstruction/CodeLabelReadonly";
 import Dialog from "@/components/ui/Dialog";
 
 export default function Discover() {
@@ -391,7 +391,7 @@ export default function Discover() {
                         ref={dialogRef}
                       >
                         {selectedCards.map((card, index) => (
-                          <Card key={index} {...card} />
+                          <CodeLabelReadonly key={index} id={card.id} name={card.name} topics={card.topics} isGPT={card.isGPT} colorIndex={index} />
                         ))}
                       </div>
                     </Dialog>
@@ -463,7 +463,7 @@ export default function Discover() {
                   ref={dialogRef}
                 >
                   {selectedCards.map((card, index) => (
-                    <Card key={index} {...card} />
+                    <CodeLabelReadonly key={index} id={card.id} name={card.name} topics={card.topics} isGPT={card.isGPT} colorIndex={index} />
                   ))}
                 </div>
               </Dialog>

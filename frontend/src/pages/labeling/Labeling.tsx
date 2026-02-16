@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import Card from "@/pages/reconstruction/Card";
+import CodeLabelReadonly from "@/pages/reconstruction/CodeLabelReadonly";
 import Code from "./Code";
 import AddCode from "./AddCode";
 import useCodeStore from "@/stores/useCodeStore";
@@ -330,7 +330,7 @@ export default function Labeling() {
                 {Object.values(drawerOpenCodes)
                   .flat()
                   .map((card, index) => (
-                    <Card key={index} {...card} />
+                    <CodeLabelReadonly key={index} id={card.id} name={card.name} topics={card.topics} isGPT={card.isGPT} colorIndex={index} />
                   ))}
               </>
             ) : (
@@ -377,7 +377,7 @@ export default function Labeling() {
                   Open codes left
                 </div>
                 {unselectedCards.map((card, index) => (
-                  <Card key={index} {...card} />
+                  <CodeLabelReadonly key={index} id={card.id} name={card.name} topics={card.topics} isGPT={card.isGPT} colorIndex={index} />
                 ))}
               </div>
             )}

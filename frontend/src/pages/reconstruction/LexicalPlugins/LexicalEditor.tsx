@@ -262,15 +262,17 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
             // Scroll into view
             parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
 
-            // Flash highlight
-            const origBg = parentEl.style.backgroundColor;
-            parentEl.style.backgroundColor = "#FFD700";
-            parentEl.style.transition = "background-color 0.3s";
+            // Darken existing highlight color briefly
+            const origFilter = parentEl.style.filter;
+            const origTransition = parentEl.style.transition;
+            parentEl.style.transition = "filter 0.3s";
+            parentEl.style.filter = "brightness(0.7) saturate(1.5)";
             setTimeout(() => {
-              parentEl.style.backgroundColor = "#FFFACD";
+              parentEl.style.filter = "brightness(0.85) saturate(1.2)";
               setTimeout(() => {
-                parentEl.style.backgroundColor = origBg;
-              }, 2000);
+                parentEl.style.filter = origFilter;
+                parentEl.style.transition = origTransition;
+              }, 1500);
             }, 500);
           }
           break;

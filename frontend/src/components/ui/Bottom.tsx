@@ -1,8 +1,4 @@
 import { useNavigate, useParams } from "react-router-dom";
-import Button from "./Button";
-import reloadIcon from "../../assets/icon/reload.svg";
-import nextIcon from "../../assets/icon/next.svg";
-import backIcon from "../../assets/icon/back.svg";
 
 type BottomLayoutProps = {
   bottomType: "generate" | "regenerate" | "display";
@@ -18,7 +14,6 @@ type BottomLayoutProps = {
 
 export default function Bottom({
   bottomType,
-  // generate = () => {},
   regenerate,
   regenerateSubsequent,
 }: BottomLayoutProps) {
@@ -30,106 +25,32 @@ export default function Bottom({
     navigate(`/progress/${project}/${currentStep}`);
   };
 
-  // const gonext = () => {
-  //   const nextStep = currentStep + 1;
-  //   if (project) {
-  //     navigate(`/progress/${project}/${nextStep}`);
-  //   } else {
-  //     console.error("Project is undefined, cannot navigate.");
-  //   }
-  // };
-
-  // console.log("Current step:", storeType);
-
   return (
-    <div className="w-full flex justify-end mx-auto md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-3/4 gap-3">
-      {/* {bottomType === "generate" && (
+    <div className="flex items-center gap-2">
+      {(bottomType === "regenerate" || bottomType === "display") && (
         <>
-          <Button
-            onClick={generate}
-            className="p-3 rounded-lg !bg-[#CB9180] hover:!bg-[#AA7667] 2xl:p-5"
-          >
-            Generate
-          </Button>
-        </>
-      )} */}
-      {bottomType === "regenerate" && (
-        <>
-          <Button
-            onClick={goback}
-            className="px-4 py-4 rounded-lg !bg-[#FFF3EE] !text-[#CB9180] hover:!bg-[#F3E8E4] text-sm font-semibold font-zen"
-          >
-            <img src={backIcon} alt="reload" className="w-4 h-4 mr-1" />
-            Return to Reasoning Page
-          </Button>
-          <Button
+          <button
             onClick={regenerate}
-            className="px-4 py-4 rounded-lg !bg-[#CB9180] hover:!bg-[#AA7667] flex text-sm font-semibold font-zen"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#CB9180] hover:bg-[#AA7667] text-white text-xs font-zen font-semibold transition-colors"
           >
-            <img
-              src={reloadIcon}
-              alt="reload"
-              className="w-4 h-4 justify-center items-center mr-1"
-            />
-            Regenerate Current Page
-          </Button>
-          <Button
-            onClick={regenerateSubsequent}
-            className="px-4 py-4 rounded-lg !bg-[#E8C0B3] hover:!bg-[#D1A696] text-sm font-semibold font-zen"
-          >
-            <img
-              src={nextIcon}
-              alt="reload"
-              className="w-4 h-4 justify-center items-center mr-1"
-            />
-            Update the Rest Coding
-          </Button>
-          {/* <Button
-            onClick={saveAndBack}
-            className="p-3 rounded-lg !bg-[#FFF3EE] !text-[#CB9180] hover:!bg-[#F3E8E4] 2xl:p-5"
-          >
-            Update the rest coding
-          </Button> */}
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Regenerate
+          </button>
+          {bottomType === "regenerate" && regenerateSubsequent && (
+            <button
+              onClick={regenerateSubsequent}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#E8C0B3] hover:bg-[#D1A696] text-white text-xs font-zen font-semibold transition-colors"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+              </svg>
+              Regen All
+            </button>
+          )}
         </>
       )}
-      {bottomType === "display" && (
-        <>
-          <Button
-            onClick={goback}
-            className="px-4 py-4 rounded-lg !bg-[#FFF3EE] !text-[#CB9180] hover:!bg-[#F3E8E4] text-sm font-semibold font-zen"
-          >
-            <img
-              src={backIcon}
-              alt="reload"
-              className="w-4 h-4 justify-center items-center mr-1"
-            />
-            Return to Reasoning page
-          </Button>
-          <Button
-            onClick={regenerate}
-            className="px-4 py-4 rounded-lg !bg-[#CB9180] hover:!bg-[#AA7667] flex text-sm font-semibold font-zen"
-          >
-            <img
-              src={reloadIcon}
-              alt="reload"
-              className="w-4 h-4 justify-center items-center mr-1"
-            />
-            Regenerate Current Page
-          </Button>
-          {/* <Button
-            onClick={generate}
-            className="p-3 rounded-lg !bg-[#FFF3EE] !text-[#CB9180] hover:!bg-[#F3E8E4] 2xl:p-5"
-          >
-            Save to PDF
-          </Button> */}
-        </>
-      )}
-      {/* <Button
-            onClick={saveAndBack}
-            className="p-3 rounded-lg !bg-[#FFF3EE] !text-[#CB9180] hover:!bg-[#F3E8E4] 2xl:p-5"
-          >
-            Update the rest coding
-          </Button> */}
     </div>
   );
 }

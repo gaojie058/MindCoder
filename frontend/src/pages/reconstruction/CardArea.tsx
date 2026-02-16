@@ -133,8 +133,8 @@ export default function CardArea() {
       <style>{`
         @keyframes code-label-flash {
           0%, 100% { background-color: transparent; }
-          30% { background-color: #FFD700; }
-          60% { background-color: #FFFACD; }
+          30% { background-color: rgba(203,145,128,0.25); }
+          60% { background-color: rgba(203,145,128,0.1); }
         }
         .code-label-flash {
           animation: code-label-flash 1.5s ease;

@@ -480,11 +480,9 @@ export function DatapointHighlightPlugin({
               ) {
                 // This is a complex case - we'll need to handle it specially
                 // For now, we'll just highlight the first node that contains part of the match
-                const highlightColor = getConsistentColorForString(
-                  datapoint.content
-                );
+                const highlightColor = getColorForCard(card.id);
                 textNode.setStyle(
-                  `background-color: ${highlightColor} !important; cursor: pointer;`
+                  `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
                 );
 
                 // Card info will be attached to DOM later by tooltip plugin via content matching
@@ -545,11 +543,9 @@ export function DatapointHighlightPlugin({
                 );
 
                 // Style only the matching part
-                const highlightColor = getConsistentColorForString(
-                  datapoint.content
-                );
+                const highlightColor = getColorForCard(card.id);
                 matchNode.setStyle(
-                  `background-color: ${highlightColor} !important; cursor: pointer;`
+                  `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
                 );
 
                 // Card info will be attached to DOM later by tooltip plugin via content matching
@@ -631,11 +627,9 @@ export function DatapointHighlightPlugin({
                   const afterNode = $createTextNode(text.substring(subEnd));
 
                   // Style only the matching part
-                  const highlightColor = getConsistentColorForString(
-                    datapoint.content
-                  );
+                  const highlightColor = getColorForCard(card.id);
                   matchNode.setStyle(
-                    `background-color: ${highlightColor} !important; cursor: pointer;`
+                    `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
                   );
 
                   // Card info will be attached to DOM later by tooltip plugin via content matching
@@ -704,11 +698,9 @@ export function DatapointHighlightPlugin({
                   // IMPROVED VALIDATION: Much stricter threshold for last resort highlighting
                   // Only highlight whole node if we have a very strong match (90%+)
                   if (bestMatch.ratio >= 90 && textNode.isAttached()) {
-                    const highlightColor = getConsistentColorForString(
-                      datapoint.content
-                    );
+                    const highlightColor = getColorForCard(card.id);
                     textNode.setStyle(
-                      `background-color: ${highlightColor} !important; cursor: pointer;`
+                      `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
                     );
 
                     // Card info will be attached to DOM later by tooltip plugin via content matching
@@ -1557,7 +1549,7 @@ export function AddDatapointPlugin({
             const highlightedNode = $createTextNode(selectedText);
             const highlightColor = getRandomColor();
             highlightedNode.setStyle(
-              `background-color: ${highlightColor} !important; cursor: pointer;`
+              `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
             );
 
             // Store card info as custom data

@@ -243,99 +243,94 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     [selectedFileLocal, getEditorState, setEditorState]
   );
 
-  // Listen for highlightInEditor events from code hover / segment clicks
+  // Helper: find all editor elements belonging to a card ID
+  const findCardElements = (codeId: string): Element[] => {
+    if (!editorRef.current) return [];
+    // Try data-card-id attribute first
+    let elements = Array.from(editorRef.current.querySelectorAll(`[data-card-id="${codeId}"]`));
+    if (elements.length > 0) return elements;
+    // Fallback: scan for --card-id CSS custom property
+    const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
+    elements = Array.from(allHighlighted).filter((el) => {
+      const style = (el as HTMLElement).style.cssText;
+      return style.includes(`--card-id: ${codeId}`) || style.includes(`--card-id:${codeId}`);
+    });
+    return elements;
+  };
+
+  // Listen for highlightInEditor — flash highlight using data-card-id attributes
   useEffect(() => {
     const handleHighlight = (e: CustomEvent) => {
-      const { text, color } = e.detail;
-      if (!text || !editorRef.current) return;
+      const { codeId, color } = e.detail;
+      if (!editorRef.current) return;
 
-      const editorEl = editorRef.current;
-      const walker = document.createTreeWalker(editorEl, NodeFilter.SHOW_TEXT);
-      const searchText = text.trim().substring(0, 80).toLowerCase();
+      const elements = findCardElements(codeId);
+      if (elements.length === 0) return;
 
-      let node: Text | null;
-      while ((node = walker.nextNode() as Text)) {
-        if (node.textContent && node.textContent.toLowerCase().includes(searchText)) {
-          const parentEl = node.parentElement;
-          if (parentEl) {
-            parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      // Scroll to first element
+      elements[0].scrollIntoView({ behavior: "smooth", block: "center" });
 
-            // Use the code's matching color for highlight flash
-            const origBg = parentEl.style.backgroundColor;
-            const highlightColor = color || origBg || "#E8B4B8";
-            parentEl.style.transition = "background-color 0.2s";
-            parentEl.style.backgroundColor = highlightColor;
-            setTimeout(() => {
-              parentEl.style.backgroundColor = origBg;
-              parentEl.style.transition = "";
-            }, 1800);
-          }
-          break;
-        }
-      }
+      // Flash all elements with the code's color
+      elements.forEach((el: Element) => {
+        const htmlEl = el as HTMLElement;
+        const origBg = htmlEl.style.backgroundColor;
+        const flashColor = color || "#E8B4B8";
+        htmlEl.style.transition = "outline 0.2s";
+        htmlEl.style.outline = `2px solid ${flashColor}`;
+        setTimeout(() => {
+          htmlEl.style.outline = "";
+          htmlEl.style.transition = "";
+        }, 1500);
+      });
     };
 
     window.addEventListener("highlightInEditor", handleHighlight as EventListener);
     return () => window.removeEventListener("highlightInEditor", handleHighlight as EventListener);
   }, []);
 
-  // Listen for selectCodeInEditor — persistent highlight with pen indicator
+  // Listen for selectCodeInEditor — persistent outline + pen indicator
   useEffect(() => {
-    // Track elements we've highlighted so we can clear them
-    let activeOverlays: HTMLElement[] = [];
     let activeElements: { el: HTMLElement; origOutline: string }[] = [];
+    let penEl: HTMLElement | null = null;
 
     const handleSelect = (e: CustomEvent) => {
-      // Clear previous selection
-      activeOverlays.forEach((o) => o.remove());
-      activeOverlays = [];
+      // Clear previous
       activeElements.forEach(({ el, origOutline }) => { el.style.outline = origOutline; });
       activeElements = [];
+      if (penEl) { penEl.remove(); penEl = null; }
 
-      const { codeId, color, topics } = e.detail;
-      if (!codeId || !topics || !editorRef.current) return;
+      const { codeId, color } = e.detail;
+      if (!codeId || !editorRef.current) return;
 
-      const editorEl = editorRef.current;
+      const elements = findCardElements(codeId);
+      if (elements.length === 0) return;
 
-      // For each topic/segment, find and persistently highlight in editor
-      for (const topic of topics) {
-        const text = topic.content?.trim().substring(0, 80).toLowerCase();
-        if (!text) continue;
+      // Scroll to first
+      elements[0].scrollIntoView({ behavior: "smooth", block: "center" });
 
-        const walker = document.createTreeWalker(editorEl, NodeFilter.SHOW_TEXT);
-        let node: Text | null;
-        while ((node = walker.nextNode() as Text)) {
-          if (node.textContent && node.textContent.toLowerCase().includes(text)) {
-            const parentEl = node.parentElement;
-            if (parentEl) {
-              // Add colored outline
-              const origOutline = parentEl.style.outline;
-              parentEl.style.outline = `2px solid ${color}`;
-              activeElements.push({ el: parentEl, origOutline });
+      // Add pen on first element
+      const firstEl = elements[0] as HTMLElement;
+      const pen = document.createElement("span");
+      pen.textContent = "✏️";
+      pen.style.cssText = "position:absolute;left:-18px;top:-2px;font-size:13px;pointer-events:none;z-index:20;";
+      firstEl.style.position = "relative";
+      firstEl.appendChild(pen);
+      penEl = pen;
 
-              // Add pen indicator on first segment only
-              if (activeOverlays.length === 0) {
-                parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
-                const pen = document.createElement("span");
-                pen.textContent = "✏️";
-                pen.className = "select-pen-indicator";
-                pen.style.cssText = `position:absolute;margin-left:-20px;margin-top:-4px;font-size:14px;pointer-events:none;z-index:20;`;
-                parentEl.style.position = "relative";
-                parentEl.appendChild(pen);
-                activeOverlays.push(pen);
-              }
-            }
-            break;
-          }
-        }
-      }
+      // Outline all
+      elements.forEach((el: Element) => {
+        const htmlEl = el as HTMLElement;
+        const origOutline = htmlEl.style.outline;
+        htmlEl.style.outline = `2px solid ${color}`;
+        activeElements.push({ el: htmlEl, origOutline });
+      });
     };
 
     window.addEventListener("selectCodeInEditor", handleSelect as EventListener);
     return () => {
       window.removeEventListener("selectCodeInEditor", handleSelect as EventListener);
-      activeOverlays.forEach((o) => o.remove());
       activeElements.forEach(({ el, origOutline }) => { el.style.outline = origOutline; });
+      if (penEl) penEl.remove();
     };
   }, []);
 

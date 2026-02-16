@@ -27,6 +27,7 @@ function HomePage() {
   const [localResearchQuestion, setLocalResearchQuestion] = useState(researchQuestion);
   const [minCodes, setMinCodes] = useState(numberOfTopicClusters[0]);
   const [maxCodes, setMaxCodes] = useState(numberOfTopicClusters[1]);
+  const [savedStep] = useState(() => sessionStorage.getItem("mindcoder-last-step"));
 
   const allowedFileTypes = [
     "application/msword",
@@ -131,9 +132,24 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-[#FFFBF9] flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-4 px-8 py-4 border-b border-gray-200">
-        <img src={logo} className="h-12 object-contain" alt="MindCoder" />
-        <h1 className="text-2xl font-semibold font-zen">MindCoder</h1>
+      <div className="flex items-center justify-between px-8 py-4 border-b border-gray-200">
+        <div className="flex items-center gap-4">
+          <img src={logo} className="h-12 object-contain" alt="MindCoder" />
+          <h1 className="text-2xl font-semibold font-zen">MindCoder</h1>
+        </div>
+        {savedStep && (
+          <button
+            onClick={() => {
+              window.location.hash = savedStep.replace(/^#/, "");
+            }}
+            className="px-4 py-2 rounded-lg bg-[#D39C83] text-white hover:bg-[#CB9180] font-zen text-sm flex items-center gap-2"
+          >
+            Return to Analysis
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        )}
       </div>
 
       <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto w-full">

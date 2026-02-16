@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from "react";
 import { Outlet } from "react-router-dom";
-import Loading from "@/components/ui/Loading";
 import Bottom from "@/components/ui/Bottom";
 import frameLogo from "@/assets/frameLogo.png";
 import toplogoright from "@/assets/toplogoright.png";
@@ -25,6 +24,37 @@ import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
 import useInfoStore from "@/stores/useInfoStore";
+
+// Collapsible Left Panel
+function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObject<{ saveChangesToStore: () => void } | null>; stepName: string }) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <div className={`relative flex h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[320px]'}`}>
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute -right-3 top-3 z-10 w-6 h-6 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#AA7667] shadow-md cursor-pointer"
+        title={collapsed ? "Expand panel" : "Collapse panel"}
+      >
+        {collapsed ? '›' : '‹'}
+      </button>
+      {!collapsed && (
+        <div
+          className="w-full overflow-y-auto scrollbar-thin h-full border-r border-gray-100"
+          style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
+        >
+          <div className="p-3 pb-8">
+            <StyleInputs
+              ref={styleInputsRef}
+              storeType={stepName}
+              className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
+            />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 type MainLayoutProps = {
   children?: React.ReactNode;
@@ -300,59 +330,29 @@ export default function MainLayout({
       )}
 
       {stepToName[step] !== "data" && stepToName[step] !== "display" && (
-        <div className="w-full flex flex-row items-start px-2 gap-3 h-[calc(100vh-64px)] overflow-hidden">
-          {/* Left side - Collapsible Panel */}
-          <div className="relative flex h-full">
-            {/* Toggle button */}
-            <button
-              onClick={() => {
-                const panel = document.getElementById('left-panel');
-                if (panel) {
-                  panel.classList.toggle('hidden');
-                  const btn = document.getElementById('panel-toggle');
-                  if (btn) btn.textContent = panel.classList.contains('hidden') ? '☰' : '✕';
-                }
-              }}
-              id="panel-toggle"
-              className="absolute -right-4 top-3 z-10 w-8 h-8 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-sm hover:bg-[#AA7667] shadow-md cursor-pointer"
-              title="Toggle panel"
-            >
-              ✕
-            </button>
-            <div
-              id="left-panel"
-              className="w-[340px] overflow-y-auto scrollbar-thin h-full border-r border-gray-100"
-              style={{
-                scrollbarWidth: "thin",
-                scrollbarColor: "#4a5568 #edf2f7",
-              }}
-            >
-              <div className="p-3 pb-8">
-                <StyleInputs
-                  ref={styleInputsRef}
-                  storeType={stepToName[step] || "data"}
-                  className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
-                />
+        <div className="w-full flex justify-center h-[calc(100vh-56px)] overflow-hidden">
+          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-4">
+            {/* Left side - Collapsible Panel */}
+            <LeftPanel
+              styleInputsRef={styleInputsRef}
+              stepName={stepToName[step] || "data"}
+            />
+
+            {/* Right side - Content Area */}
+            <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+              <div
+                className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
+                {...props}
+              >
+                {children || <Outlet />}
               </div>
-            </div>
-          </div>
 
-          {/* Right side - Content Area */}
-          <div className="flex-1 flex flex-col h-full overflow-hidden">
-            <div
-              className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
-              {...props}
-            >
-              {children || <Outlet />}
-            </div>
-
-            {/* Bottom buttons for non-data/non-display pages */}
-            <div className="w-full flex justify-between items-center py-3 px-4 border-t border-gray-200 flex-shrink-0">
-              <div className="w-full flex justify-between gap-4">
+              {/* Bottom buttons */}
+              <div className="w-full flex justify-between items-center py-2 px-4 border-t border-gray-200 flex-shrink-0">
                 <button
                   onClick={handleSaveToHistory}
                   disabled={pdfLoading || showSuccessAlert}
-                  className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-5 py-2 rounded-md text-sm font-semibold font-zen ${
+                  className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-4 py-1.5 rounded-md text-sm font-semibold font-zen ${
                     (pdfLoading || showSuccessAlert) &&
                     "opacity-50 cursor-not-allowed"
                   }`}
@@ -441,7 +441,20 @@ export default function MainLayout({
           )}
         </div>
       )}
-      {loading && <Loading progress={progress} />}
+      {loading && (
+        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
+            <div className="relative w-16 h-16 mx-auto mb-4">
+              <div className="absolute inset-0 border-4 border-[#CB9180]/20 rounded-full"></div>
+              <div className="absolute inset-0 border-4 border-transparent border-t-[#CB9180] rounded-full animate-spin"></div>
+            </div>
+            <h3 className="text-lg font-semibold font-zen text-gray-800 mb-2">
+              Running MindCoder
+            </h3>
+            <p className="text-sm text-[#CB9180] font-zen">{progress}</p>
+          </div>
+        </div>
+      )}
       <HistoryModal />
       <LLMHistoryModal />
     </div>

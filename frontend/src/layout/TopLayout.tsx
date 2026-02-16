@@ -17,7 +17,7 @@ const TopLayout: React.FC = () => {
 
   return (
     <div className="flex items-center w-full border-b border-gray-200 shrink-0">
-      <div className="flex items-center gap-3 w-full max-w-[1400px] mx-auto px-8 py-4">
+      <div className="flex items-center gap-3 w-full mx-auto md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%] px-4 py-4">
         <button
           onClick={handleBackToHome}
           className="px-3 py-1.5 rounded-lg bg-[#CB9180] text-white hover:bg-[#AA7667] font-zen font-semibold text-xs cursor-pointer flex items-center gap-1.5 shrink-0"

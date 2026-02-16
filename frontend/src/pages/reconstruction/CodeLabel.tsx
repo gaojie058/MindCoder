@@ -18,11 +18,11 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
   const { updateCardName, cardData, setCardData } = useCardStore();
   const [editing, setEditing] = useState(false);
   const [localName, setLocalName] = useState(name);
-  const [manualExpanded, setManualExpanded] = useState(false);
-  const expanded = isSelected || manualExpanded;
   const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
   const labelRef = useRef<HTMLDivElement>(null);
   const isSelected = selectedCodeId === id;
+  const [manualExpanded, setManualExpanded] = useState(false);
+  const expanded = isSelected || manualExpanded;
 
   useEffect(() => setLocalName(name), [name]);
 

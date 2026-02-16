@@ -106,7 +106,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
 
   return (
     <div
-      className=" w-full  shadow-md border rounded-xl overflow-hidden"
+      className=" w-full  shadow-md border rounded-xl overflow-visible"
       style={{ backgroundColor: tempColor || "#E3C8C0" }}
     >
       <div className=" w-full p-3 rounded-xl shadow-md flex justify-between items-center text-[#C66B50] ">

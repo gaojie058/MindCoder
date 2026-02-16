@@ -112,7 +112,7 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
 
   return (
     <div
-      className="w-full shadow-md border rounded-xl overflow-hidden"
+      className="w-full shadow-md border rounded-xl overflow-visible"
       style={{ backgroundColor: tempColor || "#E3C8C0" }}
     >
       <div className="w-full p-3 rounded-xl shadow-md flex justify-between items-center text-[#C66B50]">
@@ -152,7 +152,7 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
       <div className="w-full p-3">
         <ColorSelector codeId="" onColorChange={setTempColor} />
       </div>
-      <div className="w-full p-3">
+      <div className="w-full p-3 pb-6">
         <MultiSelectDropdown
           label="Choose Open Codes"
           options={cardData.map((card) => ({ id: card.id, label: `#${card.id} ${card.name}` }))}

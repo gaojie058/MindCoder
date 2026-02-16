@@ -74,19 +74,14 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
   return (
     <div
       ref={labelRef}
-      className={`group relative rounded-lg transition-all cursor-pointer ${
-        isSelected
-          ? "shadow-sm"
-          : "hover:bg-gray-50/80"
-      }`}
-      style={isSelected ? { backgroundColor: color.bg + "40" } : undefined}
+      className={`group relative rounded-lg transition-all cursor-pointer hover:bg-gray-50/80`}
       id={`card-${id}`}
       onClick={handleClick}
     >
       <div className="flex items-center gap-2.5 px-3 py-2">
         {/* Color dot — larger when selected */}
         <div
-          className={`rounded-full shrink-0 transition-all ${isSelected ? "w-3 h-3" : "w-2.5 h-2.5"}`}
+          className={`shrink-0 transition-all ${isSelected ? "w-4 h-4 rounded" : "w-2.5 h-2.5 rounded-full"}`}
           style={{ backgroundColor: color.bg }}
         />
 

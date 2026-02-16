@@ -103,8 +103,10 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
             <div className="text-sm leading-snug" style={{ color: color.text }}>
               <span className="text-gray-400 font-mono text-xs mr-1">#{id}</span>
               <span className="font-medium">{localName}</span>
-              {isGPT && (
+              {isGPT ? (
                 <span className="ml-1.5 text-[10px] px-1 py-0.5 bg-gray-100 text-gray-400 rounded align-middle">AI</span>
+              ) : (
+                <span className="ml-1.5 text-[10px] px-1 py-0.5 bg-blue-50 text-blue-400 rounded align-middle">👤 User</span>
               )}
             </div>
           )}

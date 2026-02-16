@@ -1,4 +1,4 @@
-import logo from "@/assets/mindcoder.png";
+import logo from "@/assets/frameLogo.png";
 import { useRef, useState } from "react";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
@@ -132,10 +132,10 @@ function HomePage() {
   return (
     <div className="min-h-screen bg-[#FFFBF9] flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-8 py-4 border-b border-gray-200">
+      <div className="border-b border-gray-200">
+        <div className="flex items-center justify-between px-8 py-4 max-w-[1400px] mx-auto w-full">
         <div className="flex items-center gap-4">
-          <img src={logo} className="h-12 object-contain" alt="MindCoder" />
-          <h1 className="text-2xl font-semibold font-zen">MindCoder</h1>
+          <img src={logo} className="h-10 object-contain" alt="MindCoder" />
         </div>
         {savedStep && (
           <button
@@ -151,8 +151,9 @@ function HomePage() {
           </button>
         )}
       </div>
+      </div>
 
-      <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-7xl mx-auto w-full">
+      <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-[1400px] mx-auto w-full">
         {/* Left: Upload + Run */}
         <div className="flex-1 flex flex-col gap-6">
           {/* Upload Area */}

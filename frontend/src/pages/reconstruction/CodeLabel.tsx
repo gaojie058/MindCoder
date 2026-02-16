@@ -3,6 +3,7 @@ import { card } from "@/types";
 import useCardStore from "@/stores/useCardStore";
 import { CODE_COLORS } from "@/utils/codeColors";
 
+
 interface CodeLabelProps {
   id: string;
   name: string;
@@ -18,8 +19,24 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex 
   const [localName, setLocalName] = useState(name);
   const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
   const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const labelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => setLocalName(name), [name]);
+
+  // Listen for navigateToCard events (when user clicks highlighted text in editor)
+  useEffect(() => {
+    const handler = (e: CustomEvent) => {
+      if (e.detail.cardId === id.toString() || e.detail.cardId === id) {
+        if (labelRef.current) {
+          labelRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+          labelRef.current.classList.add("code-label-flash");
+          setTimeout(() => labelRef.current?.classList.remove("code-label-flash"), 1500);
+        }
+      }
+    };
+    window.addEventListener("navigateToCard", handler as EventListener);
+    return () => window.removeEventListener("navigateToCard", handler as EventListener);
+  }, [id]);
 
   const handleSaveName = useCallback(() => {
     updateCardName(id, localName);
@@ -55,6 +72,7 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex 
 
   return (
     <div
+      ref={labelRef}
       className="group relative rounded-lg hover:bg-gray-50/80 transition-colors cursor-pointer border border-transparent hover:border-gray-200"
       id={`card-${id}`}
       onMouseEnter={handleMouseEnter}

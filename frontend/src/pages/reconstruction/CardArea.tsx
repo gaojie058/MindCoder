@@ -129,6 +129,17 @@ export default function CardArea() {
           <AddCard hideDialog={hideDialog} />
         </Dialog>
       )}
+
+      <style>{`
+        @keyframes code-label-flash {
+          0%, 100% { background-color: transparent; }
+          30% { background-color: #FFD700; }
+          60% { background-color: #FFFACD; }
+        }
+        .code-label-flash {
+          animation: code-label-flash 1.5s ease;
+        }
+      `}</style>
     </>
   );
 }

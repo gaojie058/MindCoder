@@ -18,7 +18,8 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
   const { updateCardName, cardData, setCardData } = useCardStore();
   const [editing, setEditing] = useState(false);
   const [localName, setLocalName] = useState(name);
-  const [expanded, setExpanded] = useState(false);
+  const [manualExpanded, setManualExpanded] = useState(false);
+  const expanded = isSelected || manualExpanded;
   const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
   const labelRef = useRef<HTMLDivElement>(null);
   const isSelected = selectedCodeId === id;
@@ -108,7 +109,7 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
             </div>
           )}
           <button
-            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded); }}
+            onClick={(e) => { e.stopPropagation(); setManualExpanded(!expanded); }}
             className="text-[11px] text-gray-400 hover:text-gray-600 mt-0.5"
           >
             {topics.length} segment{topics.length !== 1 ? "s" : ""} {expanded ? "▴" : "▾"}
@@ -130,13 +131,17 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
 
       {/* Expanded segments */}
       {expanded && (
-        <div className="px-3 pb-2 space-y-1">
+        <div className="px-3 pb-2 space-y-1.5">
           {topics.map((t, i) => (
             <div
               key={t.uuid || i}
-              className="text-xs text-gray-600 py-1 px-2 rounded line-clamp-2"
-              style={{ backgroundColor: color.bg + "33" }}
+              className="text-xs text-gray-700 py-1.5 px-2.5 rounded-md border-l-[3px] line-clamp-3"
+              style={{
+                backgroundColor: color.bg + "1A",
+                borderLeftColor: color.bg,
+              }}
             >
+              <span className="text-[10px] font-mono text-gray-400 mr-1.5">S{i + 1}</span>
               {t.content}
             </div>
           ))}

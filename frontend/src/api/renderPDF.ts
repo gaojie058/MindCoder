@@ -27,6 +27,51 @@ import useEditStore from "@/stores/useEditStore"
   },
 }
 
+// Function to create AI badge
+function createAIBadge(): any {
+  return {
+    text: "[AI]",
+    color: '#EA580C',
+    bold: true,
+    fontSize: 9
+  };
+}
+
+// Function to create Human badge
+function createHumanBadge(): any {
+  return {
+    text: "[Human]",
+    color: '#1E40AF',
+    bold: true,
+    fontSize: 9
+  };
+}
+
+// Function to create User badge
+function createUserBadge(): any {
+  return {
+    text: "[User]",
+    color: '#1E40AF',
+    bold: true,
+    fontSize: 9
+  };
+}
+
+// Function to create horizontal rule separator
+function createHorizontalRule(): any {
+  return {
+    canvas: [
+      {
+        type: 'line',
+        x1: 0, y1: 0, x2: 515, y2: 0,
+        lineWidth: 1,
+        lineColor: '#D1D5DB'
+      }
+    ],
+    margin: [0, 10, 0, 10]
+  };
+}
+
 // Function to clean inline references in text content
 function cleanContent(text: string): any[] {
   if (!text || typeof text !== 'string') return [{ text: '' }];
@@ -88,384 +133,519 @@ function formatTimestampForPDF(timestamp: number): string {
   });
 }
 
-// Function to generate Open Codes process content (Human Interpretation and LLM Mechanism)
+// Function to calculate statistics for a step
+function calculateStepStatistics(data: any[], isCard: boolean = false): { total: number, aiGenerated: number, userEdited: number } {
+  if (!data || !Array.isArray(data)) {
+    return { total: 0, aiGenerated: 0, userEdited: 0 };
+  }
+
+  const total = data.length;
+  let aiGenerated = 0;
+  let userEdited = 0;
+
+  data.forEach(item => {
+    if (isCard) {
+      // For cards, check if it's GPT-generated
+      if (item.isGPT) {
+        aiGenerated++;
+      } else {
+        userEdited++;
+      }
+    } else {
+      // For codes/concepts, check if it has been user-modified
+      if (item.isGPT !== false) {
+        aiGenerated++;
+      } else {
+        userEdited++;
+      }
+    }
+  });
+
+  return { total, aiGenerated, userEdited };
+}
+
+// Function to generate Analysis Configuration section
+function generateAnalysisConfigurationContent(): Content[] {
+  const result: Content[] = [];
+  
+  // Get data from stores
+  const { researchQuestion, numberOfTopicClusters, clusteringStyle, codingStyle, conceptualizingStyle, uploadedFiles } = useAppStore.getState();
+
+  result.push({
+    text: "Analysis Configuration",
+    fontSize: 20,
+    bold: true,
+    marginBottom: 15,
+    marginTop: 30,
+    headlineLevel: 1,
+    tocItem: true,
+    id: 'analysisConfigurationSection'
+  });
+
+  result.push(createHorizontalRule());
+
+  // Configuration table
+  const configData = [
+    // Header row
+    [
+      { text: 'Configuration Parameter', style: 'tableHeader', fillColor: '#F3F4F6', bold: true },
+      { text: 'Setting', style: 'tableHeader', fillColor: '#F3F4F6', bold: true }
+    ]
+  ];
+
+  // Research Question
+  if (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) {
+    configData.push([
+      { text: 'Research Question', fontSize: 10, bold: true },
+      { text: researchQuestion.trim(), fontSize: 10 }
+    ]);
+  }
+
+  // Number of Open Codes Range
+  if (numberOfTopicClusters && numberOfTopicClusters.length === 2) {
+    const [min, max] = numberOfTopicClusters;
+    configData.push([
+      { text: 'Open Codes Range', fontSize: 10, bold: true },
+      { text: `${min} - ${max} codes per file`, fontSize: 10 }
+    ]);
+  }
+
+  // Clustering Style
+  if (clusteringStyle && typeof clusteringStyle === 'string' && clusteringStyle.trim()) {
+    configData.push([
+      { text: 'Clustering Style', fontSize: 10, bold: true },
+      { text: clusteringStyle.trim(), fontSize: 10 }
+    ]);
+  }
+
+  // Coding Style
+  if (codingStyle && typeof codingStyle === 'string' && codingStyle.trim()) {
+    configData.push([
+      { text: 'Coding Style', fontSize: 10, bold: true },
+      { text: codingStyle.trim(), fontSize: 10 }
+    ]);
+  }
+
+  // Conceptualizing Style
+  if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
+    configData.push([
+      { text: 'Conceptualizing Style', fontSize: 10, bold: true },
+      { text: conceptualizingStyle.trim(), fontSize: 10 }
+    ]);
+  }
+
+  // Uploaded Files
+  if (uploadedFiles && uploadedFiles.length > 0) {
+    const fileNames = uploadedFiles.map(file => file.name.replace(/\.txt$/i, '')).join(', ');
+    configData.push([
+      { text: 'Uploaded Files', fontSize: 10, bold: true },
+      { text: fileNames, fontSize: 10 }
+    ]);
+  }
+
+  if (configData.length > 1) {
+    result.push({
+      table: {
+        widths: ['25%', '75%'],
+        body: configData
+      },
+      layout: {
+        hLineWidth: function (i: number, node: any) {
+          return i === 0 || i === node.table.body.length ? 1 : 0.5;
+        },
+        vLineWidth: function (i: number, node: any) {
+          return 0;
+        },
+        hLineColor: function (i: number, node: any) {
+          return '#E5E7EB';
+        },
+        paddingLeft: function (i: number, node: any) { return 8; },
+        paddingRight: function (i: number, node: any) { return 8; },
+        paddingTop: function (i: number, node: any) { return 6; },
+        paddingBottom: function (i: number, node: any) { return 6; }
+      },
+      marginBottom: 20
+    });
+  }
+
+  result.push(createHorizontalRule());
+
+  return result;
+}
+
+// Function to generate Open Codes process content (Step 1)
 function generateOpenCodesProcessContent(): Content[] {
   const result: Content[] = [];
 
   // Get data from stores
+  const { cardData } = useCardStore.getState();
   const { whatLLMDid: cardWhatLLMDid, rationale: cardRationale, llmDescription: cardLlmDescription } = useCardStore.getState();
-  const { researchQuestion, numberOfTopicClusters, clusteringStyle } = useAppStore.getState();
+  const { researchQuestion, numberOfTopicClusters } = useAppStore.getState();
   const { topicMemo } = useEditStore.getState();
 
-  // Check if there's any open codes process content
-  const hasTopicProcessContent = (cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) ||
-    (cardRationale && typeof cardRationale === 'string' && cardRationale.trim()) ||
-    (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim()) ||
-    (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) ||
-    (numberOfTopicClusters && numberOfTopicClusters.length > 0) ||
-    (clusteringStyle && typeof clusteringStyle === 'string' && clusteringStyle.trim()) ||
-    (topicMemo && typeof topicMemo === 'string' && topicMemo.trim());
+  // Calculate statistics
+  const stats = calculateStepStatistics(cardData || [], true);
 
-  if (hasTopicProcessContent) {
-    result.push({
-      text: "Open Codes",
-      fontSize: 16,
-      bold: true,
-      marginBottom: 5,
-      marginTop: 15,
-      headlineLevel: 2,
-      tocItem: true,
-      id: 'openCodesProcessSection',
-      tocStyle: 'tocLevel2'
-    });
+  result.push({
+    text: [
+      { text: "Step 1: ", fontSize: 18, bold: true, color: '#DC2626' },
+      { text: "Open Codes", fontSize: 18, bold: true }
+    ],
+    marginBottom: 10,
+    marginTop: 25,
+    headlineLevel: 2,
+    tocItem: true,
+    id: 'openCodesProcessSection',
+    tocStyle: 'tocLevel2'
+  });
 
-    // MindCoder Mechanical Task subsection
-    if ((cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) ||
+  // Step summary box
+  result.push({
+    table: {
+      widths: ['*'],
+      body: [
+        [{
+          stack: [
+            {
+              text: "Step Summary",
+              fontSize: 12,
+              bold: true,
+              marginBottom: 5,
+              color: '#374151'
+            },
+            {
+              text: `Total Open Codes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
+              fontSize: 10,
+              marginBottom: 5
+            },
+            {
+              text: "LLM generates initial open codes from raw data segments, while human researcher reviews, refines, and validates the coding scheme.",
+              fontSize: 10,
+              italics: true
+            }
+          ],
+          fillColor: '#F9FAFB',
+          margin: [10, 10, 10, 10]
+        }]
+      ]
+    },
+    layout: 'noBorders',
+    marginBottom: 15
+  });
+
+  // AI Mechanical Task section
+  if ((cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) ||
       (cardRationale && typeof cardRationale === 'string' && cardRationale.trim()) ||
       (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim())) {
 
-      const mechanicalTaskContent = [];
+    const mechanicalTaskContent = [];
 
-      mechanicalTaskContent.push({
-        text: "MindCoder Mechanical Task",
-        fontSize: 12,
-        bold: false,
-        marginTop: 5,
-        marginBottom: 5,
-        headlineLevel: 3,
-        tocItem: false,
-        id: 'topicMechanicalTask',
-        tocStyle: 'tocLevel3',
-        tocMargin: [10, 0, 0, 0]
-      });
-
-      if (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim()) {
-        mechanicalTaskContent.push({
-          text: cleanContent(cardLlmDescription),
-          fontSize: 9,
-          marginBottom: 8,
-          marginLeft: 5
-        });
-      }
-
-      if (cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) {
-        mechanicalTaskContent.push(
-          {
-            text: "What LLM Did",
-            fontSize: 11,
-            bold: true,
-            marginTop: 8,
-            marginBottom: 3,
-            headlineLevel: 4,
-            id: 'cardWhatLLMDidParam'
-          },
-          {
-            text: cleanContent(cardWhatLLMDid),
-            fontSize: 9,
-            marginBottom: 8,
-            marginLeft: 5
-          }
-        );
-      }
-
-      if (cardRationale && typeof cardRationale === 'string' && cardRationale.trim()) {
-        mechanicalTaskContent.push(
-          {
-            text: "LLM Self Criticize",
-            fontSize: 11,
-            bold: true,
-            marginTop: 8,
-            marginBottom: 3,
-            headlineLevel: 4,
-            id: 'cardRationaleParam'
-          },
-          {
-            text: cleanContent(cardRationale),
-            fontSize: 9,
-            marginBottom: 8,
-            marginLeft: 5
-          }
-        );
-      }
-
-      // Add the MindCoder Mechanical Task section with background
-      result.push({
-        table: {
-          widths: ['*'],
-          body: [
-            [{
-              stack: mechanicalTaskContent,
-              fillColor: '#FFF3EE',
-              margin: [10, 10, 10, 10]
-            }]
-          ]
-        },
-        layout: 'noBorders',
-        marginTop: 12
-      });
-    }
-
-    // Open Codes Human Interpretation subsection with background
-    const humanInterpretationContent = [];
-
-    humanInterpretationContent.push({
-      text: "Human Interpretation",
-      fontSize: 12,
-      bold: false,
+    mechanicalTaskContent.push({
+      text: [
+        createAIBadge(),
+        { text: " MindCoder Mechanical Task", fontSize: 14, bold: true, marginLeft: 5 }
+      ],
       marginTop: 5,
-      marginBottom: 5,
+      marginBottom: 10,
       headlineLevel: 3,
       tocItem: false,
-      id: 'topicHumanInterpretation',
+      id: 'topicMechanicalTask',
       tocStyle: 'tocLevel3',
       tocMargin: [10, 0, 0, 0]
     });
 
-    // Add human interpretation guidance for Open Codes
-    humanInterpretationContent.push(
-      {
-        text: "In this stage, the LLM offers an exploratory coding draft, while you should bring critical interpretation, contextual knowledge, and methodological rigor. Your revisions, notes, and reflections ensure that the analysis stays trustworthy and grounded in both the data and the research aims. Specifically, this involves:",
-        fontSize: 9,
-        marginBottom: 5,
+    if (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim()) {
+      mechanicalTaskContent.push({
+        text: cleanContent(cardLlmDescription),
+        fontSize: 10,
+        marginBottom: 10,
         marginLeft: 5
-      },
-      {
-        ol: [
-          {
-            text: [
-              { text: "Familiarize Yourself with the Data", bold: true },
-              {
-                text: [
-                  "\n• Read and re-read both the original data chunks and the LLM-generated codes.",
-                  "\n• Pay attention to recurring concepts, surprising details, or emotionally charged expressions.",
-                  "\n• Jot down early impressions, insights, or questions directly in your memos. These notes help capture your evolving interpretation of the data."
-                ],
-                fontSize: 8
-              }
-            ],
-            fontSize: 9,
-            marginBottom: 3
-          },
-          {
-            text: [
-              { text: "Review and Adjust Initial Codes", bold: true },
-              {
-                text: [
-                  "\n• Compare the LLM's suggested codes with your own understanding of the data.",
-                  "\n• If a code feels too broad, vague, or misleading, revise its name or definition to better capture the nuance.",
-                  "\n• You can also merge or split codes by re-assigning clusters, or use the system to regenerate codes with a different style prompt (e.g., more theory-driven or more descriptive).",
-                  "\n• For each adjustment, record a short memo explaining your reasoning (e.g., \"Code X was too generic; renamed to highlight participants' focus on emotional impact\"). These memos will later be included in the final report for transparency."
-                ],
-                fontSize: 8
-              }
-            ],
-            fontSize: 9,
-            marginBottom: 3
-          },
-          {
-            text: [
-              { text: "Focus on Your Research Questions", bold: true },
-              {
-                text: [
-                  "\n• Remember that coding is not just about labeling text—it is about systematically reducing the data in ways that remain meaningful for your specific research questions.",
-                  "\n• As you refine the LLM's output, ensure that the codes are relevant, interpretable, and sufficiently detailed to serve as a foundation for later theme development."
-                ],
-                fontSize: 8
-              }
-            ],
-            fontSize: 9,
-            marginBottom: 5
-          }
-        ],
-        marginLeft: 5,
-        marginBottom: 8
-      }
-    );
+      });
+    }
 
-    // Open Codes Research Question
-    if (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) {
-      humanInterpretationContent.push(
+    if (cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) {
+      mechanicalTaskContent.push(
         {
-          text: "Research Question",
-          fontSize: 11,
+          text: "What LLM Did",
+          fontSize: 12,
           bold: true,
-          marginTop: 8,
-          marginBottom: 3,
+          marginTop: 10,
+          marginBottom: 5,
           headlineLevel: 4,
-          id: 'researchQuestionParam'
+          id: 'cardWhatLLMDidParam'
         },
         {
-          text: cleanContent(researchQuestion),
-          fontSize: 9,
-          marginBottom: 8,
+          text: cleanContent(cardWhatLLMDid),
+          fontSize: 10,
+          marginBottom: 10,
           marginLeft: 5
         }
       );
     }
 
-    // Open Codes Range
-    if (numberOfTopicClusters && numberOfTopicClusters.length > 0) {
-      const [min, max] = numberOfTopicClusters;
-      humanInterpretationContent.push(
+    if (cardRationale && typeof cardRationale === 'string' && cardRationale.trim()) {
+      mechanicalTaskContent.push(
         {
-          text: "Number of Open Codes",
-          fontSize: 11,
+          text: "LLM Self Criticize",
+          fontSize: 12,
           bold: true,
-          marginTop: 8,
-          marginBottom: 3,
+          marginTop: 10,
+          marginBottom: 5,
           headlineLevel: 4,
-          id: 'topicClustersParam'
+          id: 'cardRationaleParam'
         },
         {
-          text: `Range: ${min} - ${max} open codes per file`,
-          fontSize: 9,
-          marginBottom: 8,
+          text: cleanContent(cardRationale),
+          fontSize: 10,
+          marginBottom: 10,
           marginLeft: 5
         }
       );
     }
 
-    // Open Codes Style
-    humanInterpretationContent.push(
-      {
-        text: "Prompt to LLM",
-        fontSize: 11,
-        bold: true,
-        marginTop: 8,
-        marginBottom: 3,
-        headlineLevel: 4,
-        id: 'clusteringStyleParam'
-      }
-    );
-
-    // Add prompt history for card step
-    const { llmHistory = [] } = useLLMHistoryStore.getState();
-    const cardHistory = llmHistory.filter(entry => entry.step === "card");
-    if (cardHistory.length > 0) {
-      cardHistory.forEach((entry) => {
-        humanInterpretationContent.push(
-          {
-            text: formatTimestampForPDF(entry.timestamp),
-            fontSize: 8,
-            bold: true,
-            marginLeft: 5,
-            marginBottom: 2
-          },
-          {
-            text: cleanContent(entry.userPrompt || ""),
-            fontSize: 8,
-            marginLeft: 5,
-            marginBottom: 4
-          }
-        );
-      });
-    } else {
-      humanInterpretationContent.push({
-        text: "No customized prompt yet",
-        fontSize: 8,
-        marginLeft: 5,
-        marginBottom: 4
-      });
-    }
-
-    // Open Codes Memo
-    humanInterpretationContent.push(
-      {
-        text: "User Memo",
-        fontSize: 11,
-        bold: true,
-        marginTop: 8,
-        marginBottom: 3,
-        headlineLevel: 4,
-        id: 'topicMemoParam'
-      },
-      {
-        text: cleanContent(topicMemo && typeof topicMemo === 'string' && topicMemo.trim() ? topicMemo : "No memo added yet"),
-        fontSize: 9,
-        marginBottom: 5,
-        marginLeft: 5
-      }
-    );
-
-    // Add the Human Interpretation section with background
     result.push({
       table: {
         widths: ['*'],
         body: [
           [{
-            stack: humanInterpretationContent,
-            fillColor: '#E3F2FD',
-            margin: [10, 10, 10, 10]
+            stack: mechanicalTaskContent,
+            fillColor: '#FFF3EE',
+            margin: [15, 15, 15, 15]
           }]
         ]
       },
       layout: 'noBorders',
-      marginTop: 12
+      marginTop: 10,
+      marginBottom: 15
     });
-
-    // Add Open Codes names
-    const { cardData } = useCardStore.getState();
-    if (cardData && cardData.length > 0) {
-      result.push({
-        text: "",
-        marginTop: 15
-      });
-
-      cardData.forEach((card, index) => {
-        result.push({
-          text: card.name,
-          fontSize: 10,
-          marginBottom: 2,
-          marginLeft: 10
-        });
-      });
-    }
   }
+
+  // Human Interpretation section
+  const humanInterpretationContent = [];
+
+  humanInterpretationContent.push({
+    text: [
+      createHumanBadge(),
+      { text: " Human Interpretation", fontSize: 14, bold: true, marginLeft: 5 }
+    ],
+    marginTop: 5,
+    marginBottom: 10,
+    headlineLevel: 3,
+    tocItem: false,
+    id: 'topicHumanInterpretation',
+    tocStyle: 'tocLevel3',
+    tocMargin: [10, 0, 0, 0]
+  });
+
+  // Human interpretation guidance
+  humanInterpretationContent.push(
+    {
+      text: "In this stage, the LLM offers an exploratory coding draft, while you should bring critical interpretation, contextual knowledge, and methodological rigor. Your revisions, notes, and reflections ensure that the analysis stays trustworthy and grounded in both the data and the research aims.",
+      fontSize: 10,
+      marginBottom: 10,
+      marginLeft: 5,
+      alignment: 'justify'
+    }
+  );
+
+  // Research Question
+  if (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) {
+    humanInterpretationContent.push(
+      {
+        text: "Research Question",
+        fontSize: 12,
+        bold: true,
+        marginTop: 10,
+        marginBottom: 5,
+        headlineLevel: 4,
+        id: 'researchQuestionParam'
+      },
+      {
+        text: cleanContent(researchQuestion),
+        fontSize: 10,
+        marginBottom: 10,
+        marginLeft: 5
+      }
+    );
+  }
+
+  // Number of Open Codes Range
+  if (numberOfTopicClusters && numberOfTopicClusters.length > 0) {
+    const [min, max] = numberOfTopicClusters;
+    humanInterpretationContent.push(
+      {
+        text: "Number of Open Codes",
+        fontSize: 12,
+        bold: true,
+        marginTop: 10,
+        marginBottom: 5,
+        headlineLevel: 4,
+        id: 'topicClustersParam'
+      },
+      {
+        text: `Range: ${min} - ${max} open codes per file`,
+        fontSize: 10,
+        marginBottom: 10,
+        marginLeft: 5
+      }
+    );
+  }
+
+  // Prompt to LLM
+  humanInterpretationContent.push(
+    {
+      text: "Prompt to LLM",
+      fontSize: 12,
+      bold: true,
+      marginTop: 10,
+      marginBottom: 5,
+      headlineLevel: 4,
+      id: 'clusteringStyleParam'
+    }
+  );
+
+  const { llmHistory = [] } = useLLMHistoryStore.getState();
+  const cardHistory = llmHistory.filter(entry => entry.step === "card");
+  if (cardHistory.length > 0) {
+    cardHistory.forEach((entry) => {
+      humanInterpretationContent.push(
+        {
+          text: formatTimestampForPDF(entry.timestamp),
+          fontSize: 9,
+          bold: true,
+          marginLeft: 5,
+          marginBottom: 3
+        },
+        {
+          text: cleanContent(entry.userPrompt || ""),
+          fontSize: 9,
+          marginLeft: 5,
+          marginBottom: 8
+        }
+      );
+    });
+  } else {
+    humanInterpretationContent.push({
+      text: "No customized prompt yet",
+      fontSize: 9,
+      marginLeft: 5,
+      marginBottom: 8
+    });
+  }
+
+  // User Memo
+  humanInterpretationContent.push(
+    {
+      text: "User Memo",
+      fontSize: 12,
+      bold: true,
+      marginTop: 10,
+      marginBottom: 5,
+      headlineLevel: 4,
+      id: 'topicMemoParam'
+    },
+    {
+      text: cleanContent(topicMemo && typeof topicMemo === 'string' && topicMemo.trim() ? topicMemo : "No memo added yet"),
+      fontSize: 10,
+      marginBottom: 10,
+      marginLeft: 5
+    }
+  );
+
+  result.push({
+    table: {
+      widths: ['*'],
+      body: [
+        [{
+          stack: humanInterpretationContent,
+          fillColor: '#E3F2FD',
+          margin: [15, 15, 15, 15]
+        }]
+      ]
+    },
+    layout: 'noBorders',
+    marginTop: 5,
+    marginBottom: 20
+  });
+
+  result.push(createHorizontalRule());
 
   return result;
 }
 
-// Function to generate Sub-themes process content (Human Interpretation and LLM Mechanism)
+// Function to generate Sub-themes process content (Step 2)
 function generateSubThemesProcessContent(): Content[] {
   const result: Content[] = [];
 
   // Get data from stores
+  const { codeData } = useCodeStore.getState();
   const { whatLLMDid: codeWhatLLMDid, rationale: codeRationale, llmDescription: codeLlmDescription } = useCodeStore.getState();
-  const { codingStyle } = useAppStore.getState();
   const { codeMemo } = useEditStore.getState();
 
-  // Always show Sub-themes section
+  // Calculate statistics
+  const stats = calculateStepStatistics(codeData || []);
+
   result.push({
-    text: "Sub-themes",
-    fontSize: 16,
-    bold: true,
-    marginBottom: 5,
-    marginTop: 15,
+    text: [
+      { text: "Step 2: ", fontSize: 18, bold: true, color: '#DC2626' },
+      { text: "Sub-themes", fontSize: 18, bold: true }
+    ],
+    marginBottom: 10,
+    marginTop: 25,
     headlineLevel: 2,
     tocItem: true,
     id: 'subThemesProcessSection',
     tocStyle: 'tocLevel2'
   });
 
-  // Check if there's any code labeling process content
-  (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
-    (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim()) ||
-    (codingStyle && typeof codingStyle === 'string' && codingStyle.trim()) ||
-    (codeMemo && typeof codeMemo === 'string' && codeMemo.trim());
+  // Step summary box
+  result.push({
+    table: {
+      widths: ['*'],
+      body: [
+        [{
+          stack: [
+            {
+              text: "Step Summary",
+              fontSize: 12,
+              bold: true,
+              marginBottom: 5,
+              color: '#374151'
+            },
+            {
+              text: `Total Sub-themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
+              fontSize: 10,
+              marginBottom: 5
+            },
+            {
+              text: "LLM groups open codes into coherent sub-themes, while human researcher validates groupings and refines thematic boundaries.",
+              fontSize: 10,
+              italics: true
+            }
+          ],
+          fillColor: '#F9FAFB',
+          margin: [10, 10, 10, 10]
+        }]
+      ]
+    },
+    layout: 'noBorders',
+    marginBottom: 15
+  });
 
-  // MindCoder Mechanical Task subsection
+  // AI Mechanical Task section
   if ((codeWhatLLMDid && typeof codeWhatLLMDid === 'string' && codeWhatLLMDid.trim()) ||
-    (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
-    (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim())) {
+      (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
+      (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim())) {
 
     const mechanicalTaskContent = [];
 
     mechanicalTaskContent.push({
-      text: "MindCoder Mechanical Task",
-      fontSize: 12,
-      bold: false,
+      text: [
+        createAIBadge(),
+        { text: " MindCoder Mechanical Task", fontSize: 14, bold: true, marginLeft: 5 }
+      ],
       marginTop: 5,
-      marginBottom: 5,
+      marginBottom: 10,
       headlineLevel: 3,
       tocItem: false,
       id: 'codeMechanicalTask',
@@ -476,8 +656,8 @@ function generateSubThemesProcessContent(): Content[] {
     if (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim()) {
       mechanicalTaskContent.push({
         text: cleanContent(codeLlmDescription),
-        fontSize: 9,
-        marginBottom: 8,
+        fontSize: 10,
+        marginBottom: 10,
         marginLeft: 5
       });
     }
@@ -486,17 +666,17 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 11,
+          fontSize: 12,
           bold: true,
-          marginTop: 8,
-          marginBottom: 3,
+          marginTop: 10,
+          marginBottom: 5,
           headlineLevel: 4,
           id: 'codeWhatLLMDidParam'
         },
         {
           text: cleanContent(codeWhatLLMDid),
-          fontSize: 9,
-          marginBottom: 8,
+          fontSize: 10,
+          marginBottom: 10,
           marginLeft: 5
         }
       );
@@ -506,23 +686,22 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 11,
+          fontSize: 12,
           bold: true,
-          marginTop: 8,
-          marginBottom: 3,
+          marginTop: 10,
+          marginBottom: 5,
           headlineLevel: 4,
           id: 'codeRationaleParam'
         },
         {
           text: cleanContent(codeRationale),
-          fontSize: 9,
-          marginBottom: 8,
+          fontSize: 10,
+          marginBottom: 10,
           marginLeft: 5
         }
       );
     }
 
-    // Add the MindCoder Mechanical Task section with background
     result.push({
       table: {
         widths: ['*'],
@@ -530,24 +709,26 @@ function generateSubThemesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: '#FFF3EE',
-            margin: [10, 10, 10, 10]
+            margin: [15, 15, 15, 15]
           }]
         ]
       },
       layout: 'noBorders',
-      marginTop: 12
+      marginTop: 10,
+      marginBottom: 15
     });
   }
 
-  // Sub-themes Human Interpretation subsection with background
+  // Human Interpretation section
   const subThemesHumanInterpretationContent = [];
 
   subThemesHumanInterpretationContent.push({
-    text: "Human Interpretation",
-    fontSize: 12,
-    bold: false,
+    text: [
+      createHumanBadge(),
+      { text: " Human Interpretation", fontSize: 14, bold: true, marginLeft: 5 }
+    ],
     marginTop: 5,
-    marginBottom: 5,
+    marginBottom: 10,
     headlineLevel: 3,
     tocItem: false,
     id: 'codeHumanInterpretation',
@@ -555,95 +736,30 @@ function generateSubThemesProcessContent(): Content[] {
     tocMargin: [10, 0, 0, 0]
   });
 
-  // Add human interpretation guidance for Sub-themes
+  // Human interpretation guidance
   subThemesHumanInterpretationContent.push(
     {
-      text: "In this stage, the LLM provides an initial map of sub-themes, while you should bring judgment, contextual understanding, and methodological rigor to confirm, adjust, or expand the map. Your engagement ensures that the sub-themes stay trustworthy, relevant, and analytically useful. Specifically, this involves:",
-      fontSize: 9,
-      marginBottom: 5,
-      marginLeft: 5
-    },
-    {
-      ol: [
-        {
-          text: [
-            { text: "Examine and Connect Codes", bold: true },
-            {
-              text: [
-                "\n• Review each sub-theme and the codes grouped within it.",
-                "\n• Ask: Do these codes really belong together? Do they reflect a coherent pattern that is significant to my research question?",
-                "\n• Merge, split, or reassign codes if the grouping feels forced, too broad, or too fragmented."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Refine Sub-Theme Boundaries", bold: true },
-            {
-              text: [
-                "\n• Consider whether a sub-theme is internally consistent and externally distinct from others.",
-                "\n• Some codes may naturally overlap across more than one sub-theme; document these overlaps rather than forcing a single fit.",
-                "\n• If certain codes do not align with any sub-theme, temporarily place them in a miscellaneous category for further review later."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Iterative Adjustment with the System", bold: true },
-            {
-              text: [
-                "\n• Use the system's functionality to regenerate sub-themes by adjusting prompts (e.g., ask for more theory-driven groupings or more descriptive groupings).",
-                "\n• Edit sub-theme names and definitions directly when the LLM's wording does not align with your interpretation.",
-                "\n• For each revision, write a memo explaining your reasoning (e.g., \"Codes merged under Sub-theme A because they all describe the emotional dimension of feedback\"). These memos ensure transparency and will be reflected in the final report."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Maintain Research Question Focus", bold: true },
-            {
-              text: [
-                "\n• Ensure that each sub-theme not only describes patterns in the data but also connects back to your guiding research question(s).",
-                "\n• At this stage, themes may still be descriptive rather than fully interpretive, but they should already highlight meaningful trends that prepare for the next stage of defining and naming themes."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 5
-        }
-      ],
+      text: "In this stage, the LLM provides an initial map of sub-themes, while you should bring judgment, contextual understanding, and methodological rigor to confirm, adjust, or expand the map. Your engagement ensures that the sub-themes stay trustworthy, relevant, and analytically useful.",
+      fontSize: 10,
+      marginBottom: 10,
       marginLeft: 5,
-      marginBottom: 8
+      alignment: 'justify'
     }
   );
 
-  // Coding Style
+  // Prompt to LLM
   subThemesHumanInterpretationContent.push(
     {
       text: "Prompt to LLM",
-      fontSize: 11,
+      fontSize: 12,
       bold: true,
-      marginTop: 8,
-      marginBottom: 3,
+      marginTop: 10,
+      marginBottom: 5,
       headlineLevel: 4,
       id: 'codingStyleParam'
     }
   );
 
-  // Add prompt history for code step
   const { llmHistory = [] } = useLLMHistoryStore.getState();
   const codeHistory = llmHistory.filter(entry => entry.step === "code");
   if (codeHistory.length > 0) {
@@ -651,48 +767,47 @@ function generateSubThemesProcessContent(): Content[] {
       subThemesHumanInterpretationContent.push(
         {
           text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 8,
+          fontSize: 9,
           bold: true,
           marginLeft: 5,
-          marginBottom: 2
+          marginBottom: 3
         },
         {
           text: cleanContent(entry.userPrompt || ""),
-          fontSize: 8,
+          fontSize: 9,
           marginLeft: 5,
-          marginBottom: 4
+          marginBottom: 8
         }
       );
     });
   } else {
     subThemesHumanInterpretationContent.push({
       text: "No customized prompt yet",
-      fontSize: 8,
+      fontSize: 9,
       marginLeft: 5,
-      marginBottom: 4
+      marginBottom: 8
     });
   }
 
-  // Sub-themes Memo
+  // User Memo
   subThemesHumanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 11,
+      fontSize: 12,
       bold: true,
-      marginTop: 8,
-      marginBottom: 3,
+      marginTop: 10,
+      marginBottom: 5,
       headlineLevel: 4,
       id: 'codeMemoParam'
     },
     {
       text: cleanContent(codeMemo && typeof codeMemo === 'string' && codeMemo.trim() ? codeMemo : "No memo added yet"),
-      fontSize: 9,
-      marginBottom: 5,
+      fontSize: 10,
+      marginBottom: 10,
       marginLeft: 5
     }
   );
 
-  // Add the Human Interpretation section with background
   result.push({
     table: {
       widths: ['*'],
@@ -700,66 +815,39 @@ function generateSubThemesProcessContent(): Content[] {
         [{
           stack: subThemesHumanInterpretationContent,
           fillColor: '#E3F2FD',
-          margin: [10, 10, 10, 10]
+          margin: [15, 15, 15, 15]
         }]
       ]
     },
     layout: 'noBorders',
-    marginTop: 5
+    marginTop: 5,
+    marginBottom: 20
   });
 
-  // Add Sub-themes names with contained codes
-  const { codeData } = useCodeStore.getState();
-  if (codeData && codeData.length > 0) {
-    result.push({
-      text: "",
-      marginTop: 15
-    });
-
-    codeData.forEach((code, index) => {
-      result.push({
-        text: code.name,
-        fontSize: 10,
-        bold: true,
-        marginBottom: 3,
-        marginLeft: 10
-      });
-
-      // Add contained codes (cards) under this sub-theme
-      for (const dataKey in code.data) {
-        const cards = code.data[dataKey];
-        cards.forEach((card) => {
-          if (card.active !== false) {
-            result.push({
-              text: card.name,
-              fontSize: 9,
-              marginBottom: 1,
-              marginLeft: 20
-            });
-          }
-        });
-      }
-    });
-  }
+  result.push(createHorizontalRule());
 
   return result;
 }
 
-// Function to generate Themes process content (Human Interpretation and LLM Mechanism)
+// Function to generate Themes process content (Step 3)
 function generateThemesProcessContent(): Content[] {
   const result: Content[] = [];
 
   // Get data from stores
+  const { conceptData } = useConceptStore.getState();
   const { whatLLMDid: conceptWhatLLMDid, rationale: conceptRationale, llmDescription: conceptLlmDescription } = useConceptStore.getState();
   const { conceptualizingStyle } = useAppStore.getState();
   const { conceptMemo } = useEditStore.getState();
 
-  // Always show Themes section
+  // Calculate statistics
+  const stats = calculateStepStatistics(conceptData || []);
+
   result.push({
-    text: "Themes",
-    fontSize: 16,
-    bold: true,
-    marginBottom: 5,
+    text: [
+      { text: "Step 3: ", fontSize: 18, bold: true, color: '#DC2626' },
+      { text: "Themes", fontSize: 18, bold: true }
+    ],
+    marginBottom: 10,
     marginTop: 25,
     headlineLevel: 2,
     tocItem: true,
@@ -767,26 +855,54 @@ function generateThemesProcessContent(): Content[] {
     tocStyle: 'tocLevel2'
   });
 
-  // Check if there's any conceptualizing process content
-  const hasConceptProcessContent = (conceptWhatLLMDid && typeof conceptWhatLLMDid === 'string' && conceptWhatLLMDid.trim()) ||
-    (conceptRationale && typeof conceptRationale === 'string' && conceptRationale.trim()) ||
-    (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim()) ||
-    (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) ||
-    (conceptMemo && typeof conceptMemo === 'string' && conceptMemo.trim());
+  // Step summary box
+  result.push({
+    table: {
+      widths: ['*'],
+      body: [
+        [{
+          stack: [
+            {
+              text: "Step Summary",
+              fontSize: 12,
+              bold: true,
+              marginBottom: 5,
+              color: '#374151'
+            },
+            {
+              text: `Total Themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
+              fontSize: 10,
+              marginBottom: 5
+            },
+            {
+              text: "LLM synthesizes sub-themes into overarching themes, while human researcher provides interpretive depth and theoretical alignment.",
+              fontSize: 10,
+              italics: true
+            }
+          ],
+          fillColor: '#F9FAFB',
+          margin: [10, 10, 10, 10]
+        }]
+      ]
+    },
+    layout: 'noBorders',
+    marginBottom: 15
+  });
 
-  // Themes MindCoder Mechanical Task subsection
+  // AI Mechanical Task section
   if ((conceptWhatLLMDid && typeof conceptWhatLLMDid === 'string' && conceptWhatLLMDid.trim()) ||
-    (conceptRationale && typeof conceptRationale === 'string' && conceptRationale.trim()) ||
-    (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim())) {
+      (conceptRationale && typeof conceptRationale === 'string' && conceptRationale.trim()) ||
+      (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim())) {
 
     const mechanicalTaskContent = [];
 
     mechanicalTaskContent.push({
-      text: "MindCoder Mechanical Task",
-      fontSize: 12,
-      bold: false,
+      text: [
+        createAIBadge(),
+        { text: " MindCoder Mechanical Task", fontSize: 14, bold: true, marginLeft: 5 }
+      ],
       marginTop: 5,
-      marginBottom: 5,
+      marginBottom: 10,
       headlineLevel: 3,
       tocItem: false,
       id: 'conceptMechanicalTask',
@@ -797,8 +913,8 @@ function generateThemesProcessContent(): Content[] {
     if (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim()) {
       mechanicalTaskContent.push({
         text: cleanContent(conceptLlmDescription),
-        fontSize: 9,
-        marginBottom: 8,
+        fontSize: 10,
+        marginBottom: 10,
         marginLeft: 5
       });
     }
@@ -807,17 +923,17 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 11,
+          fontSize: 12,
           bold: true,
-          marginTop: 8,
-          marginBottom: 3,
+          marginTop: 10,
+          marginBottom: 5,
           headlineLevel: 4,
           id: 'conceptWhatLLMDidParam'
         },
         {
           text: cleanContent(conceptWhatLLMDid),
-          fontSize: 9,
-          marginBottom: 8,
+          fontSize: 10,
+          marginBottom: 10,
           marginLeft: 5
         }
       );
@@ -827,23 +943,22 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 11,
+          fontSize: 12,
           bold: true,
-          marginTop: 8,
-          marginBottom: 3,
+          marginTop: 10,
+          marginBottom: 5,
           headlineLevel: 4,
           id: 'conceptRationaleParam'
         },
         {
           text: cleanContent(conceptRationale),
-          fontSize: 9,
-          marginBottom: 8,
+          fontSize: 10,
+          marginBottom: 10,
           marginLeft: 5
         }
       );
     }
 
-    // Add the MindCoder Mechanical Task section with background
     result.push({
       table: {
         widths: ['*'],
@@ -851,24 +966,26 @@ function generateThemesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: '#FFF3EE',
-            margin: [10, 10, 10, 10]
+            margin: [15, 15, 15, 15]
           }]
         ]
       },
       layout: 'noBorders',
-      marginTop: 12
+      marginTop: 10,
+      marginBottom: 15
     });
   }
 
-  // Themes Human Interpretation subsection with background
+  // Human Interpretation section
   const themesHumanInterpretationContent = [];
 
   themesHumanInterpretationContent.push({
-    text: "Human Interpretation",
-    fontSize: 12,
-    bold: false,
+    text: [
+      createHumanBadge(),
+      { text: " Human Interpretation", fontSize: 14, bold: true, marginLeft: 5 }
+    ],
     marginTop: 5,
-    marginBottom: 5,
+    marginBottom: 10,
     headlineLevel: 3,
     tocItem: false,
     id: 'conceptHumanInterpretation',
@@ -876,109 +993,30 @@ function generateThemesProcessContent(): Content[] {
     tocMargin: [10, 0, 0, 0]
   });
 
-  // Add human interpretation guidance for Themes
+  // Human interpretation guidance
   themesHumanInterpretationContent.push(
     {
-      text: "This stage transforms the analysis from a preliminary structure into a coherent thematic framework. The LLM offers a draft map of themes, and you should provide the critical review, interpretive judgment, and theoretical alignment necessary to produce a trustworthy and meaningful set of final themes. Specifically, this involves:",
-      fontSize: 9,
-      marginBottom: 5,
-      marginLeft: 5
-    },
-    {
-      ol: [
-        {
-          text: [
-            { text: "Review Each Theme Against the Data", bold: true },
-            {
-              text: [
-                "\n• Carefully read through the original chunks, codes, and sub-themes grouped under each theme.",
-                "\n• Ask: Does the data really support this theme? Do the included elements fit together coherently?",
-                "\n• Eliminate weak themes with insufficient supporting data, merge overlapping ones, and identify potential sub-themes where finer distinctions are meaningful."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Refine Theme Boundaries and Relationships", bold: true },
-            {
-              text: [
-                "\n• Ensure that each theme is internally coherent and externally distinct from others.",
-                "\n• Consider whether some themes work better as sub-themes nested within a broader one.",
-                "\n• Reflect on how themes relate to each other across the entire dataset: Are they complementary, contrasting, or hierarchical?"
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Define and Name Themes Clearly", bold: true },
-            {
-              text: [
-                "\n• Assign concise, descriptive names (4–8 words) that capture the essence of each theme.",
-                "\n• Write a short definition for each, making explicit what the theme includes and excludes.",
-                "\n• If necessary, regenerate theme suggestions in the system using a different style prompt (e.g., more interpretive, more descriptive)."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Document Human Interpretation with Memos", bold: true },
-            {
-              text: [
-                "\n• Record your reasoning for any modifications, merges, splits, or renaming of themes (e.g., \"Merged Theme A and Theme B into 'Use of Feedback' because both addressed how students engaged with feedback practices\").",
-                "\n• These memos provide transparency and will appear in the final report, ensuring that the analytical decisions are traceable."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 3
-        },
-        {
-          text: [
-            { text: "Check Alignment with Research Questions", bold: true },
-            {
-              text: [
-                "\n• Finally, ensure that the refined themes not only make sense internally but also contribute to answering your research questions.",
-                "\n• Consider prevalence (how often a theme occurs) and significance (why it matters), and reflect on whether the final themes capture the key stories in the data."
-              ],
-              fontSize: 8
-            }
-          ],
-          fontSize: 9,
-          marginBottom: 5
-        }
-      ],
+      text: "This stage transforms the analysis from a preliminary structure into a coherent thematic framework. The LLM offers a draft map of themes, and you should provide the critical review, interpretive judgment, and theoretical alignment necessary to produce a trustworthy and meaningful set of final themes.",
+      fontSize: 10,
+      marginBottom: 10,
       marginLeft: 5,
-      marginBottom: 8
+      alignment: 'justify'
     }
   );
 
-  // Themes Style
+  // Prompt to LLM
   themesHumanInterpretationContent.push(
     {
       text: "Prompt to LLM",
-      fontSize: 11,
+      fontSize: 12,
       bold: true,
-      marginTop: 8,
-      marginBottom: 3,
+      marginTop: 10,
+      marginBottom: 5,
       headlineLevel: 4,
       id: 'conceptualizingStyleParam'
     }
   );
 
-  // Add prompt history for concept step
   const { llmHistory = [] } = useLLMHistoryStore.getState();
   const conceptHistory = llmHistory.filter(entry => entry.step === "concept");
   if (conceptHistory.length > 0) {
@@ -986,57 +1024,54 @@ function generateThemesProcessContent(): Content[] {
       themesHumanInterpretationContent.push(
         {
           text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 8,
+          fontSize: 9,
           bold: true,
           marginLeft: 5,
-          marginBottom: 2
+          marginBottom: 3
         },
         {
           text: cleanContent(entry.userPrompt || ""),
-          fontSize: 8,
+          fontSize: 9,
           marginLeft: 5,
-          marginBottom: 4
+          marginBottom: 8
         }
       );
     });
   } else if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
-    // If no LLM history and no current user input, use current input
     themesHumanInterpretationContent.push({
       text: cleanContent(conceptualizingStyle),
-      fontSize: 8,
+      fontSize: 9,
       marginLeft: 5,
-      marginBottom: 4
+      marginBottom: 8
     });
   } else {
-    // If no LLM history and no current user input, show backup message
     themesHumanInterpretationContent.push({
       text: "No customized prompt yet",
-      fontSize: 8,
+      fontSize: 9,
       marginLeft: 5,
-      marginBottom: 4
+      marginBottom: 8
     });
   }
 
-  // Themes Memo
+  // User Memo
   themesHumanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 11,
+      fontSize: 12,
       bold: true,
-      marginTop: 8,
-      marginBottom: 3,
+      marginTop: 10,
+      marginBottom: 5,
       headlineLevel: 4,
       id: 'conceptMemoParam'
     },
     {
       text: cleanContent(conceptMemo && typeof conceptMemo === 'string' && conceptMemo.trim() ? conceptMemo : "No memo added yet"),
-      fontSize: 9,
-      marginBottom: 5,
+      fontSize: 10,
+      marginBottom: 10,
       marginLeft: 5
     }
   );
 
-  // Add the Human Interpretation section with background
   result.push({
     table: {
       widths: ['*'],
@@ -1044,61 +1079,91 @@ function generateThemesProcessContent(): Content[] {
         [{
           stack: themesHumanInterpretationContent,
           fillColor: '#E3F2FD',
-          margin: [10, 10, 10, 10]
+          margin: [15, 15, 15, 15]
         }]
       ]
     },
     layout: 'noBorders',
-    marginTop: 10
+    marginTop: 5,
+    marginBottom: 20
   });
 
-  // Add Themes names with sub-themes and cards
-  const { conceptData } = useConceptStore.getState();
-  if (conceptData && conceptData.length > 0) {
-    result.push({
-      text: "",
-      marginTop: 15
-    });
+  result.push(createHorizontalRule());
 
-    conceptData.forEach((concept, index) => {
-      result.push({
-        text: concept.name,
-        fontSize: 10,
-        bold: true,
-        marginBottom: 3,
-        marginLeft: 10
-      });
+  return result;
+}
 
-      // Add sub-themes under this theme
-      for (const codeKey in concept.codes) {
-        const codes = concept.codes[codeKey];
-        codes.forEach((code) => {
-          result.push({
-            text: code.name,
-            fontSize: 9,
+// Function to generate timeline/flow visualization
+function generateTimelineContent(): Content[] {
+  const result: Content[] = [];
+
+  result.push({
+    text: "Analysis Timeline",
+    fontSize: 16,
+    bold: true,
+    marginTop: 20,
+    marginBottom: 15,
+    headlineLevel: 2,
+    tocItem: true,
+    id: 'analysisTimelineSection',
+    tocStyle: 'tocLevel2'
+  });
+
+  // Timeline visualization
+  result.push({
+    table: {
+      widths: ['*', 30, '*', 30, '*'],
+      body: [
+        [
+          {
+            stack: [
+              { text: "STEP 1", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
+              { text: "Open Codes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
+              { text: "Raw data → Initial codes", fontSize: 9, alignment: 'center', marginTop: 3 }
+            ],
+            fillColor: '#FEF2F2',
+            margin: [8, 8, 8, 8]
+          },
+          {
+            text: "→",
+            fontSize: 20,
             bold: true,
-            marginBottom: 2,
-            marginLeft: 20
-          });
-
-          // Add cards under this sub-theme
-          for (const dataKey in code.data) {
-            const cards = code.data[dataKey];
-            cards.forEach((card) => {
-              if (card.active !== false) {
-                result.push({
-                  text: card.name,
-                  fontSize: 8,
-                  marginBottom: 1,
-                  marginLeft: 30
-                });
-              }
-            });
+            alignment: 'center',
+            color: '#9CA3AF'
+          },
+          {
+            stack: [
+              { text: "STEP 2", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
+              { text: "Sub-themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
+              { text: "Codes → Grouped patterns", fontSize: 9, alignment: 'center', marginTop: 3 }
+            ],
+            fillColor: '#FEF2F2',
+            margin: [8, 8, 8, 8]
+          },
+          {
+            text: "→",
+            fontSize: 20,
+            bold: true,
+            alignment: 'center',
+            color: '#9CA3AF'
+          },
+          {
+            stack: [
+              { text: "STEP 3", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
+              { text: "Themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
+              { text: "Sub-themes → Final themes", fontSize: 9, alignment: 'center', marginTop: 3 }
+            ],
+            fillColor: '#FEF2F2',
+            margin: [8, 8, 8, 8]
           }
-        });
-      }
-    });
-  }
+        ]
+      ]
+    },
+    layout: 'noBorders',
+    marginBottom: 20
+  });
+
+  result.push(createHorizontalRule());
 
   return result;
 }
@@ -1106,157 +1171,188 @@ function generateThemesProcessContent(): Content[] {
 // Function to generate Open Codes section content (for Primary Codebook - data only)
 function generateOpenCodesContent(): Content[] {
   const result: Content[] = [];
-
-  // Get data from stores
-  const { cardData } = useCardStore.getState();
-
-  // Check if there's any open codes data content
-  const hasTopicDataContent = (cardData && cardData.length > 0);
-
-  if (hasTopicDataContent) {
-    // Cards Data subsection - Removed duplicate content since themes already contain all cards
-    // The cards are now only displayed in the Themes section to avoid duplication
-  }
-
+  // This section is now integrated into the main theme codebook
   return result;
 }
 
 // Function to generate Sub-themes section content (for Primary Codebook - data only)
 function generateSubThemesContent(): Content[] {
   const result: Content[] = [];
-
-  // Get data from stores
-  const { codeData } = useCodeStore.getState();
-
-  // Check if there's any code labeling data content
-  const hasCodeDataContent = (codeData && codeData.length > 0);
-
-  if (hasCodeDataContent) {
-    // Codes Data subsection - Removed duplicate content since themes already contain all sub-themes
-    // Sub-themes are now only displayed in the Themes section to avoid duplication
-  }
-
+  // This section is now integrated into the main theme codebook
   return result;
 }
 
-// Function to generate Themes section content (for Primary Codebook - data only)
+// Function to generate Themes section content (for Primary Codebook - improved table design)
 function generateThemesContent(): Content[] {
   const result: Content[] = [];
 
   // Get data from stores
   const { conceptData } = useConceptStore.getState();
 
-  // Check if there's any conceptualizing data content
-  const hasConceptDataContent = (conceptData && conceptData.length > 0);
+  if (conceptData && conceptData.length > 0) {
+    conceptData.forEach((concept, conceptIndex) => {
+      // Theme header (colored row)
+      const themeHeaderData = [
+        [{
+          text: [
+            concept.isGPT !== false ? createAIBadge() : createUserBadge(),
+            { text: ` ${cleanTitle(concept.name)}`, fontSize: 13, bold: true, marginLeft: 5 }
+          ],
+          fillColor: '#1E3A8A',
+          color: '#FFFFFF',
+          margin: [10, 8, 10, 8]
+        }]
+      ];
 
-  if (hasConceptDataContent) {
-    // Themes Data subsection
-    if (conceptData && conceptData.length > 0) {
-      conceptData.forEach((concept, index) => {
-        result.push(
-          {
-            text: cleanTitle(concept.name),
-            fontSize: 11,
-            bold: true,
-            marginTop: 8,
-            marginBottom: 3,
-            headlineLevel: 4,
-            tocItem: true,
-            id: `themes_concept_${concept.nanoid || concept.id}`,
-            tocStyle: 'tocLevel3',
-            tocMargin: [10, 0, 0, 0]
-          }
-        );
-
-        if (concept.definition) {
-          result.push({
-            text: cleanContent(concept.definition),
-            fontSize: 9,
-            italics: true,
-            marginBottom: 5,
-            marginLeft: 5
-          });
-        }
-
-        // Add codes under this concept
-        for (const codeKey in concept.codes) {
-          const codes = concept.codes[codeKey];
-          codes.forEach((code) => {
-            // Use more specific ID to avoid duplicates
-            const codeId = `themes_code_${concept.nanoid || concept.id}_${code.nanoid || code.id}`;
-
-            result.push(
-              {
-                text: cleanTitle(code.name),
-                fontSize: 10,
-                bold: true,
-                marginTop: 5,
-                marginBottom: 3,
-                marginLeft: 10,
-                headlineLevel: 5,
-                tocItem: true,
-                id: codeId,
-                tocStyle: 'tocLevel4',
-                tocMargin: [20, 0, 0, 0]
-              }
-            );
-
-            if (code.definition) {
-              result.push({
-                text: cleanContent(code.definition),
-                fontSize: 8,
-                italics: true,
-                marginBottom: 3,
-                marginLeft: 15
-              });
-            }
-
-            // Add cards under this code
-            for (const dataKey in code.data) {
-              const clusters = code.data[dataKey];
-              clusters.forEach((cluster) => {
-                if (cluster.active !== false) {
-                  const cardId = `themes_card_${concept.nanoid || concept.id}_${code.nanoid || code.id}_${cluster.id}`;
-
-                  result.push(
-                    {
-                      text: cleanTitle(cluster.name),
-                      fontSize: 9,
-                      bold: true,
-                      marginTop: 3,
-                      marginBottom: 2,
-                      marginLeft: 15,
-                      headlineLevel: 6,
-                      tocItem: true,
-                      id: cardId,
-                      tocStyle: 'tocLevel5',
-                      tocMargin: [40, 0, 0, 0]
-                    }
-                  );
-
-                  if (cluster.topics && cluster.topics.length > 0) {
-                    const topicItems = cluster.topics.map(topic => ({
-                      text: topic.content,
-                      fontSize: 7,
-                      marginBottom: 1
-                    }));
-                    result.push({
-                      ul: topicItems,
-                      marginLeft: 25
-                    });
-                  }
-                }
-              });
-            }
-          });
-        }
+      result.push({
+        table: {
+          widths: ['*'],
+          body: themeHeaderData
+        },
+        layout: 'noBorders',
+        marginTop: conceptIndex > 0 ? 20 : 10,
+        marginBottom: 5,
+        headlineLevel: 3,
+        tocItem: true,
+        id: `themes_concept_${concept.nanoid || concept.id}`,
+        tocStyle: 'tocLevel3',
+        tocMargin: [10, 0, 0, 0]
       });
-    }
+
+      // Theme definition
+      if (concept.definition) {
+        result.push({
+          table: {
+            widths: ['*'],
+            body: [
+              [{
+                text: cleanContent(concept.definition),
+                fontSize: 10,
+                italics: true,
+                fillColor: '#F8FAFC',
+                margin: [15, 10, 15, 10]
+              }]
+            ]
+          },
+          layout: 'noBorders',
+          marginBottom: 10
+        });
+      }
+
+      // Sub-themes table
+      const subThemeRows = [];
+      
+      for (const codeKey in concept.codes) {
+        const codes = concept.codes[codeKey];
+        codes.forEach((code, codeIndex) => {
+          // Sub-theme header row
+          subThemeRows.push([
+            {
+              text: [
+                code.isGPT !== false ? createAIBadge() : createUserBadge(),
+                { text: ` ${cleanTitle(code.name)}`, fontSize: 11, bold: true, marginLeft: 5 }
+              ],
+              fillColor: '#E0E7FF',
+              margin: [15, 6, 10, 6]
+            }
+          ]);
+
+          // Sub-theme definition row
+          if (code.definition) {
+            subThemeRows.push([
+              {
+                text: cleanContent(code.definition),
+                fontSize: 9,
+                italics: true,
+                fillColor: '#F1F5F9',
+                margin: [20, 6, 15, 6]
+              }
+            ]);
+          }
+
+          // Open codes rows
+          for (const dataKey in code.data) {
+            const clusters = code.data[dataKey];
+            clusters.forEach((cluster, clusterIndex) => {
+              if (cluster.active !== false) {
+                // Alternate row colors for open codes
+                const isEvenRow = clusterIndex % 2 === 0;
+                const fillColor = isEvenRow ? '#FFFFFF' : '#F9FAFB';
+                
+                subThemeRows.push([
+                  {
+                    stack: [
+                      {
+                        text: [
+                          cluster.isGPT ? createAIBadge() : createUserBadge(),
+                          { text: ` ${cleanTitle(cluster.name)}`, fontSize: 10, bold: true, marginLeft: 5 }
+                        ],
+                        marginBottom: 3
+                      },
+                      ...(cluster.topics && cluster.topics.length > 0 ? [
+                        {
+                          text: `Data Segments (${cluster.topics.length}):`,
+                          fontSize: 8,
+                          bold: true,
+                          marginBottom: 2,
+                          color: '#6B7280'
+                        },
+                        ...cluster.topics.slice(0, 3).map((topic: any) => ({
+                          text: `"${topic.content.length > 100 ? topic.content.substring(0, 100) + '...' : topic.content}"`,
+                          fontSize: 8,
+                          marginBottom: 2,
+                          marginLeft: 5,
+                          italics: true,
+                          color: '#374151'
+                        })),
+                        ...(cluster.topics.length > 3 ? [{
+                          text: `... and ${cluster.topics.length - 3} more segments`,
+                          fontSize: 8,
+                          italics: true,
+                          color: '#6B7280',
+                          marginLeft: 5
+                        }] : [])
+                      ] : [])
+                    ],
+                    fillColor,
+                    margin: [25, 8, 15, 8]
+                  }
+                ]);
+              }
+            });
+          }
+        });
+      }
+
+      if (subThemeRows.length > 0) {
+        result.push({
+          table: {
+            widths: ['*'],
+            body: subThemeRows
+          },
+          layout: {
+            hLineWidth: function (i: number, node: any) {
+              return i === 0 || i === node.table.body.length ? 1 : 0.5;
+            },
+            vLineWidth: function (i: number, node: any) {
+              return 0;
+            },
+            hLineColor: function (i: number, node: any) {
+              return '#E5E7EB';
+            },
+            paddingLeft: function (i: number, node: any) { return 0; },
+            paddingRight: function (i: number, node: any) { return 0; },
+            paddingTop: function (i: number, node: any) { return 0; },
+            paddingBottom: function (i: number, node: any) { return 0; }
+          },
+          marginBottom: 15
+        });
+      }
+    });
   }
 
   return result;
 }
-
 
 // Card data type for PDF calculation
 interface CardDataForPDF {
@@ -1346,17 +1442,17 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
         coverageItems.push({
           text: [
             { text: displayName, bold: true },
-            { text: " - Coverage calculation error", fontSize: 9, italics: true, color: '#dc2626' }
+            { text: " - Coverage calculation error", fontSize: 10, italics: true, color: '#DC2626' }
           ],
-          fontSize: 10
+          fontSize: 11
         });
       } else {
         coverageItems.push({
           text: [
             { text: displayName, bold: true },
-            { text: ` - ${coverage.coveragePercentage}% coverage (${coverage.coveredWords}/${coverage.totalWords} words)`, fontSize: 9 }
+            { text: ` - ${coverage.coveragePercentage}% coverage (${coverage.coveredWords}/${coverage.totalWords} words)`, fontSize: 10 }
           ],
-          fontSize: 10
+          fontSize: 11
         });
       }
     } else {
@@ -1365,23 +1461,39 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
       coverageItems.push({
         text: [
           { text: displayName, bold: true },
-          { text: " - No coverage data available", fontSize: 9, italics: true }
+          { text: " - No coverage data available", fontSize: 10, italics: true }
         ],
-        fontSize: 10
+        fontSize: 11
       });
     }
   });
 
   if (coverageItems.length > 0) {
-    coverageItems.forEach(item => {
-      result.push(item);
+    result.push({
+      text: "Document Coverage",
+      fontSize: 16,
+      bold: true,
+      marginTop: 15,
+      marginBottom: 10,
+      headlineLevel: 3,
+      tocItem: true,
+      id: 'documentCoverageSection',
+      tocStyle: 'tocLevel3'
     });
+
+    coverageItems.forEach(item => {
+      result.push({
+        ...item,
+        marginBottom: 5,
+        marginLeft: 10
+      });
+    });
+
+    result.push({ text: "", marginBottom: 20 });
   }
 
   return result;
 }
-
-
 
 export default async function renderPDF(report: any, concept: concept[]) {
   const svgsData: ContentSvg[] = [];
@@ -1639,8 +1751,8 @@ export default async function renderPDF(report: any, concept: concept[]) {
     const sectionContent = section.Content || section.content;
 
     reportContent.push(
-      { text: cleanTitle(sectionTitle), fontSize: 10, bold: true, marginTop: 10, marginBottom: 5, headlineLevel: 2 },
-      { text: cleanContent(typeof sectionContent === 'string' ? sectionContent : ''), fontSize: 8, marginBottom: 10 }
+      { text: cleanTitle(sectionTitle), fontSize: 12, bold: true, marginTop: 15, marginBottom: 8, headlineLevel: 2 },
+      { text: cleanContent(typeof sectionContent === 'string' ? sectionContent : ''), fontSize: 10, marginBottom: 12, alignment: 'justify' }
     );
 
     const subsections = section.Subsections;
@@ -1650,24 +1762,19 @@ export default async function renderPDF(report: any, concept: concept[]) {
         const subsectionContent = subsection.Content || subsection.content;
 
         reportContent.push(
-          { text: cleanTitle(subsectionTitle), fontSize: 9, bold: true, marginTop: 5, marginBottom: 3, marginLeft: 10, headlineLevel: 3 },
-          { text: cleanContent(typeof subsectionContent === 'string' ? subsectionContent : ''), fontSize: 8, marginBottom: 8, marginLeft: 10 }
+          { text: cleanTitle(subsectionTitle), fontSize: 11, bold: true, marginTop: 10, marginBottom: 5, marginLeft: 15, headlineLevel: 3 },
+          { text: cleanContent(typeof subsectionContent === 'string' ? subsectionContent : ''), fontSize: 10, marginBottom: 10, marginLeft: 15, alignment: 'justify' }
         );
       });
     }
   });
-  // if (reportSections.length > 0) {
-
-  // } else {
-  //   reportContent.push({ text: "No content available", fontSize: 8, marginBottom: 10 });
-  // }
 
   if (report.Conclusion || report.conclusion) {
     const conclusion = report.Conclusion || report.conclusion;
     if (typeof conclusion === 'string') {
       reportContent.push(
-        { text: "Conclusion", fontSize: 10, bold: true, marginTop: 10, marginBottom: 5, headlineLevel: 2 },
-        { text: cleanContent(conclusion), fontSize: 8, marginBottom: 10 }
+        { text: "Conclusion", fontSize: 12, bold: true, marginTop: 15, marginBottom: 8, headlineLevel: 2 },
+        { text: cleanContent(conclusion), fontSize: 10, marginBottom: 12, alignment: 'justify' }
       );
     }
   }
@@ -1677,59 +1784,62 @@ export default async function renderPDF(report: any, concept: concept[]) {
     pageOrientation: 'portrait',
     compress: true,
     pdfVersion: '1.7',
+    pageMargins: [60, 60, 60, 60],
 
     styles: {
       tocTitle: {
-        fontSize: 12,
+        fontSize: 14,
         bold: true,
-        margin: [0, 20, 0, 10]
+        margin: [0, 25, 0, 15]
       },
       tocText: {
-        fontSize: 12
+        fontSize: 11
       },
       tocNumber: {
-        fontSize: 9,
+        fontSize: 10,
         italics: true
       },
       tocLevel1: {
         fontSize: 12,
         bold: true,
-        margin: [0, 10, 0, 5],
+        margin: [0, 8, 0, 4],
         color: '#1976d2'
       },
       tocLevel2: {
-        fontSize: 10,
-        margin: [15, 5, 0, 3],
+        fontSize: 11,
+        margin: [20, 6, 0, 4],
         italics: false
       },
       tocLevel3: {
-        fontSize: 8,
-        margin: [30, 3, 0, 3],
+        fontSize: 10,
+        margin: [40, 4, 0, 4],
         color: '#000000'
       },
       tocLevel4: {
-        fontSize: 8,
-        margin: [80, 2, 0, 2],
+        fontSize: 9,
+        margin: [60, 3, 0, 3],
         color: '#666666'
       },
       tocLevel5: {
-        fontSize: 8,
-        margin: [100, 2, 0, 2],
+        fontSize: 9,
+        margin: [80, 2, 0, 2],
         color: '#666666'
       },
       tocLevel6: {
-        fontSize: 8,
-        margin: [120, 2, 0, 2],
+        fontSize: 9,
+        margin: [100, 2, 0, 2],
         color: '#666666'
       },
-      humanInterpretationSection: {
-        fillColor: '#E3F2FD',
-        margin: [10, 10, 10, 10]
+      tableHeader: {
+        bold: true,
+        fontSize: 11,
+        fillColor: '#F3F4F6'
       }
     },
 
     outline: [
       { title: cleanTitle(reportTitle), ref: 'reportTitle', open: true },
+      { title: 'Analysis Configuration', ref: 'analysisConfigurationSection', open: true },
       { title: 'Key Finding Summary', ref: 'reportSection', open: true },
       { title: 'Theme Map', ref: 'visualizationSection', open: true },
       {
@@ -1738,7 +1848,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         open: true,
         items: [
           {
-            title: 'Open Codes',
+            title: 'Step 1: Open Codes',
             ref: 'openCodesProcessSection',
             items: [
               { title: 'Human Interpretation', ref: 'topicHumanInterpretation' },
@@ -1746,7 +1856,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
             ]
           },
           {
-            title: 'Sub-themes',
+            title: 'Step 2: Sub-themes',
             ref: 'subThemesProcessSection',
             items: [
               { title: 'Human Interpretation', ref: 'codeHumanInterpretation' },
@@ -1754,7 +1864,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
             ]
           },
           {
-            title: 'Themes',
+            title: 'Step 3: Themes',
             ref: 'themesProcessSection',
             items: [
               { title: 'Human Interpretation', ref: 'conceptHumanInterpretation' },
@@ -1779,25 +1889,28 @@ export default async function renderPDF(report: any, concept: concept[]) {
     },
 
     content: [
-      { image: logoBase64, width: 100, alignment: "center" },
+      // Header with logo and date
+      { image: logoBase64, width: 120, alignment: "center" },
       {
         text: formatDate(new Date()),
-        fontSize: 8,
+        fontSize: 10,
         color: "#707070",
         alignment: "center",
-        margin: [0, 10, 0, 10],
+        margin: [0, 15, 0, 15],
       },
+      
+      // Main title
       {
         text: cleanTitle(reportTitle),
-        fontSize: 12,
+        fontSize: 16,
         bold: true,
         alignment: "center",
-        margin: [0, 0, 0, 10],
+        margin: [0, 0, 0, 20],
         headlineLevel: 1,
         id: 'reportTitle'
       },
 
-      // Disclaimer
+      // Disclaimer section with improved styling
       {
         table: {
           widths: ['*'],
@@ -1809,7 +1922,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
                   fontSize: 14,
                   bold: true,
                   marginTop: 5,
-                  marginBottom: 5,
+                  marginBottom: 10,
                   color: '#6B7280'
                 },
                 {
@@ -1820,17 +1933,17 @@ export default async function renderPDF(report: any, concept: concept[]) {
                   alignment: 'justify'
                 }
               ],
-              fillColor: '#F3F4F6',
-              margin: [10, 10, 10, 10]
+              fillColor: '#F9FAFB',
+              margin: [15, 15, 15, 15]
             }]
           ]
         },
         layout: 'noBorders',
-        marginTop: 15,
-        marginBottom: 20
+        marginTop: 20,
+        marginBottom: 25
       },
 
-      // Add Table of Contents
+      // Table of Contents with improved styling
       {
         toc: {
           title: {
@@ -1842,84 +1955,112 @@ export default async function renderPDF(report: any, concept: concept[]) {
           textMargin: [0, 0, 0, 0],
           levels: [
             { textStyle: 'tocLevel1', textMargin: [0, 0, 0, 0] },
-            { textStyle: 'tocLevel2', textMargin: [15, 0, 0, 0] },
+            { textStyle: 'tocLevel2', textMargin: [20, 0, 0, 0] },
             { textStyle: 'tocLevel3', textMargin: [40, 0, 0, 0] },
-            { textStyle: 'tocLevel4', textMargin: [120, 0, 0, 0] },
-            { textStyle: 'tocLevel5', textMargin: [160, 0, 0, 0] },
-            { textStyle: 'tocLevel6', textMargin: [200, 0, 0, 0] }
+            { textStyle: 'tocLevel4', textMargin: [60, 0, 0, 0] },
+            { textStyle: 'tocLevel5', textMargin: [80, 0, 0, 0] },
+            { textStyle: 'tocLevel6', textMargin: [100, 0, 0, 0] }
           ]
         }
       },
 
+      // Add horizontal rule after TOC
+      createHorizontalRule(),
+
+      // Analysis Configuration section (new requirement #4)
+      ...generateAnalysisConfigurationContent(),
+
+      // Key Finding Summary section
       {
         text: "Key Finding Summary",
         fontSize: 20,
         bold: true,
-        marginBottom: 10,
-        marginTop: 20,
+        marginBottom: 15,
+        marginTop: 30,
         headlineLevel: 1,
         tocItem: true,
         id: 'reportSection'
       },
+      createHorizontalRule(),
       ...reportContent,
+      
+      createHorizontalRule(),
+
+      // Theme Map section
       {
         text: "Theme Map",
         fontSize: 20,
         bold: true,
-        marginBottom: 10,
-        marginTop: 20,
+        marginBottom: 15,
+        marginTop: 30,
         headlineLevel: 1,
         tocItem: true,
         id: 'visualizationSection',
         pageBreak: 'before'
       },
+      createHorizontalRule(),
       ...svgsData.map(svg => ({
         ...svg,
-        marginBottom: 20,
-        marginTop: 10
+        marginBottom: 25,
+        marginTop: 15
       })),
+
+      createHorizontalRule(),
+
       // Codebook Development Process section
       {
         text: "Codebook Development Process",
         fontSize: 20,
         bold: true,
-        marginBottom: 10,
-        marginTop: 15,
+        marginBottom: 15,
+        marginTop: 30,
         headlineLevel: 1,
         tocItem: true,
         id: 'codebookDevelopmentProcessSection',
         pageBreak: 'before'
       },
-      // Open Codes process section
+      createHorizontalRule(),
+
+      // Add timeline visualization
+      ...generateTimelineContent(),
+
+      // Step 1: Open Codes process section (improved)
       ...generateOpenCodesProcessContent(),
-      // Sub-themes process section
+      
+      // Step 2: Sub-themes process section (improved)
       ...generateSubThemesProcessContent(),
-      // Themes process section
+      
+      // Step 3: Themes process section (improved)
       ...generateThemesProcessContent(),
+
       // Primary Codebook section
       {
         text: "Primary Codebook",
         fontSize: 20,
         bold: true,
-        marginBottom: 10,
-        marginTop: 15,
+        marginBottom: 15,
+        marginTop: 30,
         headlineLevel: 1,
         tocItem: true,
         id: 'primaryCodebookSection',
         pageBreak: 'before'
       },
+      createHorizontalRule(),
+      
       // Primary Codebook description
       {
-        text: "This primary codebook is provided as a reference to support your downstream tasks, such as group discussions, the development of higher-level theories, and formal report writing.",
-        fontSize: 11,
-        marginBottom: 15,
+        text: "This primary codebook is provided as a reference to support your downstream tasks, such as group discussions, the development of higher-level theories, and formal report writing. The table below shows the hierarchical structure of themes, sub-themes, and open codes with their associated data segments.",
+        fontSize: 12,
+        marginBottom: 20,
         italics: true,
         color: '#6B7280',
         alignment: 'justify'
       },
+      
       // Document Coverage Information
       ...(await generateDocumentCoverageContent()),
-      // Themes section
+      
+      // Themes section with improved table-based design (requirement #5)
       ...generateThemesContent(),
     ],
   } as TDocumentDefinitions;

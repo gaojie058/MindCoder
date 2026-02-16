@@ -35,31 +35,42 @@ declare module "lexical" {
 //   return null;
 // }
 
-// Define the colors array directly
-const HIGHLIGHT_COLORS = [
-  "#E3C8C0",
-  "#FFE2D4",
-  "#C9ECCF",
-  "#C9ECE6",
-  "#D5ECF9",
-  "#DDDDF3",
-  "#F9D5F8",
-  "#F9D5D5",
-];
+import { CODE_COLORS } from "@/utils/codeColors";
 
-function getRandomColor(): string {
-  return HIGHLIGHT_COLORS[Math.floor(Math.random() * HIGHLIGHT_COLORS.length)];
+// Build a cardId → color map based on active card order (matches CodeLabel's colorIndex)
+let _cardColorMap: Record<string, string> = {};
+
+function rebuildCardColorMap() {
+  const { cardData } = useCardStore.getState();
+  const activeCards = cardData.filter((c) => c.active);
+  _cardColorMap = {};
+  activeCards.forEach((card, index) => {
+    _cardColorMap[card.id] = CODE_COLORS[index % CODE_COLORS.length].bg;
+    // Also map each datapoint content to the same color
+    card.topics.forEach((t) => {
+      _cardColorMap[`content:${t.content.substring(0, 60)}`] = CODE_COLORS[index % CODE_COLORS.length].bg;
+    });
+  });
+}
+
+function getColorForCard(cardId: string): string {
+  if (!_cardColorMap[cardId]) rebuildCardColorMap();
+  return _cardColorMap[cardId] || CODE_COLORS[0].bg;
 }
 
 function getConsistentColorForString(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
-  }
-  // Use the hash to pick a color from our array
-  const index = Math.abs(hash) % HIGHLIGHT_COLORS.length;
-  return HIGHLIGHT_COLORS[index];
+  // Try to find by content prefix
+  const key = `content:${str.substring(0, 60)}`;
+  if (_cardColorMap[key]) return _cardColorMap[key];
+  // Rebuild and try again
+  rebuildCardColorMap();
+  if (_cardColorMap[key]) return _cardColorMap[key];
+  // Fallback
+  return CODE_COLORS[0].bg;
+}
+
+function getRandomColor(): string {
+  return CODE_COLORS[Math.floor(Math.random() * CODE_COLORS.length)].bg;
 }
 
 export const HighlightTextPlugin = ({ searchStr }) => {
@@ -150,6 +161,7 @@ export function DatapointHighlightPlugin({
   const coverageLoggedForFileRef = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
+    rebuildCardColorMap(); // Sync colors with CodeLabel order
     const cards = getCardsForFile(currentFileName) || [];
     fileSpecificCardsRef.current = cards;
     // try {

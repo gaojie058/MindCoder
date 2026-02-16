@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import useAppStore from "@/stores/useAppStore";
 
 const SAMPLE_FILES = [
-  { name: "Sample Data.txt", path: "/sample_data/Sample Data.txt" },
-  { name: "Sample Data 2.txt", path: "/sample_data/Sample Data 2.txt" },
-  { name: "Sample Data 3.txt", path: "/sample_data/Sample Data 3.txt" },
+  { name: "Interview_1.txt", path: "/sample_data/Interview_1.txt" },
+  { name: "Interview_2.txt", path: "/sample_data/Interview_2.txt" },
+  { name: "Interview_3.txt", path: "/sample_data/Interview_3.txt" },
 ];
 
 function SampleDataPreview() {

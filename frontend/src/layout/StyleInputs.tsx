@@ -425,13 +425,13 @@ const StyleInputs = React.forwardRef<
   const Section = ({ title, icon, defaultOpen = false, children: sectionChildren }: {
     title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
   }) => (
-    <details open={defaultOpen} className="group border border-gray-200 rounded-lg mb-2 overflow-hidden">
+    <details open={defaultOpen || undefined} className="group border border-gray-200 rounded-lg mb-2 overflow-hidden">
       <summary className="flex items-center gap-2 px-3 py-2 bg-gray-50/80 cursor-pointer text-xs font-semibold text-gray-600 hover:bg-gray-100 select-none list-none [&::-webkit-details-marker]:hidden">
         <span className="transition-transform group-open:rotate-90 text-[10px]">▶</span>
         <span>{icon}</span>
         <span>{title}</span>
       </summary>
-      <div className="px-3 py-2">{sectionChildren}</div>
+      <div className="px-3 py-2" onClick={(e) => e.stopPropagation()}>{sectionChildren}</div>
     </details>
   );
 

@@ -161,7 +161,6 @@ export default function CardArea() {
                     <CodeLabel
                       key={card.id}
                       id={card.id}
-                      displayIndex={index + 1}
                       name={card.name}
                       topics={card.topics}
                       active={card.active ?? true}

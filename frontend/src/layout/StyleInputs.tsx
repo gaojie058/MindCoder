@@ -655,15 +655,7 @@ const StyleInputs = React.forwardRef<
       {/* Card step content */}
       <div className={currentStoreType === "card" ? "block" : "hidden"}>
         <CategoryHeader label="Understand" color="bg-indigo-500" />
-        <Section title="AI Agent Summary" icon="🤖" defaultOpen>
-          <LLMTaskSection {...cardLLMInfo} />
-        </Section>
-        <Section title="Your Task" icon="✍️">
-          <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
-            <li>Verify chunks are grouped correctly</li>
-            <li>Rename vague codes to be specific</li>
-          </ol>
-        </Section>
+        <LLMTaskSection {...cardLLMInfo} />
 
         <CategoryHeader label="Act" color="bg-amber-500" />
         <Section title="Custom Instructions" icon="💬">
@@ -687,15 +679,7 @@ const StyleInputs = React.forwardRef<
       {/* Code step content */}
       <div className={currentStoreType === "code" ? "block" : "hidden"}>
         <CategoryHeader label="Understand" color="bg-indigo-500" />
-        <Section title="AI Agent Summary" icon="🤖" defaultOpen>
-          <LLMTaskSection {...codeLLMInfo} />
-        </Section>
-        <Section title="Your Task" icon="✍️">
-          <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
-            <li>Check codes within each sub-theme belong together</li>
-            <li>Merge or split sub-themes as needed</li>
-          </ol>
-        </Section>
+        <LLMTaskSection {...codeLLMInfo} />
 
         <CategoryHeader label="Act" color="bg-amber-500" />
         <Section title="Custom Instructions" icon="💬">
@@ -719,15 +703,7 @@ const StyleInputs = React.forwardRef<
       {/* Concept step content */}
       <div className={currentStoreType === "concept" ? "block" : "hidden"}>
         <CategoryHeader label="Understand" color="bg-indigo-500" />
-        <Section title="AI Agent Summary" icon="🤖" defaultOpen>
-          <LLMTaskSection {...conceptLLMInfo} />
-        </Section>
-        <Section title="Your Task" icon="✍️">
-          <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
-            <li>Ensure themes are distinct and well-named (4-8 words)</li>
-            <li>Check sub-themes fit coherently within each theme</li>
-          </ol>
-        </Section>
+        <LLMTaskSection {...conceptLLMInfo} />
 
         <CategoryHeader label="Act" color="bg-amber-500" />
         <Section title="Custom Instructions" icon="💬">

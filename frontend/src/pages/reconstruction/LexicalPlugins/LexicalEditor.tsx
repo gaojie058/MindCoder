@@ -303,9 +303,61 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
       activeElements = [];
       if (penEl) { penEl.remove(); penEl = null; }
 
-      const { codeId, color } = e.detail;
+      const { codeId, color, newCardText } = e.detail;
       if (!codeId || !editorRef.current) return;
 
+      const selectColor = color || "#E8B4B8";
+
+      // For new cards: find text by content, apply highlight directly, dim others
+      if (newCardText) {
+        // Dim all existing highlighted elements
+        const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
+        allHighlighted.forEach((el: Element) => {
+          const htmlEl = el as HTMLElement;
+          const origOpacity = htmlEl.style.opacity;
+          htmlEl.style.opacity = "0.3";
+          activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);
+        });
+
+        // Find and highlight the matching text in the editor using TreeWalker
+        const walker = document.createTreeWalker(
+          editorRef.current,
+          NodeFilter.SHOW_TEXT,
+          null
+        );
+        const normalizedTarget = newCardText.replace(/\s+/g, " ").trim();
+        let textNode: Text | null;
+        const matchedNodes: HTMLElement[] = [];
+
+        while ((textNode = walker.nextNode() as Text | null)) {
+          const nodeText = (textNode.textContent || "").replace(/\s+/g, " ");
+          if (nodeText && normalizedTarget.includes(nodeText.trim()) && nodeText.trim().length > 0) {
+            const parent = textNode.parentElement;
+            if (parent) {
+              const origBg = parent.style.backgroundColor;
+              parent.style.backgroundColor = selectColor + "99";
+              parent.style.boxShadow = `inset 0 -2px 0 0 ${selectColor}`;
+              parent.style.setProperty("--card-id", codeId);
+              activeElements.push({ el: parent, orig: origBg, key: "bg" } as any);
+              matchedNodes.push(parent);
+            }
+          }
+        }
+
+        // Scroll to first match
+        if (matchedNodes.length > 0) {
+          matchedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" });
+          const pen = document.createElement("span");
+          pen.textContent = "✏️";
+          pen.style.cssText = "position:absolute;left:-18px;top:-2px;font-size:13px;pointer-events:none;z-index:20;";
+          matchedNodes[0].style.position = "relative";
+          matchedNodes[0].appendChild(pen);
+          penEl = pen;
+        }
+        return;
+      }
+
+      // Existing cards: find by card ID
       const elements = findCardElements(codeId);
       if (elements.length === 0) return;
 
@@ -322,7 +374,6 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
       penEl = pen;
 
       // Apply persistent solid background to selected code's segments, dim others
-      const selectColor = color || "#E8B4B8";
       const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
       allHighlighted.forEach((el: Element) => {
         const htmlEl = el as HTMLElement;
@@ -330,7 +381,6 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
           htmlEl.style.cssText.includes(`--card-id: ${codeId}`) ||
           htmlEl.style.cssText.includes(`--card-id:${codeId}`);
         if (isThisCode) {
-          // Solid background highlight with the code's color (60% opacity)
           const origBg = htmlEl.style.backgroundColor;
           const origShadow = htmlEl.style.boxShadow;
           htmlEl.style.backgroundColor = selectColor + "99";
@@ -338,7 +388,6 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
           activeElements.push({ el: htmlEl, orig: origBg, key: "bg" } as any);
           activeElements.push({ el: htmlEl, orig: origShadow, key: "boxShadow" } as any);
         } else {
-          // Dim non-selected codes
           const origOpacity = htmlEl.style.opacity;
           htmlEl.style.opacity = "0.3";
           activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);

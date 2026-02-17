@@ -134,21 +134,15 @@ export default function CardArea() {
     // Select the new code
     setSelectedCodeId(newId);
 
-    // Trigger highlight: first re-highlight all (to include new card), then select it
+    // Highlight the new code's text + dim others immediately
     setTimeout(() => {
-      // Re-highlight to pick up the new card
-      window.dispatchEvent(new CustomEvent("cardDataChanged"));
-
-      // Then select the new code to highlight its text + dim others
-      setTimeout(() => {
-        window.dispatchEvent(
-          new CustomEvent("selectCodeInEditor", {
-            detail: { codeId: newId, color: color.bg, topics: newCard.topics },
-          })
-        );
-        const el = document.querySelector(`[data-code-id="${newId}"]`);
-        el?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 200);
+      window.dispatchEvent(
+        new CustomEvent("selectCodeInEditor", {
+          detail: { codeId: newId, color: color.bg, newCardText: contextMenu.text },
+        })
+      );
+      const el = document.querySelector(`[data-code-id="${newId}"]`);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 50);
 
     setContextMenu(null);

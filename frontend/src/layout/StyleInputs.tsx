@@ -147,24 +147,12 @@ const LLMTaskSection = memo(
           <div>
             <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">General Approach</div>
             <ul className="space-y-1">
-              {common.map((item, i) => {
-                const c = condenseSentence(item.replace(/^\d+[\)\.]\s*/, ''));
-                return (
+              {common.map((item, i) => (
                   <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
                     <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
-                    {c.truncated ? (
-                      <details className="[&::-webkit-details-marker]:hidden">
-                        <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
-                          {c.short} <span className="text-[10px] text-indigo-400 underline">more</span>
-                        </summary>
-                        <div className="mt-0.5 text-gray-500 italic">{c.full}</div>
-                      </details>
-                    ) : (
-                      <span>{c.short}</span>
-                    )}
+                    <span>{item.replace(/^\d+[\)\.]\s*/, '').trim()}</span>
                   </li>
-                );
-              })}
+              ))}
             </ul>
           </div>
         )}
@@ -195,18 +183,10 @@ const LLMTaskSection = memo(
                   ? text.substring(0, codePositions[0].start).replace(/\s*Example:\s*$/i, '').trim()
                   : text;
                 
-                const condensed = mainText ? condenseSentence(mainText) : null;
-                
                 return (
                   <div key={i} className="bg-amber-50/60 rounded-lg px-2.5 py-2 border-l-3 border-amber-300" style={{ borderLeftWidth: '3px' }}>
-                    {condensed && (
-                      <details className="text-xs leading-5 text-gray-600 mb-1">
-                        <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
-                          {condensed.short}
-                          {condensed.truncated && <span className="ml-1 text-[10px] text-amber-500 underline">more</span>}
-                        </summary>
-                        {condensed.truncated && <div className="mt-1 text-gray-500 italic">{condensed.full}</div>}
-                      </details>
+                    {mainText && (
+                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
                     )}
                     {codeEntries.length > 0 && (
                       <div className="space-y-1.5 mt-1.5">
@@ -258,19 +238,11 @@ const LLMTaskSection = memo(
                 const mainText = codePositions.length > 0
                   ? text.substring(0, codePositions[0].start).trim()
                   : text;
-                
-                const condensed = mainText ? condenseSentence(mainText) : null;
 
                 return (
                   <div key={i} className="bg-indigo-50 rounded-lg px-2.5 py-2 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
-                    {condensed && (
-                      <details className="text-xs leading-5 text-gray-600 mb-1">
-                        <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
-                          {condensed.short}
-                          {condensed.truncated && <span className="ml-1 text-[10px] text-indigo-500 underline">more</span>}
-                        </summary>
-                        {condensed.truncated && <div className="mt-1 text-gray-500 italic">{condensed.full}</div>}
-                      </details>
+                    {mainText && (
+                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
                     )}
                     {codeEntries.length > 0 && (
                       <div className="space-y-1.5 mt-1.5">

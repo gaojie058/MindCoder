@@ -30,10 +30,10 @@ Task Description:
 - First, analyze the raw text content from the uploaded data and divide it into meaningful chunks based on the topic similarity. Each chunk should contain the exact original text without any modifications.
 - Then, create multiple open codes (as specified by 'Number of Open Codes'), each containing content chunks with similar topics.
 - In "metadata", provide 2 short examples showing why specific chunks belong to a code.
-- In "metadata" self_reflection, be EXTREMELY concise (1 short sentence each, max 15 words per field):
-    1) confident_results: Which codes are strongest and why (one sentence).
-    2) uncertain_results: Which codes are weakest and why (one sentence).
-    3) recommended_review: What should humans check first (one sentence).
+- In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 examples:
+    1) confident_results: Which codes are strongest? Reference Code【Name】 with brief reason (1-2 sentences).
+    2) uncertain_results: Which codes may overlap or are weakest? Reference Code【Name】 (1-2 sentences).
+    3) recommended_review: What should humans check? Reference Code【Name】 with specific concern (1-2 sentences).
 
 Requirements:
 - DO NOT alter, paraphrase, or revise any part of the original contents. Each chunk must contain the EXACT SAME text as it appears in the original data.
@@ -104,10 +104,10 @@ Task Description:
 - For each sub-theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the sub-theme. The definition should not merely restate the sub-theme name, nor simply summarize the codes; it must express why the grouped codes belong together. 
 - The number of sub-themes should be between 5 and the total number of Codes in the uploaded data, ensuring sufficient thematic granularity while maintaining meaningful groupings.
 - In "metadata", provide 2 short examples showing why specific codes belong to a sub-theme.
-- In "metadata" self_reflection, be EXTREMELY concise (1 short sentence each, max 15 words per field):
-    1) confident_results: Which sub-themes are strongest and why (one sentence).
-    2) uncertain_results: Which groupings are weakest and why (one sentence).
-    3) recommended_review: What should humans check first (one sentence).
+- In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 examples:
+    1) confident_results: Which sub-themes are strongest? Reference Code【Name】 with brief reason (1-2 sentences).
+    2) uncertain_results: Which groupings may overlap or are weakest? Reference Code【Name】 (1-2 sentences).
+    3) recommended_review: What should humans check? Reference Code【Name】 with specific concern (1-2 sentences).
 
 
 Requirement:
@@ -200,10 +200,10 @@ Task Description:
 2.	For each theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the theme. The definition should not merely restate the theme name, nor simply summarize the sub-themes; it must express why the grouped sub-themes belong together. 
 3.	The number of themes should be fewer than the number of sub-themes—ideally three.
 4. In "metadata", provide 2 short examples showing why specific sub-themes belong to a theme.
-5. In "metadata" self_reflection, be EXTREMELY concise (1 short sentence each, max 15 words per field):
-    1) confident_results: Which themes are strongest and why (one sentence).
-    2) uncertain_results: Which groupings are weakest and why (one sentence).
-    3) recommended_review: What should humans check first (one sentence).
+5. In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 or sub-theme examples:
+    1) confident_results: Which themes are strongest? Reference specific codes/sub-themes with brief reason (1-2 sentences).
+    2) uncertain_results: Which groupings may overlap or are weakest? Reference specific codes/sub-themes (1-2 sentences).
+    3) recommended_review: What should humans check? Reference specific codes/sub-themes with concern (1-2 sentences).
 
 Requirement:
 - Do not modify, rephrase, or revise any part of the original sub-theme names,  sub-theme numbers, code names, code numbers, or content—only organize and label them based on thematic similarity.

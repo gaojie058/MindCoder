@@ -13,7 +13,7 @@ import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import {
   DatapointHighlightPlugin,
   DatapointTooltipPlugin,
-  AddDatapointPlugin,
+  // AddDatapointPlugin,
 } from "./CodeHighLight";
 import { DatapointNode } from "./DatapointView";
 import ListMaxIndentLevelPlugin from "./ListMaxIndentLevel";
@@ -449,7 +449,6 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
             <>
               <DatapointHighlightPlugin currentFileName={selectedFileLocal} />
               <DatapointTooltipPlugin currentFileName={selectedFileLocal} />
-              <AddDatapointPlugin currentFileName={selectedFileLocal} />
             </>
           )}
         </div>

@@ -318,7 +318,7 @@ const LLMTaskSection = memo(
 
 LLMTaskSection.displayName = "LLMTaskSection";
 
-// Expandable Textarea — auto-grows, with expand/collapse toggle
+// Resizable Textarea — just a textarea with resize handle
 const ExpandableTextarea = React.forwardRef<
   HTMLTextAreaElement,
   {
@@ -326,47 +326,16 @@ const ExpandableTextarea = React.forwardRef<
     onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
     placeholder?: string;
   }
->(({ defaultValue, onChange, placeholder }, ref) => {
-  const [expanded, setExpanded] = useState(false);
-  const innerRef = useRef<HTMLTextAreaElement>(null);
-  const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || innerRef;
-
-  // Auto-resize on input
-  const autoResize = useCallback(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    if (expanded) {
-      el.style.height = "auto";
-      el.style.height = el.scrollHeight + "px";
-    } else {
-      el.style.height = "";
-    }
-  }, [expanded, textareaRef]);
-
-  useEffect(() => { autoResize(); }, [expanded, autoResize]);
-
-  return (
-    <div className="relative">
-      <textarea
-        ref={textareaRef}
-        defaultValue={defaultValue}
-        onChange={(e) => { onChange(e); autoResize(); }}
-        placeholder={placeholder}
-        className={`w-full outline-none overflow-auto font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 transition-all placeholder:text-gray-300 placeholder:text-[11px] ${
-          expanded ? "resize-y" : "resize-none"
-        }`}
-        style={expanded ? { minHeight: "120px" } : { minHeight: "60px", maxHeight: "120px" }}
-      />
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="absolute bottom-1 right-1 text-[10px] text-gray-400 hover:text-[#CB9180] bg-white/80 px-1.5 py-0.5 rounded"
-        title={expanded ? "Collapse" : "Expand"}
-      >
-        {expanded ? "▲ Collapse" : "▼ Expand"}
-      </button>
-    </div>
-  );
-});
+>(({ defaultValue, onChange, placeholder }, ref) => (
+  <textarea
+    ref={ref}
+    defaultValue={defaultValue}
+    onChange={onChange}
+    placeholder={placeholder}
+    className="w-full outline-none overflow-auto resize-y font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 placeholder:text-gray-300 placeholder:text-[11px]"
+    style={{ minHeight: "60px" }}
+  />
+));
 ExpandableTextarea.displayName = "ExpandableTextarea";
 
 // Prompt History Section

@@ -29,11 +29,11 @@ Open Codes Style:
 Task Description:
 - First, analyze the raw text content from the uploaded data and divide it into meaningful chunks based on the topic similarity. Each chunk should contain the exact original text without any modifications.
 - Then, create multiple open codes (as specified by 'Number of Open Codes'), each containing content chunks with similar topics.
-- Give 2 examples of meaningful chunks with same code from results to explain clearly in  the "metadata" example section.
-- Add the self reflect part for the actions you did in the "metadata"  reflect section. Your self-reflection should be structured into three parts:
-    1）Confident Results. Summarize the codes you are most confident about. Provide a brief reason why (e.g., strong thematic coherence, clear recurring concept, well-supported by multiple codes).
-    2) Uncertain Results. Summarize the codes you are least confident about. Provide a brief reason why (e.g., open codes overlaps multiple topics, ambiguous language, limited supporting chunks, weak thematic clarity).
-    3) Recommended Human Review Focus. Suggest which parts of your coding results should be prioritized for human checking and interpretation and explain why briefly.
+- In "metadata", provide 2 short examples showing why specific chunks belong to a code.
+- In "metadata" self_reflection, be EXTREMELY concise (1 short sentence each, max 15 words per field):
+    1) confident_results: Which codes are strongest and why (one sentence).
+    2) uncertain_results: Which codes are weakest and why (one sentence).
+    3) recommended_review: What should humans check first (one sentence).
 
 Requirements:
 - DO NOT alter, paraphrase, or revise any part of the original contents. Each chunk must contain the EXACT SAME text as it appears in the original data.
@@ -66,13 +66,13 @@ Code Example:
   },
   "metadata": {
     "what_llm_did": {
-      "main_actions": "Analyzed qualitative data and generated open codes by dividing text into meaningful chunks",
-      "examples": "Code【Code Name PlaceHolder】 contains chunks about classroom management because they share similar themes about student engagement strategies"
+      "main_actions": "Grouped text into open codes by topic similarity",
+      "examples": "Code【Name】 groups chunks about X. Code【Name】 groups chunks about Y."
     },
     "self_reflection": {
-      "confident_results": "Most confident about Code【Code Name PlaceHolder】 and Code 【Code Name PlaceHolder】 due to clear thematic coherence",
-      "uncertain_results": "Less confident about Code 【Code Name PlaceHolder】 which may overlap with multiple topics", 
-      "recommended_review": "Focus on reviewing boundary clarity between overlapping codes for human validation"
+      "confident_results": "Code【Name】 and Code【Name】: clear thematic coherence",
+      "uncertain_results": "Code【Name】 may overlap with Code【Name】",
+      "recommended_review": "Check boundary between Code【Name】 and Code【Name】"
     }
   }
 }
@@ -103,11 +103,11 @@ Task Description:
 - Sub-Theme names should be descriptive and specific, containing key concepts, terms, and entities from the content. Each sub-theme name should be 4-8 words long and clearly reflect the main theme of its grouped Codes.
 - For each sub-theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the sub-theme. The definition should not merely restate the sub-theme name, nor simply summarize the codes; it must express why the grouped codes belong together. 
 - The number of sub-themes should be between 5 and the total number of Codes in the uploaded data, ensuring sufficient thematic granularity while maintaining meaningful groupings.
-- Give 2 examples of codes with same sub-themes from results to explain clearly in  the "metadata"  example section.
-- Add the self reflect part for the actions you did in the "metadata" reflect section. Your self-reflection should be structured into three parts:
-    1）Confident Results. Summarize the sub-themes you are most confident about. Provide a brief reason why (e.g., strong thematic coherence, clear recurring concept, well-supported by multiple codes).
-    2) Uncertain Results. Summarize the sub-themes you are least confident about. Provide a brief reason why (e.g., open codes overlaps multiple topics, ambiguous language, limited supporting chunks, weak thematic clarity).
-    3) Recommended Human Review Focus. Suggest which parts of your sub-theme results should be prioritized for human checking and interpretation and explain why briefly.
+- In "metadata", provide 2 short examples showing why specific codes belong to a sub-theme.
+- In "metadata" self_reflection, be EXTREMELY concise (1 short sentence each, max 15 words per field):
+    1) confident_results: Which sub-themes are strongest and why (one sentence).
+    2) uncertain_results: Which groupings are weakest and why (one sentence).
+    3) recommended_review: What should humans check first (one sentence).
 
 
 Requirement:
@@ -167,13 +167,13 @@ Follow the structure below:
     # add more codes as needed
     "metadata": {
     "what_llm_did": {
-      "main_actions": "Performed axial coding to group codes into sub-themes based on thematic overlap",
-      "examples": "Sub-Theme 【Sub-Theme Name PlaceHolder】 includes Code 【Code Name PlaceHolder】 and Code 【Code Name PlaceHolder】 because they both relate to similar conceptual patterns"
+      "main_actions": "Grouped codes into sub-themes by thematic overlap",
+      "examples": "Sub-Theme【Name】 groups Code【Name】 and Code【Name】 (shared pattern). Sub-Theme【Name】 groups Code【Name】 (distinct focus)."
     },
     "self_reflection": {
-      "confident_results": "Strong confidence in Sub-Theme 【Sub-Theme Name PlaceHolder】 and Sub-Theme 【Sub-Theme Name PlaceHolder】 due to clear thematic coherence",
-      "uncertain_results": "Less confident about Code 【Code Name PlaceHolder】 placement which could fit multiple sub-themes",
-      "recommended_review": "Review grouping decisions for codes with potential overlap between sub-themes"
+      "confident_results": "Sub-Theme【Name】 and Sub-Theme【Name】: clear coherence",
+      "uncertain_results": "Code【Name】 could fit multiple sub-themes",
+      "recommended_review": "Check overlap between Sub-Theme【Name】 and Sub-Theme【Name】"
     }
   }
   }
@@ -199,11 +199,11 @@ Task Description:
 1.	Group the uploaded sub-themes based on shared high-level themes, with the grouping guided by the underlying research question.
 2.	For each theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the theme. The definition should not merely restate the theme name, nor simply summarize the sub-themes; it must express why the grouped sub-themes belong together. 
 3.	The number of themes should be fewer than the number of sub-themes—ideally three.
-4.  Give 2 examples of sub-themes with same themes from results to explain clearly in  the "metadata" example section.
-5. Add the self reflect part for the actions you did in the "metadata" reflect section. Your self-reflection should be structured into three parts:
-    1）Confident Results. Summarize the themes you are most confident about. Provide a brief reason why (e.g., strong thematic coherence, clear recurring concept, well-supported by multiple codes).
-    2) Uncertain Results. Summarize the themes you are least confident about. Provide a brief reason why (e.g., open codes overlaps multiple topics, ambiguous language, limited supporting chunks, weak thematic clarity).
-    3) Recommended Human Review Focus. Suggest which parts of your theme results should be prioritized for human checking and interpretation and explain why briefly.
+4. In "metadata", provide 2 short examples showing why specific sub-themes belong to a theme.
+5. In "metadata" self_reflection, be EXTREMELY concise (1 short sentence each, max 15 words per field):
+    1) confident_results: Which themes are strongest and why (one sentence).
+    2) uncertain_results: Which groupings are weakest and why (one sentence).
+    3) recommended_review: What should humans check first (one sentence).
 
 Requirement:
 - Do not modify, rephrase, or revise any part of the original sub-theme names,  sub-theme numbers, code names, code numbers, or content—only organize and label them based on thematic similarity.
@@ -285,13 +285,13 @@ Generate the output strictly in JSON format with NO additional text or explanati
   },
   "metadata": {
     "what_llm_did": {
-      "main_actions": "Developed high-level themes by grouping related sub-themes based on shared patterns",
-      "examples": "Theme 【Theme Name PlaceHolder】 includes Sub-Theme 【Sub-Theme Name PlaceHolder】 and Sub-Theme 【Sub-Theme Name PlaceHolder】 because they represent similar higher-level concepts"
+      "main_actions": "Grouped sub-themes into high-level themes by shared patterns",
+      "examples": "Theme【Name】 groups Sub-Theme【Name】 and Sub-Theme【Name】 (shared concept). Theme【Name】 groups Sub-Theme【Name】 (distinct focus)."
     },
     "self_reflection": {
-      "confident_results": "High confidence in Theme 【Theme Name PlaceHolder】 which shows clear conceptual coherence and internal consistency",
-      "uncertain_results": "Some uncertainty about Theme 【Theme Name PlaceHolder】 boundaries which may need refinement",
-      "recommended_review": "Validate final thematic boundaries and ensure themes are externally distinct for research validity"
+      "confident_results": "Theme【Name】: strong internal coherence",
+      "uncertain_results": "Theme【Name】 boundaries may need refinement",
+      "recommended_review": "Check distinction between Theme【Name】 and Theme【Name】"
     }
   }
 }

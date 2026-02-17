@@ -78,6 +78,7 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
       ref={labelRef}
       className={`group relative rounded-lg transition-all cursor-pointer hover:bg-gray-50/80`}
       id={`card-${id}`}
+      data-code-id={id}
       onClick={handleClick}
     >
       <div className="flex items-center gap-2.5 px-3 py-2">

@@ -118,6 +118,13 @@ export default function CardArea() {
       useCardStore.setState({ fileCardMap: updatedMap });
     }
 
+    // Select the new code and scroll to it
+    setSelectedCodeId(newId);
+    setTimeout(() => {
+      const el = document.querySelector(`[data-code-id="${newId}"]`);
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 100);
+
     setContextMenu(null);
     window.getSelection()?.removeAllRanges();
   }, [contextMenu]);

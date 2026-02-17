@@ -8,7 +8,7 @@ import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStor
 import { API_URL } from "@/api/api";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
-import useCardStore from "@/stores/useCardStore";
+// useCardStore imported indirectly via updateStoreData
 
 export type GenStage = "idle" | "card" | "code" | "concept" | "display" | "done" | "error";
 

@@ -24,7 +24,7 @@ import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
 import useInfoStore from "@/stores/useInfoStore";
-import useGenerationStore, { stageLabels } from "@/stores/useGenerationStore";
+import useGenerationStore from "@/stores/useGenerationStore";
 
 // Persist memo open/position across route changes
 const memoState = { open: false, x: 0, y: 0, initialized: false };
@@ -443,7 +443,7 @@ export default function MainLayout({
                 >
                   {pdfLoading ? "Adding..." : "Save Version"}
                 </button>
-                <Bottom loading={loading}
+                <Bottom loading={loading || globalIsRunning}
                   bottomType={stepName === "display" ? "display" : "regenerate"}
                   regenerate={handleRegenerate}
                   regenerateSubsequent={handleRegenerateRest}
@@ -516,7 +516,7 @@ export default function MainLayout({
               >
                 {pdfLoading ? "Adding..." : "Save Current Version"}
               </button>
-              <Bottom loading={loading}
+              <Bottom loading={loading || globalIsRunning}
                 bottomType={stepName === "display" ? "display" : "regenerate"}
                 regenerate={handleRegenerate}
                 regenerateSubsequent={handleRegenerateRest}

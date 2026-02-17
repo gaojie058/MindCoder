@@ -162,7 +162,7 @@ export function DatapointHighlightPlugin({
 
   useEffect(() => {
     rebuildCardColorMap(); // Sync colors with CodeLabel order
-    const cards = getCardsForFile(currentFileName) || [];
+    const cards = (getCardsForFile(currentFileName) || []).filter(c => c.active !== false);
     fileSpecificCardsRef.current = cards;
     // try {
     //   const totalDatapoints = cards.reduce(
@@ -220,7 +220,7 @@ export function DatapointHighlightPlugin({
         });
       }
 
-      // Also clear via Lexical model
+      // Also clear via Lexical model — this is the authoritative clear
       editor.update(() => {
         const root = $getRoot();
         const clearNode = (node) => {
@@ -230,7 +230,12 @@ export function DatapointHighlightPlugin({
               const cardIdMatch = style.match(/--card-id:\s*([^;}\s]+)/);
               const cardId = cardIdMatch?.[1]?.trim();
               if (!cardId || !activeCardIds.has(cardId)) {
-                node.setStyle("");
+                // Replace with a plain text node to fully remove styling
+                const text = node.getTextContent();
+                const newNode = $createTextNode(text);
+                if (node.isAttached()) {
+                  node.replace(newNode);
+                }
               }
             }
           } else if (node.getChildren) {
@@ -239,8 +244,6 @@ export function DatapointHighlightPlugin({
         };
         root.getChildren().forEach(clearNode);
       });
-
-      setForceUpdate((prev) => prev + 1);
     };
     window.addEventListener("cardDataChanged", handler);
     return () => window.removeEventListener("cardDataChanged", handler);

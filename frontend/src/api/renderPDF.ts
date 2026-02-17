@@ -86,6 +86,7 @@ function sanitizeText(str: string): string {
     .replace(/[\u00AB\u00BB]/g, '"')                   // guillemets
     .replace(/[\u2039\u203A]/g, "'")                   // single guillemets
     .replace(/\u00B7/g, '-')                           // middle dot
+    .replace(/[\u2192\u2794\u279C\u27A1]/g, '->')      // arrows
     // Remove any remaining chars outside Basic Latin + Latin-1 Supplement that Roboto may not have
     .replace(/[^\x00-\xFF]/g, (ch) => {
       // Keep common Latin Extended chars that Roboto supports, strip the rest
@@ -1144,13 +1145,13 @@ function generateTimelineContent(): Content[] {
             stack: [
               { text: "STEP 1", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
               { text: "Open Codes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
-              { text: "Raw data → Initial codes", fontSize: 9, alignment: 'center', marginTop: 3 }
+              { text: "Raw data -> Initial codes", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
             fillColor: '#FEF2F2',
             margin: [8, 8, 8, 8]
           },
           {
-            text: "→",
+            text: ">>",
             fontSize: 20,
             bold: true,
             alignment: 'center',
@@ -1160,13 +1161,13 @@ function generateTimelineContent(): Content[] {
             stack: [
               { text: "STEP 2", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
               { text: "Sub-themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
-              { text: "Codes → Grouped patterns", fontSize: 9, alignment: 'center', marginTop: 3 }
+              { text: "Codes -> Grouped patterns", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
             fillColor: '#FEF2F2',
             margin: [8, 8, 8, 8]
           },
           {
-            text: "→",
+            text: ">>",
             fontSize: 20,
             bold: true,
             alignment: 'center',
@@ -1176,7 +1177,7 @@ function generateTimelineContent(): Content[] {
             stack: [
               { text: "STEP 3", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
               { text: "Themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
-              { text: "Sub-themes → Final themes", fontSize: 9, alignment: 'center', marginTop: 3 }
+              { text: "Sub-themes -> Final themes", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
             fillColor: '#FEF2F2',
             margin: [8, 8, 8, 8]

@@ -8,6 +8,7 @@ import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStor
 import { API_URL } from "@/api/api";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
+import useVersionStore from "@/stores/useVersionStore";
 
 export type GenStage = "idle" | "card" | "code" | "concept" | "display" | "done" | "error";
 
@@ -115,6 +116,9 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
   regenerateStep: async (stepName: string) => {
     if (get().bgRunning || get().regenRunning) return;
 
+    // Auto-save current state as a version before regenerating
+    useVersionStore.getState().saveVersion(stepName, `Before regen ${stepName}`);
+
     set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 
     try {
@@ -136,6 +140,8 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
 
   regenerateSubsequent: async (stepName: string) => {
     if (get().bgRunning || get().regenRunning) return;
+
+    useVersionStore.getState().saveVersion(stepName, `Before regen ${stepName}+`);
 
     set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 

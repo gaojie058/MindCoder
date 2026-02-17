@@ -25,6 +25,7 @@ import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
 import useInfoStore from "@/stores/useInfoStore";
 import useGenerationStore from "@/stores/useGenerationStore";
+import VersionPanel from "./VersionPanel";
 
 // Persist memo open/position across route changes
 const memoState = { open: false, x: 0, y: 0, initialized: false };
@@ -528,6 +529,7 @@ export default function MainLayout({
         </div>
       )}
       {/* Loading indicator removed — spinner is now inline in the Regenerate button */}
+      <VersionPanel />
       <FloatingMemo stepName={stepName} />
       <HistoryModal />
       <LLMHistoryModal />

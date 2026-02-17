@@ -35,6 +35,47 @@ const AIIcon = () => (
   </svg>
 );
 
+// Parse numbered items from text (e.g., "1) xxx 2) yyy" or "1. xxx 2. yyy")
+function parseNumberedItems(text: string): string[] {
+  // Split by patterns like "1) ", "2) ", "1. ", "2. " at start of line or after sentence
+  const items = text.split(/(?:^|\s)(?=\d+[\)\.]\s)/g).map(s => s.trim()).filter(Boolean);
+  if (items.length > 1) return items;
+  // Fallback: split by newlines
+  const lines = text.split(/\n+/).map(s => s.trim()).filter(Boolean);
+  return lines.length > 1 ? lines : [text];
+}
+
+// Categorize items into common patterns vs unique observations
+function categorizeItems(items: string[]): { common: string[]; unique: string[] } {
+  const common: string[] = [];
+  const unique: string[] = [];
+  
+  for (const item of items) {
+    const lower = item.toLowerCase();
+    // Common patterns: general methodology descriptions, overall approach
+    if (lower.includes('all ') || lower.includes('each ') || lower.includes('every ') ||
+        lower.includes('overall') || lower.includes('across') || lower.includes('general') ||
+        lower.includes('methodology') || lower.includes('approach') || lower.includes('process') ||
+        lower.match(/^\d+[\)\.]\s*(the |i |we |codes? were|data was|segments? were)/i)) {
+      common.push(item);
+    } else {
+      unique.push(item);
+    }
+  }
+  
+  // If nothing categorized as unique, split roughly in half
+  if (unique.length === 0 && common.length > 2) {
+    const mid = Math.ceil(common.length / 2);
+    return { common: common.slice(0, mid), unique: common.slice(mid) };
+  }
+  // If nothing categorized as common, first item is common
+  if (common.length === 0 && unique.length > 1) {
+    return { common: [unique[0]], unique: unique.slice(1) };
+  }
+  
+  return { common, unique };
+}
+
 // LLM Task Section
 const LLMTaskSection = memo(
   ({
@@ -50,30 +91,71 @@ const LLMTaskSection = memo(
       return null;
     }
 
+    // Parse whatLLMDid into categorized items
+    const { common, unique } = whatLLMDid 
+      ? categorizeItems(parseNumberedItems(whatLLMDid))
+      : { common: [], unique: [] };
+
+    // Parse rationale into sections
+    const rationaleItems = rationale ? parseNumberedItems(rationale) : [];
+
     return (
-      <div className="bg-indigo-50/50 rounded-xl p-3 mb-2 border border-indigo-100">
-        <div className="flex items-center gap-2 mb-2">
+      <div className="bg-indigo-50/50 rounded-xl p-3 mb-2 border border-indigo-100 space-y-2">
+        <div className="flex items-center gap-2">
           <AIIcon />
           <h2 className="text-sm font-bold text-indigo-700">AI Agent</h2>
         </div>
+
+        {/* Task Description */}
         {llmDescription && (
-          <div className="text-xs whitespace-pre-line leading-4 font-zen font-semibold mb-2 text-gray-700">
+          <div className="text-[11px] leading-4 font-zen font-semibold text-gray-700 bg-white/60 rounded-md px-2 py-1.5">
             {llmDescription}
           </div>
         )}
-        {whatLLMDid && (
-          <div className="mb-2">
-            <div className="text-xs whitespace-pre-line leading-4 text-gray-600">
-              {whatLLMDid}
-            </div>
+
+        {/* General Approach */}
+        {common.length > 0 && (
+          <div>
+            <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wide mb-1">General Approach</div>
+            <ul className="space-y-0.5">
+              {common.map((item, i) => (
+                <li key={i} className="text-[11px] leading-4 text-gray-600 flex gap-1.5">
+                  <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
+                  <span>{item.replace(/^\d+[\)\.]\s*/, '')}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
-        {rationale && (
+
+        {/* Specific Observations */}
+        {unique.length > 0 && (
+          <div>
+            <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wide mb-1">Specific Observations</div>
+            <ul className="space-y-0.5">
+              {unique.map((item, i) => (
+                <li key={i} className="text-[11px] leading-4 text-gray-600 flex gap-1.5">
+                  <span className="text-amber-400 shrink-0 mt-0.5">•</span>
+                  <span>{item.replace(/^\d+[\)\.]\s*/, '')}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Self-Reflection */}
+        {rationaleItems.length > 0 && (
           <details className="text-xs">
-            <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800">Self-Reflection</summary>
-            <div className="mt-1 whitespace-pre-line leading-4 text-gray-600 pl-2 border-l-2 border-indigo-200">
-              {rationale}
-            </div>
+            <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 text-[11px]">
+              Self-Reflection ({rationaleItems.length} point{rationaleItems.length !== 1 ? 's' : ''})
+            </summary>
+            <ul className="mt-1.5 space-y-1 pl-2 border-l-2 border-indigo-200">
+              {rationaleItems.map((item, i) => (
+                <li key={i} className="text-[11px] leading-4 text-gray-600">
+                  {item.replace(/^\d+[\)\.]\s*/, '')}
+                </li>
+              ))}
+            </ul>
           </details>
         )}
       </div>

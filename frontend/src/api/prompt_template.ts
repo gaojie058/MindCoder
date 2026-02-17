@@ -26,6 +26,10 @@ Open Codes Style:
 \${clusteringStyle}
 (ALWAYS use this "Open Codes Style" to guide how to assign open codes names to the data. If it is empty, assign open codes names based on semantic meaning using the original terms from the data.)
 
+Preserved Codes (user-locked/edited — DO NOT regenerate these):
+\${preservedCodes}
+(If preserved codes are listed above, they have been locked or edited by the user. Do NOT generate codes that duplicate or overlap with these existing codes. Instead, generate ONLY new complementary codes that cover aspects of the data NOT already captured by the preserved codes. Adjust the number of new codes so that preserved + new ≈ the target number of codes above. If no preserved codes are listed, generate all codes from scratch.)
+
 Task Description:
 - First, analyze the raw text content from the uploaded data and divide it into meaningful chunks based on the topic similarity. Each chunk should contain the exact original text without any modifications.
 - Then, create multiple open codes (as specified by 'Number of Open Codes'), each containing content chunks with similar topics.

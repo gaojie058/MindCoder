@@ -23,6 +23,7 @@ export default function CardArea() {
   const [editorReady, setEditorReady] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<"all" | "ai" | "edited" | "locked">("all");
 
   const revealDialog = () => setIsHidden(false);
   const hideDialog = () => setIsHidden(true);
@@ -62,17 +63,31 @@ export default function CardArea() {
     return { total, aiGenerated, userEdited: total - aiGenerated, locked };
   }, [activeCodes, lockedCardIds]);
 
-  // Filter codes by search query
-  const filteredCodes = searchQuery.trim()
-    ? activeCodes.filter((card) => {
-        const q = searchQuery.toLowerCase();
-        return (
-          card.name.toLowerCase().includes(q) ||
-          card.id.toString().includes(q) ||
-          card.topics.some((t) => t.content.toLowerCase().includes(q))
-        );
-      })
-    : activeCodes;
+  // Filter codes by active filter + search query
+  const filteredCodes = useMemo(() => {
+    let codes = activeCodes;
+
+    // Apply category filter
+    if (activeFilter === "ai") {
+      codes = codes.filter(c => c.isGPT === true && !lockedCardIds.has(c.id));
+    } else if (activeFilter === "edited") {
+      codes = codes.filter(c => c.isGPT === false);
+    } else if (activeFilter === "locked") {
+      codes = codes.filter(c => lockedCardIds.has(c.id));
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      codes = codes.filter((card) =>
+        card.name.toLowerCase().includes(q) ||
+        card.id.toString().includes(q) ||
+        card.topics.some((t) => t.content.toLowerCase().includes(q))
+      );
+    }
+
+    return codes;
+  }, [activeCodes, activeFilter, searchQuery, lockedCardIds]);
 
   return (
     <>
@@ -85,18 +100,25 @@ export default function CardArea() {
           <p className="text-xs text-gray-500 font-zen mt-0.5">Organize your data into open codes based on semantic meaning</p>
         </div>
         {/* Stats Bar */}
-        <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
-          <span className="text-[#8B5E4B] font-medium">Total: {stats.total}</span>
-          <span className="text-[#CB9180]">•</span>
-          <span className="text-[#CB9180]">🤖 AI-generated: {stats.aiGenerated}</span>
-          <span className="text-[#CB9180]">•</span>
-          <span className="text-[#8B5E4B]">✏️ User edited: {stats.userEdited}</span>
-          {stats.locked > 0 && (
-            <>
-              <span className="text-[#CB9180]">•</span>
-              <span className="text-[#CB9180] font-medium">🔒 Locked: {stats.locked}</span>
-            </>
-          )}
+        <div className="w-full px-6 py-2 flex items-center gap-2 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
+          {([
+            { key: "all", label: `All (${stats.total})`, icon: "" },
+            { key: "ai", label: `AI (${stats.aiGenerated})`, icon: "🤖" },
+            { key: "edited", label: `Edited (${stats.userEdited})`, icon: "✏️" },
+            { key: "locked", label: `Locked (${stats.locked})`, icon: "🔒" },
+          ] as const).map(({ key, label, icon }) => (
+            <button
+              key={key}
+              onClick={() => setActiveFilter(activeFilter === key ? "all" : key)}
+              className={`px-2.5 py-1 rounded-full transition-all ${
+                activeFilter === key
+                  ? "bg-[#CB9180] text-white font-medium shadow-sm"
+                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
+              }`}
+            >
+              {icon} {label}
+            </button>
+          ))}
         </div>
         <div className="w-full flex gap-2 bg-white z-20 px-6 py-2 flex-shrink-0 border-b border-gray-100 items-center">
           <Button

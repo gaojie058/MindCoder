@@ -59,10 +59,23 @@ export async function packageData(
         templateProps.uploadedFiles = "No files uploaded.";
       }
 
+      // Include locked/user-edited cards as context for regeneration
+      const { cardData: allCards, lockedCardIds } = useCardStore.getState();
+      const preservedCards = allCards.filter(c => c.isGPT === false || lockedCardIds.has(c.id));
+      if (preservedCards.length > 0) {
+        templateProps.preservedCodes = JSON.stringify(preservedCards.map(c => ({
+          name: c.name,
+          chunks: c.topics.map(t => t.content),
+        })), null, 2);
+      } else {
+        templateProps.preservedCodes = "None";
+      }
+
       console.log("Processing data for storeType 'card':", {
         templateProps,
         hasFiles: uploadedFiles && uploadedFiles.length > 0,
         specificFile: specificFile?.name,
+        preservedCards: preservedCards.length,
       });
 
       fewShotData = await loadFewShotExample('card.txt');

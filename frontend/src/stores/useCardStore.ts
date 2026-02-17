@@ -560,9 +560,12 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
 
     // Save LLM task information to store
     if (llmTaskInfo.whatLLMDid || llmTaskInfo.rationale || llmTaskInfo.llmDescription) {
+      // Dynamic description with actual code count
+      const totalCodes = useCardStore.getState().cardData.filter(c => c.active).length;
+      const dynamicDesc = `Generated ${totalCodes} codes on uploaded text.`;
       useCardStore.getState().setWhatLLMDid(llmTaskInfo.whatLLMDid);
       useCardStore.getState().setRationale(llmTaskInfo.rationale);
-      useCardStore.getState().setLlmDescription(llmTaskInfo.llmDescription);
+      useCardStore.getState().setLlmDescription(dynamicDesc);
     }
 
 

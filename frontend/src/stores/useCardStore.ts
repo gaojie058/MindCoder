@@ -396,19 +396,24 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
     const currentCardData = currentState.cardData || [];
     const currentFileCardMap = currentState.fileCardMap || {};
 
-    // For full regeneration, reset everything
+    // For full regeneration, preserve user-edited cards
     if (!fileName) {
-      console.log("Full regeneration - resetting all cards");
+      console.log("Full regeneration - preserving user-edited cards");
 
-      // Assign sequential IDs starting from 1
-      const newCards = processedCards.map((card, index) => ({
+      const userEdited = currentCardData.filter(c => c.isGPT === false);
+      const newAICards = processedCards.map(card => ({
         ...card,
-        id: String(index + 1)
+        isGPT: true,
       }));
 
-      // Reset the store with new cards and empty file mapping
+      // Merge: user-edited first, then new AI-generated, re-index IDs
+      const mergedCards = [...userEdited, ...newAICards].map((card, index) => ({
+        ...card,
+        id: String(index + 1),
+      }));
+
       useCardStore.setState({
-        cardData: newCards,
+        cardData: mergedCards,
         fileCardMap: {}
       });
 

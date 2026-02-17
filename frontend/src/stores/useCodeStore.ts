@@ -91,10 +91,20 @@ const useCodeStore = create<codeStore>((set, get) => ({
     let updatedCodes: code[] = [];
 
     if (regenerate === true) {
-      updatedCodes = newCodes.map(newCode => ({
+      // Preserve user-edited codes (isGPT === false), only replace AI-generated ones
+      const currentCodeData = get().codeData || [];
+      const userEdited = currentCodeData.filter(c => c.isGPT === false);
+
+      const aiGenerated = newCodes.map(newCode => ({
         ...newCode,
         nanoid: nanoid(),
         isGPT: true,
+      }));
+
+      // Merge: user-edited first, then new AI-generated (re-index IDs)
+      updatedCodes = [...userEdited, ...aiGenerated].map((code, index) => ({
+        ...code,
+        id: (index + 1).toString(),
       }));
     } else {
       const currentCodeData = get().codeData || [];

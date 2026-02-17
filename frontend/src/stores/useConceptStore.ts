@@ -88,11 +88,20 @@ const useConceptStore = create<conceptStore>((set, get) => ({
     let updatedConcepts: concept[] = [];
 
     if (regenerate) {
-      updatedConcepts = newConcepts.map((newConcept, index) => ({
+      // Preserve user-edited concepts (isGPT === false), only replace AI-generated ones
+      const currentConceptData = get().conceptData || [];
+      const userEdited = currentConceptData.filter(c => c.isGPT === false);
+
+      const aiGenerated = newConcepts.map(newConcept => ({
         ...newConcept,
-        id: (index + 1).toString(),
         nanoid: nanoid(),
         isGPT: true,
+      }));
+
+      // Merge: user-edited first, then new AI-generated (re-index IDs)
+      updatedConcepts = [...userEdited, ...aiGenerated].map((concept, index) => ({
+        ...concept,
+        id: (index + 1).toString(),
       }));
     } else {
       const currentConceptData = get().conceptData || [];

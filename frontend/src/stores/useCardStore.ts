@@ -454,8 +454,8 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
 
     // If we should reset all IDs, we'll do that after combining the cards
     if (shouldResetAllIds) {
-      // Combine cards and then reset all IDs
-      const combinedCards = [...otherCards, ...newCards];
+      // Combine cards: new cards first, then others, so the current file starts from #1
+      const combinedCards = [...newCards, ...otherCards];
 
       // Reset all IDs sequentially
       const resetCards = combinedCards.map((card, index) => ({

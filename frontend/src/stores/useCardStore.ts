@@ -14,6 +14,10 @@ interface CardStore {
   fileCardMap: Record<string, string[]>;
   getCardsForFile: (fileName: string) => card[];
   resetCardIds: () => void;
+  // Locked cards — preserved during regeneration
+  lockedCardIds: Set<string>;
+  toggleCardLock: (cardId: string) => void;
+  isCardLocked: (cardId: string) => boolean;
   // LLM task information
   whatLLMDid: string;
   setWhatLLMDid: (whatLLMDid: string) => void;
@@ -26,6 +30,16 @@ interface CardStore {
 const useCardStore = create<CardStore>((set, get) => ({
   cardData: [],
   fileCardMap: {},
+  lockedCardIds: new Set<string>(),
+  toggleCardLock: (cardId: string) => {
+    set((state) => {
+      const newSet = new Set(state.lockedCardIds);
+      if (newSet.has(cardId)) newSet.delete(cardId);
+      else newSet.add(cardId);
+      return { lockedCardIds: newSet };
+    });
+  },
+  isCardLocked: (cardId: string) => get().lockedCardIds.has(cardId),
   whatLLMDid: '',
   rationale: '',
   llmDescription: '',
@@ -398,9 +412,10 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
 
     // For full regeneration, preserve user-edited cards
     if (!fileName) {
-      console.log("Full regeneration - preserving user-edited cards");
+      console.log("Full regeneration - preserving user-edited and locked cards");
 
-      const userEdited = currentCardData.filter(c => c.isGPT === false);
+      const { lockedCardIds } = useCardStore.getState();
+      const userEdited = currentCardData.filter(c => c.isGPT === false || lockedCardIds.has(c.id));
       const newAICards = processedCards.map(card => ({
         ...card,
         isGPT: true,

@@ -52,12 +52,15 @@ export default function CardArea() {
   const [selectedCodeId, setSelectedCodeId] = useState<string | null>(null);
   const handleSelect = useCallback((id: string | null) => setSelectedCodeId(id), []);
 
+  const { lockedCardIds } = useCardStore();
+
   // Stats
   const stats = useMemo(() => {
     const total = activeCodes.length;
     const aiGenerated = activeCodes.filter(c => c.isGPT === true).length;
-    return { total, aiGenerated, userEdited: total - aiGenerated };
-  }, [activeCodes]);
+    const locked = activeCodes.filter(c => lockedCardIds.has(c.id)).length;
+    return { total, aiGenerated, userEdited: total - aiGenerated, locked };
+  }, [activeCodes, lockedCardIds]);
 
   // Filter codes by search query
   const filteredCodes = searchQuery.trim()
@@ -88,6 +91,12 @@ export default function CardArea() {
           <span className="text-[#CB9180]">🤖 AI-generated: {stats.aiGenerated}</span>
           <span className="text-[#CB9180]">•</span>
           <span className="text-[#8B5E4B]">✏️ User edited: {stats.userEdited}</span>
+          {stats.locked > 0 && (
+            <>
+              <span className="text-[#CB9180]">•</span>
+              <span className="text-[#CB9180] font-medium">🔒 Locked: {stats.locked}</span>
+            </>
+          )}
         </div>
         <div className="w-full flex gap-2 bg-white z-20 px-6 py-2 flex-shrink-0 border-b border-gray-100 items-center">
           <Button

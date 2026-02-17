@@ -15,7 +15,8 @@ interface CodeLabelProps {
 }
 
 export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex, selectedCodeId, onSelect }: CodeLabelProps) {
-  const { updateCardName, cardData, setCardData } = useCardStore();
+  const { updateCardName, cardData, setCardData, lockedCardIds, toggleCardLock } = useCardStore();
+  const isLocked = lockedCardIds.has(id);
   const [editing, setEditing] = useState(false);
   const [localName, setLocalName] = useState(name);
   const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
@@ -80,6 +81,22 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
       onClick={handleClick}
     >
       <div className="flex items-center gap-2.5 px-3 py-2">
+        {/* Lock checkbox */}
+        <button
+          onClick={(e) => { e.stopPropagation(); toggleCardLock(id); }}
+          className={`shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-all ${
+            isLocked
+              ? "bg-[#CB9180] border-[#CB9180] text-white"
+              : "border-gray-300 hover:border-[#CB9180] text-transparent"
+          }`}
+          title={isLocked ? "Locked — preserved during regeneration" : "Click to lock"}
+        >
+          {isLocked && (
+            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </button>
         {/* Color dot — larger when selected */}
         <div
           className={`shrink-0 transition-all ${isSelected ? "w-4 h-4 rounded" : "w-2.5 h-2.5 rounded-full"}`}

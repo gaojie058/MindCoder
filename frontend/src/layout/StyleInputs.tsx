@@ -132,28 +132,35 @@ const LLMTaskSection = memo(
         {unique.length > 0 && (
           <div>
             <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">Specific Observations</div>
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {unique.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
-                // Detect example quotes: text in "quotes" or after "Example:" / "e.g."
-                const parts = text.split(/(".*?"|'.*?'|`.*?`)/g);
-                const hasExample = parts.length > 1;
+                // Extract Code references: "Code 【name】" or "Code [name]" patterns
+                const codePattern = /Code\s*[\[【](.*?)[\]】]/g;
+                const codes: string[] = [];
+                let codeMatch;
+                while ((codeMatch = codePattern.exec(text)) !== null) {
+                  codes.push(codeMatch[1].trim());
+                }
+                // Remove code references from main text for cleaner display
+                const mainText = text.replace(/Code\s*[\[【].*?[\]】]\s*/g, '').replace(/\s{2,}/g, ' ').trim();
+                
                 return (
-                  <div key={i} className="text-xs leading-5 text-gray-600 bg-amber-50/60 rounded-md px-2.5 py-1.5 border-l-3 border-amber-300" style={{ borderLeftWidth: '3px' }}>
-                    {hasExample ? (
-                      <span>
-                        {parts.map((part, j) =>
-                          /^["'`].*["'`]$/.test(part) ? (
-                            <span key={j} className="inline-block bg-amber-100 text-amber-800 rounded px-1 py-0.5 mx-0.5 text-[11px] font-medium italic">
-                              {part}
+                  <div key={i} className="bg-amber-50/60 rounded-lg px-2.5 py-2 border-l-3 border-amber-300" style={{ borderLeftWidth: '3px' }}>
+                    {mainText && (
+                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
+                    )}
+                    {codes.length > 0 && (
+                      <div className="space-y-1 mt-1.5">
+                        {codes.map((code, j) => (
+                          <div key={j} className="flex items-start gap-1.5">
+                            <span className="text-amber-500 mt-0.5 text-[10px]">▸</span>
+                            <span className="text-[11px] leading-4 text-amber-800 bg-amber-100 rounded px-1.5 py-0.5 font-medium">
+                              {code}
                             </span>
-                          ) : (
-                            <span key={j}>{part}</span>
-                          )
-                        )}
-                      </span>
-                    ) : (
-                      <span>{text}</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 );
@@ -168,27 +175,33 @@ const LLMTaskSection = memo(
             <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 text-xs">
               Self-Reflection ({rationaleItems.length} point{rationaleItems.length !== 1 ? 's' : ''})
             </summary>
-            <div className="mt-2 space-y-1.5">
+            <div className="mt-2 space-y-2">
               {rationaleItems.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
-                const parts = text.split(/(".*?"|'.*?'|`.*?`)/g);
-                const hasExample = parts.length > 1;
+                const codePattern = /Code\s*[\[【](.*?)[\]】]/g;
+                const codes: string[] = [];
+                let codeMatch;
+                while ((codeMatch = codePattern.exec(text)) !== null) {
+                  codes.push(codeMatch[1].trim());
+                }
+                const mainText = text.replace(/Code\s*[\[【].*?[\]】]\s*/g, '').replace(/\s{2,}/g, ' ').trim();
+                
                 return (
-                  <div key={i} className="text-xs leading-5 text-gray-600 bg-indigo-50 rounded-md px-2.5 py-1.5 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
-                    {hasExample ? (
-                      <span>
-                        {parts.map((part, j) =>
-                          /^["'`].*["'`]$/.test(part) ? (
-                            <span key={j} className="inline-block bg-indigo-100 text-indigo-800 rounded px-1 py-0.5 mx-0.5 text-[11px] font-medium italic">
-                              {part}
+                  <div key={i} className="bg-indigo-50 rounded-lg px-2.5 py-2 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
+                    {mainText && (
+                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
+                    )}
+                    {codes.length > 0 && (
+                      <div className="space-y-1 mt-1.5">
+                        {codes.map((code, j) => (
+                          <div key={j} className="flex items-start gap-1.5">
+                            <span className="text-indigo-500 mt-0.5 text-[10px]">▸</span>
+                            <span className="text-[11px] leading-4 text-indigo-800 bg-indigo-100 rounded px-1.5 py-0.5 font-medium">
+                              {code}
                             </span>
-                          ) : (
-                            <span key={j}>{part}</span>
-                          )
-                        )}
-                      </span>
-                    ) : (
-                      <span>{text}</span>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
                 );

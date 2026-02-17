@@ -318,6 +318,57 @@ const LLMTaskSection = memo(
 
 LLMTaskSection.displayName = "LLMTaskSection";
 
+// Expandable Textarea — auto-grows, with expand/collapse toggle
+const ExpandableTextarea = React.forwardRef<
+  HTMLTextAreaElement,
+  {
+    defaultValue: string;
+    onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    placeholder?: string;
+  }
+>(({ defaultValue, onChange, placeholder }, ref) => {
+  const [expanded, setExpanded] = useState(false);
+  const innerRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = (ref as React.RefObject<HTMLTextAreaElement>) || innerRef;
+
+  // Auto-resize on input
+  const autoResize = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    if (expanded) {
+      el.style.height = "auto";
+      el.style.height = el.scrollHeight + "px";
+    } else {
+      el.style.height = "";
+    }
+  }, [expanded, textareaRef]);
+
+  useEffect(() => { autoResize(); }, [expanded, autoResize]);
+
+  return (
+    <div className="relative">
+      <textarea
+        ref={textareaRef}
+        defaultValue={defaultValue}
+        onChange={(e) => { onChange(e); autoResize(); }}
+        placeholder={placeholder}
+        className={`w-full outline-none overflow-auto font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 transition-all placeholder:text-gray-300 placeholder:text-[11px] ${
+          expanded ? "resize-y" : "resize-none"
+        }`}
+        style={expanded ? { minHeight: "120px" } : { minHeight: "60px", maxHeight: "120px" }}
+      />
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="absolute bottom-1 right-1 text-[10px] text-gray-400 hover:text-[#CB9180] bg-white/80 px-1.5 py-0.5 rounded"
+        title={expanded ? "Collapse" : "Expand"}
+      >
+        {expanded ? "▲ Collapse" : "▼ Expand"}
+      </button>
+    </div>
+  );
+});
+ExpandableTextarea.displayName = "ExpandableTextarea";
+
 // Prompt History Section
 const PromptHistorySection = memo(({ step }: { step: string }) => {
   const { llmHistory = [] } = useLLMHistoryStore();
@@ -728,12 +779,11 @@ const StyleInputs = React.forwardRef<
 
         <CategoryHeader label="Act" color="bg-amber-500" />
         <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
-          <textarea
+          <ExpandableTextarea
             ref={clusteringTextAreaRef}
             defaultValue={clusteringStyle || ""}
             onChange={handleClusterChange}
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-            style={{ minHeight: "60px", maxHeight: "200px" }}
+            placeholder="Guide how open codes are named and grouped. E.g., 'Use participants' own words as code names' or 'Focus on emotional responses related to AI adoption'."
           />
           <div className="mt-2 flex flex-wrap gap-1">
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("In-Vivo coding: Use the direct language of raw data as codes", "clustering")}>In-Vivo</button>
@@ -752,12 +802,11 @@ const StyleInputs = React.forwardRef<
 
         <CategoryHeader label="Act" color="bg-amber-500" />
         <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
-          <textarea
+          <ExpandableTextarea
             ref={codingTextAreaRef}
             defaultValue={codingStyle || ""}
             onChange={handleCodeChange}
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-            style={{ minHeight: "60px", maxHeight: "200px" }}
+            placeholder="Guide how sub-themes are formed from open codes. E.g., 'Group codes by behavioral patterns' or 'Prioritize codes related to user frustration'."
           />
           <div className="mt-2 flex flex-wrap gap-1">
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("In-Vivo coding: Use the direct words of raw data as sub-themes", "coding")}>In-Vivo</button>
@@ -776,12 +825,11 @@ const StyleInputs = React.forwardRef<
 
         <CategoryHeader label="Act" color="bg-amber-500" />
         <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
-          <textarea
+          <ExpandableTextarea
             ref={conceptualizingTextAreaRef}
             defaultValue={conceptualizingStyle || ""}
             onChange={handleConceptChange}
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-            style={{ minHeight: "60px", maxHeight: "200px" }}
+            placeholder="Guide how themes are conceptualized from sub-themes. E.g., 'Connect themes to Technology Acceptance Model (TAM)' or 'Focus on overarching narratives about human-AI collaboration'."
           />
           <div className="mt-2 flex flex-wrap gap-1">
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Thematic analysis: Identify patterns and themes across sub-themes", "conceptualizing")}>Thematic</button>

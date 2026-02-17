@@ -174,11 +174,20 @@ const Visualize = () => {
     <>
       <div className="w-full h-full flex-1 flex flex-col overflow-auto bg-[#FFFBF9]">
         {/* Step Header */}
-        <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0">
-          <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
-            <span className="text-[#CB9180] mr-2">Step 4</span>Visualization
-          </h2>
-          <p className="text-xs text-gray-500 font-zen mt-0.5">Key finding summary and theme map</p>
+        <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0 flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
+              <span className="text-[#CB9180] mr-2">Step 4</span>Visualization
+            </h2>
+            <p className="text-xs text-gray-500 font-zen mt-0.5">Key finding summary and theme map</p>
+          </div>
+          <button
+            onClick={handleViewPDF}
+            disabled={pdfLoading}
+            className="flex items-center gap-1.5 px-4 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
+          >
+            {pdfLoading ? <>⏳ Generating...</> : <>📄 View PDF</>}
+          </button>
         </div>
         {/* Tab Bar */}
         <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
@@ -221,7 +230,7 @@ const Visualize = () => {
                 />
               </div>
             </div>
-            <div className="w-[60%] h-full relative">
+            <div className="w-[60%] h-full">
               <Display
                 selectedNode={selectedNode}
                 visibleNodes={visibleNodes}
@@ -229,13 +238,6 @@ const Visualize = () => {
                 onGraphTypeChange={setActiveGraphType}
                 activeGraphType={activeGraphType}
               />
-              <button
-                onClick={handleViewPDF}
-                disabled={pdfLoading}
-                className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-[11px] font-medium rounded-lg transition-colors shadow-sm"
-              >
-                {pdfLoading ? <>⏳ Generating...</> : <>📄 View PDF</>}
-              </button>
             </div>
           </div>
         ) : (

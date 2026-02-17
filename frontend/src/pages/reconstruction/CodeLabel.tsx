@@ -56,6 +56,8 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
     const updated = cardData.map((c) => c.id === id ? { ...c, active: false } : c);
     setCardData(updated);
     if (isSelected) onSelect(null);
+    // Trigger editor to re-highlight (remove deleted card's highlights)
+    window.dispatchEvent(new CustomEvent("cardDataChanged"));
   }, [cardData, id, setCardData, isSelected, onSelect]);
 
   // Click to select/deselect and highlight in editor

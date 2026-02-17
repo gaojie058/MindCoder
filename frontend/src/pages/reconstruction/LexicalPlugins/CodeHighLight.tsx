@@ -182,6 +182,41 @@ export function DatapointHighlightPlugin({
     // }
   }, [getCardsForFile, currentFileName]);
 
+  // Re-highlight when cards are added/deleted
+  useEffect(() => {
+    const handler = () => {
+      const cards = getCardsForFile(currentFileName) || [];
+      fileSpecificCardsRef.current = cards;
+      highlightedContentRef.current.clear();
+      highlightResultsRef.current.clear();
+      lastProcessedFileRef.current = null;
+      isProcessingRef.current = false;
+      rebuildCardColorMap();
+
+      // Clear existing highlights then re-apply
+      editor.update(() => {
+        const root = $getRoot();
+        const clearNode = (node) => {
+          if ($isTextNode(node)) {
+            const style = node.getStyle();
+            if (style && style.includes("background-color")) {
+              const text = node.getTextContent();
+              const newNode = $createTextNode(text);
+              if (node.isAttached()) node.replace(newNode);
+            }
+          } else if (node.getChildren) {
+            node.getChildren().forEach(clearNode);
+          }
+        };
+        root.getChildren().forEach(clearNode);
+      });
+
+      setForceUpdate((prev) => prev + 1);
+    };
+    window.addEventListener("cardDataChanged", handler);
+    return () => window.removeEventListener("cardDataChanged", handler);
+  }, [editor, getCardsForFile, currentFileName]);
+
   useEffect(() => {
     // Reset highlights ONLY when selected file changes, to avoid thrashing
     const now = Date.now();

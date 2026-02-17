@@ -180,7 +180,7 @@ const Visualize = () => {
           </h2>
           <p className="text-xs text-gray-500 font-zen mt-0.5">Key finding summary and theme map</p>
         </div>
-        {/* Tab Bar + PDF Button */}
+        {/* Tab Bar */}
         <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
           <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
             <button
@@ -204,15 +204,6 @@ const Visualize = () => {
               🔄 Iteration Trajectory
             </button>
           </div>
-          {activeTab === "analysis" && (
-            <button
-              onClick={handleViewPDF}
-              disabled={pdfLoading}
-              className="flex items-center gap-2 px-4 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors ml-auto"
-            >
-              {pdfLoading ? <>⏳ Generating PDF...</> : <>📄 View Report PDF</>}
-            </button>
-          )}
         </div>
         {activeTab === "trajectory" ? (
           <div className="flex-1 overflow-hidden">
@@ -230,7 +221,7 @@ const Visualize = () => {
                 />
               </div>
             </div>
-            <div className="w-[60%] h-full">
+            <div className="w-[60%] h-full relative">
               <Display
                 selectedNode={selectedNode}
                 visibleNodes={visibleNodes}
@@ -238,6 +229,13 @@ const Visualize = () => {
                 onGraphTypeChange={setActiveGraphType}
                 activeGraphType={activeGraphType}
               />
+              <button
+                onClick={handleViewPDF}
+                disabled={pdfLoading}
+                className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-[11px] font-medium rounded-lg transition-colors shadow-sm"
+              >
+                {pdfLoading ? <>⏳ Generating...</> : <>📄 View PDF</>}
+              </button>
             </div>
           </div>
         ) : (

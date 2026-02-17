@@ -656,7 +656,31 @@ const StyleInputs = React.forwardRef<
   //   }
   // }, [currentStoreType, cardLLMInfo, codeLLMInfo, conceptLLMInfo]);
 
-  // Collapsible section helper
+  // Human-action section (matches AI section style but with human/warm colors)
+  const HumanSection = ({ title, icon, defaultOpen = false, children: sectionChildren }: {
+    title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
+  }) => (
+    <details open={defaultOpen || undefined} className="group rounded-xl mb-2.5 overflow-hidden border border-[#CB9180]/30 shadow-sm">
+      <summary className="flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden bg-gradient-to-r from-orange-50 to-rose-50">
+        <div className="w-6 h-6 rounded-md bg-white/80 backdrop-blur flex items-center justify-center text-sm shadow-sm">
+          {icon}
+        </div>
+        <span className="text-xs font-bold text-gray-700 flex-1">{title}</span>
+        <div className="flex items-center gap-1 bg-orange-50 border border-orange-200 rounded-full px-1.5 py-0.5">
+          <svg className="w-3 h-3 text-[#CB9180]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0" />
+          </svg>
+          <span className="text-[9px] font-bold text-[#CB9180] tracking-wide">YOU</span>
+        </div>
+        <svg className="w-3.5 h-3.5 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </summary>
+      <div className="px-3.5 py-3 bg-white/60 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>{sectionChildren}</div>
+    </details>
+  );
+
+  // Keep old Section for non-categorized use (display step)
   const Section = ({ title, icon, defaultOpen = false, children: sectionChildren }: {
     title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
   }) => (
@@ -687,7 +711,7 @@ const StyleInputs = React.forwardRef<
         <LLMTaskSection {...cardLLMInfo} />
 
         <CategoryHeader label="Act" color="bg-amber-500" />
-        <Section title="Custom Instructions" icon="💬">
+        <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
           <textarea
             ref={clusteringTextAreaRef}
             defaultValue={clusteringStyle || ""}
@@ -699,10 +723,10 @@ const StyleInputs = React.forwardRef<
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("In-Vivo coding: Use the direct language of raw data as codes", "clustering")}>In-Vivo</button>
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Descriptive coding: Assign basic labels to describe the main topic", "clustering")}>Descriptive</button>
           </div>
-        </Section>
-        <Section title="Prompt History" icon="📜">
+        </HumanSection>
+        <HumanSection title="Prompt History" icon="📜">
           <PromptHistorySection step="card" />
-        </Section>
+        </HumanSection>
       </div>
 
       {/* Code step content */}
@@ -711,7 +735,7 @@ const StyleInputs = React.forwardRef<
         <LLMTaskSection {...codeLLMInfo} />
 
         <CategoryHeader label="Act" color="bg-amber-500" />
-        <Section title="Custom Instructions" icon="💬">
+        <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
           <textarea
             ref={codingTextAreaRef}
             defaultValue={codingStyle || ""}
@@ -723,10 +747,10 @@ const StyleInputs = React.forwardRef<
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("In-Vivo coding: Use the direct words of raw data as sub-themes", "coding")}>In-Vivo</button>
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Descriptive coding: Assign basic labels to describe the main sub-theme", "coding")}>Descriptive</button>
           </div>
-        </Section>
-        <Section title="Prompt History" icon="📜">
+        </HumanSection>
+        <HumanSection title="Prompt History" icon="📜">
           <PromptHistorySection step="code" />
-        </Section>
+        </HumanSection>
       </div>
 
       {/* Concept step content */}
@@ -735,7 +759,7 @@ const StyleInputs = React.forwardRef<
         <LLMTaskSection {...conceptLLMInfo} />
 
         <CategoryHeader label="Act" color="bg-amber-500" />
-        <Section title="Custom Instructions" icon="💬">
+        <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
           <textarea
             ref={conceptualizingTextAreaRef}
             defaultValue={conceptualizingStyle || ""}
@@ -747,10 +771,10 @@ const StyleInputs = React.forwardRef<
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Thematic analysis: Identify patterns and themes across sub-themes", "conceptualizing")}>Thematic</button>
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Theoretical conceptualization: Link findings to established theories", "conceptualizing")}>Theoretical</button>
           </div>
-        </Section>
-        <Section title="Prompt History" icon="📜">
+        </HumanSection>
+        <HumanSection title="Prompt History" icon="📜">
           <PromptHistorySection step="concept" />
-        </Section>
+        </HumanSection>
       </div>
 
       {/* Display step content */}

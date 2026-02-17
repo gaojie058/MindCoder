@@ -3,9 +3,8 @@ import useGenerationStore, { stageLabels } from "@/stores/useGenerationStore";
 export default function BackgroundGenButton() {
   const stage = useGenerationStore((s) => s.stage);
   const errorMsg = useGenerationStore((s) => s.errorMsg);
+  const isRunning = useGenerationStore((s) => s.isRunning);
   const runRemaining = useGenerationStore((s) => s.runRemaining);
-
-  const isRunning = stage === "code" || stage === "concept" || stage === "display";
 
   return (
     <button

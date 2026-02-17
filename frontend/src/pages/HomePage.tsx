@@ -30,7 +30,7 @@ function HomePage() {
   const [maxCodes, setMaxCodes] = useState(numberOfTopicClusters[1]);
   const [savedStep] = useState(() => sessionStorage.getItem("mindcoder-last-step"));
   const genStage = useGenerationStore((s) => s.stage);
-  const genIsRunning = genStage === "code" || genStage === "concept" || genStage === "display";
+  const genIsRunning = useGenerationStore((s) => s.isRunning);
 
   const allowedFileTypes = [
     "application/msword",

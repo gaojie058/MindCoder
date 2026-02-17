@@ -24,11 +24,16 @@ import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
 import useInfoStore from "@/stores/useInfoStore";
+import useGenerationStore, { stageLabels } from "@/stores/useGenerationStore";
+
+// Persist memo open/position across route changes
+const memoState = { open: false, x: 0, y: 0, initialized: false };
 
 // Floating Research Memo
 function FloatingMemo({ stepName }: { stepName: string }) {
-  const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [open, _setOpen] = useState(memoState.open);
+  const setOpen = (v: boolean) => { memoState.open = v; _setOpen(v); };
+  const [position, _setPosition] = useState({ x: memoState.x, y: memoState.y });
   const [dragging, setDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
 
@@ -44,9 +49,14 @@ function FloatingMemo({ stepName }: { stepName: string }) {
     : stepName === "code" ? "Your notes on the sub-theme process..."
     : "Your notes on the theme process...";
 
+  const setPosition = (p: { x: number; y: number }) => {
+    memoState.x = p.x; memoState.y = p.y; _setPosition(p);
+  };
+
   // Initialize position on first open
   useEffect(() => {
-    if (open && position.x === 0 && position.y === 0) {
+    if (open && !memoState.initialized) {
+      memoState.initialized = true;
       setPosition({ x: window.innerWidth - 380, y: 120 });
     }
   }, [open]);
@@ -244,53 +254,33 @@ export default function MainLayout({
     };
   }, [saveChangesToStore]);
 
+  const globalIsRunning = useGenerationStore((s) => s.isRunning);
+
+  const savePromptToHistory = () => {
+    const { addLLMHistoryEntry } = useLLMHistoryStore.getState();
+    const { clusteringStyle, codingStyle, conceptualizingStyle } = useAppStore.getState();
+    if (stepName === "card" && clusteringStyle?.trim()) {
+      addLLMHistoryEntry("card", clusteringStyle.trim(), "Custom Prompt");
+    } else if (stepName === "code" && codingStyle?.trim()) {
+      addLLMHistoryEntry("code", codingStyle.trim(), "Custom Prompt");
+    } else if (stepName === "concept" && conceptualizingStyle?.trim()) {
+      addLLMHistoryEntry("concept", conceptualizingStyle.trim(), "Custom Prompt");
+    }
+  };
+
   const handleRegenerate = () => {
-    if (!loading) {
-      saveChangesToStore(); // Save all changes to store before generation
-
-      // Get current store values to save to history
-      const { addLLMHistoryEntry } = useLLMHistoryStore.getState();
-      const { clusteringStyle, codingStyle, conceptualizingStyle } =
-        useAppStore.getState();
-
-      if (stepName === "card" && clusteringStyle?.trim()) {
-        addLLMHistoryEntry("card", clusteringStyle.trim(), "Custom Prompt");
-      } else if (stepName === "code" && codingStyle?.trim()) {
-        addLLMHistoryEntry("code", codingStyle.trim(), "Custom Prompt");
-      } else if (stepName === "concept" && conceptualizingStyle?.trim()) {
-        addLLMHistoryEntry(
-          "concept",
-          conceptualizingStyle.trim(),
-          "Custom Prompt"
-        );
-      }
-
-      handleGenerate(stepName);
+    if (!loading && !globalIsRunning) {
+      saveChangesToStore();
+      savePromptToHistory();
+      useGenerationStore.getState().regenerateStep(stepName);
     }
   };
 
   const handleRegenerateRest = () => {
-    if (!loading) {
-      saveChangesToStore(); // Save all changes to store before generation
-
-      // Get current store values to save to history
-      const { addLLMHistoryEntry } = useLLMHistoryStore.getState();
-      const { clusteringStyle, codingStyle, conceptualizingStyle } =
-        useAppStore.getState();
-
-      if (stepName === "card" && clusteringStyle?.trim()) {
-        addLLMHistoryEntry("card", clusteringStyle.trim(), "Custom Prompt");
-      } else if (stepName === "code" && codingStyle?.trim()) {
-        addLLMHistoryEntry("code", codingStyle.trim(), "Custom Prompt");
-      } else if (stepName === "concept" && conceptualizingStyle?.trim()) {
-        addLLMHistoryEntry(
-          "concept",
-          conceptualizingStyle.trim(),
-          "Custom Prompt"
-        );
-      }
-
-      handleRegenerateSubsequent(stepName);
+    if (!loading && !globalIsRunning) {
+      saveChangesToStore();
+      savePromptToHistory();
+      useGenerationStore.getState().regenerateSubsequent(stepName);
     }
   };
 

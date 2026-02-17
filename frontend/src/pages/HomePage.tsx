@@ -2,6 +2,7 @@ import logo from "@/assets/frameLogo.png";
 import { useRef, useState } from "react";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
+import useGenerationStore, { stageLabels } from "@/stores/useGenerationStore";
 import { useNavigate } from "react-router-dom";
 import mammoth from "mammoth";
 
@@ -28,6 +29,8 @@ function HomePage() {
   const [minCodes, setMinCodes] = useState(numberOfTopicClusters[0]);
   const [maxCodes, setMaxCodes] = useState(numberOfTopicClusters[1]);
   const [savedStep] = useState(() => sessionStorage.getItem("mindcoder-last-step"));
+  const genStage = useGenerationStore((s) => s.stage);
+  const genIsRunning = genStage === "code" || genStage === "concept" || genStage === "display";
 
   const allowedFileTypes = [
     "application/msword",
@@ -152,6 +155,19 @@ function HomePage() {
         )}
       </div>
       </div>
+
+      {/* Generation status banner */}
+      {genIsRunning && (
+        <div className="mx-auto max-w-[1400px] w-full px-6 pt-4">
+          <div className="flex items-center gap-3 bg-[#FFF3EE] border border-[#CB9180]/30 rounded-xl px-5 py-3">
+            <div className="w-4 h-4 border-2 border-[#CB9180]/30 border-t-[#CB9180] rounded-full animate-spin shrink-0" />
+            <span className="font-zen text-sm text-[#CB9180] font-semibold">
+              {stageLabels[genStage]}
+            </span>
+            <span className="text-xs text-gray-500">— generation continues in background</span>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-[1400px] mx-auto w-full">
         {/* Left: Upload + Run */}

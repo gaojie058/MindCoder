@@ -29,8 +29,11 @@ function HomePage() {
   const [minCodes, setMinCodes] = useState(numberOfTopicClusters[0]);
   const [maxCodes, setMaxCodes] = useState(numberOfTopicClusters[1]);
   const [savedStep] = useState(() => sessionStorage.getItem("mindcoder-last-step"));
-  const genStage = useGenerationStore((s) => s.stage);
-  const genIsRunning = useGenerationStore((s) => s.isRunning);
+  const bgStage = useGenerationStore((s) => s.bgStage);
+  const bgRunning = useGenerationStore((s) => s.bgRunning);
+  const regenStage = useGenerationStore((s) => s.regenStage);
+  const regenRunning = useGenerationStore((s) => s.regenRunning);
+  const genIsRunning = bgRunning || regenRunning;
 
   const allowedFileTypes = [
     "application/msword",
@@ -158,14 +161,25 @@ function HomePage() {
 
       {/* Generation status banner */}
       {genIsRunning && (
-        <div className="mx-auto max-w-[1400px] w-full px-6 pt-4">
-          <div className="flex items-center gap-3 bg-[#FFF3EE] border border-[#CB9180]/30 rounded-xl px-5 py-3">
-            <div className="w-4 h-4 border-2 border-[#CB9180]/30 border-t-[#CB9180] rounded-full animate-spin shrink-0" />
-            <span className="font-zen text-sm text-[#CB9180] font-semibold">
-              {stageLabels[genStage]}
-            </span>
-            <span className="text-xs text-gray-500">— generation continues in background</span>
-          </div>
+        <div className="mx-auto max-w-[1400px] w-full px-6 pt-4 space-y-2">
+          {bgRunning && (
+            <div className="flex items-center gap-3 bg-[#FFF3EE] border border-[#CB9180]/30 rounded-xl px-5 py-3">
+              <div className="w-4 h-4 border-2 border-[#CB9180]/30 border-t-[#CB9180] rounded-full animate-spin shrink-0" />
+              <span className="font-zen text-sm text-[#CB9180] font-semibold">
+                {stageLabels[bgStage]}
+              </span>
+              <span className="text-xs text-gray-500">— Generate All Steps in background</span>
+            </div>
+          )}
+          {regenRunning && (
+            <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200/50 rounded-xl px-5 py-3">
+              <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin shrink-0" />
+              <span className="font-zen text-sm text-indigo-600 font-semibold">
+                {stageLabels[regenStage]}
+              </span>
+              <span className="text-xs text-gray-500">— Regenerating in background</span>
+            </div>
+          )}
         </div>
       )}
 

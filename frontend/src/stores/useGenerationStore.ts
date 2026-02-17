@@ -8,7 +8,6 @@ import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStor
 import { API_URL } from "@/api/api";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
-// useCardStore imported indirectly via updateStoreData
 
 export type GenStage = "idle" | "card" | "code" | "concept" | "display" | "done" | "error";
 
@@ -23,12 +22,21 @@ export const stageLabels: Record<GenStage, string> = {
 };
 
 interface GenerationStore {
-  stage: GenStage;
-  errorMsg: string;
-  isRunning: boolean;
+  // Background "Generate All Steps" state
+  bgStage: GenStage;
+  bgRunning: boolean;
+  bgError: string;
   runRemaining: () => Promise<void>;
+
+  // Regenerate (single step / subsequent) state
+  regenStage: GenStage;
+  regenRunning: boolean;
+  regenError: string;
   regenerateStep: (stepName: string) => Promise<void>;
   regenerateSubsequent: (stepName: string) => Promise<void>;
+
+  // Combined check
+  isRunning: boolean;
 }
 
 async function executeStep(step: string, taskType?: string) {
@@ -68,70 +76,68 @@ async function executeStep(step: string, taskType?: string) {
 }
 
 const useGenerationStore = create<GenerationStore>((set, get) => ({
-  stage: "idle",
-  errorMsg: "",
-  isRunning: false,
+  bgStage: "idle",
+  bgRunning: false,
+  bgError: "",
 
-  // Run all remaining steps (Generate All Steps button)
+  regenStage: "idle",
+  regenRunning: false,
+  regenError: "",
+
+  get isRunning() { return get().bgRunning || get().regenRunning; },
+
   runRemaining: async () => {
-    const { isRunning } = get();
-    if (isRunning) return;
+    if (get().bgRunning || get().regenRunning) return;
 
     const { selectedSteps } = useInfoStore.getState();
-    set({ stage: "code", errorMsg: "", isRunning: true });
+    set({ bgStage: "code", bgError: "", bgRunning: true });
 
     try {
       if (selectedSteps.includes("code")) {
-        set({ stage: "code" });
+        set({ bgStage: "code" });
         await executeStep("code");
       }
       if (selectedSteps.includes("concept")) {
-        set({ stage: "concept" });
+        set({ bgStage: "concept" });
         await executeStep("concept");
       }
       if (selectedSteps.includes("display")) {
-        set({ stage: "display" });
+        set({ bgStage: "display" });
         await executeStep("display");
       }
-      set({ stage: "done", isRunning: false });
+      set({ bgStage: "done", bgRunning: false });
     } catch (err: any) {
       console.error("Background generation error:", err);
-      set({ stage: "error", errorMsg: err?.message || "Generation failed", isRunning: false });
+      set({ bgStage: "error", bgError: err?.message || "Generation failed", bgRunning: false });
     }
   },
 
-  // Regenerate a single step
   regenerateStep: async (stepName: string) => {
-    const { isRunning } = get();
-    if (isRunning) return;
+    if (get().bgRunning || get().regenRunning) return;
 
-    set({ stage: stepName as GenStage, errorMsg: "", isRunning: true });
+    set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 
     try {
       if (stepName === "display") {
         useDisplayStore.getState().set({
-          renderedGraphSvg: null,
-          viewState: {},
-          activeGraphType: "mindmap",
+          renderedGraphSvg: null, viewState: {}, activeGraphType: "mindmap",
         });
       }
       await executeStep(stepName);
       if (stepName === "display") {
         window.dispatchEvent(new CustomEvent("graph-regenerated"));
       }
-      set({ stage: "done", isRunning: false });
+      set({ regenStage: "done", regenRunning: false });
     } catch (err: any) {
       console.error("Regenerate step error:", err);
-      set({ stage: "error", errorMsg: err?.message || "Regeneration failed", isRunning: false });
+      set({ regenStage: "error", regenError: err?.message || "Regeneration failed", regenRunning: false });
     }
   },
 
-  // Regenerate current step and all subsequent
   regenerateSubsequent: async (stepName: string) => {
-    const { isRunning } = get();
-    if (isRunning) return;
+    if (get().bgRunning || get().regenRunning) return;
 
-    set({ stage: stepName as GenStage, errorMsg: "", isRunning: true });
+    set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 
     try {
       const steps = ["card", "code", "concept", "display"];
@@ -139,21 +145,19 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
       if (startIdx === -1) throw new Error("Unknown step: " + stepName);
 
       for (let i = startIdx; i < steps.length; i++) {
-        set({ stage: steps[i] as GenStage });
+        set({ regenStage: steps[i] as GenStage });
         if (steps[i] === "display") {
           useDisplayStore.getState().set({
-            renderedGraphSvg: null,
-            viewState: {},
-            activeGraphType: "mindmap",
+            renderedGraphSvg: null, viewState: {}, activeGraphType: "mindmap",
           });
         }
         await executeStep(steps[i]);
       }
       window.dispatchEvent(new CustomEvent("graph-regenerated"));
-      set({ stage: "done", isRunning: false });
+      set({ regenStage: "done", regenRunning: false });
     } catch (err: any) {
       console.error("Regenerate subsequent error:", err);
-      set({ stage: "error", errorMsg: err?.message || "Regeneration failed", isRunning: false });
+      set({ regenStage: "error", regenError: err?.message || "Regeneration failed", regenRunning: false });
     }
   },
 }));

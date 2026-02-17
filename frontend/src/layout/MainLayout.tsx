@@ -254,7 +254,9 @@ export default function MainLayout({
     };
   }, [saveChangesToStore]);
 
-  const globalIsRunning = useGenerationStore((s) => s.isRunning);
+  const bgRunning = useGenerationStore((s) => s.bgRunning);
+  const regenRunning = useGenerationStore((s) => s.regenRunning);
+  const globalIsRunning = bgRunning || regenRunning;
 
   const savePromptToHistory = () => {
     const { addLLMHistoryEntry } = useLLMHistoryStore.getState();

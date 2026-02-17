@@ -8,6 +8,7 @@ import useCardStore from "@/stores/useCardStore";
 import useEditorStore from "@/stores/useEditorStore";
 import { card } from "@/types/stores";
 import { nanoid } from "nanoid";
+import { CODE_COLORS } from "@/utils/codeColors";
 import LexicalEditor from "./LexicalPlugins/LexicalEditor";
 
 export default function CardArea() {
@@ -99,28 +100,52 @@ export default function CardArea() {
     if (!contextMenu) return;
     const { setCardData } = useCardStore.getState();
     const currentCards = useCardStore.getState().cardData;
+    const { selectedFile } = useEditorStore.getState();
+
+    // Generate global unique ID
     const newId = String(Math.max(0, ...currentCards.map(c => parseInt(c.id) || 0)) + 1);
+
+    // File-local numbering: count active codes in current file
+    const { fileCardMap } = useCardStore.getState();
+    const fileCardIds = selectedFile ? (fileCardMap[selectedFile] || []) : [];
+    const activeFileCodeCount = currentCards.filter(
+      c => fileCardIds.includes(c.id) && c.active !== false
+    ).length;
+    const fileCodeNum = activeFileCodeCount + 1;
+
+    // Color: use the file-local index for consistent coloring
+    const colorIndex = activeFileCodeCount;
+    const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
+
     const newCard: card = {
       id: newId,
-      name: `Code ${newId}`,
+      name: `Code ${fileCodeNum}`,
       topics: [{ id: "1", content: contextMenu.text, uuid: nanoid() }],
       active: true,
       isGPT: false,
     };
     setCardData([...currentCards, newCard]);
 
-    // Add to file card map if a file is selected
-    const { selectedFile } = useEditorStore.getState();
+    // Add to file card map
     if (selectedFile) {
-      const { fileCardMap } = useCardStore.getState();
-      const updatedMap = { ...fileCardMap };
+      const updatedMap = { ...useCardStore.getState().fileCardMap };
       updatedMap[selectedFile] = [...(updatedMap[selectedFile] || []), newId];
       useCardStore.setState({ fileCardMap: updatedMap });
     }
 
     // Select the new code and scroll to it
     setSelectedCodeId(newId);
+
+    // Trigger highlight in editor: highlight new code's text + dim others
     setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent("selectCodeInEditor", {
+          detail: { codeId: newId, color: color.bg, topics: newCard.topics },
+        })
+      );
+      // Trigger re-highlight so the new card's text gets colored
+      window.dispatchEvent(new CustomEvent("cardDataChanged"));
+
       const el = document.querySelector(`[data-code-id="${newId}"]`);
       el?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 100);

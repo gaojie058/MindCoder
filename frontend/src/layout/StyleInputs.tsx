@@ -141,10 +141,10 @@ const LLMTaskSection = memo(
           </div>
         )}
 
-        {/* General Approach */}
+        {/* What LLM Did */}
         {common.length > 0 && (
           <div>
-            <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">General Approach</div>
+            <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">What Was Done</div>
             <ul className="space-y-1">
               {common.map((item, i) => (
                   <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
@@ -156,10 +156,10 @@ const LLMTaskSection = memo(
           </div>
         )}
 
-        {/* Specific Observations */}
+        {/* Example Codes */}
         {unique.length > 0 && (
           <div>
-            <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">Specific Observations</div>
+            <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">Example Codes</div>
             <div className="space-y-2">
               {unique.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
@@ -215,11 +215,9 @@ const LLMTaskSection = memo(
 
         {/* Self-Reflection */}
         {rationaleItems.length > 0 && (
-          <details className="text-xs">
-            <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 text-xs">
-              Self-Reflection ({rationaleItems.length} point{rationaleItems.length !== 1 ? 's' : ''})
-            </summary>
-            <div className="mt-2 space-y-2">
+          <div className="text-xs">
+            <div className="text-[11px] font-bold text-emerald-600 uppercase tracking-wide mb-1.5">Self-Reflection</div>
+            <div className="space-y-2">
               {rationaleItems.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
                 // Detect label prefix: "Most confident: ...", "Less confident: ...", "Focus on human review: ..."
@@ -282,7 +280,7 @@ const LLMTaskSection = memo(
                 );
               })}
             </div>
-          </details>
+          </div>
         )}
       </div>
     );

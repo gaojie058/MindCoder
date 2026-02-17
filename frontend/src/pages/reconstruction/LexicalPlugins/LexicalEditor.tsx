@@ -357,9 +357,53 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
         return;
       }
 
-      // Existing cards: find by card ID
+      // Existing cards: find by card ID, fall back to text matching
       const elements = findCardElements(codeId);
-      if (elements.length === 0) return;
+      if (elements.length === 0) {
+        // Fallback: find by topic text content
+        const { topics } = e.detail;
+        if (topics && topics.length > 0 && editorRef.current) {
+          const topicTexts = topics.map((t: any) => (t.content || "").replace(/\s+/g, " ").trim()).filter(Boolean);
+          if (topicTexts.length > 0) {
+            // Dim all existing highlighted elements
+            const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
+            allHighlighted.forEach((el: Element) => {
+              const htmlEl = el as HTMLElement;
+              const origOpacity = htmlEl.style.opacity;
+              htmlEl.style.opacity = "0.3";
+              activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);
+            });
+
+            // Find matching text nodes
+            const walker = document.createTreeWalker(editorRef.current, NodeFilter.SHOW_TEXT, null);
+            let textNode: Text | null;
+            const matchedNodes: HTMLElement[] = [];
+            while ((textNode = walker.nextNode() as Text | null)) {
+              const nodeText = (textNode.textContent || "").replace(/\s+/g, " ").trim();
+              if (nodeText && topicTexts.some((t: string) => t.includes(nodeText) && nodeText.length > 5)) {
+                const parent = textNode.parentElement;
+                if (parent) {
+                  const origBg = parent.style.backgroundColor;
+                  parent.style.backgroundColor = selectColor + "99";
+                  parent.style.boxShadow = `inset 0 -2px 0 0 ${selectColor}`;
+                  activeElements.push({ el: parent, orig: origBg, key: "bg" } as any);
+                  matchedNodes.push(parent);
+                }
+              }
+            }
+            if (matchedNodes.length > 0) {
+              matchedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" });
+              const pen = document.createElement("span");
+              pen.textContent = "✏️";
+              pen.style.cssText = "position:absolute;left:-18px;top:-2px;font-size:13px;pointer-events:none;z-index:20;";
+              matchedNodes[0].style.position = "relative";
+              matchedNodes[0].appendChild(pen);
+              penEl = pen;
+            }
+          }
+        }
+        return;
+      }
 
       // Scroll to first
       elements[0].scrollIntoView({ behavior: "smooth", block: "center" });

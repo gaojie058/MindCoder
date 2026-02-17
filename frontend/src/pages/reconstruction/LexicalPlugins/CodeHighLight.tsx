@@ -185,10 +185,12 @@ export function DatapointHighlightPlugin({
   // Re-highlight when cards are added/deleted
   useEffect(() => {
     const handler = () => {
-      // Refresh active cards
-      const cards = getCardsForFile(currentFileName) || [];
-      fileSpecificCardsRef.current = cards;
-      const activeCardIds = new Set(cards.filter(c => c.active !== false).map(c => c.id));
+      // Refresh active cards — use cardData directly since getCardsForFile includes inactive
+      const allCards = useCardStore.getState().cardData;
+      const fileCardIds = new Set((useCardStore.getState().fileCardMap[currentFileName] || []) as string[]);
+      const activeFileCards = allCards.filter(c => fileCardIds.has(c.id) && c.active !== false);
+      fileSpecificCardsRef.current = activeFileCards;
+      const activeCardIds = new Set(activeFileCards.map(c => c.id));
 
       highlightedContentRef.current.clear();
       highlightResultsRef.current.clear();
@@ -196,34 +198,38 @@ export function DatapointHighlightPlugin({
       isProcessingRef.current = false;
       rebuildCardColorMap();
 
-      // Clear highlights for deleted cards via DOM (more reliable than Lexical node replacement)
+      // Clear highlights for deleted cards via DOM
       const rootEl = editor.getRootElement();
       if (rootEl) {
         const highlighted = rootEl.querySelectorAll('[style*="background-color"]');
         highlighted.forEach((el: Element) => {
           const htmlEl = el as HTMLElement;
           const style = htmlEl.getAttribute("style") || "";
-          const cardIdMatch = style.match(/--card-id:\s*(\S+)/);
-          const cardId = cardIdMatch?.[1]?.replace(";", "");
-          if (cardId && !activeCardIds.has(cardId)) {
-            htmlEl.style.backgroundColor = "";
-            htmlEl.style.cursor = "";
-            htmlEl.style.boxShadow = "";
-            htmlEl.removeAttribute("data-card-id");
+          // Extract card-id from CSS custom property
+          const cardIdMatch = style.match(/--card-id:\s*([^;}\s]+)/);
+          const cardId = cardIdMatch?.[1]?.trim();
+          if (!cardId || !activeCardIds.has(cardId)) {
+            // Clear all highlight styling
+            htmlEl.style.removeProperty("background-color");
+            htmlEl.style.removeProperty("cursor");
+            htmlEl.style.removeProperty("box-shadow");
+            // Remove the entire style if it only had highlight props
+            const remaining = htmlEl.getAttribute("style")?.trim();
+            if (!remaining || remaining === "") htmlEl.removeAttribute("style");
           }
         });
       }
 
-      // Also clear via Lexical for any we missed
+      // Also clear via Lexical model
       editor.update(() => {
         const root = $getRoot();
         const clearNode = (node) => {
           if ($isTextNode(node)) {
             const style = node.getStyle();
-            if (style && style.includes("--card-id")) {
-              const cardIdMatch = style.match(/--card-id:\s*(\S+)/);
-              const cardId = cardIdMatch?.[1]?.replace(";", "");
-              if (cardId && !activeCardIds.has(cardId)) {
+            if (style && style.includes("background-color")) {
+              const cardIdMatch = style.match(/--card-id:\s*([^;}\s]+)/);
+              const cardId = cardIdMatch?.[1]?.trim();
+              if (!cardId || !activeCardIds.has(cardId)) {
                 node.setStyle("");
               }
             }

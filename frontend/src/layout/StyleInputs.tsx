@@ -6,7 +6,6 @@ import React, {
   memo,
   useMemo,
 } from "react";
-import { Slider } from "@mui/material";
 import useCardStore from "@/stores/useCardStore";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
@@ -653,27 +652,10 @@ const StyleInputs = React.forwardRef<
         </Section>
 
         <Section title="Your Task" icon="✍️">
-          <ul className="space-y-1 text-xs text-gray-700">
-            <li>• Check if chunks are grouped correctly</li>
-            <li>• Rename vague codes to be more specific</li>
-          </ul>
-        </Section>
-
-        <Section title="Open Codes per File" icon="🔢">
-          <Slider
-            value={localTopicClusterRange}
-            onChange={handleTopicClusterRangeChange}
-            valueLabelDisplay="auto"
-            step={1}
-            marks={[{ value: 0, label: "0" }, { value: 10, label: "10" }, { value: 20, label: "20" }, { value: 30, label: "30" }, { value: 40, label: "40" }, { value: 50, label: "50" }]}
-            min={0} max={50} disableSwap
-            sx={{
-              "& .MuiSlider-thumb": { height: 20, width: 20, backgroundColor: "#CB9180" },
-              "& .MuiSlider-track": { height: 12, backgroundColor: "#CB9180", border: "none" },
-              "& .MuiSlider-rail": { height: 12, backgroundColor: "#CB9180", opacity: 0.2 },
-              "& .MuiSlider-mark": { backgroundColor: "#CB9180" },
-            }}
-          />
+          <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
+            <li>Verify chunks are grouped correctly</li>
+            <li>Rename vague codes to be specific</li>
+          </ol>
         </Section>
 
         <Section title="Custom Instructions" icon="💬">
@@ -713,10 +695,10 @@ const StyleInputs = React.forwardRef<
         </Section>
 
         <Section title="Your Task" icon="✍️">
-          <ul className="space-y-1 text-xs text-gray-700">
-            <li>• Check if codes within each sub-theme belong together</li>
-            <li>• Merge or split sub-themes as needed</li>
-          </ul>
+          <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
+            <li>Check codes within each sub-theme belong together</li>
+            <li>Merge or split sub-themes as needed</li>
+          </ol>
         </Section>
 
         <Section title="Custom Instructions" icon="💬">
@@ -756,10 +738,10 @@ const StyleInputs = React.forwardRef<
         </Section>
 
         <Section title="Your Task" icon="✍️">
-          <ul className="space-y-1 text-xs text-gray-700">
-            <li>• Ensure themes are distinct and well-named (4-8 words)</li>
-            <li>• Check sub-themes fit coherently within each theme</li>
-          </ul>
+          <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
+            <li>Ensure themes are distinct and well-named (4-8 words)</li>
+            <li>Check sub-themes fit coherently within each theme</li>
+          </ol>
         </Section>
 
         <Section title="Custom Instructions" icon="💬">

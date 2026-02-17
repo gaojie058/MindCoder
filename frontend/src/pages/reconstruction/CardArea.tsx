@@ -98,24 +98,20 @@ export default function CardArea() {
 
   const handleAddCodeFromSelection = useCallback(() => {
     if (!contextMenu) return;
-    const { setCardData } = useCardStore.getState();
     const currentCards = useCardStore.getState().cardData;
-    const { selectedFile } = useEditorStore.getState();
+    const currentSelectedFile = useEditorStore.getState().selectedFile;
 
     // Generate global unique ID
     const newId = String(Math.max(0, ...currentCards.map(c => parseInt(c.id) || 0)) + 1);
 
-    // File-local numbering: count active codes in current file
-    const { fileCardMap } = useCardStore.getState();
-    const fileCardIds = selectedFile ? (fileCardMap[selectedFile] || []) : [];
-    const activeFileCodeCount = currentCards.filter(
-      c => fileCardIds.includes(c.id) && c.active !== false
-    ).length;
-    const fileCodeNum = activeFileCodeCount + 1;
+    // File-local numbering based on currently visible active codes
+    const fileCodeNum = activeCodes.length + 1;
 
-    // Color: use the file-local index for consistent coloring
-    const colorIndex = activeFileCodeCount;
+    // Color: use the current count as index for consistent coloring
+    const colorIndex = activeCodes.length;
     const color = CODE_COLORS[colorIndex % CODE_COLORS.length];
+
+    console.log("[AddCode] file:", currentSelectedFile, "fileCodeNum:", fileCodeNum, "colorIndex:", colorIndex, "color:", color.bg, "newId:", newId);
 
     const newCard: card = {
       id: newId,
@@ -124,35 +120,40 @@ export default function CardArea() {
       active: true,
       isGPT: false,
     };
-    setCardData([...currentCards, newCard]);
+
+    // Update card data
+    useCardStore.getState().setCardData([...currentCards, newCard]);
 
     // Add to file card map
-    if (selectedFile) {
+    if (currentSelectedFile) {
       const updatedMap = { ...useCardStore.getState().fileCardMap };
-      updatedMap[selectedFile] = [...(updatedMap[selectedFile] || []), newId];
+      updatedMap[currentSelectedFile] = [...(updatedMap[currentSelectedFile] || []), newId];
       useCardStore.setState({ fileCardMap: updatedMap });
     }
 
-    // Select the new code and scroll to it
+    // Select the new code
     setSelectedCodeId(newId);
 
-    // Trigger highlight in editor: highlight new code's text + dim others
+    // Trigger highlight: first re-highlight all (to include new card), then select it
     setTimeout(() => {
-      window.dispatchEvent(
-        new CustomEvent("selectCodeInEditor", {
-          detail: { codeId: newId, color: color.bg, topics: newCard.topics },
-        })
-      );
-      // Trigger re-highlight so the new card's text gets colored
+      // Re-highlight to pick up the new card
       window.dispatchEvent(new CustomEvent("cardDataChanged"));
 
-      const el = document.querySelector(`[data-code-id="${newId}"]`);
-      el?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 100);
+      // Then select the new code to highlight its text + dim others
+      setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent("selectCodeInEditor", {
+            detail: { codeId: newId, color: color.bg, topics: newCard.topics },
+          })
+        );
+        const el = document.querySelector(`[data-code-id="${newId}"]`);
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 200);
+    }, 50);
 
     setContextMenu(null);
     window.getSelection()?.removeAllRanges();
-  }, [contextMenu]);
+  }, [contextMenu, activeCodes]);
 
   // Close context menu on click elsewhere
   useEffect(() => {

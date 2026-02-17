@@ -5,6 +5,7 @@ import { CODE_COLORS } from "@/utils/codeColors";
 
 interface CodeLabelProps {
   id: string;
+  displayIndex?: number;
   name: string;
   topics: card["topics"];
   active: boolean;
@@ -14,7 +15,7 @@ interface CodeLabelProps {
   onSelect: (id: string | null) => void;
 }
 
-export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex, selectedCodeId, onSelect }: CodeLabelProps) {
+export default function CodeLabel({ id, displayIndex, name, topics, active, isGPT, colorIndex, selectedCodeId, onSelect }: CodeLabelProps) {
   const { updateCardName, cardData, setCardData } = useCardStore();
   const [editing, setEditing] = useState(false);
   const [localName, setLocalName] = useState(name);
@@ -101,7 +102,7 @@ export default function CodeLabel({ id, name, topics, active, isGPT, colorIndex,
             />
           ) : (
             <div className="text-sm leading-snug" style={{ color: color.text }}>
-              <span className="text-gray-400 font-mono text-xs mr-1">#{id}</span>
+              <span className="text-gray-400 font-mono text-xs mr-1">#{displayIndex ?? id}</span>
               <span className="font-medium">{localName}</span>
               {isGPT ? (
                 <span className="ml-1.5 text-[10px] px-1 py-0.5 bg-gray-100 text-gray-400 rounded align-middle">AI</span>

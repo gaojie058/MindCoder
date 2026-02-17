@@ -185,24 +185,47 @@ export function DatapointHighlightPlugin({
   // Re-highlight when cards are added/deleted
   useEffect(() => {
     const handler = () => {
+      // Refresh active cards
       const cards = getCardsForFile(currentFileName) || [];
       fileSpecificCardsRef.current = cards;
+      const activeCardIds = new Set(cards.filter(c => c.active !== false).map(c => c.id));
+
       highlightedContentRef.current.clear();
       highlightResultsRef.current.clear();
       lastProcessedFileRef.current = null;
       isProcessingRef.current = false;
       rebuildCardColorMap();
 
-      // Clear existing highlights then re-apply
+      // Clear highlights for deleted cards via DOM (more reliable than Lexical node replacement)
+      const rootEl = editor.getRootElement();
+      if (rootEl) {
+        const highlighted = rootEl.querySelectorAll('[style*="background-color"]');
+        highlighted.forEach((el: Element) => {
+          const htmlEl = el as HTMLElement;
+          const style = htmlEl.getAttribute("style") || "";
+          const cardIdMatch = style.match(/--card-id:\s*(\S+)/);
+          const cardId = cardIdMatch?.[1]?.replace(";", "");
+          if (cardId && !activeCardIds.has(cardId)) {
+            htmlEl.style.backgroundColor = "";
+            htmlEl.style.cursor = "";
+            htmlEl.style.boxShadow = "";
+            htmlEl.removeAttribute("data-card-id");
+          }
+        });
+      }
+
+      // Also clear via Lexical for any we missed
       editor.update(() => {
         const root = $getRoot();
         const clearNode = (node) => {
           if ($isTextNode(node)) {
             const style = node.getStyle();
-            if (style && style.includes("background-color")) {
-              const text = node.getTextContent();
-              const newNode = $createTextNode(text);
-              if (node.isAttached()) node.replace(newNode);
+            if (style && style.includes("--card-id")) {
+              const cardIdMatch = style.match(/--card-id:\s*(\S+)/);
+              const cardId = cardIdMatch?.[1]?.replace(";", "");
+              if (cardId && !activeCardIds.has(cardId)) {
+                node.setStyle("");
+              }
             }
           } else if (node.getChildren) {
             node.getChildren().forEach(clearNode);

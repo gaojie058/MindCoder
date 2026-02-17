@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Display from "./Display";
 import Report from "./Report";
+import Trajectory from "./Trajectory";
 import useDisplayStore from "@/stores/useDisplayStore";
 import useHistoryStore from "@/stores/useHistoryStore";
 import { useGSAP } from "@gsap/react";
@@ -22,6 +23,7 @@ const Visualize = () => {
   // const [codeNodes, setCodeNodes] = useState<string[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeGraphType, setActiveGraphType] = useState<string>("mindmap");
+  const [activeTab, setActiveTab] = useState<"analysis" | "trajectory">("analysis");
 
   const [activeType, setActiveType] = useState<
     "Concept" | "Card" | "Code" | ""
@@ -178,21 +180,45 @@ const Visualize = () => {
           </h2>
           <p className="text-xs text-gray-500 font-zen mt-0.5">Key finding summary and theme map</p>
         </div>
-        {/* PDF Button Bar */}
-        <div className="w-full px-6 py-2 flex items-center bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
-          <button
-            onClick={handleViewPDF}
-            disabled={pdfLoading}
-            className="flex items-center gap-2 px-4 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
-          >
-            {pdfLoading ? (
-              <>⏳ Generating PDF...</>
-            ) : (
-              <>📄 View Report PDF</>
-            )}
-          </button>
+        {/* Tab Bar + PDF Button */}
+        <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
+          <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
+            <button
+              onClick={() => setActiveTab("analysis")}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                activeTab === "analysis"
+                  ? "bg-[#CB9180] text-white shadow-sm"
+                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
+              }`}
+            >
+              📊 Report & Graph
+            </button>
+            <button
+              onClick={() => setActiveTab("trajectory")}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                activeTab === "trajectory"
+                  ? "bg-[#CB9180] text-white shadow-sm"
+                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
+              }`}
+            >
+              🔄 Iteration Trajectory
+            </button>
+          </div>
+          {activeTab === "analysis" && (
+            <button
+              onClick={handleViewPDF}
+              disabled={pdfLoading}
+              className="flex items-center gap-2 px-4 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors ml-auto"
+            >
+              {pdfLoading ? <>⏳ Generating PDF...</> : <>📄 View Report PDF</>}
+            </button>
+          )}
         </div>
-        {!isFullScreen ? (
+        {activeTab === "trajectory" ? (
+          <div className="flex-1 overflow-hidden">
+            <Trajectory />
+          </div>
+        ) : !isFullScreen ? (
           <div className="justify-between items-center flex flex-row flex-1 overflow-hidden">
             <div className="flex flex-col w-[40%] h-full gap-2">
               <div className="h-full overflow-auto scrollbar-thin">

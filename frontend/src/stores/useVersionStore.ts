@@ -22,6 +22,7 @@ interface VersionStore {
   saveVersion: (step: string, label?: string) => void;
   restoreVersion: (versionId: string) => void;
   deleteVersion: (versionId: string) => void;
+  renameVersion: (versionId: string, newLabel: string) => void;
   clearVersions: () => void;
 }
 
@@ -94,6 +95,14 @@ const useVersionStore = create<VersionStore>((set, get) => ({
     useConceptStore.getState().setConceptData(structuredClone(version.conceptData));
 
     set({ versions: updatedVersions, activeVersionId: versionId });
+  },
+
+  renameVersion: (versionId: string, newLabel: string) => {
+    set((s) => ({
+      versions: s.versions.map((v) =>
+        v.id === versionId ? { ...v, label: newLabel.trim() || v.label } : v
+      ),
+    }));
   },
 
   deleteVersion: (versionId: string) => {

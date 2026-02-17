@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useRef, useEffect, useCallback } from "react";
 import {
   ReactFlow,
   Background,
@@ -33,40 +33,97 @@ function countActive(items: any[]): number {
   return items.filter((i: any) => i.active !== false).length;
 }
 
+const NODE_WIDTH = 200;
+const NODE_HEIGHT = 120;
+
 function VersionNode({ data }: { data: any }) {
   const style = STAGE_COLORS[data.stage as keyof typeof STAGE_COLORS] || STAGE_COLORS.card;
   const isCurrent = data.isCurrent;
+  const [editing, setEditing] = useState(false);
+  const [editValue, setEditValue] = useState(data.label);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const renameVersion = useVersionStore((s) => s.renameVersion);
+
+  useEffect(() => {
+    if (editing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [editing]);
+
+  const commitRename = useCallback(() => {
+    setEditing(false);
+    if (editValue.trim() && editValue.trim() !== data.label) {
+      renameVersion(data.versionId, editValue.trim());
+    }
+  }, [editValue, data.label, data.versionId, renameVersion]);
 
   return (
     <div
-      className={`rounded-xl border-2 px-4 py-3 min-w-[160px] shadow-sm transition-all relative ${
+      className={`rounded-xl border-2 px-3 py-2.5 shadow-sm transition-all relative flex flex-col justify-between ${
         isCurrent ? "ring-2 ring-offset-2 ring-[#CB9180]" : ""
       }`}
       style={{
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
         backgroundColor: style.bg,
         borderColor: isCurrent ? "#CB9180" : style.border,
+      }}
+      onDoubleClick={(e) => {
+        e.stopPropagation();
+        setEditValue(data.label);
+        setEditing(true);
       }}
     >
       <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
       <Handle type="target" position={Position.Left} id="left" style={{ opacity: 0 }} />
       <Handle type="source" position={Position.Bottom} style={{ opacity: 0 }} />
       <Handle type="source" position={Position.Right} id="right" style={{ opacity: 0 }} />
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-[11px] font-bold" style={{ color: style.text }}>
-          {data.label}
-        </span>
-        {isCurrent && (
-          <span className="text-[9px] bg-[#CB9180] text-white px-1.5 py-0.5 rounded-full">
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-0.5">
+        {editing ? (
+          <input
+            ref={inputRef}
+            className="text-[11px] font-bold bg-white/80 border rounded px-1 py-0.5 w-full mr-1 outline-none"
+            style={{ color: style.text }}
+            value={editValue}
+            onChange={(e) => setEditValue(e.target.value)}
+            onBlur={commitRename}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") commitRename();
+              if (e.key === "Escape") setEditing(false);
+            }}
+          />
+        ) : (
+          <span
+            className="text-[11px] font-bold truncate cursor-default"
+            style={{ color: style.text }}
+            title="Double-click to rename"
+          >
+            {data.label}
+          </span>
+        )}
+        {isCurrent && !editing && (
+          <span className="text-[9px] bg-[#CB9180] text-white px-1.5 py-0.5 rounded-full shrink-0">
             CURRENT
           </span>
         )}
       </div>
+
+      {/* Stats */}
       <div className="text-[10px] text-gray-600 space-y-0.5">
-        <div>📊 {data.cardCount} codes · {data.codeCount} sub-themes · {data.conceptCount} themes</div>
-        {data.lockedCount > 0 && <div>🔒 {data.lockedCount} locked</div>}
-        {data.editedCount > 0 && <div>✏️ {data.editedCount} edited</div>}
+        <div>📊 {data.cardCount} codes · {data.codeCount} sub · {data.conceptCount} themes</div>
+        {(data.lockedCount > 0 || data.editedCount > 0) && (
+          <div>
+            {data.lockedCount > 0 && <span>🔒 {data.lockedCount} </span>}
+            {data.editedCount > 0 && <span>✏️ {data.editedCount}</span>}
+          </div>
+        )}
       </div>
-      <div className="text-[9px] text-gray-400 mt-1.5">
+
+      {/* Timestamp */}
+      <div className="text-[9px] text-gray-400 mt-auto">
         {new Date(data.timestamp).toLocaleString("en-US", {
           month: "short",
           day: "numeric",
@@ -74,11 +131,6 @@ function VersionNode({ data }: { data: any }) {
           minute: "2-digit",
         })}
       </div>
-      {data.changeLabel && (
-        <div className="text-[9px] mt-1 px-1.5 py-0.5 bg-white/60 rounded text-gray-500 italic">
-          {data.changeLabel}
-        </div>
-      )}
     </div>
   );
 }
@@ -108,8 +160,8 @@ export default function Trajectory() {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
-    const COLUMN_X = { card: 0, code: 350, concept: 700 };
-    const ROW_HEIGHT = 140;
+    const COLUMN_X = { card: 0, code: 280, concept: 560 };
+    const ROW_HEIGHT = NODE_HEIGHT + 30;
     const HEADER_Y = 0;
     const START_Y = 60;
 
@@ -153,16 +205,16 @@ export default function Trajectory() {
             y: START_Y + index * ROW_HEIGHT,
           },
           data: {
+            versionId: v.id,
             label: v.label || `Version ${index + 1}`,
             stage,
             isCurrent,
             cardCount: activeCards,
             codeCount: v.codeData.length,
             conceptCount: v.conceptData.length,
-            lockedCount: 0, // Would need lockedCardIds from version
+            lockedCount: 0,
             editedCount: editedCards,
             timestamp: v.timestamp,
-            changeLabel: v.label,
           },
           sourcePosition: Position.Right,
           targetPosition: Position.Left,

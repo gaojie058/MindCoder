@@ -1,32 +1,28 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import Button from "@/components/ui/Button";
-import logoAdd from "@/assets/icon/add.png";
 import logoTrash from "@/assets/icon/trash.png";
 import logoDoc from "@/assets/icon/doc.png";
 import CodeLabel from "./CodeLabel";
-import Dialog from "@/components/ui/Dialog";
 import { useNavigate, useParams } from "react-router-dom";
-import AddCard from "./AddCard";
 import useCardStore from "@/stores/useCardStore";
 import useEditorStore from "@/stores/useEditorStore";
+import { card } from "@/types/stores";
+import { nanoid } from "nanoid";
 import LexicalEditor from "./LexicalPlugins/LexicalEditor";
 
 export default function CardArea() {
   const { cardData, fileCardMap, getCardsForFile } = useCardStore();
   const { selectedFile } = useEditorStore();
 
-  const [isHidden, setIsHidden] = useState(true);
-
   const navigate = useNavigate();
   const { project, step } = useParams();
-  const [viewMode, setViewMode] = useState("split"); // "codes" = full-width codes, "split" = editor + codes
+  const [viewMode, setViewMode] = useState("split");
   const [editorReady, setEditorReady] = useState(false);
   const [editorInitialized, setEditorInitialized] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "ai" | "edited" | "locked">("all");
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; text: string } | null>(null);
 
-  const revealDialog = () => setIsHidden(false);
-  const hideDialog = () => setIsHidden(true);
   const trashedCard = () =>
     navigate(`/reconstruction/${project}/${step}/trash`);
 
@@ -89,6 +85,51 @@ export default function CardArea() {
     return codes;
   }, [activeCodes, activeFilter, searchQuery, lockedCardIds]);
 
+  // Right-click context menu for adding code from selected text
+  const handleEditorContextMenu = useCallback((e: React.MouseEvent) => {
+    const selection = window.getSelection();
+    const text = selection?.toString().trim();
+    if (text && text.length > 0) {
+      e.preventDefault();
+      setContextMenu({ x: e.clientX, y: e.clientY, text });
+    }
+  }, []);
+
+  const handleAddCodeFromSelection = useCallback(() => {
+    if (!contextMenu) return;
+    const { setCardData } = useCardStore.getState();
+    const currentCards = useCardStore.getState().cardData;
+    const newId = String(Math.max(0, ...currentCards.map(c => parseInt(c.id) || 0)) + 1);
+    const newCard: card = {
+      id: newId,
+      name: `Code ${newId}`,
+      topics: [{ id: "1", content: contextMenu.text, uuid: nanoid() }],
+      active: true,
+      isGPT: false,
+    };
+    setCardData([...currentCards, newCard]);
+
+    // Add to file card map if a file is selected
+    const { selectedFile } = useEditorStore.getState();
+    if (selectedFile) {
+      const { fileCardMap } = useCardStore.getState();
+      const updatedMap = { ...fileCardMap };
+      updatedMap[selectedFile] = [...(updatedMap[selectedFile] || []), newId];
+      useCardStore.setState({ fileCardMap: updatedMap });
+    }
+
+    setContextMenu(null);
+    window.getSelection()?.removeAllRanges();
+  }, [contextMenu]);
+
+  // Close context menu on click elsewhere
+  useEffect(() => {
+    if (!contextMenu) return;
+    const close = () => setContextMenu(null);
+    window.addEventListener("click", close);
+    return () => window.removeEventListener("click", close);
+  }, [contextMenu]);
+
   return (
     <>
       <div className="w-full h-full flex flex-col bg-[#FFFBF9]">
@@ -99,7 +140,7 @@ export default function CardArea() {
           </h2>
           <p className="text-xs text-gray-500 font-zen mt-0.5">Organize your data into open codes based on semantic meaning</p>
         </div>
-        {/* Stats Bar */}
+        {/* Stats Bar + Trash + Search */}
         <div className="w-full px-6 py-2 flex items-center gap-2 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
           {([
             { key: "all", label: `All (${stats.total})`, icon: "" },
@@ -119,39 +160,34 @@ export default function CardArea() {
               {icon} {label}
             </button>
           ))}
-        </div>
-        <div className="w-full flex gap-2 bg-white z-20 px-6 py-2 flex-shrink-0 border-b border-gray-100 items-center">
-          <Button
-            onClick={revealDialog}
-            className="h-9 rounded-xl !text-deepbg !bg-[#FFF3EE] text-xs px-3"
-          >
-            <img src={logoAdd} alt="" className="w-4 h-4 mr-1.5" />
-            Add Code
-          </Button>
-          <Button
-            onClick={trashedCard}
-            className="h-9 rounded-xl !text-deepbg !bg-[#FFF3EE] text-xs px-3"
-          >
-            <img src={logoTrash} alt="" className="w-4 h-4 mr-1.5" />
-            Trash
-          </Button>
-          {/* Always-visible search input */}
-          <div className="flex-1 relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">🔍</span>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search codes..."
-              className="w-full h-9 pl-8 pr-3 border border-gray-200 rounded-xl text-xs outline-none focus:border-[#CB9180] bg-gray-50/50"
-            />
+          <div className="ml-auto flex items-center gap-2">
+            <Button
+              onClick={trashedCard}
+              className="h-7 rounded-lg !text-deepbg !bg-white/80 text-[11px] px-2.5 border border-gray-200"
+            >
+              <img src={logoTrash} alt="" className="w-3.5 h-3.5 mr-1" />
+              Trash
+            </Button>
+            <div className="relative">
+              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-[10px]">🔍</span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search..."
+                className="h-7 w-36 pl-7 pr-2 border border-gray-200 rounded-lg text-[11px] outline-none focus:border-[#CB9180] bg-white/80"
+              />
+            </div>
           </div>
         </div>
 
         <div className="w-full flex-1 flex flex-row overflow-hidden">
           {/* Editor Section */}
           {viewMode === "split" && (
-            <div className="border-r h-full overflow-y-auto scrollbar-thin w-[60%]">
+            <div
+              className="border-r h-full overflow-y-auto scrollbar-thin w-[60%]"
+              onContextMenu={handleEditorContextMenu}
+            >
               {editorInitialized && (
                 <LexicalEditor
                   onHighlightReady={() => setEditorReady(true)}
@@ -208,10 +244,23 @@ export default function CardArea() {
         </div>
       </div>
 
-      {!isHidden && (
-        <Dialog>
-          <AddCard hideDialog={hideDialog} />
-        </Dialog>
+      {/* Right-click context menu for adding code */}
+      {contextMenu && (
+        <div
+          className="fixed z-50 bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[180px]"
+          style={{ left: contextMenu.x, top: contextMenu.y }}
+        >
+          <button
+            onClick={handleAddCodeFromSelection}
+            className="w-full text-left px-3 py-2 text-xs hover:bg-[#FFF3EE] text-[#8B5E4B] flex items-center gap-2"
+          >
+            <span>➕</span>
+            <span>Add as New Code</span>
+          </button>
+          <div className="px-3 py-1 text-[10px] text-gray-400 border-t border-gray-100 mt-1 truncate max-w-[250px]">
+            "{contextMenu.text.length > 60 ? contextMenu.text.slice(0, 60) + "..." : contextMenu.text}"
+          </div>
+        </div>
       )}
 
       <style>{`

@@ -421,15 +421,25 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
         isGPT: true,
       }));
 
-      // Merge: user-edited first, then new AI-generated, re-index IDs
-      const mergedCards = [...userEdited, ...newAICards].map((card, index) => ({
+      // Merge: user-edited/locked first, then new AI-generated, re-index IDs
+      const preMerge = [...userEdited, ...newAICards];
+      const mergedCards = preMerge.map((card, index) => ({
         ...card,
         id: String(index + 1),
       }));
 
+      // Update locked IDs to match new sequential IDs
+      const newLockedIds = new Set<string>();
+      preMerge.forEach((card, index) => {
+        if (lockedCardIds.has(card.id)) {
+          newLockedIds.add(String(index + 1));
+        }
+      });
+
       useCardStore.setState({
         cardData: mergedCards,
-        fileCardMap: {}
+        fileCardMap: {},
+        lockedCardIds: newLockedIds,
       });
 
       return;
@@ -447,8 +457,16 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
     const existingCardIds = updatedFileCardMap[fileName] || [];
     console.log(`Existing card IDs for file "${fileName}":`, existingCardIds);
 
-    // Remove existing cards for this file
-    const otherCards = currentCardData.filter(card => !existingCardIds.includes(card.id));
+    // Separate locked cards for this file (they should be preserved)
+    const { lockedCardIds: lockedIds } = useCardStore.getState();
+    const lockedCardsForFile = currentCardData.filter(
+      card => existingCardIds.includes(card.id) && lockedIds.has(card.id)
+    );
+
+    // Remove existing cards for this file (except locked ones)
+    const otherCards = currentCardData.filter(
+      card => !existingCardIds.includes(card.id) || lockedIds.has(card.id)
+    );
 
     // Assign new IDs to the processed cards (contiguous from highest existing ID)
     let nextId = 1; // Start from 1
@@ -468,8 +486,11 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
       id: String(nextId + index)
     }));
 
-    // Update the file's card ID mapping
-    updatedFileCardMap[fileName] = newCards.map(card => card.id);
+    // Update the file's card ID mapping (include locked cards + new AI cards)
+    updatedFileCardMap[fileName] = [
+      ...lockedCardsForFile.map(card => card.id),
+      ...newCards.map(card => card.id),
+    ];
     console.log(`Updated mapping for file "${fileName}":`, updatedFileCardMap[fileName]);
 
     // If we should reset all IDs, we'll do that after combining the cards
@@ -496,10 +517,19 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
         resetFileCardMap[file] = newIds;
       });
 
+      // Update locked card IDs to match new sequential IDs
+      const newLockedIds = new Set<string>();
+      combinedCards.forEach((card, index) => {
+        if (lockedIds.has(card.id)) {
+          newLockedIds.add(String(index + 1));
+        }
+      });
+
       // Update the store with reset IDs
       useCardStore.setState({
         cardData: resetCards,
-        fileCardMap: resetFileCardMap
+        fileCardMap: resetFileCardMap,
+        lockedCardIds: newLockedIds,
       });
     } else {
       // Just combine cards without resetting IDs

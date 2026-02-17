@@ -446,7 +446,7 @@ export default function MainLayout({
                 >
                   {pdfLoading ? "Adding..." : "Save Version"}
                 </button>
-                <Bottom loading={loading || globalIsRunning}
+                <Bottom loading={loading || regenRunning}
                   bottomType={stepName === "display" ? "display" : "regenerate"}
                   regenerate={handleRegenerate}
                   regenerateSubsequent={handleRegenerateRest}
@@ -519,7 +519,7 @@ export default function MainLayout({
               >
                 {pdfLoading ? "Adding..." : "Save Current Version"}
               </button>
-              <Bottom loading={loading || globalIsRunning}
+              <Bottom loading={loading || regenRunning}
                 bottomType={stepName === "display" ? "display" : "regenerate"}
                 regenerate={handleRegenerate}
                 regenerateSubsequent={handleRegenerateRest}

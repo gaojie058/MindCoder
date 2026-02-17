@@ -35,6 +35,35 @@ const AIIcon = () => (
   </svg>
 );
 
+// Truncate verbose sentences to key point (first clause or ~80 chars)
+function condenseSentence(text: string): { short: string; full: string; truncated: boolean } {
+  const full = text.trim();
+  if (full.length <= 80) return { short: full, full, truncated: false };
+  
+  // Try to cut at first comma, semicolon, or "to ensure/to verify/and verify" etc.
+  const cutPatterns = [
+    /,\s*(?:and\s+)?(?:to\s+ensure|to\s+verify|and\s+verify|which\s+|ensuring|while)/i,
+    /,\s*(?:especially|particularly|specifically)/i,
+    /\s+to\s+ensure\s+/i,
+    /\s+and\s+verify\s+/i,
+  ];
+  
+  for (const pattern of cutPatterns) {
+    const match = full.match(pattern);
+    if (match && match.index && match.index >= 30 && match.index <= 120) {
+      return { short: full.substring(0, match.index).trim(), full, truncated: true };
+    }
+  }
+  
+  // Fallback: cut at ~80 chars at word boundary
+  const cutAt = full.lastIndexOf(' ', 80);
+  if (cutAt > 30) {
+    return { short: full.substring(0, cutAt).trim() + '...', full, truncated: true };
+  }
+  
+  return { short: full, full, truncated: false };
+}
+
 // Parse numbered items from text (e.g., "1) xxx 2) yyy" or "1. xxx 2. yyy")
 function parseNumberedItems(text: string): string[] {
   // Split by patterns like "1) ", "2) ", "1. ", "2. " at start of line or after sentence
@@ -118,12 +147,24 @@ const LLMTaskSection = memo(
           <div>
             <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">General Approach</div>
             <ul className="space-y-1">
-              {common.map((item, i) => (
-                <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
-                  <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
-                  <span>{item.replace(/^\d+[\)\.]\s*/, '')}</span>
-                </li>
-              ))}
+              {common.map((item, i) => {
+                const c = condenseSentence(item.replace(/^\d+[\)\.]\s*/, ''));
+                return (
+                  <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
+                    <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
+                    {c.truncated ? (
+                      <details className="[&::-webkit-details-marker]:hidden">
+                        <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
+                          {c.short} <span className="text-[10px] text-indigo-400 underline">more</span>
+                        </summary>
+                        <div className="mt-0.5 text-gray-500 italic">{c.full}</div>
+                      </details>
+                    ) : (
+                      <span>{c.short}</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -154,10 +195,18 @@ const LLMTaskSection = memo(
                   ? text.substring(0, codePositions[0].start).replace(/\s*Example:\s*$/i, '').trim()
                   : text;
                 
+                const condensed = mainText ? condenseSentence(mainText) : null;
+                
                 return (
                   <div key={i} className="bg-amber-50/60 rounded-lg px-2.5 py-2 border-l-3 border-amber-300" style={{ borderLeftWidth: '3px' }}>
-                    {mainText && (
-                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
+                    {condensed && (
+                      <details className="text-xs leading-5 text-gray-600 mb-1">
+                        <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
+                          {condensed.short}
+                          {condensed.truncated && <span className="ml-1 text-[10px] text-amber-500 underline">more</span>}
+                        </summary>
+                        {condensed.truncated && <div className="mt-1 text-gray-500 italic">{condensed.full}</div>}
+                      </details>
                     )}
                     {codeEntries.length > 0 && (
                       <div className="space-y-1.5 mt-1.5">
@@ -210,10 +259,18 @@ const LLMTaskSection = memo(
                   ? text.substring(0, codePositions[0].start).trim()
                   : text;
                 
+                const condensed = mainText ? condenseSentence(mainText) : null;
+
                 return (
                   <div key={i} className="bg-indigo-50 rounded-lg px-2.5 py-2 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
-                    {mainText && (
-                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
+                    {condensed && (
+                      <details className="text-xs leading-5 text-gray-600 mb-1">
+                        <summary className="list-none cursor-pointer [&::-webkit-details-marker]:hidden">
+                          {condensed.short}
+                          {condensed.truncated && <span className="ml-1 text-[10px] text-indigo-500 underline">more</span>}
+                        </summary>
+                        {condensed.truncated && <div className="mt-1 text-gray-500 italic">{condensed.full}</div>}
+                      </details>
                     )}
                     {codeEntries.length > 0 && (
                       <div className="space-y-1.5 mt-1.5">

@@ -116,34 +116,68 @@ def run_tests():
                 print("  Waiting for full analysis pipeline...", flush=True)
                 start_time = time.time()
                 
-                # Poll: check if Regenerate button appears (means step completed)
-                # or wait until no more network activity
-                for wait_round in range(24):  # 24 * 15s = 360s max
-                    page.wait_for_timeout(15000)
-                    elapsed = int(time.time() - start_time)
-                    
-                    # Check for Regenerate button (appears when generation is done)
-                    regen = page.locator("button:has-text('Regenerate')").first
-                    has_regen = regen.count() > 0 and regen.is_visible()
-                    
-                    # Check for code labels (appear when open coding is done)
-                    has_codes = page.locator("[id^='card-']").count()
-                    
-                    print(f"  [{elapsed}s] Codes: {has_codes}, Regenerate btn: {has_regen}", flush=True)
-                    
-                    if has_codes > 0 and has_regen:
-                        # Step 1 is done. Now wait for background steps (2-4)
-                        # Check if there's a background generation indicator
-                        bg_btn = page.locator("text=Background").first
-                        has_bg = bg_btn.count() > 0 and bg_btn.is_visible()
-                        if not has_bg:
-                            print(f"  [{elapsed}s] All steps appear complete!", flush=True)
-                            break
-                        else:
-                            print(f"  [{elapsed}s] Background generation still running...", flush=True)
+                # PHASE 1: Wait 90s for Step 1 to fully complete (2 files × ~30-40s each)
+                print("  Phase 1: Waiting 90s for Step 1 to complete...", flush=True)
+                page.wait_for_timeout(90000)
+                shots.append(shot(page, "tc03-step1-done"))
+                print(f"  Step 1 wait done. Taking screenshot.", flush=True)
                 
-                # Extra wait to ensure everything rendered
+                # PHASE 2: Click "Generate All Steps" via JS and wait
+                print("  Phase 2: Clicking 'Generate All Steps'...", flush=True)
+                try:
+                    result = page.evaluate("""() => {
+                        const btns = [...document.querySelectorAll('button')];
+                        const b = btns.find(b => b.textContent.includes('Generate All Steps'));
+                        if (b && !b.disabled) { b.click(); return 'clicked'; }
+                        // Maybe it already shows a different state
+                        const any = btns.find(b => b.textContent.includes('Generate') || b.textContent.includes('Complete'));
+                        return any ? 'found: ' + any.textContent.trim() : 'not-found';
+                    }""")
+                    print(f"  Button: {result}", flush=True)
+                except Exception as ex:
+                    print(f"  Click error: {ex}", flush=True)
+                
+                # Wait for all background steps (Sub-themes → Themes → Summary)
+                # Each step ~20-40s, total ~60-120s
+                print("  Waiting for background generation...", flush=True)
+                for bg_round in range(20):  # 20 * 15s = 300s
+                    page.wait_for_timeout(15000)
+                    bg_elapsed = int(time.time() - start_time)
+                    
+                    try:
+                        state = page.evaluate("""() => {
+                            const btns = [...document.querySelectorAll('button')];
+                            for (const b of btns) {
+                                const t = (b.textContent || '').trim();
+                                if (t.includes('Complete')) return 'complete';
+                                if (t.includes('Error') || t.includes('Retry')) return 'error';
+                                if (t.includes('Sub-themes')) return 'sub-themes';
+                                if (t.includes('Themes')) return 'themes';
+                                if (t.includes('Summary')) return 'summary';
+                            }
+                            return 'running';
+                        }""")
+                    except:
+                        state = "unknown"
+                    
+                    print(f"  [{bg_elapsed}s] Status: {state}", flush=True)
+                    
+                    if state == "complete":
+                        print(f"  ✅ All steps generated!", flush=True)
+                        break
+                    elif state == "error":
+                        print(f"  Error detected, retrying...", flush=True)
+                        try:
+                            page.evaluate("""() => {
+                                const b = [...document.querySelectorAll('button')].find(b => 
+                                    b.textContent.includes('Retry') || b.textContent.includes('Error'));
+                                if (b) b.click();
+                            }""")
+                        except:
+                            pass
+                
                 page.wait_for_timeout(5000)
+                shots.append(shot(page, "tc03-all-done"))
                 
                 # Final screenshot
                 page.wait_for_timeout(3000)

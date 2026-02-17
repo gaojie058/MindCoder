@@ -27,10 +27,23 @@ interface StyleInputsProps {
   className?: string;
 }
 
-// AI Agent Icon
-const AIIcon = () => (
-  <svg className="w-5 h-5 text-[#6366F1] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+// AI Sparkle Icon — used as badge in AI-generated section headers
+const AIBadgeIcon = () => (
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
+    <defs>
+      <linearGradient id="ai-grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#818CF8" />
+        <stop offset="1" stopColor="#A78BFA" />
+      </linearGradient>
+    </defs>
+    {/* Brain/circuit style */}
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#ai-grad)" opacity="0.12" />
+    <path d="M9 8.5L9 10M15 8.5V10M9 14H10.5M13.5 14H15M12 5V7M12 17V19M5 12H7M17 12H19" stroke="url(#ai-grad)" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="9" cy="12" r="1.5" fill="url(#ai-grad)" />
+    <circle cx="15" cy="12" r="1.5" fill="url(#ai-grad)" />
+    <circle cx="12" cy="9" r="1.5" fill="url(#ai-grad)" />
+    <circle cx="12" cy="15" r="1.5" fill="url(#ai-grad)" />
+    <path d="M9 12L12 9M12 9L15 12M15 12L12 15M12 15L9 12" stroke="url(#ai-grad)" strokeWidth="1" opacity="0.5" />
   </svg>
 );
 
@@ -136,14 +149,17 @@ const LLMTaskSection = memo(
             {icon}
           </div>
           <span className="text-xs font-bold text-gray-700 flex-1">{title}</span>
-          <span className="text-[9px] font-medium text-indigo-400 bg-indigo-50 border border-indigo-100 rounded-full px-1.5 py-0.5 tracking-wide">AI</span>
+          <div className="flex items-center gap-1 bg-indigo-50 border border-indigo-100 rounded-full px-1.5 py-0.5">
+            <AIBadgeIcon />
+            <span className="text-[9px] font-bold text-indigo-500 tracking-wide">AI</span>
+          </div>
           <svg className="w-3.5 h-3.5 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </summary>
         <div className="px-3.5 py-3 bg-white/60 backdrop-blur-sm relative" onClick={(e) => e.stopPropagation()}>
-          <div className="absolute top-1.5 right-2.5 flex items-center gap-1 opacity-40">
-            <svg className="w-2.5 h-2.5 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+          <div className="absolute top-1.5 right-2.5 flex items-center gap-1 opacity-30">
+            <AIBadgeIcon />
             <span className="text-[8px] text-indigo-400 font-medium tracking-wider">GENERATED</span>
           </div>
           {sectionChildren}

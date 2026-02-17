@@ -127,16 +127,20 @@ const LLMTaskSection = memo(
     // Parse rationale into sections
     const rationaleItems = rationale ? parseNumberedItems(rationale) : [];
 
-    const CollapsibleSection = ({ title, icon, defaultOpen = false, children: sectionChildren }: {
-      title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
+    const AISection = ({ title, icon, accentFrom, accentTo, borderColor, defaultOpen = false, children: sectionChildren }: {
+      title: string; icon: string; accentFrom: string; accentTo: string; borderColor: string; defaultOpen?: boolean; children: React.ReactNode;
     }) => (
-      <details open={defaultOpen || undefined} className="group border border-gray-200 rounded-lg mb-2 overflow-hidden">
-        <summary className="flex items-center gap-2 px-3 py-2 bg-gray-50/80 cursor-pointer text-xs font-semibold text-gray-600 hover:bg-gray-100 select-none list-none [&::-webkit-details-marker]:hidden">
-          <span className="transition-transform group-open:rotate-90 text-[10px]">▶</span>
-          <span>{icon}</span>
-          <span>{title}</span>
+      <details open={defaultOpen || undefined} className={`group rounded-xl mb-2.5 overflow-hidden border ${borderColor} shadow-sm`}>
+        <summary className={`flex items-center gap-2.5 px-3.5 py-2.5 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden bg-gradient-to-r ${accentFrom} ${accentTo}`}>
+          <div className="w-6 h-6 rounded-md bg-white/80 backdrop-blur flex items-center justify-center text-sm shadow-sm">
+            {icon}
+          </div>
+          <span className="text-xs font-bold text-gray-700 flex-1">{title}</span>
+          <svg className="w-3.5 h-3.5 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
         </summary>
-        <div className="px-3 py-2" onClick={(e) => e.stopPropagation()}>{sectionChildren}</div>
+        <div className="px-3.5 py-3 bg-white/60 backdrop-blur-sm" onClick={(e) => e.stopPropagation()}>{sectionChildren}</div>
       </details>
     );
 
@@ -144,7 +148,7 @@ const LLMTaskSection = memo(
       <>
         {/* What Was Done */}
         {(llmDescription || common.length > 0) && (
-          <CollapsibleSection title="What Was Done" icon="🤖" defaultOpen>
+          <AISection title="What Was Done" icon="✨" accentFrom="from-indigo-50" accentTo="to-violet-50" borderColor="border-indigo-200/60" defaultOpen>
             <div className="space-y-2">
               {llmDescription && (
                 <div className="text-xs leading-5 font-zen font-semibold text-gray-700 bg-white/60 rounded-md px-2.5 py-2">
@@ -162,12 +166,12 @@ const LLMTaskSection = memo(
                 </ul>
               )}
             </div>
-          </CollapsibleSection>
+          </AISection>
         )}
 
         {/* Example Codes */}
         {unique.length > 0 && (
-          <CollapsibleSection title="Example Codes" icon="💡">
+          <AISection title="Example Codes" icon="💡" accentFrom="from-amber-50" accentTo="to-orange-50" borderColor="border-amber-200/60">
             <div className="space-y-2">
               {unique.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
@@ -215,12 +219,12 @@ const LLMTaskSection = memo(
                 );
               })}
             </div>
-          </CollapsibleSection>
+          </AISection>
         )}
 
         {/* Self-Reflection */}
         {rationaleItems.length > 0 && (
-          <CollapsibleSection title="Self-Reflection" icon="🔍">
+          <AISection title="Self-Reflection" icon="🔍" accentFrom="from-emerald-50" accentTo="to-teal-50" borderColor="border-emerald-200/60">
             <div className="space-y-2">
               {rationaleItems.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
@@ -282,7 +286,7 @@ const LLMTaskSection = memo(
                 );
               })}
             </div>
-          </CollapsibleSection>
+          </AISection>
         )}
       </>
     );

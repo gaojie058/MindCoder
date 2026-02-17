@@ -73,8 +73,32 @@ function createHorizontalRule(): any {
 }
 
 // Function to clean inline references in text content
+// Sanitize Unicode chars that Roboto can't render in pdfmake
+function sanitizeText(str: string): string {
+  return str
+    .replace(/[\u2018\u2019\u201A\uFFFD]/g, "'")   // smart single quotes
+    .replace(/[\u201C\u201D\u201E]/g, '"')            // smart double quotes
+    .replace(/[\u2013\u2014]/g, '-')                   // en/em dash
+    .replace(/\u2026/g, '...')                         // ellipsis
+    .replace(/\u00A0/g, ' ')                           // non-breaking space
+    .replace(/[\u2022\u2023\u25E6\u2043]/g, '-')      // bullet variants
+    .replace(/[\u2003\u2002\u2009]/g, ' ')             // em/en/thin space
+    .replace(/[\u00AB\u00BB]/g, '"')                   // guillemets
+    .replace(/[\u2039\u203A]/g, "'")                   // single guillemets
+    .replace(/\u00B7/g, '-')                           // middle dot
+    // Remove any remaining chars outside Basic Latin + Latin-1 Supplement that Roboto may not have
+    .replace(/[^\x00-\xFF]/g, (ch) => {
+      // Keep common Latin Extended chars that Roboto supports, strip the rest
+      const code = ch.charCodeAt(0);
+      if (code >= 0x100 && code <= 0x24F) return ch; // Latin Extended-A/B
+      return '';
+    });
+}
+
 function cleanContent(text: string): any[] {
   if (!text || typeof text !== 'string') return [{ text: '' }];
+
+  text = sanitizeText(text);
 
   // Regular expression to match [Text {Group X}] or [Text] patterns
   const regex = /\[(.*?)(?:\s*\{.*?\})?\]/g;
@@ -116,7 +140,8 @@ function cleanTitle(title: string): string {
     return "MindCoder Trustworthy Codebook with a Transparent Trajectory";
   }
 
-  const withoutBraces = title.replace(/\{[^}]*\}/g, '');
+  const sanitized = sanitizeText(title);
+  const withoutBraces = sanitized.replace(/\{[^}]*\}/g, '');
   const cleanedTitle = withoutBraces.replace(/\[|\]/g, '');
   return cleanedTitle.trim();
 }

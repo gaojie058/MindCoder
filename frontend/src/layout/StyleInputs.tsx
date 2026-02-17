@@ -127,43 +127,50 @@ const LLMTaskSection = memo(
     // Parse rationale into sections
     const rationaleItems = rationale ? parseNumberedItems(rationale) : [];
 
+    const CollapsibleSection = ({ title, icon, defaultOpen = false, children: sectionChildren }: {
+      title: string; icon: string; defaultOpen?: boolean; children: React.ReactNode;
+    }) => (
+      <details open={defaultOpen || undefined} className="group border border-gray-200 rounded-lg mb-2 overflow-hidden">
+        <summary className="flex items-center gap-2 px-3 py-2 bg-gray-50/80 cursor-pointer text-xs font-semibold text-gray-600 hover:bg-gray-100 select-none list-none [&::-webkit-details-marker]:hidden">
+          <span className="transition-transform group-open:rotate-90 text-[10px]">▶</span>
+          <span>{icon}</span>
+          <span>{title}</span>
+        </summary>
+        <div className="px-3 py-2" onClick={(e) => e.stopPropagation()}>{sectionChildren}</div>
+      </details>
+    );
+
     return (
-      <div className="bg-indigo-50/50 rounded-xl p-3 mb-2 border border-indigo-100 space-y-2">
-        <div className="flex items-center gap-2">
-          <AIIcon />
-          <h2 className="text-sm font-bold text-indigo-700">AI Agent</h2>
-        </div>
-
-        {/* Task Description */}
-        {llmDescription && (
-          <div className="text-xs leading-5 font-zen font-semibold text-gray-700 bg-white/60 rounded-md px-2.5 py-2">
-            {llmDescription}
-          </div>
-        )}
-
-        {/* What LLM Did */}
-        {common.length > 0 && (
-          <div>
-            <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">What Was Done</div>
-            <ul className="space-y-1">
-              {common.map((item, i) => (
-                  <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
-                    <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
-                    <span>{item.replace(/^\d+[\)\.]\s*/, '').trim()}</span>
-                  </li>
-              ))}
-            </ul>
-          </div>
+      <>
+        {/* What Was Done */}
+        {(llmDescription || common.length > 0) && (
+          <CollapsibleSection title="What Was Done" icon="🤖" defaultOpen>
+            <div className="space-y-2">
+              {llmDescription && (
+                <div className="text-xs leading-5 font-zen font-semibold text-gray-700 bg-white/60 rounded-md px-2.5 py-2">
+                  {llmDescription}
+                </div>
+              )}
+              {common.length > 0 && (
+                <ul className="space-y-1">
+                  {common.map((item, i) => (
+                    <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
+                      <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
+                      <span>{item.replace(/^\d+[\)\.]\s*/, '').trim()}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </CollapsibleSection>
         )}
 
         {/* Example Codes */}
         {unique.length > 0 && (
-          <div>
-            <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">Example Codes</div>
+          <CollapsibleSection title="Example Codes" icon="💡">
             <div className="space-y-2">
               {unique.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
-                // Extract "Code 【name】 explanation" pairs
                 const codePattern = /Code\s*[\[【](.*?)[\]】]\s*/g;
                 const codeEntries: { name: string; explanation: string }[] = [];
                 let codeMatch;
@@ -171,13 +178,11 @@ const LLMTaskSection = memo(
                 while ((codeMatch = codePattern.exec(text)) !== null) {
                   codePositions.push({ start: codeMatch.index, end: codePattern.lastIndex, name: codeMatch[1].trim() });
                 }
-                // Extract explanation: text between this code's end and next code's start (or end of string)
                 for (let ci = 0; ci < codePositions.length; ci++) {
                   const nextStart = ci + 1 < codePositions.length ? codePositions[ci + 1].start : text.length;
                   const explanation = text.substring(codePositions[ci].end, nextStart).replace(/^\s*[,.:;]\s*/, '').trim();
                   codeEntries.push({ name: codePositions[ci].name, explanation });
                 }
-                // Text before the first Code reference
                 const mainText = codePositions.length > 0
                   ? text.substring(0, codePositions[0].start).replace(/\s*Example:\s*$/i, '').trim()
                   : text;
@@ -210,22 +215,19 @@ const LLMTaskSection = memo(
                 );
               })}
             </div>
-          </div>
+          </CollapsibleSection>
         )}
 
         {/* Self-Reflection */}
         {rationaleItems.length > 0 && (
-          <div className="text-xs">
-            <div className="text-[11px] font-bold text-emerald-600 uppercase tracking-wide mb-1.5">Self-Reflection</div>
+          <CollapsibleSection title="Self-Reflection" icon="🔍">
             <div className="space-y-2">
               {rationaleItems.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
-                // Detect label prefix: "Most confident: ...", "Less confident: ...", "Focus on human review: ..."
                 const labelMatch = text.match(/^(Most confident|Less confident|Focus on human review)\s*:\s*/i);
                 const label = labelMatch ? labelMatch[1] : null;
                 const body = label ? text.substring(labelMatch![0].length).trim() : text;
 
-                // Extract Code references from body
                 const codePattern = /Code\s*[\[【](.*?)[\]】]\s*/g;
                 const codeEntries: { name: string; explanation: string }[] = [];
                 const codePositions: { start: number; end: number; name: string }[] = [];
@@ -280,9 +282,9 @@ const LLMTaskSection = memo(
                 );
               })}
             </div>
-          </div>
+          </CollapsibleSection>
         )}
-      </div>
+      </>
     );
   }
 );

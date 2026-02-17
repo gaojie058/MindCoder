@@ -134,8 +134,9 @@ export default function Trajectory() {
       versionList: VersionSnapshot[],
       stage: "card" | "code" | "concept"
     ) => {
+      const latestId = versionList.length > 0 ? versionList[versionList.length - 1].id : null;
       versionList.forEach((v, index) => {
-        const isCurrent = v.id === activeVersionId;
+        const isCurrent = v.id === latestId;
         const activeCards = countActive(v.cardData);
         const editedCards = v.cardData.filter((c) => c.isGPT === false).length;
 
@@ -180,27 +181,40 @@ export default function Trajectory() {
     createColumnNodes(codeVersions, "code");
     createColumnNodes(conceptVersions, "concept");
 
-    // Cross-column edges: last card version → first code version, last code → first concept
-    if (cardVersions.length > 0 && codeVersions.length > 0) {
+    // Final trajectory: connect the CURRENT (latest) version of each stage
+    // This shows the path: e.g., Open Codes v4 → Sub-themes v1 → Themes v2
+    const currentCard = cardVersions[cardVersions.length - 1];
+    const currentCode = codeVersions[codeVersions.length - 1];
+    const currentConcept = conceptVersions[conceptVersions.length - 1];
+
+    if (currentCard && currentCode) {
       edges.push({
-        id: `e-cross-card-code`,
-        source: cardVersions[cardVersions.length - 1].id,
-        target: codeVersions[0].id,
+        id: `e-trajectory-card-code`,
+        source: currentCard.id,
+        target: currentCode.id,
         type: "smoothstep",
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#B4C7E8" },
-        style: { stroke: "#B4C7E8", strokeWidth: 2, strokeDasharray: "5,5" },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180" },
+        style: { stroke: "#CB9180", strokeWidth: 3 },
         animated: true,
+        label: "feeds into",
+        labelStyle: { fontSize: 9, fill: "#CB9180", fontWeight: 600 },
+        labelBgStyle: { fill: "white", fillOpacity: 0.9 },
+        labelBgPadding: [4, 2] as [number, number],
       });
     }
-    if (codeVersions.length > 0 && conceptVersions.length > 0) {
+    if (currentCode && currentConcept) {
       edges.push({
-        id: `e-cross-code-concept`,
-        source: codeVersions[codeVersions.length - 1].id,
-        target: conceptVersions[0].id,
+        id: `e-trajectory-code-concept`,
+        source: currentCode.id,
+        target: currentConcept.id,
         type: "smoothstep",
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#A8D5BA" },
-        style: { stroke: "#A8D5BA", strokeWidth: 2, strokeDasharray: "5,5" },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180" },
+        style: { stroke: "#CB9180", strokeWidth: 3 },
         animated: true,
+        label: "feeds into",
+        labelStyle: { fontSize: 9, fill: "#CB9180", fontWeight: 600 },
+        labelBgStyle: { fill: "white", fillOpacity: 0.9 },
+        labelBgPadding: [4, 2] as [number, number],
       });
     }
 

@@ -381,7 +381,7 @@ export default function MainLayout({
 
       {/* Bottom buttons for data and display pages */}
       {(stepToName[step] === "data" || stepToName[step] === "display") && (
-        <div className="w-full flex justify-between items-center p-6 border-t border-gray-300">
+        <div className="w-full mx-auto md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%] flex justify-between items-center p-6 border-t border-gray-300">
           {stepName === "data" ? (
             isCustomizePage ? (
               // Show Save button when on customize page

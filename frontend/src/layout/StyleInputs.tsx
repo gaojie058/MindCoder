@@ -108,7 +108,7 @@ const LLMTaskSection = memo(
 
         {/* Task Description */}
         {llmDescription && (
-          <div className="text-[11px] leading-4 font-zen font-semibold text-gray-700 bg-white/60 rounded-md px-2 py-1.5">
+          <div className="text-xs leading-5 font-zen font-semibold text-gray-700 bg-white/60 rounded-md px-2.5 py-2">
             {llmDescription}
           </div>
         )}
@@ -116,10 +116,10 @@ const LLMTaskSection = memo(
         {/* General Approach */}
         {common.length > 0 && (
           <div>
-            <div className="text-[10px] font-bold text-indigo-600 uppercase tracking-wide mb-1">General Approach</div>
-            <ul className="space-y-0.5">
+            <div className="text-[11px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">General Approach</div>
+            <ul className="space-y-1">
               {common.map((item, i) => (
-                <li key={i} className="text-[11px] leading-4 text-gray-600 flex gap-1.5">
+                <li key={i} className="text-xs leading-5 text-gray-600 flex gap-1.5">
                   <span className="text-indigo-400 shrink-0 mt-0.5">•</span>
                   <span>{item.replace(/^\d+[\)\.]\s*/, '')}</span>
                 </li>
@@ -131,31 +131,69 @@ const LLMTaskSection = memo(
         {/* Specific Observations */}
         {unique.length > 0 && (
           <div>
-            <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wide mb-1">Specific Observations</div>
-            <ul className="space-y-0.5">
-              {unique.map((item, i) => (
-                <li key={i} className="text-[11px] leading-4 text-gray-600 flex gap-1.5">
-                  <span className="text-amber-400 shrink-0 mt-0.5">•</span>
-                  <span>{item.replace(/^\d+[\)\.]\s*/, '')}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="text-[11px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">Specific Observations</div>
+            <div className="space-y-1.5">
+              {unique.map((item, i) => {
+                const text = item.replace(/^\d+[\)\.]\s*/, '');
+                // Detect example quotes: text in "quotes" or after "Example:" / "e.g."
+                const parts = text.split(/(".*?"|'.*?'|`.*?`)/g);
+                const hasExample = parts.length > 1;
+                return (
+                  <div key={i} className="text-xs leading-5 text-gray-600 bg-amber-50/60 rounded-md px-2.5 py-1.5 border-l-3 border-amber-300" style={{ borderLeftWidth: '3px' }}>
+                    {hasExample ? (
+                      <span>
+                        {parts.map((part, j) =>
+                          /^["'`].*["'`]$/.test(part) ? (
+                            <span key={j} className="inline-block bg-amber-100 text-amber-800 rounded px-1 py-0.5 mx-0.5 text-[11px] font-medium italic">
+                              {part}
+                            </span>
+                          ) : (
+                            <span key={j}>{part}</span>
+                          )
+                        )}
+                      </span>
+                    ) : (
+                      <span>{text}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
 
         {/* Self-Reflection */}
         {rationaleItems.length > 0 && (
           <details className="text-xs">
-            <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 text-[11px]">
+            <summary className="font-semibold cursor-pointer text-indigo-600 hover:text-indigo-800 text-xs">
               Self-Reflection ({rationaleItems.length} point{rationaleItems.length !== 1 ? 's' : ''})
             </summary>
-            <ul className="mt-1.5 space-y-1 pl-2 border-l-2 border-indigo-200">
-              {rationaleItems.map((item, i) => (
-                <li key={i} className="text-[11px] leading-4 text-gray-600">
-                  {item.replace(/^\d+[\)\.]\s*/, '')}
-                </li>
-              ))}
-            </ul>
+            <div className="mt-2 space-y-1.5">
+              {rationaleItems.map((item, i) => {
+                const text = item.replace(/^\d+[\)\.]\s*/, '');
+                const parts = text.split(/(".*?"|'.*?'|`.*?`)/g);
+                const hasExample = parts.length > 1;
+                return (
+                  <div key={i} className="text-xs leading-5 text-gray-600 bg-indigo-50 rounded-md px-2.5 py-1.5 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
+                    {hasExample ? (
+                      <span>
+                        {parts.map((part, j) =>
+                          /^["'`].*["'`]$/.test(part) ? (
+                            <span key={j} className="inline-block bg-indigo-100 text-indigo-800 rounded px-1 py-0.5 mx-0.5 text-[11px] font-medium italic">
+                              {part}
+                            </span>
+                          ) : (
+                            <span key={j}>{part}</span>
+                          )
+                        )}
+                      </span>
+                    ) : (
+                      <span>{text}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </details>
         )}
       </div>

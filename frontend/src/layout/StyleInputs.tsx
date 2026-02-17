@@ -223,34 +223,50 @@ const LLMTaskSection = memo(
             <div className="mt-2 space-y-2">
               {rationaleItems.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
+                // Detect label prefix: "Most confident: ...", "Less confident: ...", "Focus on human review: ..."
+                const labelMatch = text.match(/^(Most confident|Less confident|Focus on human review)\s*:\s*/i);
+                const label = labelMatch ? labelMatch[1] : null;
+                const body = label ? text.substring(labelMatch![0].length).trim() : text;
+
+                // Extract Code references from body
                 const codePattern = /Code\s*[\[【](.*?)[\]】]\s*/g;
                 const codeEntries: { name: string; explanation: string }[] = [];
-                let codeMatch;
                 const codePositions: { start: number; end: number; name: string }[] = [];
-                while ((codeMatch = codePattern.exec(text)) !== null) {
+                let codeMatch;
+                while ((codeMatch = codePattern.exec(body)) !== null) {
                   codePositions.push({ start: codeMatch.index, end: codePattern.lastIndex, name: codeMatch[1].trim() });
                 }
                 for (let ci = 0; ci < codePositions.length; ci++) {
-                  const nextStart = ci + 1 < codePositions.length ? codePositions[ci + 1].start : text.length;
-                  const explanation = text.substring(codePositions[ci].end, nextStart).replace(/^\s*[,.:;]\s*/, '').trim();
+                  const nextStart = ci + 1 < codePositions.length ? codePositions[ci + 1].start : body.length;
+                  const explanation = body.substring(codePositions[ci].end, nextStart).replace(/^\s*[,.:;]\s*/, '').trim();
                   codeEntries.push({ name: codePositions[ci].name, explanation });
                 }
                 const mainText = codePositions.length > 0
-                  ? text.substring(0, codePositions[0].start).trim()
-                  : text;
+                  ? body.substring(0, codePositions[0].start).trim()
+                  : body;
+
+                const labelColors: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+                  'most confident': { bg: 'bg-emerald-50', border: 'border-emerald-300', text: 'text-emerald-700', badge: 'bg-emerald-100 text-emerald-800' },
+                  'less confident': { bg: 'bg-amber-50', border: 'border-amber-300', text: 'text-amber-700', badge: 'bg-amber-100 text-amber-800' },
+                  'focus on human review': { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700', badge: 'bg-indigo-100 text-indigo-800' },
+                };
+                const colors = label ? labelColors[label.toLowerCase()] || { bg: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700', badge: 'bg-gray-100 text-gray-800' } : { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700', badge: 'bg-indigo-100 text-indigo-800' };
 
                 return (
-                  <div key={i} className="bg-indigo-50 rounded-lg px-2.5 py-2 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
+                  <div key={i} className={`${colors.bg} rounded-lg px-2.5 py-2 ${colors.border}`} style={{ borderLeftWidth: '3px' }}>
+                    {label && (
+                      <span className={`text-[10px] font-bold uppercase tracking-wide ${colors.text} mb-1 block`}>{label}</span>
+                    )}
                     {mainText && (
-                      <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
+                      <div className="text-xs leading-5 text-gray-600">{mainText}</div>
                     )}
                     {codeEntries.length > 0 && (
                       <div className="space-y-1.5 mt-1.5">
                         {codeEntries.map((entry, j) => (
                           <div key={j} className="flex items-start gap-1.5">
-                            <span className="text-indigo-500 mt-0.5 text-[10px] shrink-0">▸</span>
+                            <span className={`${colors.text} mt-0.5 text-[10px] shrink-0`}>▸</span>
                             <div>
-                              <span className="text-[11px] leading-4 text-indigo-800 bg-indigo-100 rounded px-1.5 py-0.5 font-medium">
+                              <span className={`text-[11px] leading-4 ${colors.badge} rounded px-1.5 py-0.5 font-medium`}>
                                 {entry.name}
                               </span>
                               {entry.explanation && (

@@ -302,9 +302,9 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
                 whatLLMDid: (whatLLMDidSection.main_actions || '') +
                   (whatLLMDidSection.examples ? '\n\nExample: ' + whatLLMDidSection.examples : ''),
                 rationale:
-                  (selfReflectionSection.confident_results ? selfReflectionSection.confident_results + '\n\n' : '') +
-                  (selfReflectionSection.uncertain_results ? selfReflectionSection.uncertain_results + '\n\n' : '') +
-                  (selfReflectionSection.recommended_review ? selfReflectionSection.recommended_review : ''),
+                  (selfReflectionSection.confident_results ? 'Most confident: ' + selfReflectionSection.confident_results + '\n\n' : '') +
+                  (selfReflectionSection.uncertain_results ? 'Less confident: ' + selfReflectionSection.uncertain_results + '\n\n' : '') +
+                  (selfReflectionSection.recommended_review ? 'Focus on human review: ' + selfReflectionSection.recommended_review : ''),
                 llmDescription: llm_did_description.card
               };
             } else {

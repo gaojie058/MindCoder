@@ -478,14 +478,21 @@ export function DatapointHighlightPlugin({
                 bestMatch.matchType === "spanning" &&
                 bestMatch.spanningNodes
               ) {
-                // This is a complex case - we'll need to handle it specially
-                // For now, we'll just highlight the first node that contains part of the match
                 const highlightColor = getColorForCard(card.id);
-                textNode.setStyle(
-                  `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
-                );
-
-                // Card info will be attached to DOM later by tooltip plugin via content matching
+                // Highlight ALL spanning nodes, not just the first
+                for (const spanNode of bestMatch.spanningNodes) {
+                  if (spanNode.isAttached()) {
+                    spanNode.setStyle(
+                      `background-color: ${highlightColor} !important; cursor: pointer; --card-id: ${card.id};`
+                    );
+                    // Set data attribute for tooltip
+                    const spanKey = spanNode.getKey();
+                    const spanDom = editor.getElementByKey(spanKey);
+                    if (spanDom) {
+                      spanDom.setAttribute("data-card-id", card.id);
+                    }
+                  }
+                }
 
                 foundCount++;
                 highlightedContentRef.current.add(datapoint.content);
@@ -852,35 +859,31 @@ function findBestTextMatch(textNodes, datapointContent) {
     return bestMatch.node ? bestMatch : null;
   }
 
-  // NEW: Try concatenating adjacent nodes for longer matches
-  // IMPROVED: Add stronger validation for spanning matches
+  // Try concatenating adjacent nodes (2-4 nodes) for longer matches
   for (let i = 0; i < textNodes.length - 1; i++) {
-    const textNode = textNodes[i];
-    const nextNode = textNodes[i + 1];
-    const text = textNode.getTextContent();
-    const nextText = nextNode.getTextContent();
-    const combinedText = text + " " + nextText;
+    // Try combining 2, 3, or 4 adjacent nodes
+    for (let span = 2; span <= Math.min(4, textNodes.length - i); span++) {
+      const spanNodes = textNodes.slice(i, i + span);
+      const combinedText = spanNodes.map(n => n.getTextContent()).join(" ");
 
-    if (combinedText.length < 20) continue; // Increased minimum length
+      if (combinedText.length < 20) continue;
 
-    const normalizedCombined = normalizeText(combinedText);
+      const normalizedCombined = normalizeText(combinedText);
 
-    // Only accept spanning matches that contain a significant portion of the datapoint
-    if (
-      normalizedCombined.includes(normalizedDatapoint) &&
-      normalizedDatapoint.length >= combinedText.length * 0.5
-    ) {
-      // If the match spans both nodes, we'll use the first node
-      // and handle the spanning in the highlighting logic
-      return {
-        node: textNode,
-        ratio: 90,
-        index: i,
-        text: combinedText,
-        matchType: "spanning",
-        startPos: normalizedCombined.indexOf(normalizedDatapoint),
-        spanningNodes: [textNode, nextNode],
-      };
+      if (
+        normalizedCombined.includes(normalizedDatapoint) &&
+        normalizedDatapoint.length >= combinedText.length * 0.4
+      ) {
+        return {
+          node: spanNodes[0],
+          ratio: 90,
+          index: i,
+          text: combinedText,
+          matchType: "spanning",
+          startPos: normalizedCombined.indexOf(normalizedDatapoint),
+          spanningNodes: spanNodes,
+        };
+      }
     }
   }
 

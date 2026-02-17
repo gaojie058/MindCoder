@@ -135,29 +135,45 @@ const LLMTaskSection = memo(
             <div className="space-y-2">
               {unique.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
-                // Extract Code references: "Code 【name】" or "Code [name]" patterns
-                const codePattern = /Code\s*[\[【](.*?)[\]】]/g;
-                const codes: string[] = [];
+                // Extract "Code 【name】 explanation" pairs
+                const codePattern = /Code\s*[\[【](.*?)[\]】]\s*/g;
+                const codeEntries: { name: string; explanation: string }[] = [];
                 let codeMatch;
+                const codePositions: { start: number; end: number; name: string }[] = [];
                 while ((codeMatch = codePattern.exec(text)) !== null) {
-                  codes.push(codeMatch[1].trim());
+                  codePositions.push({ start: codeMatch.index, end: codePattern.lastIndex, name: codeMatch[1].trim() });
                 }
-                // Remove code references from main text for cleaner display
-                const mainText = text.replace(/Code\s*[\[【].*?[\]】]\s*/g, '').replace(/\s{2,}/g, ' ').trim();
+                // Extract explanation: text between this code's end and next code's start (or end of string)
+                for (let ci = 0; ci < codePositions.length; ci++) {
+                  const nextStart = ci + 1 < codePositions.length ? codePositions[ci + 1].start : text.length;
+                  const explanation = text.substring(codePositions[ci].end, nextStart).replace(/^\s*[,.:;]\s*/, '').trim();
+                  codeEntries.push({ name: codePositions[ci].name, explanation });
+                }
+                // Text before the first Code reference
+                const mainText = codePositions.length > 0
+                  ? text.substring(0, codePositions[0].start).replace(/\s*Example:\s*$/i, '').trim()
+                  : text;
                 
                 return (
                   <div key={i} className="bg-amber-50/60 rounded-lg px-2.5 py-2 border-l-3 border-amber-300" style={{ borderLeftWidth: '3px' }}>
                     {mainText && (
                       <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
                     )}
-                    {codes.length > 0 && (
-                      <div className="space-y-1 mt-1.5">
-                        {codes.map((code, j) => (
+                    {codeEntries.length > 0 && (
+                      <div className="space-y-1.5 mt-1.5">
+                        {codeEntries.map((entry, j) => (
                           <div key={j} className="flex items-start gap-1.5">
-                            <span className="text-amber-500 mt-0.5 text-[10px]">▸</span>
-                            <span className="text-[11px] leading-4 text-amber-800 bg-amber-100 rounded px-1.5 py-0.5 font-medium">
-                              {code}
-                            </span>
+                            <span className="text-amber-500 mt-0.5 text-[10px] shrink-0">▸</span>
+                            <div>
+                              <span className="text-[11px] leading-4 text-amber-800 bg-amber-100 rounded px-1.5 py-0.5 font-medium">
+                                {entry.name}
+                              </span>
+                              {entry.explanation && (
+                                <span className="text-[11px] leading-4 text-gray-500 ml-1">
+                                  — {entry.explanation}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -178,27 +194,42 @@ const LLMTaskSection = memo(
             <div className="mt-2 space-y-2">
               {rationaleItems.map((item, i) => {
                 const text = item.replace(/^\d+[\)\.]\s*/, '');
-                const codePattern = /Code\s*[\[【](.*?)[\]】]/g;
-                const codes: string[] = [];
+                const codePattern = /Code\s*[\[【](.*?)[\]】]\s*/g;
+                const codeEntries: { name: string; explanation: string }[] = [];
                 let codeMatch;
+                const codePositions: { start: number; end: number; name: string }[] = [];
                 while ((codeMatch = codePattern.exec(text)) !== null) {
-                  codes.push(codeMatch[1].trim());
+                  codePositions.push({ start: codeMatch.index, end: codePattern.lastIndex, name: codeMatch[1].trim() });
                 }
-                const mainText = text.replace(/Code\s*[\[【].*?[\]】]\s*/g, '').replace(/\s{2,}/g, ' ').trim();
+                for (let ci = 0; ci < codePositions.length; ci++) {
+                  const nextStart = ci + 1 < codePositions.length ? codePositions[ci + 1].start : text.length;
+                  const explanation = text.substring(codePositions[ci].end, nextStart).replace(/^\s*[,.:;]\s*/, '').trim();
+                  codeEntries.push({ name: codePositions[ci].name, explanation });
+                }
+                const mainText = codePositions.length > 0
+                  ? text.substring(0, codePositions[0].start).trim()
+                  : text;
                 
                 return (
                   <div key={i} className="bg-indigo-50 rounded-lg px-2.5 py-2 border-l-3 border-indigo-300" style={{ borderLeftWidth: '3px' }}>
                     {mainText && (
                       <div className="text-xs leading-5 text-gray-600 mb-1">{mainText}</div>
                     )}
-                    {codes.length > 0 && (
-                      <div className="space-y-1 mt-1.5">
-                        {codes.map((code, j) => (
+                    {codeEntries.length > 0 && (
+                      <div className="space-y-1.5 mt-1.5">
+                        {codeEntries.map((entry, j) => (
                           <div key={j} className="flex items-start gap-1.5">
-                            <span className="text-indigo-500 mt-0.5 text-[10px]">▸</span>
-                            <span className="text-[11px] leading-4 text-indigo-800 bg-indigo-100 rounded px-1.5 py-0.5 font-medium">
-                              {code}
-                            </span>
+                            <span className="text-indigo-500 mt-0.5 text-[10px] shrink-0">▸</span>
+                            <div>
+                              <span className="text-[11px] leading-4 text-indigo-800 bg-indigo-100 rounded px-1.5 py-0.5 font-medium">
+                                {entry.name}
+                              </span>
+                              {entry.explanation && (
+                                <span className="text-[11px] leading-4 text-gray-500 ml-1">
+                                  — {entry.explanation}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         ))}
                       </div>

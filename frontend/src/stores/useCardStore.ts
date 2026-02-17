@@ -468,35 +468,19 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
       card => !existingCardIds.includes(card.id) || lockedIds.has(card.id)
     );
 
-    // Assign new IDs to the processed cards (contiguous from highest existing ID)
-    let nextId = 1; // Start from 1
-
-    // If we have other cards and are not resetting IDs, find the highest ID + 1
-    if (otherCards.length > 0 && !shouldResetAllIds) {
-      const maxId = Math.max(...otherCards.map(card => parseInt(card.id, 10) || 0));
-      nextId = maxId + 1;
-      console.log(`Next ID for ${fileName}: ${nextId} (max existing ID: ${maxId})`);
-    } else {
-      console.log(`Next ID for ${fileName}: ${nextId} (no existing cards or resetting IDs)`);
-    }
-
-    // Assign the new IDs
+    // Assign temporary unique IDs to new cards (prefixed to avoid collision with existing IDs)
     const newCards = processedCards.map((card, index) => ({
       ...card,
-      id: String(nextId + index)
+      id: `__new_${index}`,
+      isGPT: true,
     }));
 
-    // Update the file's card ID mapping (include locked cards + new AI cards)
-    updatedFileCardMap[fileName] = [
-      ...lockedCardsForFile.map(card => card.id),
-      ...newCards.map(card => card.id),
-    ];
-    console.log(`Updated mapping for file "${fileName}":`, updatedFileCardMap[fileName]);
-
-    // If we should reset all IDs, we'll do that after combining the cards
     if (shouldResetAllIds) {
-      // Combine cards: new cards first, then others, so the current file starts from #1
-      const combinedCards = [...newCards, ...otherCards];
+      // Combine: locked cards for this file FIRST, then new AI cards, then other cards
+      // This ensures locked cards get the lowest IDs and file mapping is correct
+      const combinedCards = [...lockedCardsForFile, ...newCards, ...otherCards.filter(
+        c => !lockedCardsForFile.some(lc => lc.id === c.id)
+      )];
 
       // Reset all IDs sequentially
       const resetCards = combinedCards.map((card, index) => ({
@@ -504,16 +488,24 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
         id: String(index + 1)
       }));
 
-      // Update file mapping to reflect the new IDs
+      // Build file mapping using position in combinedCards
       const resetFileCardMap: Record<string, string[]> = {};
 
+      // For the current file: locked cards + new cards (they're at the start)
+      const currentFileIds: string[] = [];
+      for (let i = 0; i < lockedCardsForFile.length + newCards.length; i++) {
+        currentFileIds.push(String(i + 1));
+      }
+      resetFileCardMap[fileName] = currentFileIds;
+
+      // For other files, map their old IDs to new positions
       Object.keys(updatedFileCardMap).forEach(file => {
+        if (file === fileName) return;
         const oldIds = updatedFileCardMap[file];
         const newIds = oldIds.map(oldId => {
           const index = combinedCards.findIndex(c => c.id === oldId);
           return index !== -1 ? String(index + 1) : "";
         }).filter(id => id !== "");
-
         resetFileCardMap[file] = newIds;
       });
 
@@ -532,8 +524,26 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
         lockedCardIds: newLockedIds,
       });
     } else {
+      // Non-reset path: assign proper contiguous IDs
+      let nextId = 1;
+      if (otherCards.length > 0) {
+        const maxId = Math.max(...otherCards.map(card => parseInt(card.id, 10) || 0));
+        nextId = maxId + 1;
+      }
+
+      // Re-assign real IDs to new cards
+      const finalNewCards = newCards.map((card, index) => ({
+        ...card,
+        id: String(nextId + index)
+      }));
+
+      // Update file mapping
+      updatedFileCardMap[fileName] = [
+        ...lockedCardsForFile.map(card => card.id),
+        ...finalNewCards.map(card => card.id),
+      ];
       // Just combine cards without resetting IDs
-      const combinedCards = [...otherCards, ...newCards];
+      const combinedCards = [...otherCards, ...finalNewCards];
 
       // Update the store
       useCardStore.setState({

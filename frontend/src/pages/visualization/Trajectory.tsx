@@ -3,6 +3,7 @@ import {
   ReactFlow,
   Background,
   Controls,
+  Handle,
   type Node,
   type Edge,
   Position,
@@ -38,7 +39,7 @@ function VersionNode({ data }: { data: any }) {
 
   return (
     <div
-      className={`rounded-xl border-2 px-4 py-3 min-w-[160px] shadow-sm transition-all ${
+      className={`rounded-xl border-2 px-4 py-3 min-w-[160px] shadow-sm transition-all relative ${
         isCurrent ? "ring-2 ring-offset-2 ring-[#CB9180]" : ""
       }`}
       style={{
@@ -46,6 +47,10 @@ function VersionNode({ data }: { data: any }) {
         borderColor: isCurrent ? "#CB9180" : style.border,
       }}
     >
+      <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
+      <Handle type="target" position={Position.Left} id="left" style={{ opacity: 0 }} />
+      <Handle type="source" position={Position.Bottom} style={{ opacity: 0 }} />
+      <Handle type="source" position={Position.Right} id="right" style={{ opacity: 0 }} />
       <div className="flex items-center justify-between mb-1">
         <span className="text-[11px] font-bold" style={{ color: style.text }}>
           {data.label}
@@ -172,6 +177,7 @@ export default function Trajectory() {
             type: "smoothstep",
             style: { stroke: STAGE_COLORS[stage].border, strokeWidth: 2 },
             animated: false,
+            markerEnd: { type: MarkerType.ArrowClosed, color: STAGE_COLORS[stage].border, width: 12, height: 12 },
           });
         }
       });
@@ -191,30 +197,34 @@ export default function Trajectory() {
       edges.push({
         id: `e-trajectory-card-code`,
         source: currentCard.id,
+        sourceHandle: "right",
         target: currentCode.id,
+        targetHandle: "left",
         type: "smoothstep",
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180" },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180", width: 16, height: 16 },
         style: { stroke: "#CB9180", strokeWidth: 3 },
         animated: true,
         label: "feeds into",
-        labelStyle: { fontSize: 9, fill: "#CB9180", fontWeight: 600 },
+        labelStyle: { fontSize: 10, fill: "#CB9180", fontWeight: 700 },
         labelBgStyle: { fill: "white", fillOpacity: 0.9 },
-        labelBgPadding: [4, 2] as [number, number],
+        labelBgPadding: [6, 3] as [number, number],
       });
     }
     if (currentCode && currentConcept) {
       edges.push({
         id: `e-trajectory-code-concept`,
         source: currentCode.id,
+        sourceHandle: "right",
         target: currentConcept.id,
+        targetHandle: "left",
         type: "smoothstep",
-        markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180" },
+        markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180", width: 16, height: 16 },
         style: { stroke: "#CB9180", strokeWidth: 3 },
         animated: true,
         label: "feeds into",
-        labelStyle: { fontSize: 9, fill: "#CB9180", fontWeight: 600 },
+        labelStyle: { fontSize: 10, fill: "#CB9180", fontWeight: 700 },
         labelBgStyle: { fill: "white", fillOpacity: 0.9 },
-        labelBgPadding: [4, 2] as [number, number],
+        labelBgPadding: [6, 3] as [number, number],
       });
     }
 

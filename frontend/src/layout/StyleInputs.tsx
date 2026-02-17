@@ -643,14 +643,23 @@ const StyleInputs = React.forwardRef<
     </details>
   );
 
+  // Category header
+  const CategoryHeader = ({ label, color }: { label: string; color: string }) => (
+    <div className={`flex items-center gap-2 mb-2 mt-3 first:mt-0`}>
+      <div className={`w-1.5 h-4 rounded-full ${color}`} />
+      <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">{label}</span>
+      <div className="flex-1 h-px bg-gray-200" />
+    </div>
+  );
+
   return (
     <div className={`flex flex-col w-full ${className}`}>
       {/* Card step content */}
       <div className={currentStoreType === "card" ? "block" : "hidden"}>
+        <CategoryHeader label="Understand" color="bg-indigo-500" />
         <Section title="AI Agent Summary" icon="🤖" defaultOpen>
           <LLMTaskSection {...cardLLMInfo} />
         </Section>
-
         <Section title="Your Task" icon="✍️">
           <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
             <li>Verify chunks are grouped correctly</li>
@@ -658,6 +667,7 @@ const StyleInputs = React.forwardRef<
           </ol>
         </Section>
 
+        <CategoryHeader label="Act" color="bg-amber-500" />
         <Section title="Custom Instructions" icon="💬">
           <textarea
             ref={clusteringTextAreaRef}
@@ -671,18 +681,6 @@ const StyleInputs = React.forwardRef<
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Descriptive coding: Assign basic labels to describe the main topic", "clustering")}>Descriptive</button>
           </div>
         </Section>
-
-        <Section title="Research Memo" icon="📝">
-          <textarea
-            ref={topicMemoTextAreaRef}
-            defaultValue={topicMemo || ""}
-            onChange={handleTopicMemoChange}
-            placeholder="Your notes on the open coding process..."
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-            style={{ minHeight: "60px", maxHeight: "200px" }}
-          />
-        </Section>
-
         <Section title="Prompt History" icon="📜">
           <PromptHistorySection step="card" />
         </Section>
@@ -690,10 +688,10 @@ const StyleInputs = React.forwardRef<
 
       {/* Code step content */}
       <div className={currentStoreType === "code" ? "block" : "hidden"}>
+        <CategoryHeader label="Understand" color="bg-indigo-500" />
         <Section title="AI Agent Summary" icon="🤖" defaultOpen>
           <LLMTaskSection {...codeLLMInfo} />
         </Section>
-
         <Section title="Your Task" icon="✍️">
           <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
             <li>Check codes within each sub-theme belong together</li>
@@ -701,6 +699,7 @@ const StyleInputs = React.forwardRef<
           </ol>
         </Section>
 
+        <CategoryHeader label="Act" color="bg-amber-500" />
         <Section title="Custom Instructions" icon="💬">
           <textarea
             ref={codingTextAreaRef}
@@ -714,18 +713,6 @@ const StyleInputs = React.forwardRef<
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Descriptive coding: Assign basic labels to describe the main sub-theme", "coding")}>Descriptive</button>
           </div>
         </Section>
-
-        <Section title="Research Memo" icon="📝">
-          <textarea
-            ref={codeMemoTextAreaRef}
-            defaultValue={codeMemo || ""}
-            onChange={handleCodeMemoChange}
-            placeholder="Your notes on the sub-theme process..."
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-            style={{ minHeight: "60px", maxHeight: "200px" }}
-          />
-        </Section>
-
         <Section title="Prompt History" icon="📜">
           <PromptHistorySection step="code" />
         </Section>
@@ -733,10 +720,10 @@ const StyleInputs = React.forwardRef<
 
       {/* Concept step content */}
       <div className={currentStoreType === "concept" ? "block" : "hidden"}>
+        <CategoryHeader label="Understand" color="bg-indigo-500" />
         <Section title="AI Agent Summary" icon="🤖" defaultOpen>
           <LLMTaskSection {...conceptLLMInfo} />
         </Section>
-
         <Section title="Your Task" icon="✍️">
           <ol className="space-y-0.5 text-xs text-gray-700 list-decimal list-inside">
             <li>Ensure themes are distinct and well-named (4-8 words)</li>
@@ -744,6 +731,7 @@ const StyleInputs = React.forwardRef<
           </ol>
         </Section>
 
+        <CategoryHeader label="Act" color="bg-amber-500" />
         <Section title="Custom Instructions" icon="💬">
           <textarea
             ref={conceptualizingTextAreaRef}
@@ -757,18 +745,6 @@ const StyleInputs = React.forwardRef<
             <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Theoretical conceptualization: Link findings to established theories", "conceptualizing")}>Theoretical</button>
           </div>
         </Section>
-
-        <Section title="Research Memo" icon="📝">
-          <textarea
-            ref={conceptMemoTextAreaRef}
-            defaultValue={conceptMemo || ""}
-            onChange={handleConceptMemoChange}
-            placeholder="Your notes on the theme process..."
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-            style={{ minHeight: "60px", maxHeight: "200px" }}
-          />
-        </Section>
-
         <Section title="Prompt History" icon="📜">
           <PromptHistorySection step="concept" />
         </Section>

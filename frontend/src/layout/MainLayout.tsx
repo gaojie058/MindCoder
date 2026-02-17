@@ -25,6 +25,100 @@ import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
 import useInfoStore from "@/stores/useInfoStore";
 
+// Floating Research Memo
+function FloatingMemo({ stepName }: { stepName: string }) {
+  const [open, setOpen] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [dragging, setDragging] = useState(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+
+  const {
+    topicMemo, setTopicMemo,
+    codeMemo, setCodeMemo,
+    conceptMemo, setConceptMemo,
+  } = useEditStore();
+
+  const memo = stepName === "card" ? topicMemo : stepName === "code" ? codeMemo : conceptMemo;
+  const setMemo = stepName === "card" ? setTopicMemo : stepName === "code" ? setCodeMemo : setConceptMemo;
+  const placeholder = stepName === "card" ? "Your notes on the open coding process..."
+    : stepName === "code" ? "Your notes on the sub-theme process..."
+    : "Your notes on the theme process...";
+
+  // Initialize position on first open
+  useEffect(() => {
+    if (open && position.x === 0 && position.y === 0) {
+      setPosition({ x: window.innerWidth - 380, y: 120 });
+    }
+  }, [open]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
+    setDragging(true);
+    dragOffset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+  };
+
+  useEffect(() => {
+    if (!dragging) return;
+    const handleMove = (e: MouseEvent) => {
+      setPosition({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y });
+    };
+    const handleUp = () => setDragging(false);
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+    return () => { window.removeEventListener("mousemove", handleMove); window.removeEventListener("mouseup", handleUp); };
+  }, [dragging]);
+
+  if (stepName === "data" || stepName === "display") return null;
+
+  return (
+    <>
+      {/* Floating toggle button */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-[#CB9180] hover:bg-[#AA7667] text-white rounded-full shadow-lg flex items-center justify-center text-lg transition-all hover:scale-105"
+          title="Research Memo"
+        >
+          📝
+        </button>
+      )}
+
+      {/* Floating memo panel */}
+      {open && (
+        <div
+          className="fixed z-50 w-[320px] bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
+          style={{ left: position.x, top: position.y, maxHeight: "400px" }}
+        >
+          <div
+            className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200 cursor-move select-none"
+            onMouseDown={handleMouseDown}
+          >
+            <div className="flex items-center gap-2">
+              <span>📝</span>
+              <span className="text-xs font-bold text-gray-600">Research Memo</span>
+            </div>
+            <button
+              onClick={() => setOpen(false)}
+              className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200 text-xs"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="p-3 flex-1">
+            <textarea
+              value={memo || ""}
+              onChange={(e) => setMemo(e.target.value)}
+              placeholder={placeholder}
+              className="w-full outline-none resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
+              style={{ minHeight: "200px", maxHeight: "300px" }}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 // Collapsible Left Panel
 function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObject<{ saveChangesToStore: () => void } | null>; stepName: string }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -442,6 +536,7 @@ export default function MainLayout({
         </div>
       )}
       {/* Loading indicator removed — spinner is now inline in the Regenerate button */}
+      <FloatingMemo stepName={stepName} />
       <HistoryModal />
       <LLMHistoryModal />
     </div>

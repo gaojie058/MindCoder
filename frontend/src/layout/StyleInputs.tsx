@@ -337,13 +337,28 @@ const PromptHistorySection = memo(({ step }: { step: string }) => {
     return (llmHistory || []).filter((entry) => entry.step === step);
   }, [llmHistory, step]);
 
+  const { deleteLLMHistoryEntry } = useLLMHistoryStore();
+
+  const clearStepHistory = () => {
+    stepHistory.forEach((entry) => deleteLLMHistoryEntry(entry.id));
+  };
+
   return (
-    <div className="w-full flex flex-col mt-2 border rounded-xl border-black relative pt-4 mx-0">
-      <div className="absolute -top-2.5 left-3 bg-white px-1.5 text-xs">
-        <span className="font-semibold text-[11px]">Prompt History</span>
-      </div>
-      <div className="px-3 py-2">
+    <div className="w-full flex flex-col">
+      <div className="px-1 py-1">
         {stepHistory.length > 0 ? (
+          <>
+            <div className="flex justify-end mb-2">
+              <button
+                onClick={clearStepHistory}
+                className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Clear All
+              </button>
+            </div>
           <div className="space-y-3">
             {stepHistory.map((entry) => (
               <div
@@ -363,9 +378,10 @@ const PromptHistorySection = memo(({ step }: { step: string }) => {
               </div>
             ))}
           </div>
+          </>
         ) : (
-          <div className="text-sm text-gray pb-4 text-left">
-            No Prompt History
+          <div className="text-xs text-gray-400 py-2 text-center">
+            No prompt history yet
           </div>
         )}
       </div>

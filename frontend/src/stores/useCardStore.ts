@@ -415,31 +415,26 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
       console.log("Full regeneration - preserving user-edited and locked cards");
 
       const { lockedCardIds } = useCardStore.getState();
-      const userEdited = currentCardData.filter(c => c.isGPT === false || lockedCardIds.has(c.id));
-      const newAICards = processedCards.map(card => ({
-        ...card,
-        isGPT: true,
-      }));
+      const preserved = currentCardData.filter(c => c.isGPT === false || lockedCardIds.has(c.id));
 
-      // Merge: user-edited/locked first, then new AI-generated, re-index IDs
-      const preMerge = [...userEdited, ...newAICards];
-      const mergedCards = preMerge.map((card, index) => ({
-        ...card,
-        id: String(index + 1),
-      }));
+      // Preserved cards keep their original IDs (so highlights + lock state stay valid)
+      const preservedIds = new Set(preserved.map(c => c.id));
 
-      // Update locked IDs to match new sequential IDs
-      const newLockedIds = new Set<string>();
-      preMerge.forEach((card, index) => {
-        if (lockedCardIds.has(card.id)) {
-          newLockedIds.add(String(index + 1));
-        }
+      // Assign new AI cards IDs that don't collide with preserved ones
+      let nextId = Math.max(0, ...currentCardData.map(c => parseInt(c.id, 10) || 0)) + 1;
+      const newAICards = processedCards.map(card => {
+        while (preservedIds.has(String(nextId))) nextId++;
+        const id = String(nextId++);
+        return { ...card, id, isGPT: true };
       });
 
+      // Merge: preserved first, then new AI-generated
+      const mergedCards = [...preserved, ...newAICards];
+
+      // lockedCardIds unchanged — preserved cards kept their original IDs
       useCardStore.setState({
         cardData: mergedCards,
         fileCardMap: {},
-        lockedCardIds: newLockedIds,
       });
 
       return;

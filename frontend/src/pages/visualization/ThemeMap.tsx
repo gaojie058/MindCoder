@@ -10,6 +10,18 @@ const CONCEPT_COLORS = [
   "#D5ECF9", "#DDDDF3", "#F9D5F8", "#F9D5D5",
 ];
 
+// Shift a hex color slightly in hue (by adjusting RGB channels)
+function shiftColor(hex: string, shift: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  // Rotate channels slightly
+  const sr = Math.min(255, Math.max(0, Math.round(r + shift * 60)));
+  const sg = Math.min(255, Math.max(0, Math.round(g - shift * 30)));
+  const sb = Math.min(255, Math.max(0, Math.round(b + shift * 20)));
+  return `#${sr.toString(16).padStart(2, "0")}${sg.toString(16).padStart(2, "0")}${sb.toString(16).padStart(2, "0")}`;
+}
+
 function lighten(hex: string, amount = 0.3): string {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
@@ -64,29 +76,32 @@ function buildMapData(): MapData {
     const color = concept.color || CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
 
     // concept.codes is Record<string, code[]> — these are sub-themes
-    const subthemes = Object.entries(concept.codes).flatMap(([_key, codes]) =>
-      codes.map((codeItem: code) => {
-        // codeItem.data is Record<string, card[]> — these are open codes
-        const openCodes: OpenCodeItem[] = Object.values(codeItem.data || {}).flat().map((c: card) => ({
-          id: c.id,
-          name: c.name,
-          isAI: c.isGPT ?? true,
-          segments: (c.topics || []).map((dp) => ({
-            id: dp.id || dp.uuid,
-            source: dp.content || "",
-          })),
-        }));
+    // Collect all codes across all keys, assign distinct colors
+    const allCodes = Object.entries(concept.codes).flatMap(([_key, codes]) => codes);
+    const subthemes = allCodes.map((codeItem: code, idx: number) => {
+      // Vary hue slightly per sub-theme within the same theme
+      const hueShift = allCodes.length > 1 ? (idx / allCodes.length) * 0.3 - 0.15 : 0;
+      const baseColor = codeItem.color || shiftColor(color, hueShift);
 
-        return {
-          id: codeItem.id,
-          name: codeItem.name,
-          color: codeItem.color || lighten(color, 0.15),
-          isAI: codeItem.isGPT ?? true,
-          definition: codeItem.definition,
-          openCodes,
-        };
-      })
-    );
+      const openCodes: OpenCodeItem[] = Object.values(codeItem.data || {}).flat().map((c: card) => ({
+        id: c.id,
+        name: c.name,
+        isAI: c.isGPT ?? true,
+        segments: (c.topics || []).map((dp) => ({
+          id: dp.id || dp.uuid,
+          source: dp.content || "",
+        })),
+      }));
+
+      return {
+        id: codeItem.id,
+        name: codeItem.name,
+        color: baseColor,
+        isAI: codeItem.isGPT ?? true,
+        definition: codeItem.definition,
+        openCodes,
+      };
+    });
 
     return {
       id: concept.id,

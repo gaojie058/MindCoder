@@ -1243,8 +1243,16 @@ function generateThemeMapTable(): Content[] {
     const codes = Object.values(concept.codes).flat();
     const allOpenCodes: { name: string; isAI: boolean; count: number }[] = [];
 
-    codes.forEach((code) => {
-      const codeColor = code.color || lightenColor(themeColor, 0.15);
+    codes.forEach((code, codeIdx) => {
+      // Give each sub-theme a slightly different shade
+      const hueShift = codes.length > 1 ? (codeIdx / codes.length) * 0.3 - 0.15 : 0;
+      const baseR = parseInt(themeColor.slice(1, 3), 16);
+      const baseG = parseInt(themeColor.slice(3, 5), 16);
+      const baseB = parseInt(themeColor.slice(5, 7), 16);
+      const sr = Math.min(255, Math.max(0, Math.round(baseR + hueShift * 60)));
+      const sg = Math.min(255, Math.max(0, Math.round(baseG - hueShift * 30)));
+      const sb = Math.min(255, Math.max(0, Math.round(baseB + hueShift * 20)));
+      const codeColor = code.color || `#${sr.toString(16).padStart(2,"0")}${sg.toString(16).padStart(2,"0")}${sb.toString(16).padStart(2,"0")}`;
       const cards = Object.values(code.data || {}).flat();
       cards.forEach((card) => {
         allOpenCodes.push({

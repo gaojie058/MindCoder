@@ -45,15 +45,15 @@ Requirements:
 - Avoid Code number in "metadata" section, use Code 【Code Name PlaceHolder】 instead.
 
 Output Format:
-Provide the output strictly in JSON format without any additional text or explanations. 
-Generate a title/name for each Code no more than 20 characters. 
-Don't include strange characters (e.g., '\\', '\') in any text. 
+Provide the output strictly in JSON format without any additional text or explanations.
+Generate a title/name for each Code no more than 20 characters.
+Don't include strange characters (e.g., '\\', '\') in any text.
 Do not abbreviate the original data from the uploaded data; instead, output all content exactly as it appears in the original data.
 
 Code Example:
 {
-  
-  "Code X":{ 
+
+  "Code X":{
     "name": "placeholder",
     "chunks":
       [
@@ -82,7 +82,7 @@ Code Example:
 
 
   code: `
-You are a helpful qualitative analysis assistant. Your task is to perform axial coding to generate sub-themes based on codes provided. 
+You are a helpful qualitative analysis assistant. Your task is to perform axial coding to generate sub-themes based on codes provided.
 
 
 Uploaded Data:
@@ -101,7 +101,7 @@ Task Description:
 - Grouping: Group similar "Code X" based on high-level thematic overlap. Maintain the original Code numbers (e.g., "Code 4" should remain "Code 4"), even after grouping.
 - Coding: Propose and assign a group name (i.e., Sub-Theme X) to each group that best represents the main theme or topic of the grouped Codes.
 - Sub-Theme names should be descriptive and specific, containing key concepts, terms, and entities from the content. Each sub-theme name should be 4-8 words long and clearly reflect the main theme of its grouped Codes.
-- For each sub-theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the sub-theme. The definition should not merely restate the sub-theme name, nor simply summarize the codes; it must express why the grouped codes belong together. 
+- For each sub-theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the sub-theme. The definition should not merely restate the sub-theme name, nor simply summarize the codes; it must express why the grouped codes belong together.
 - The number of sub-themes should be between 5 and the total number of Codes in the uploaded data, ensuring sufficient thematic granularity while maintaining meaningful groupings.
 - In "metadata", provide 2 short examples showing why specific codes belong to a sub-theme.
 - In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 examples:
@@ -111,9 +111,9 @@ Task Description:
 
 
 Requirement:
-- Do not modify, rephrase, or revise any part of the original Code names, Code numbers, or chunk content—only organize and label them based on thematic similarity 
+- Do not modify, rephrase, or revise any part of the original Code names, Code numbers, or chunk content-only organize and label them based on thematic similarity
 - ALL Codes from the input data MUST be grouped. No Codes can be omitted.
-- Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters). 
+- Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters).
     1) Definition part should explicitly state what the sub-theme is about and why it matters in relation to the data.
     2) Follow this output style: "This sub-theme captures XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.".
     3）Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
@@ -122,8 +122,8 @@ Requirement:
 
 
 Output Format:
-Generate the output strictly in JSON format with NO additional text or explanations. 
-Maintain the original Code indices (e.g., Code 1, Code 2) to organize the items within each Code. 
+Generate the output strictly in JSON format with NO additional text or explanations.
+Maintain the original Code indices (e.g., Code 1, Code 2) to organize the items within each Code.
 Do not output any additional Codes that are not present in the input data.
 Only output the content format similar to the few shot example. Do not output any additional contents.
 
@@ -133,14 +133,14 @@ Follow the structure below:
       "name": "xxxx",
       "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
       "codes": {
-        "Code 1": { 
+        "Code 1": {
             "name": "placeholder",
             "chunks":[
                 "xxxx",
                 "xxxx"
                 ]
             },
-        "Code 2": { 
+        "Code 2": {
             "name": "placeholder",
             "chunks":[
                 "xxxx",
@@ -153,7 +153,7 @@ Follow the structure below:
       "name": "xxxx",
       "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
       "codes": {
-        "Code 3": { 
+        "Code 3": {
             "name": "placeholder",
             "chunks":[
                 "xxxx",
@@ -180,7 +180,7 @@ Follow the structure below:
 `,
 
   concept: `
-You are a helpful qualitative analysis assistant. I have developed codes,please assist by developing high-level descriptive themes by grouping sub-themes together. 
+You are a helpful qualitative analysis assistant. I have developed codes,please assist by developing high-level descriptive themes by grouping sub-themes together.
 
 Research Questions
 \${researchQuestion}
@@ -197,8 +197,8 @@ Theme Style
 
 Task Description:
 1.	Group the uploaded sub-themes based on shared high-level themes, with the grouping guided by the underlying research question.
-2.	For each theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the theme. The definition should not merely restate the theme name, nor simply summarize the sub-themes; it must express why the grouped sub-themes belong together. 
-3.	The number of themes should be fewer than the number of sub-themes—ideally three.
+2.	For each theme, generate a concise, specific, and comprehensive definition that captures the essence (core meaning) of the theme. The definition should not merely restate the theme name, nor simply summarize the sub-themes; it must express why the grouped sub-themes belong together.
+3.	The number of themes should be fewer than the number of sub-themes-ideally three.
 4. In "metadata", provide 2 short examples showing why specific sub-themes belong to a theme.
 5. In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 or sub-theme examples:
     1) confident_results: Which themes are strongest? Reference specific codes/sub-themes with brief reason (1-2 sentences).
@@ -206,9 +206,9 @@ Task Description:
     3) recommended_review: What should humans check? Reference specific codes/sub-themes with concern (1-2 sentences).
 
 Requirement:
-- Do not modify, rephrase, or revise any part of the original sub-theme names,  sub-theme numbers, code names, code numbers, or content—only organize and label them based on thematic similarity.
+- Do not modify, rephrase, or revise any part of the original sub-theme names,  sub-theme numbers, code names, code numbers, or content-only organize and label them based on thematic similarity.
 - ALL sub-themes from the input data MUST be grouped. No sub-themes can be omitted.
-- Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters). 
+- Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters).
     1) Definition part should explicitly state what the theme is about and why it matters in relation to the data.
     2) Follow this output style: "This theme captures XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.".
     3）Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
@@ -300,63 +300,56 @@ Generate the output strictly in JSON format with NO additional text or explanati
   display: {
 
     report: `
-  You are an analytical assistant specializing in qualitative data. Please support the presentation of results by generating a summary report that distills the data into clear, actionable key findings.
+  You are an analytical assistant specializing in qualitative data. Generate a concise findings report from the codebook.
 
   Research Questions
   \${researchQuestions}
-  (Use this question to guide the direction of the reporting.)
 
-  Uploaded Data
+  Codebook
   \${codebook}
 
-  Task Description:
-  1.	Examine the uploaded codebook and source data to extract and summarize key findings aligned with each theme, focusing on how they address the research questions.
-  2.	Present the findings using clear and concise language, incorporating original themes, sub-themes, codes, or representative text excerpts to support each finding.
-
+  Task:
+  - Summarize each theme as one finding in 2-3 sentences max.
+  - Reference sub-themes and codes by name (keep original labels like {Theme 1}, {Sub-Theme 2}, {Code 3}).
+  - Be direct and evidence-based. No filler, no repetition. Each finding should state the core insight and cite 1-2 supporting codes or quotes.
+  - ALL themes must be covered. No omissions.
 
   Requirements:
-  - Do not modify, rephrase, or revise any part of the original theme names, numbers, sub-theme names, numbers, code names, numbers, or content—only organize and label them based on thematic similarity.
-  - ALL themes from the input data MUST be reported. No themes can be omitted.
+  - Do not modify original theme/sub-theme/code names or numbers.
+  - Keep findings concise — aim for brevity over elaboration.
+  - Introduction should be 1-2 sentences stating the research question and number of findings.
 
-  Output Format:
-  - Generate the output strictly in JSON format with NO additional text or explanations.
-  - Important: Keep the original names like Theme X, Sub-Theme X and Code X next to the key names wherever it appears. For example, [Professional Development {Theme 1}].
-  Here is the JSON format:
+  Output strictly in JSON:
 
   {
   "Report": {
-    "Title": "MindCoder Trustworthy Codebook with a Transparent Trajectory",
+    "Title": "MindCoder Analysis Report",
     "Sections": [
       {
         "Title": "Introduction",
-        "Content": "The data described [summary of findings]. To answer the research question, “[Insert research question here],” [insert number] key findings were identified."
+        "Content": "[1-2 sentences: research question + number of findings identified]"
       },
       {
-        "Title": "Key Finding 1: [Placeholder Theme Title {Theme 1}] could affect [insert theme].",
-        "Content": "Description about the influence of this group. For example, under [Placeholder Sub-Theme Title {Sub-Theme 1}], it is revealed that [insert insight or example]. As noted in [Placeholder Code Title {Code 2}], '[insert representative quote or insight].'"
-      },
-      {
-        "Title": "Key Finding 2: [Placeholder Theme Title {Theme 2}] is important for [insert theme].",
-        "Content": "Description about the importance of this group. For example, [Placeholder Code Title {Code 3}], under [Placeholder Sub-Theme Title {Sub-Theme 2}], emphasized that '[insert quote or observation].'"
-      },
-      # add more findings as needed
+        "Title": "Finding 1: [Theme Name {Theme 1}]",
+        "Content": "[2-3 sentences: core insight + supporting evidence from sub-themes/codes]"
+      }
     ]
   }
 }
   `,
 
-    graph: `You are a helpful assistant in both qualitative analysis and dot lanaguage graph designer. Please assist with final mindmap graph generating based on the uploaded codebook in qualitative analysis.  
+    graph: `You are a helpful assistant in both qualitative analysis and dot lanaguage graph designer. Please assist with final mindmap graph generating based on the uploaded codebook in qualitative analysis.
 
 
-    Research Questions 
-    \${researchQuestions} 
+    Research Questions
+    \${researchQuestions}
     (Use this question to identify the direction of the final analysis strategy. The whole analysis is for answering these questions.)
 
     Uploaded Codebook:
     \${codebook}
 
     Task description:
-    1. Identify the hierarchy within the codebook and generate a dot diagram with four levels, where the root node is “Research Question,” the first level is “Theme N: XX,” the second level is “Sub-Theme N: X,” and the third level is “Code N: XX.” 
+    1. Identify the hierarchy within the codebook and generate a dot diagram with four levels, where the root node is "Research Question," the first level is "Theme N: XX," the second level is "Sub-Theme N: X," and the third level is "Code N: XX."
     2. At the end of each cluster, add counts of chunks it contains, e.g., Code N: XX (Number)
     3. Generate a mindmap graph representation using DOT language
     4. The root node of the graph should be research question.
@@ -364,11 +357,11 @@ Generate the output strictly in JSON format with NO additional text or explanati
 
     Requirement:
     - Do not modify, rephrase, or revise any part of the original theme names, numbers, sub-theme names, numbers, code names, numbers.
-    - All themes, sub-themes, codes should be visualized and included. 
-    - DO NOT add any chunks in mindmap. 
+    - All themes, sub-themes, codes should be visualized and included.
+    - DO NOT add any chunks in mindmap.
 
     Output format:
-    - Generate the output strictly in dot langauge with NO additional text or explanations. 
+    - Generate the output strictly in dot langauge with NO additional text or explanations.
     - If the node label is too long, break the line using (\n) line breaks in DOT to format the text. Within each line, allow no more than three words. NOT \\n.
     - Use color scheme in few-shot example
 

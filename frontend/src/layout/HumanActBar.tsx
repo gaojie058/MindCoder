@@ -204,17 +204,19 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       </div>
 
       {!collapsed && (
-        <div className="px-4 pb-2 overflow-auto" style={{ height: panelHeight }}>
-          <div className="flex gap-2 h-full">
+        <div className="px-4 pb-3 overflow-auto" style={{ maxHeight: panelHeight }}>
+          <div className="flex gap-3">
             {/* Instructions input */}
             <div className="flex-1 min-w-0 flex flex-col">
+              <div className="text-xs font-semibold text-amber-700 mb-1.5">✍️ Custom Instructions</div>
               <ExpandableTextarea
                 ref={textareaRef}
                 defaultValue={currentValue}
                 onChange={handleChange}
                 placeholder={PLACEHOLDERS[stepName]}
               />
-              <div className="flex items-center gap-1.5 mt-1">
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <span className="text-[10px] text-gray-400 mr-0.5">Templates:</span>
                 {suggestions.map((s) => (
                   <button
                     key={s.label}
@@ -224,22 +226,32 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
                     {s.label}
                   </button>
                 ))}
-                <button
-                  className={`px-2 py-0.5 text-xs transition-colors ${
-                    showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
-                  }`}
-                  onClick={() => setShowHistory(!showHistory)}
-                  title="Prompt history"
-                >
-                  📜 History
-                </button>
+                <div className="ml-auto">
+                  <button
+                    className={`px-2 py-0.5 text-xs transition-colors ${
+                      showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
+                    }`}
+                    onClick={() => setShowHistory(!showHistory)}
+                    title="Prompt history"
+                  >
+                    📜 History
+                  </button>
+                </div>
               </div>
+
+              {/* Prompt history — inside the instructions column */}
+              {showHistory && (
+                <div className="mt-2 p-2.5 bg-white/60 rounded-lg border border-gray-100">
+                  <div className="text-xs font-semibold text-gray-500 mb-1">📜 Prompt History</div>
+                  <PromptHistory step={stepName} />
+                </div>
+              )}
             </div>
 
             {/* Research Memo (side by side) */}
             {showMemo && (
               <div className="w-[220px] shrink-0 flex flex-col">
-                <div className="text-xs font-semibold text-amber-700 mb-1">📝 Research Memo</div>
+                <div className="text-xs font-semibold text-amber-700 mb-1.5">📝 Research Memo</div>
                 <textarea
                   value={memo || ""}
                   onChange={(e) => setMemo(e.target.value)}
@@ -249,13 +261,6 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
               </div>
             )}
           </div>
-
-          {/* Prompt history */}
-          {showHistory && (
-            <div className="mt-1.5 p-2 bg-white/60 rounded-md border border-gray-100">
-              <PromptHistory step={stepName} />
-            </div>
-          )}
         </div>
       )}
     </div>

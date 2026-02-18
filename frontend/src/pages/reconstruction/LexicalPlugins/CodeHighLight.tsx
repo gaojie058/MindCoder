@@ -352,6 +352,13 @@ export function DatapointHighlightPlugin({
     // Build datapoints per pass inside highlightMatches so we can fallback if mapping is wrong
 
     const highlightMatches = () => {
+      // CRITICAL: Always read latest card data from ref, not stale closure
+      const fileSpecificCards = fileSpecificCardsRef.current;
+      if (!fileSpecificCards || !fileSpecificCards.length) {
+        isProcessingRef.current = false;
+        return;
+      }
+
       // mark processing for this run
       isProcessingRef.current = true;
       editor.update(() => {
@@ -830,23 +837,20 @@ export function DatapointHighlightPlugin({
     }
 
     // NEW: Run multiple highlight passes with increasing leniency
+    // Always recalculate totalDatapoints from current ref to avoid stale data
     const timer1 = setTimeout(() => {
-      if (highlightedContentRef.current.size < totalDatapoints * 0.9) {
-        // console.log("[DatapointHighlightPlugin] retry pass #1", {
-        //   highlighted: highlightedContentRef.current.size,
-        //   target: Math.floor(totalDatapoints * 0.9),
-        // });
+      const currentCards = fileSpecificCardsRef.current || [];
+      const currentTotal = currentCards.reduce((sum, c) => sum + (c.topics?.length || 0), 0);
+      if (currentTotal > 0 && highlightedContentRef.current.size < currentTotal * 0.9) {
         isProcessingRef.current = false;
         highlightMatches();
       }
     }, 1000);
 
     const timer2 = setTimeout(() => {
-      if (highlightedContentRef.current.size < totalDatapoints * 0.95) {
-        // console.log("[DatapointHighlightPlugin] retry pass #2", {
-        //   highlighted: highlightedContentRef.current.size,
-        //   target: Math.floor(totalDatapoints * 0.95),
-        // });
+      const currentCards = fileSpecificCardsRef.current || [];
+      const currentTotal = currentCards.reduce((sum, c) => sum + (c.topics?.length || 0), 0);
+      if (currentTotal > 0 && highlightedContentRef.current.size < currentTotal * 0.95) {
         isProcessingRef.current = false;
         highlightMatches();
       }

@@ -12,6 +12,7 @@ import { API_URL } from "./api";
 import pdfMake from "pdfmake/build/pdfmake";
 import { create } from "zustand";
 import useHistoryStore from "@/stores/useHistoryStore";
+import useVersionStore from "@/stores/useVersionStore";
 import { getWithExpiry, setWithExpiry } from "@/stores/utils";
 import useCardStore from "@/stores/useCardStore";
 import useEditorStore from "@/stores/useEditorStore";
@@ -201,6 +202,9 @@ export const useGenerate = () => {
     if (storeType === 'display' && taskType === 'graph') {
       window.dispatchEvent(new CustomEvent('graph-regenerated'));
     }
+
+    // Auto-save version after each successful generation step
+    useVersionStore.getState().saveVersion(storeType);
   };
 
   // Add this new function to trigger coverage recalculation for all files

@@ -198,7 +198,7 @@ Codes Need To Be Analysed:
 Task Description:
 1.	Group the uploaded codes based on shared high-level concepts, with the grouping guided by the underlying research question.
 2.	2.	For each concept, generate a high-level, concise, abstract name (around 2~3 words) and a clear definition. Definitions should incorporate concrete terms and patterns from the original codes, clusters, and chunks to support interpretation.
-3.	The number of concepts should be fewer than the number of codes—ideally three.
+3.	The number of concepts should be fewer than the number of codes—ideally three to five.
 
 Requirement:
 - Do not modify, rephrase, or revise any part of the original code names, numbers, cluster names, or content—only organize and label them based on thematic similarity.

@@ -28,11 +28,13 @@ interface CardAreaContextValue {
   setContextMenu: (v: { x: number; y: number; text: string } | null) => void;
   handleEditorContextMenu: (e: React.MouseEvent) => void;
   handleAddCodeFromSelection: () => void;
+  codesExpanded: boolean;
+  setCodesExpanded: (v: boolean) => void;
 }
 
 const CardAreaContext = createContext<CardAreaContextValue | null>(null);
 
-function useCardAreaContext() {
+export export function useCardAreaContext() {
   const ctx = useContext(CardAreaContext);
   if (!ctx) throw new Error("useCardAreaContext must be used within CardAreaProvider");
   return ctx;
@@ -48,6 +50,7 @@ export function CardAreaProvider({ children }: { children: React.ReactNode }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<"all" | "ai" | "edited" | "locked">("all");
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; text: string } | null>(null);
+  const [codesExpanded, setCodesExpanded] = useState(false);
 
   useEffect(() => {
     if (!editorInitialized) setEditorInitialized(true);
@@ -147,6 +150,7 @@ export function CardAreaProvider({ children }: { children: React.ReactNode }) {
     searchQuery, setSearchQuery, activeFilter, setActiveFilter,
     stats, editorInitialized, editorReady, setEditorReady,
     contextMenu, setContextMenu, handleEditorContextMenu, handleAddCodeFromSelection,
+    codesExpanded, setCodesExpanded,
   };
 
   return <CardAreaContext.Provider value={value}>{children}</CardAreaContext.Provider>;
@@ -197,8 +201,8 @@ export function CodesPanel() {
   const {
     activeCodes, filteredCodes, selectedCodeId, handleSelect,
     searchQuery, setSearchQuery, activeFilter, setActiveFilter, stats,
+    codesExpanded, setCodesExpanded,
   } = useCardAreaContext();
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const trashedCard = () => navigate(`/reconstruction/${project}/${step}/trash`);
 
@@ -212,10 +216,10 @@ export function CodesPanel() {
           </span>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setViewMode(viewMode === "list" ? "grid" : "list")}
+              onClick={() => setCodesExpanded(!codesExpanded)}
               className="text-[11px] text-gray-400 hover:text-[#CB9180] transition-colors flex items-center gap-1"
             >
-              {viewMode === "list" ? "⊞ Expand" : "☰ List"}
+              {codesExpanded ? "☰ Show Original" : "⊞ Expand"}
             </button>
             <Button
               onClick={trashedCard}
@@ -262,7 +266,7 @@ export function CodesPanel() {
 
       {/* Code cards list */}
       <div className="flex-1 overflow-auto scrollbar-thin px-3 py-3">
-        <div className={viewMode === "grid" ? "grid grid-cols-2 gap-2" : "space-y-0.5"}>
+        <div className={codesExpanded ? "grid grid-cols-2 gap-2" : "space-y-0.5"}>
           {filteredCodes.map((card, index) => {
             const origIndex = activeCodes.findIndex((c) => c.id === card.id);
             return (

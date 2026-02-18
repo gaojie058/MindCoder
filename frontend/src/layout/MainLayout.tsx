@@ -27,7 +27,7 @@ import useInfoStore from "@/stores/useInfoStore";
 import useGenerationStore from "@/stores/useGenerationStore";
 import useVersionStore from "@/stores/useVersionStore";
 import VersionPanel from "./VersionPanel";
-import { CardAreaProvider, EditorPanel, CodesPanel } from "@/pages/reconstruction/CardArea";
+import { CardAreaProvider, EditorPanel, CodesPanel, useCardAreaContext } from "@/pages/reconstruction/CardArea";
 import HumanActBar from "./HumanActBar";
 
 import InfoTooltip from "@/components/ui/InfoTooltip";
@@ -79,6 +79,51 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Inner layout for Step 1 — needs CardAreaContext access
+function CardAreaInnerLayout({ styleInputsRef }: { styleInputsRef: React.RefObject<{ saveChangesToStore: () => void } | null> }) {
+  const { codesExpanded } = useCardAreaContext();
+  return (
+    <div className="w-full flex justify-center flex-1 min-h-0 overflow-hidden">
+      <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3 pb-4">
+        {/* Left — AI Agent Panel (280px) */}
+        <LeftPanel styleInputsRef={styleInputsRef} stepName="card" />
+
+        {/* Center — Document Editor (flex-1), hidden when codes expanded */}
+        {!codesExpanded && (
+          <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+            <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
+              <AreaLabel
+                icon="📊"
+                title="Data Editor"
+                tooltip="View, edit, and organize your coding data"
+                titleColor="text-[#CB9180]"
+                className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
+              />
+              <div className="flex-1 w-full overflow-hidden">
+                <EditorPanel />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Right — Codes Panel (320px normal, flex-1 when expanded) */}
+        <div className={`${codesExpanded ? "flex-1" : "w-[320px]"} shrink-0 flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white`}>
+          <AreaLabel
+            icon="🏷️"
+            title="Codes"
+            tooltip="Open codes for the current file"
+            titleColor="text-[#CB9180]"
+            className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
+          />
+          <div className="flex-1 overflow-hidden">
+            <CodesPanel />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -341,45 +386,7 @@ export default function MainLayout({
       {/* Step 1 (card): 3-column layout with EditorPanel + CodesPanel */}
       {stepToName[step] === "card" && (
         <CardAreaProvider>
-          <div className="w-full flex justify-center flex-1 min-h-0 overflow-hidden">
-            <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3 pb-4">
-              {/* Left — AI Agent Panel (280px) */}
-              <LeftPanel
-                styleInputsRef={styleInputsRef}
-                stepName="card"
-              />
-
-              {/* Center — Document Editor (flex-1) */}
-              <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
-                <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
-                  <AreaLabel
-                    icon="📊"
-                    title="Data Editor"
-                    tooltip="View, edit, and organize your coding data"
-                    titleColor="text-[#CB9180]"
-                    className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
-                  />
-                  <div className="flex-1 w-full overflow-hidden">
-                    <EditorPanel />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right — Codes Panel (320px) */}
-              <div className="w-[320px] shrink-0 flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
-                <AreaLabel
-                  icon="🏷️"
-                  title="Codes"
-                  tooltip="Open codes for the current file"
-                  titleColor="text-[#CB9180]"
-                  className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
-                />
-                <div className="flex-1 overflow-hidden">
-                  <CodesPanel />
-                </div>
-              </div>
-            </div>
-          </div>
+          <CardAreaInnerLayout styleInputsRef={styleInputsRef} />
         </CardAreaProvider>
       )}
 

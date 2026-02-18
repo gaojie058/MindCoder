@@ -204,7 +204,7 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       </div>
 
       {!collapsed && (
-        <div className="px-4 pb-3 overflow-auto" style={{ maxHeight: panelHeight }}>
+        <div className="px-4 pb-3 overflow-auto" style={{ height: panelHeight }}>
           <div className="flex gap-3">
             {/* Instructions input */}
             <div className="flex-1 min-w-0 flex flex-col">

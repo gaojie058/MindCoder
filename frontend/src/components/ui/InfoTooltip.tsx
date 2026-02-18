@@ -29,9 +29,8 @@ export default function InfoTooltip({ text, variant = "gray" }: { text: string; 
     return () => document.removeEventListener("click", close);
   }, [show]);
 
-  const bgClass = variant === "amber"
-    ? "bg-amber-100 text-amber-600 hover:bg-amber-200"
-    : "bg-gray-200 text-gray-500 hover:bg-gray-300";
+  // All variants use the same amber circle style for consistency
+  const bgClass = "bg-amber-100 text-amber-600 hover:bg-amber-200";
 
   return (
     <>
@@ -44,10 +43,11 @@ export default function InfoTooltip({ text, variant = "gray" }: { text: string; 
       </span>
       {show && createPortal(
         <div
-          className="fixed z-[9999] px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-xl max-w-[280px] leading-relaxed"
+          className="fixed z-[9999] px-3 py-2 rounded-lg shadow-xl max-w-[280px] leading-relaxed text-xs text-white"
+          style={{ backgroundColor: "#1f2937" }}
           style={{ left: pos.x, top: pos.y, transform: "translateX(-50%)" }}
         >
-          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-800 rotate-45 rounded-sm" />
+          <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 rounded-sm" style={{ backgroundColor: "#1f2937" }} />
           <span className="relative">{text}</span>
         </div>,
         document.body

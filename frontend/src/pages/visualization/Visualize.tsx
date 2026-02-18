@@ -23,7 +23,7 @@ const Visualize = () => {
   // const [codeNodes, setCodeNodes] = useState<string[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeGraphType, setActiveGraphType] = useState<string>("mindmap");
-  const [activeTab, setActiveTab] = useState<"trajectory" | "report" | "map">("report");
+  const [activeTab, setActiveTab] = useState<"trajectory" | "report" | "map">("map");
 
   const [activeType, setActiveType] = useState<
     "Concept" | "Card" | "Code" | ""
@@ -178,7 +178,7 @@ const Visualize = () => {
           <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
             {([
               { key: "map", label: "🗺️ Map" },
-              { key: "report", label: "📊 Report" },
+              { key: "report", label: "📊 Findings" },
             ] as const).map(({ key, label }) => (
               <button
                 key={key}

@@ -284,7 +284,7 @@ export default function ThemeMap() {
     <div className="w-full h-full overflow-auto p-6 bg-[#FFFBF9]">
       {/* Column headers */}
       <div className="flex items-center mb-4 px-2">
-        <div className="flex-1">
+        <div className="flex-[2]">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Open Codes</span>
         </div>
         <div className="w-8" />
@@ -302,7 +302,7 @@ export default function ThemeMap() {
         {data.themes.map((theme) => (
           <div key={theme.id} className="flex items-stretch gap-0">
             {/* Open Codes column */}
-            <div className="flex-1 min-w-0 space-y-2">
+            <div className="flex-[2] min-w-0 space-y-2">
               {theme.subthemes.flatMap((st) =>
                 st.openCodes.map((oc) => (
                   <OpenCodeCard key={oc.id} code={oc} color={st.color} />

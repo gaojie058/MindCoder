@@ -15,7 +15,7 @@ const TopLayout: React.FC = () => {
   const navigate = useNavigate();
   const { project, step } = useParams();
   const stepName = stepToName[step || "0"] || "data";
-  const isAnalysisStep = ["card", "code", "concept"].includes(stepName);
+  const isAnalysisStep = ["card", "code", "concept", "display"].includes(stepName);
 
   const handleBackToHome = () => {
     if (project) {

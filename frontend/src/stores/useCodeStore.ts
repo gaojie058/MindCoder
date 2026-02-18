@@ -48,7 +48,7 @@ export const processJsonCode = (
           }
         });
 
-        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        const assignedColor = colors[index % colors.length];
         const newNanoid = nanoid();
 
         return {
@@ -57,7 +57,7 @@ export const processJsonCode = (
           name: codeName,
           definition,
           data,
-          color: randomColor,
+          color: assignedColor,
           isGPT: true,
         };
       });

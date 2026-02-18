@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import useAppStore from "@/stores/useAppStore";
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
 import useEditStore from "@/stores/useEditStore";
+import BackgroundGenButton from "@/components/ui/BackgroundGenButton";
 
 // Expandable Textarea
 const ExpandableTextarea = React.forwardRef<
@@ -17,7 +18,7 @@ const ExpandableTextarea = React.forwardRef<
     defaultValue={defaultValue}
     onChange={onChange}
     placeholder={placeholder}
-    className="w-full flex-1 outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 placeholder:text-gray-300 placeholder:text-[11px]"
+    className="w-full flex-1 outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm border border-gray-200 rounded-lg p-2.5 placeholder:text-gray-300 placeholder:text-xs"
     style={{ minHeight: "48px" }}
   />
 ));
@@ -159,7 +160,7 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
   const suggestions = SUGGESTIONS[stepName] || [];
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 flex-shrink-0">
+    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 flex-shrink-0 rounded-xl mt-2 border border-amber-200/50 overflow-hidden">
       {/* Drag handle */}
       {!collapsed && (
         <div
@@ -169,40 +170,32 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
           <div className="w-12 h-1 rounded-full bg-amber-300/50 group-hover:bg-amber-400/70 transition-colors" />
         </div>
       )}
-      {collapsed && <div className="w-full border-t-2 border-amber-300/60" />}
+      {collapsed && <div className="w-full border-t-2 border-amber-300/60 rounded-t-xl" />}
       {/* Collapse toggle bar */}
       <div
-        className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-amber-100/40 transition-colors"
+        className="flex items-center gap-2 px-4 py-2.5 cursor-pointer hover:bg-amber-100/40 transition-colors"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <span className="text-xs text-amber-500">{collapsed ? "▶" : "▼"}</span>
-        <span className="text-xs font-bold text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded">👤 YOU</span>
+        <span className="text-sm text-amber-500">{collapsed ? "▶" : "▼"}</span>
+        <span className="text-sm font-bold text-amber-800 bg-amber-200/70 px-2.5 py-0.5 rounded-lg">👤 YOU</span>
         {collapsed && currentValue && (
-          <span className="text-[10px] text-gray-400 truncate flex-1">{currentValue}</span>
+          <span className="text-xs text-gray-400 truncate flex-1">{currentValue}</span>
         )}
-        {/* Regenerate button always visible */}
-        <div className="ml-auto flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+        {/* Action buttons always visible */}
+        <div className="ml-auto flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => setShowMemo(!showMemo)}
-            className={`px-2 py-1 rounded text-[10px] transition-colors ${showMemo ? "bg-amber-200 text-amber-800" : "text-gray-400 hover:text-amber-600"}`}
+            className={`px-2.5 py-1 rounded-lg text-xs transition-colors ${showMemo ? "bg-amber-200 text-amber-800" : "text-gray-400 hover:text-amber-600"}`}
             title="Research Memo"
           >
             📝 Memo
           </button>
-          {onRegenerateSubsequent && (
-            <button
-              onClick={onRegenerateSubsequent}
-              disabled={loading}
-              className="px-2.5 py-1 rounded-md text-[10px] font-medium text-[#CB9180] border border-[#CB9180]/40 hover:bg-[#CB9180]/10 disabled:opacity-50 transition-colors"
-            >
-              ↻ Regen All ▼
-            </button>
-          )}
+          <BackgroundGenButton />
           {onRegenerate && (
             <button
               onClick={onRegenerate}
               disabled={loading}
-              className="px-3 py-1 rounded-md text-[10px] font-semibold text-white bg-[#CB9180] hover:bg-[#AA7667] disabled:opacity-50 transition-colors"
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#CB9180] hover:bg-[#AA7667] disabled:opacity-50 transition-colors"
             >
               {loading ? "⏳ Running..." : "↻ Regenerate"}
             </button>
@@ -225,14 +218,14 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
                 {suggestions.map((s) => (
                   <button
                     key={s.label}
-                    className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
+                    className="px-2.5 py-1 border border-gray-200 rounded-lg text-xs text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
                     onClick={() => handleSuggestion(s.text)}
                   >
                     {s.label}
                   </button>
                 ))}
                 <button
-                  className={`px-1.5 py-0.5 text-[10px] transition-colors ${
+                  className={`px-2 py-0.5 text-xs transition-colors ${
                     showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
                   }`}
                   onClick={() => setShowHistory(!showHistory)}
@@ -246,12 +239,12 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
             {/* Research Memo (side by side) */}
             {showMemo && (
               <div className="w-[220px] shrink-0 flex flex-col">
-                <div className="text-[9px] font-semibold text-amber-700 mb-1">📝 Research Memo</div>
+                <div className="text-xs font-semibold text-amber-700 mb-1">📝 Research Memo</div>
                 <textarea
                   value={memo || ""}
                   onChange={(e) => setMemo(e.target.value)}
                   placeholder="Your research notes..."
-                  className="w-full flex-1 outline-none resize-none font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80 min-h-[48px]"
+                  className="w-full flex-1 outline-none resize-none font-zen scrollbar-thin text-sm border border-amber-200 rounded-lg p-2.5 bg-white/80 min-h-[48px]"
                 />
               </div>
             )}

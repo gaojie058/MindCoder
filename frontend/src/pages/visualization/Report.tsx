@@ -46,26 +46,11 @@ function connectAttribute(
   type: "title" | "content",
   tier: "1" | "2" | "3"
 ) {
-  const { processed, bracketMatches } = extractContent(content);
-  let updatedContent = processed;
-
-  bracketMatches.forEach((bracketContent, index) => {
-    const match = content.match(/\{([^}]+)\}/);
-    let id = match ? match[1].trim() : `unknown${index}`;
-
-    if (id.includes("Group")) {
-      id = id.replace("Group", "Concept");
-    }
-
-    const spanTag = `<span class='bg-[#faf3f0] text-[#C66B50] p-0.5 rounded-lg font-bold cursor-pointer' data-link="${id}">${bracketContent}</span>`;
-    const escapedContent = bracketContent.replace(
-      /[.*+?^${}()|[\]\\]/g,
-      "\\$&"
-    );
-    const bracketRegex = new RegExp(escapedContent, "g");
-
-    updatedContent = updatedContent.replace(bracketRegex, spanTag);
-  });
+  // Strip bracket/brace references like [Theme Name {Theme 1}] → Theme Name
+  let updatedContent = content
+    .replace(/\{[^}]+\}/g, '')        // remove {Theme 1}, {Code 2} etc.
+    .replace(/\[([^\]]+)\]/g, '$1')   // unwrap [brackets] → just the text
+    .trim();
 
   // Clean up stray backslashes from LLM output
   updatedContent = updatedContent.replace(/\\"/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, '');

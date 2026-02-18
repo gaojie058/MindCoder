@@ -221,13 +221,6 @@ export function CodesPanel() {
             >
               {codesExpanded ? "☰ Show Original" : "⊞ Expand"}
             </button>
-            <Button
-              onClick={trashedCard}
-              className="h-7 rounded-lg !text-deepbg !bg-white/80 text-[11px] px-2.5 border border-gray-200"
-            >
-              <img src={logoTrash} alt="" className="w-3.5 h-3.5 mr-1" />
-              Trash
-            </Button>
           </div>
         </div>
         {/* Filter pills */}
@@ -237,10 +230,11 @@ export function CodesPanel() {
             { key: "ai", label: `AI (${stats.aiGenerated})`, icon: "🤖" },
             { key: "edited", label: `Edited (${stats.userEdited})`, icon: "✏️" },
             { key: "locked", label: `Locked (${stats.locked})`, icon: "🔒" },
+            { key: "trash", label: "Trash", icon: "🗑️" },
           ] as const).map(({ key, label, icon }) => (
             <button
               key={key}
-              onClick={() => setActiveFilter(activeFilter === key ? "all" : key)}
+              onClick={() => key === "trash" ? trashedCard() : setActiveFilter(activeFilter === key ? "all" : key)}
               className={`px-2.5 py-1 rounded-full transition-all text-xs ${
                 activeFilter === key
                   ? "bg-[#CB9180] text-white font-medium shadow-sm"

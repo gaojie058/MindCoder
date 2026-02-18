@@ -59,27 +59,17 @@ export async function packageData(
         templateProps.uploadedFiles = "No files uploaded.";
       }
 
-      // Include locked/user-edited cards as context for regeneration
+      // Collect text chunks from locked/user-edited codes — these will be
+      // stripped from file content so AI only sees unhighlighted text
       const { cardData: allCards, lockedCardIds } = useCardStore.getState();
       const preservedCards = allCards.filter(c => 
         c.active !== false && (c.isGPT === false || lockedCardIds.has(c.id))
       );
-      if (preservedCards.length > 0) {
-        templateProps.preservedCodes = JSON.stringify(preservedCards.map(c => ({
-          name: c.name,
-          chunks: c.topics.map(t => t.content),
-        })), null, 2);
-
-        // Collect all text chunks covered by preserved codes — these will be
-        // stripped from file content so AI only sees unhighlighted text
-        const preservedChunks = preservedCards.flatMap(c => 
-          c.topics.map(t => t.content).filter(Boolean)
-        );
-        if (preservedChunks.length > 0) {
-          templateProps._preservedChunks = preservedChunks;
-        }
-      } else {
-        templateProps.preservedCodes = "None";
+      const preservedChunks = preservedCards.flatMap(c => 
+        c.topics.map(t => t.content).filter(Boolean)
+      );
+      if (preservedChunks.length > 0) {
+        templateProps._preservedChunks = preservedChunks;
       }
 
       console.log("Processing data for storeType 'card':", {

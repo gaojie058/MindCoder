@@ -1209,6 +1209,104 @@ function generateSubThemesContent(): Content[] {
 }
 
 // Function to generate Themes section content (for Primary Codebook - improved table design)
+// Generate 3-column Theme Map (Open Codes → Sub-themes → Themes) for PDF
+function generateThemeMapTable(): Content[] {
+  const { conceptData } = useConceptStore.getState();
+  if (!conceptData || conceptData.length === 0) return [];
+
+  const THEME_COLORS = ["#E3C8C0", "#FFE2D4", "#C9ECCF", "#C9ECE6", "#D5ECF9", "#DDDDF3", "#F9D5F8", "#F9D5D5"];
+
+  const tableBody: any[][] = [];
+
+  // Header row
+  tableBody.push([
+    { text: 'OPEN CODES', fontSize: 8, bold: true, color: '#6B7280', margin: [5, 4, 5, 4], fillColor: '#F9FAFB' },
+    { text: '', width: 15, fillColor: '#F9FAFB', margin: [0, 0, 0, 0] },
+    { text: 'SUB-THEMES', fontSize: 8, bold: true, color: '#6B7280', margin: [5, 4, 5, 4], fillColor: '#F9FAFB' },
+    { text: '', width: 15, fillColor: '#F9FAFB', margin: [0, 0, 0, 0] },
+    { text: 'THEMES', fontSize: 8, bold: true, color: '#6B7280', margin: [5, 4, 5, 4], fillColor: '#F9FAFB' },
+  ]);
+
+  conceptData.forEach((concept, ci) => {
+    const themeColor = concept.color || THEME_COLORS[ci % THEME_COLORS.length];
+    const codes = Object.values(concept.codes).flat();
+    const allOpenCodes: { name: string; isAI: boolean; count: number }[] = [];
+
+    codes.forEach((code) => {
+      const cards = Object.values(code.data || {}).flat();
+      cards.forEach((card) => {
+        allOpenCodes.push({
+          name: card.name,
+          isAI: card.isGPT !== false,
+          count: (card.topics || []).length,
+        });
+      });
+    });
+
+    // Build open codes column text
+    const openCodesStack = allOpenCodes.map((oc) => ({
+      text: [
+        oc.isAI ? createAIBadge() : createUserBadge(),
+        { text: ` ${cleanTitle(oc.name)}`, fontSize: 8 },
+        { text: ` (${oc.count})`, fontSize: 7, color: '#9CA3AF' },
+      ],
+      margin: [0, 1, 0, 1],
+    }));
+
+    // Build sub-themes column
+    const subthemesStack = codes.map((code) => ({
+      text: [
+        code.isGPT !== false ? createAIBadge() : createUserBadge(),
+        { text: ` ${cleanTitle(code.name)}`, fontSize: 9, bold: true },
+      ],
+      margin: [0, 2, 0, 2],
+    }));
+
+    // Theme column
+    const themeStack = [
+      {
+        text: [
+          concept.isGPT !== false ? createAIBadge() : createUserBadge(),
+          { text: ` ${cleanTitle(concept.name)}`, fontSize: 10, bold: true },
+        ],
+        margin: [0, 0, 0, 3],
+      },
+      ...(concept.definition ? [{
+        text: cleanContent(concept.definition),
+        fontSize: 8,
+        color: '#6B7280',
+        italics: true,
+        margin: [0, 0, 0, 0],
+      }] : []),
+    ];
+
+    tableBody.push([
+      { stack: openCodesStack, margin: [5, 5, 5, 5] },
+      { text: '→', fontSize: 10, color: '#D1D5DB', alignment: 'center', margin: [0, 5, 0, 0] },
+      { stack: subthemesStack, margin: [5, 5, 5, 5], fillColor: themeColor + '30' },
+      { text: '→', fontSize: 10, color: '#D1D5DB', alignment: 'center', margin: [0, 5, 0, 0] },
+      { stack: themeStack, margin: [5, 5, 5, 5], fillColor: themeColor + '50' },
+    ]);
+  });
+
+  return [{
+    table: {
+      headerRows: 1,
+      widths: ['*', 15, 'auto', 15, 'auto'],
+      body: tableBody,
+    },
+    layout: {
+      hLineWidth: (i: number) => (i <= 1 ? 1 : 0.5),
+      vLineWidth: () => 0,
+      hLineColor: () => '#E5E7EB',
+      paddingLeft: () => 2,
+      paddingRight: () => 2,
+    },
+    marginTop: 10,
+    marginBottom: 15,
+  }];
+}
+
 function generateThemesContent(): Content[] {
   const result: Content[] = [];
 
@@ -2025,11 +2123,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         pageBreak: 'before'
       },
       createHorizontalRule(),
-      ...svgsData.map(svg => ({
-        ...svg,
-        marginBottom: 25,
-        marginTop: 15
-      })),
+      ...generateThemeMapTable(),
 
       createHorizontalRule(),
 

@@ -28,6 +28,7 @@ import useGenerationStore from "@/stores/useGenerationStore";
 import useVersionStore from "@/stores/useVersionStore";
 import VersionPanel from "./VersionPanel";
 import { CardAreaProvider, EditorPanel, CodesPanel } from "@/pages/reconstruction/CardArea";
+import HumanActBar from "./HumanActBar";
 
 import InfoTooltip from "@/components/ui/InfoTooltip";
 
@@ -75,113 +76,6 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
                 className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
               />
             </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Bottom Human Action Bar for analysis steps
-function HumanActionBar({ stepName, onRegenerate, onRegenerateRest, loading, globalIsRunning }: {
-  stepName: string;
-  onRegenerate: () => void;
-  onRegenerateRest: () => void;
-  loading: boolean;
-  globalIsRunning: boolean;
-}) {
-  const [showMemo, setShowMemo] = useState(false);
-  const toggleVersionPanel = useVersionStore((s) => s.togglePanel);
-
-  // Custom instructions
-  const styleKey = stepName === "card" ? "clusteringStyle" : stepName === "code" ? "codingStyle" : "conceptualizingStyle";
-  const currentValue = useAppStore((s) => (s as any)[styleKey] || "");
-  const instructionsRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (instructionsRef.current && instructionsRef.current.value !== currentValue) {
-      instructionsRef.current.value = currentValue;
-    }
-  }, [currentValue]);
-
-  const handleInstructionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const setters: Record<string, string> = { card: "setClusteringStyle", code: "setCodingStyle", concept: "setConceptualizingStyle" };
-    const setter = setters[stepName];
-    if (setter) (useAppStore.getState() as any)[setter](e.target.value);
-  }, [stepName]);
-
-  // Memo
-  const { topicMemo, setTopicMemo, codeMemo, setCodeMemo, conceptMemo, setConceptMemo } = useEditStore();
-  const memo = stepName === "card" ? topicMemo : stepName === "code" ? codeMemo : conceptMemo;
-  const setMemo = stepName === "card" ? setTopicMemo : stepName === "code" ? setCodeMemo : setConceptMemo;
-
-  const placeholders: Record<string, string> = {
-    card: "Guide how open codes are named and grouped...",
-    code: "Guide how sub-themes are formed from open codes...",
-    concept: "Guide how themes are conceptualized from sub-themes...",
-  };
-
-  const regenRunning = useGenerationStore((s) => s.regenRunning);
-
-  return (
-    <div className="w-full border-t border-gray-200 bg-white shrink-0">
-      <div className="max-w-[1400px] mx-auto px-8 py-3 flex items-start gap-4">
-        {/* Custom Instructions textarea */}
-        <div className="flex-1 min-w-0">
-          <textarea
-            ref={instructionsRef}
-            defaultValue={currentValue}
-            onChange={handleInstructionChange}
-            placeholder={placeholders[stepName] || "Custom instructions..."}
-            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-lg p-2.5 placeholder:text-gray-300 placeholder:text-[11px]"
-            style={{ minHeight: "44px", maxHeight: "80px" }}
-            rows={2}
-          />
-        </div>
-
-        {/* Action buttons */}
-        <div className="flex items-center gap-2 shrink-0 pt-1">
-          <button
-            onClick={() => setShowMemo(!showMemo)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-zen font-semibold transition-colors flex items-center gap-1.5 border ${showMemo ? "bg-amber-100 text-amber-800 border-amber-200" : "text-gray-600 hover:bg-gray-50 border-gray-200"}`}
-          >
-            📝 Memo
-          </button>
-          <button
-            onClick={toggleVersionPanel}
-            className="px-3 py-1.5 rounded-lg text-xs font-zen font-semibold text-gray-600 hover:bg-gray-50 border border-gray-200 transition-colors flex items-center gap-1.5"
-          >
-            🕐 History
-          </button>
-          <button
-            onClick={onRegenerate}
-            disabled={loading || globalIsRunning}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-zen font-semibold text-white bg-[#CB9180] hover:bg-[#AA7667] disabled:opacity-50 transition-colors flex items-center gap-1.5"
-          >
-            {regenRunning ? (
-              <>
-                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Running...
-              </>
-            ) : (
-              "↻ Regenerate"
-            )}
-          </button>
-        </div>
-      </div>
-
-      {/* Expandable memo area */}
-      {showMemo && (
-        <div className="max-w-[1400px] mx-auto px-8 pb-3">
-          <div className="p-2.5 bg-amber-50/60 rounded-lg border border-amber-200/50">
-            <div className="text-xs font-semibold text-amber-700 mb-1.5">📝 Research Memo</div>
-            <textarea
-              value={memo || ""}
-              onChange={(e) => setMemo(e.target.value)}
-              placeholder="Your research notes..."
-              className="w-full outline-none resize-y font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80"
-              style={{ minHeight: "60px", maxHeight: "120px" }}
-            />
           </div>
         </div>
       )}
@@ -595,13 +489,14 @@ export default function MainLayout({
       )}
       {/* Bottom action bar for analysis steps (human controls) */}
       {["card", "code", "concept"].includes(stepToName[step]) && (
-        <HumanActionBar
-          stepName={stepToName[step]}
-          onRegenerate={handleRegenerate}
-          onRegenerateRest={handleRegenerateRest}
-          loading={loading}
-          globalIsRunning={globalIsRunning}
-        />
+        <div className="w-full max-w-[1400px] mx-auto px-8 shrink-0">
+          <HumanActBar
+            stepName={stepToName[step]}
+            onRegenerate={handleRegenerate}
+            onRegenerateSubsequent={handleRegenerateRest}
+            loading={loading || globalIsRunning}
+          />
+        </div>
       )}
       <VersionPanel />
       {/* FloatingMemo removed — memo is now in left panel TOOLS */}

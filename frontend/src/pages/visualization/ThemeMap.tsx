@@ -103,11 +103,16 @@ function buildMapData(): MapData {
 
 // AI/Human badge
 function SourceBadge({ isAI }: { isAI: boolean }) {
+  if (isAI) {
+    return (
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-pink-100/80 text-gray-700 flex items-center gap-1">
+        <span className="text-purple-500 text-[10px]">✦</span> AI
+      </span>
+    );
+  }
   return (
-    <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium shrink-0 ${
-      isAI ? "bg-indigo-100 text-indigo-600" : "bg-emerald-100 text-emerald-600"
-    }`}>
-      {isAI ? "🤖 AI" : "👤 Human"}
+    <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 bg-emerald-100/80 text-gray-700 flex items-center gap-1">
+      👤 Human
     </span>
   );
 }

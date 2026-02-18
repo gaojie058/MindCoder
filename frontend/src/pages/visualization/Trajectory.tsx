@@ -140,11 +140,17 @@ function VersionNode({ data }: { data: any }) {
           />
         ) : (
           <span
-            className="text-[11px] font-bold truncate cursor-default"
+            className="text-[11px] font-bold truncate cursor-text hover:underline hover:decoration-dashed group/name inline-flex items-center gap-1"
             style={{ color: style.text }}
             title="Double-click to rename"
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              setEditValue(data.label);
+              setEditing(true);
+            }}
           >
             {data.label}
+            <span className="opacity-0 group-hover/name:opacity-60 text-[9px] transition-opacity">✏️</span>
           </span>
         )}
         {isCurrent && !editing && (

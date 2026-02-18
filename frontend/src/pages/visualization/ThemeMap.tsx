@@ -105,8 +105,8 @@ function buildMapData(): MapData {
 function SourceBadge({ isAI }: { isAI: boolean }) {
   if (isAI) {
     return (
-      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 flex items-center gap-0.5" style={{ backgroundColor: "#E8D5F5", color: "#5B2D8E" }}>
-        <span style={{ color: "#5B2D8E" }}>✦</span> AI
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 flex items-center gap-0.5" style={{ backgroundColor: "#E8E0F0", color: "#7C5CCC" }}>
+        ✦ AI
       </span>
     );
   }

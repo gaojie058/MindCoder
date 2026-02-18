@@ -131,14 +131,14 @@ function FloatingMemo({ stepName }: { stepName: string }) {
   );
 }
 
-// Info tooltip — hover ? icon to show description
+// Info tooltip — uses native title to avoid overflow clipping
 function InfoTooltip({ text }: { text: string }) {
   return (
-    <span className="relative group inline-flex items-center ml-1 cursor-help">
-      <span className="w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold flex items-center justify-center hover:bg-gray-300 transition-colors">?</span>
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
-        {text}
-      </span>
+    <span
+      className="inline-flex items-center ml-1 cursor-help w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold justify-center hover:bg-gray-300 transition-colors"
+      title={text}
+    >
+      ?
     </span>
   );
 }

@@ -178,12 +178,10 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       >
         <span className="text-sm text-amber-500">{collapsed ? "▶" : "▼"}</span>
         <span className="text-sm font-bold text-amber-800 bg-amber-200/70 px-2.5 py-0.5 rounded-lg">✍️ Your Instructions</span>
-        <span className="relative group inline-flex items-center cursor-help">
-          <span className="w-4 h-4 rounded-full bg-amber-200/70 text-amber-600 text-[10px] font-bold flex items-center justify-center hover:bg-amber-300 transition-colors">?</span>
-          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
-            Write custom instructions to guide AI generation for this step
-          </span>
-        </span>
+        <span
+          className="inline-flex items-center cursor-help w-4 h-4 rounded-full bg-amber-200/70 text-amber-600 text-[10px] font-bold justify-center hover:bg-amber-300 transition-colors"
+          title="Write custom instructions to guide AI generation for this step"
+        >?</span>
         {collapsed && currentValue && (
           <span className="text-xs text-gray-400 truncate flex-1">{currentValue}</span>
         )}

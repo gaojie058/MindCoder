@@ -160,9 +160,12 @@ export default function CardArea() {
   return (
     <>
       <div className="w-full h-full flex flex-col bg-[#FFFBF9]">
-        {/* Step description */}
-        <div className="w-full px-6 py-2.5 bg-[#FFFBF9] border-b border-[#CB9180]/10 flex-shrink-0">
-          <p className="text-sm text-[#8B5E4B] font-zen"><span className="font-semibold text-[#CB9180]">Open Coding</span> — Organize your data into open codes based on semantic meaning</p>
+        {/* Step Header */}
+        <div className="w-full bg-gradient-to-r from-[#CB9180]/10 to-[#D39C83]/5 border-b border-[#CB9180]/15 px-6 py-3 flex-shrink-0">
+          <h2 className="text-lg font-semibold font-zen text-[#8B5E4B]">
+            <span className="text-[#CB9180] mr-2">Step 1</span>Open Coding
+          </h2>
+          <p className="text-xs text-gray-500 font-zen mt-0.5">Organize your data into open codes based on semantic meaning</p>
         </div>
         {/* Stats Bar + Trash + Search */}
         <div className="w-full px-6 py-2 flex items-center gap-2 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">

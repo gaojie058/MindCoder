@@ -78,6 +78,7 @@ interface HumanActBarProps {
 
 export default function HumanActBar({ stepName }: HumanActBarProps) {
   const [showHistory, setShowHistory] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   const styleKey = STYLE_KEYS[stepName];
@@ -123,48 +124,61 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
   const suggestions = SUGGESTIONS[stepName] || [];
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-50/80 to-orange-50/50 border-t border-amber-200/40 px-4 py-2 flex-shrink-0">
-      <div className="flex items-center gap-2">
-        {/* Label */}
-        <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded shrink-0">YOUR INSTRUCTIONS</span>
-
-        {/* Instructions input — single line feel */}
-        <div className="flex-1 min-w-0">
-          <ExpandableTextarea
-            ref={textareaRef}
-            defaultValue={currentValue}
-            onChange={handleChange}
-            placeholder={PLACEHOLDERS[stepName]}
-          />
-        </div>
-
-        {/* Suggestion chips + history */}
-        <div className="flex items-center gap-1 shrink-0">
-          {suggestions.map((s) => (
-            <button
-              key={s.label}
-              className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
-              onClick={() => handleSuggestion(s.text)}
-            >
-              {s.label}
-            </button>
-          ))}
-          <button
-            className={`px-1.5 py-0.5 text-[10px] transition-colors ${
-              showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
-            }`}
-            onClick={() => setShowHistory(!showHistory)}
-            title="Prompt history"
-          >
-            📜
-          </button>
-        </div>
+    <div className="w-full bg-gradient-to-r from-amber-50/80 to-orange-50/50 border-t border-amber-200/40 flex-shrink-0">
+      {/* Collapse toggle bar */}
+      <div
+        className="flex items-center gap-2 px-4 py-1.5 cursor-pointer hover:bg-amber-50/50 transition-colors"
+        onClick={() => setCollapsed(!collapsed)}
+      >
+        <span className="text-[10px] text-amber-500">{collapsed ? "▶" : "▼"}</span>
+        <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">YOUR INSTRUCTIONS</span>
+        {collapsed && currentValue && (
+          <span className="text-[10px] text-gray-400 truncate flex-1">{currentValue}</span>
+        )}
       </div>
 
-      {/* Prompt history (collapsible) */}
-      {showHistory && (
-        <div className="mt-1.5 p-2 bg-white/60 rounded-md border border-gray-100">
-          <PromptHistory step={stepName} />
+      {!collapsed && (
+        <div className="px-4 pb-2">
+          <div className="flex items-center gap-2">
+            {/* Instructions input */}
+            <div className="flex-1 min-w-0">
+              <ExpandableTextarea
+                ref={textareaRef}
+                defaultValue={currentValue}
+                onChange={handleChange}
+                placeholder={PLACEHOLDERS[stepName]}
+              />
+            </div>
+
+            {/* Suggestion chips + history */}
+            <div className="flex items-center gap-1 shrink-0">
+              {suggestions.map((s) => (
+                <button
+                  key={s.label}
+                  className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
+                  onClick={() => handleSuggestion(s.text)}
+                >
+                  {s.label}
+                </button>
+              ))}
+              <button
+                className={`px-1.5 py-0.5 text-[10px] transition-colors ${
+                  showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
+                }`}
+                onClick={(e) => { e.stopPropagation(); setShowHistory(!showHistory); }}
+                title="Prompt history"
+              >
+                📜
+              </button>
+            </div>
+          </div>
+
+          {/* Prompt history */}
+          {showHistory && (
+            <div className="mt-1.5 p-2 bg-white/60 rounded-md border border-gray-100">
+              <PromptHistory step={stepName} />
+            </div>
+          )}
         </div>
       )}
     </div>

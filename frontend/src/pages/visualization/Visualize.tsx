@@ -23,7 +23,7 @@ const Visualize = () => {
   // const [codeNodes, setCodeNodes] = useState<string[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeGraphType, setActiveGraphType] = useState<string>("mindmap");
-  const [activeTab, setActiveTab] = useState<"analysis" | "trajectory">("analysis");
+  const [activeTab, setActiveTab] = useState<"analysis" | "trajectory">("trajectory");
 
   const [activeType, setActiveType] = useState<
     "Concept" | "Card" | "Code" | ""
@@ -193,16 +193,6 @@ const Visualize = () => {
         <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
           <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
             <button
-              onClick={() => setActiveTab("analysis")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                activeTab === "analysis"
-                  ? "bg-[#CB9180] text-white shadow-sm"
-                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
-              }`}
-            >
-              📊 Report & Graph
-            </button>
-            <button
               onClick={() => setActiveTab("trajectory")}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                 activeTab === "trajectory"
@@ -211,6 +201,16 @@ const Visualize = () => {
               }`}
             >
               🔄 Iteration Trajectory
+            </button>
+            <button
+              onClick={() => setActiveTab("analysis")}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                activeTab === "analysis"
+                  ? "bg-[#CB9180] text-white shadow-sm"
+                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
+              }`}
+            >
+              📊 Report & Graph
             </button>
           </div>
         </div>

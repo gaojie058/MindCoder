@@ -278,10 +278,10 @@ export default function Code({
               </div>
               <div className="flex gap-4 items-center whitespace-nowrap">
                 {isGPT ? (
-                  <div className="text-xs font-semibold">GPT-generated</div>
+                  <div className="text-xs font-semibold text-indigo-500">🤖 AI</div>
                 ) : (
-                  <div className="text-xs font-semibold text-red-500">
-                    User Edited
+                  <div className="text-xs font-semibold text-amber-600">
+                    ✏️ Edited
                   </div>
                 )}
                 <button onClick={deleteCode}>

@@ -315,9 +315,9 @@ export default function Concept({
               </div>
               <div className="flex gap-3 items-center whitespace-nowrap">
                 {isGPT ? (
-                  <div className="text-xs">GPT-generated</div>
+                  <div className="text-xs text-indigo-500">🤖 AI</div>
                 ) : (
-                  <div className="text-xs text-red-500">User Edited</div>
+                  <div className="text-xs text-amber-600">✏️ Edited</div>
                 )}
                 <button onClick={deleteConcept}>
                   <img

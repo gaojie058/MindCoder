@@ -254,12 +254,12 @@ export default function Card({ id, topics = [], active, isGPT, name }: card) {
             </div>
             <div className="flex flex-row items-end">
               {isGPT ? (
-                <div className="text-xs font-zen max-w-[60px] text-left text-wrap">
-                  GPT-Generated
+                <div className="text-xs font-zen text-indigo-500">
+                  🤖 AI
                 </div>
               ) : (
-                <div className="text-xs font-zen max-w-[80px] text-right text-red-500">
-                  User Edited
+                <div className="text-xs font-zen text-amber-600">
+                  ✏️ Edited
                 </div>
               )}
               {renderTrashOrRestore()}

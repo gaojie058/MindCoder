@@ -532,14 +532,15 @@ export default function MainLayout({
         </div>
       )}
 
-      {stepToName[step] !== "data" && stepToName[step] !== "display" && (
+      {/* Step 1 (card): 3-column layout with EditorPanel + CodesPanel */}
+      {stepToName[step] === "card" && (
         <CardAreaProvider>
           <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
             <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1600px] px-8 pt-3 pb-4">
               {/* Left — AI Agent Panel (280px) */}
               <LeftPanel
                 styleInputsRef={styleInputsRef}
-                stepName={stepToName[step] || "data"}
+                stepName="card"
               />
 
               {/* Center — Document Editor (flex-1) */}
@@ -574,6 +575,28 @@ export default function MainLayout({
             </div>
           </div>
         </CardAreaProvider>
+      )}
+
+      {/* Steps 2-3 (code/concept): Left panel + center content (Outlet) */}
+      {(stepToName[step] === "code" || stepToName[step] === "concept") && (
+        <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
+          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1600px] px-8 pt-3 pb-4">
+            {/* Left — AI Agent Panel (280px) */}
+            <LeftPanel
+              styleInputsRef={styleInputsRef}
+              stepName={stepToName[step]}
+            />
+
+            {/* Center — Step content (flex-1) */}
+            <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+              <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
+                <div className="flex-1 w-full overflow-hidden">
+                  {children || <Outlet />}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {stepToName[step] === "data" ? (

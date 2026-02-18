@@ -40,6 +40,12 @@ interface GenerationStore {
   isRunning: boolean;
 }
 
+async function executeStepAndSave(step: string, taskType?: string) {
+  await executeStep(step, taskType);
+  // Auto-save version after each successful generation
+  useVersionStore.getState().saveVersion(step);
+}
+
 async function executeStep(step: string, taskType?: string) {
   if (step === "card") {
     const { uploadedFiles } = useAppStore.getState();
@@ -96,15 +102,15 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
     try {
       if (selectedSteps.includes("code")) {
         set({ bgStage: "code" });
-        await executeStep("code");
+        await executeStepAndSave("code");
       }
       if (selectedSteps.includes("concept")) {
         set({ bgStage: "concept" });
-        await executeStep("concept");
+        await executeStepAndSave("concept");
       }
       if (selectedSteps.includes("display")) {
         set({ bgStage: "display" });
-        await executeStep("display");
+        await executeStepAndSave("display");
       }
       set({ bgStage: "done", bgRunning: false });
     } catch (err: any) {
@@ -116,9 +122,6 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
   regenerateStep: async (stepName: string) => {
     if (get().bgRunning || get().regenRunning) return;
 
-    // Auto-save current state as a version before regenerating
-    useVersionStore.getState().saveVersion(stepName, `Before regen ${stepName}`);
-
     set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 
     try {
@@ -127,7 +130,7 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
           renderedGraphSvg: null, viewState: {}, activeGraphType: "mindmap",
         });
       }
-      await executeStep(stepName);
+      await executeStepAndSave(stepName);
       if (stepName === "display") {
         window.dispatchEvent(new CustomEvent("graph-regenerated"));
       }
@@ -140,8 +143,6 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
 
   regenerateSubsequent: async (stepName: string) => {
     if (get().bgRunning || get().regenRunning) return;
-
-    useVersionStore.getState().saveVersion(stepName, `Before regen ${stepName}+`);
 
     set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 
@@ -157,7 +158,7 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
             renderedGraphSvg: null, viewState: {}, activeGraphType: "mindmap",
           });
         }
-        await executeStep(steps[i]);
+        await executeStepAndSave(steps[i]);
       }
       window.dispatchEvent(new CustomEvent("graph-regenerated"));
       set({ regenStage: "done", regenRunning: false });

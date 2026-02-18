@@ -450,7 +450,7 @@ export default function MainLayout({
 
       {stepToName[step] !== "data" && stepToName[step] !== "display" && (
         <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
-          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3">
+          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3 pb-4">
             {/* Left side - Collapsible Panel */}
             <LeftPanel
               styleInputsRef={styleInputsRef}

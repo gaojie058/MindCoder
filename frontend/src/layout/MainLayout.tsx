@@ -432,12 +432,11 @@ export default function MainLayout({
                 className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
                 {...props}
               >
-                {/* Human Act Bar — above content */}
-                <HumanActBar stepName={stepName} />
                 {children || <Outlet />}
               </div>
 
-              {/* Bottom buttons */}
+              {/* Human Act Bar + Bottom buttons */}
+              <HumanActBar stepName={stepName} />
               <div className="w-full flex justify-between items-center py-2 px-4 border-t border-gray-200 flex-shrink-0">
                 <button
                   onClick={handleSaveToHistory}

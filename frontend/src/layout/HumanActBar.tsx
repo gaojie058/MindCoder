@@ -123,14 +123,12 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
   const suggestions = SUGGESTIONS[stepName] || [];
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-50/80 to-orange-50/50 border-b border-amber-200/40 px-4 py-2 flex-shrink-0">
-      <div className="flex items-start gap-3">
+    <div className="w-full bg-gradient-to-r from-amber-50/80 to-orange-50/50 border-t border-amber-200/40 px-4 py-2 flex-shrink-0">
+      <div className="flex items-center gap-2">
         {/* Label */}
-        <div className="flex items-center gap-1.5 pt-1.5 shrink-0">
-          <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">YOU</span>
-        </div>
+        <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded shrink-0">YOUR INSTRUCTIONS</span>
 
-        {/* Instructions input */}
+        {/* Instructions input — single line feel */}
         <div className="flex-1 min-w-0">
           <ExpandableTextarea
             ref={textareaRef}
@@ -138,31 +136,34 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
             onChange={handleChange}
             placeholder={PLACEHOLDERS[stepName]}
           />
-          <div className="flex items-center gap-1.5 mt-1">
-            {suggestions.map((s) => (
-              <button
-                key={s.label}
-                className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
-                onClick={() => handleSuggestion(s.text)}
-              >
-                {s.label}
-              </button>
-            ))}
+        </div>
+
+        {/* Suggestion chips + history */}
+        <div className="flex items-center gap-1 shrink-0">
+          {suggestions.map((s) => (
             <button
-              className={`ml-auto px-2 py-0.5 text-[10px] transition-colors ${
-                showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
-              }`}
-              onClick={() => setShowHistory(!showHistory)}
+              key={s.label}
+              className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
+              onClick={() => handleSuggestion(s.text)}
             >
-              📜 History
+              {s.label}
             </button>
-          </div>
+          ))}
+          <button
+            className={`px-1.5 py-0.5 text-[10px] transition-colors ${
+              showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
+            }`}
+            onClick={() => setShowHistory(!showHistory)}
+            title="Prompt history"
+          >
+            📜
+          </button>
         </div>
       </div>
 
       {/* Prompt history (collapsible) */}
       {showHistory && (
-        <div className="mt-2 ml-[52px] p-2 bg-white/60 rounded-md border border-gray-100">
+        <div className="mt-1.5 p-2 bg-white/60 rounded-md border border-gray-100">
           <PromptHistory step={stepName} />
         </div>
       )}

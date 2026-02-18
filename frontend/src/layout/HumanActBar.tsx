@@ -17,7 +17,7 @@ const ExpandableTextarea = React.forwardRef<
     defaultValue={defaultValue}
     onChange={onChange}
     placeholder={placeholder}
-    className="w-full outline-none overflow-auto resize-y font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 placeholder:text-gray-300 placeholder:text-[11px]"
+    className="w-full flex-1 outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 placeholder:text-gray-300 placeholder:text-[11px]"
     style={{ minHeight: "48px" }}
   />
 ));
@@ -84,6 +84,10 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
   const [showHistory, setShowHistory] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showMemo, setShowMemo] = useState(false);
+  const [panelHeight, setPanelHeight] = useState(140);
+  const draggingRef = useRef(false);
+  const startYRef = useRef(0);
+  const startHeightRef = useRef(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   const styleKey = STYLE_KEYS[stepName];
@@ -129,12 +133,43 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
   const memo = stepName === "card" ? topicMemo : stepName === "code" ? codeMemo : conceptMemo;
   const setMemo = stepName === "card" ? setTopicMemo : stepName === "code" ? setCodeMemo : setConceptMemo;
 
+  // Drag to resize
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    draggingRef.current = true;
+    startYRef.current = e.clientY;
+    startHeightRef.current = panelHeight;
+
+    const handleMove = (ev: MouseEvent) => {
+      if (!draggingRef.current) return;
+      const delta = startYRef.current - ev.clientY;
+      setPanelHeight(Math.max(100, Math.min(500, startHeightRef.current + delta)));
+    };
+    const handleUp = () => {
+      draggingRef.current = false;
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+  }, [panelHeight]);
+
   if (!STYLE_KEYS[stepName]) return null;
 
   const suggestions = SUGGESTIONS[stepName] || [];
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 border-t-2 border-amber-300/60 flex-shrink-0">
+    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 flex-shrink-0">
+      {/* Drag handle */}
+      {!collapsed && (
+        <div
+          className="w-full h-2 cursor-ns-resize flex items-center justify-center hover:bg-amber-200/40 transition-colors group"
+          onMouseDown={handleDragStart}
+        >
+          <div className="w-12 h-1 rounded-full bg-amber-300/50 group-hover:bg-amber-400/70 transition-colors" />
+        </div>
+      )}
+      {collapsed && <div className="w-full border-t-2 border-amber-300/60" />}
       {/* Collapse toggle bar */}
       <div
         className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-amber-100/40 transition-colors"
@@ -176,10 +211,10 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       </div>
 
       {!collapsed && (
-        <div className="px-4 pb-2">
-          <div className="flex gap-2">
+        <div className="px-4 pb-2 overflow-auto" style={{ height: panelHeight }}>
+          <div className="flex gap-2 h-full">
             {/* Instructions input */}
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 flex flex-col">
               <ExpandableTextarea
                 ref={textareaRef}
                 defaultValue={currentValue}
@@ -210,12 +245,13 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
 
             {/* Research Memo (side by side) */}
             {showMemo && (
-              <div className="w-[220px] shrink-0">
+              <div className="w-[220px] shrink-0 flex flex-col">
+                <div className="text-[9px] font-semibold text-amber-700 mb-1">📝 Research Memo</div>
                 <textarea
                   value={memo || ""}
                   onChange={(e) => setMemo(e.target.value)}
                   placeholder="Your research notes..."
-                  className="w-full h-full outline-none resize-none font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80 min-h-[48px]"
+                  className="w-full flex-1 outline-none resize-none font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80 min-h-[48px]"
                 />
               </div>
             )}

@@ -311,10 +311,6 @@ export default function Trajectory() {
         markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180", width: 16, height: 16 },
         style: { stroke: "#CB9180", strokeWidth: 3 },
         animated: true,
-        label: "feeds into",
-        labelStyle: { fontSize: 10, fill: "#CB9180", fontWeight: 700 },
-        labelBgStyle: { fill: "white", fillOpacity: 0.9 },
-        labelBgPadding: [6, 3] as [number, number],
       });
     }
     if (currentCode && currentConcept) {
@@ -328,10 +324,6 @@ export default function Trajectory() {
         markerEnd: { type: MarkerType.ArrowClosed, color: "#CB9180", width: 16, height: 16 },
         style: { stroke: "#CB9180", strokeWidth: 3 },
         animated: true,
-        label: "feeds into",
-        labelStyle: { fontSize: 10, fill: "#CB9180", fontWeight: 700 },
-        labelBgStyle: { fill: "white", fillOpacity: 0.9 },
-        labelBgPadding: [6, 3] as [number, number],
       });
     }
 

@@ -373,7 +373,7 @@ function generateOpenCodesProcessContent(): Content[] {
               italics: true
             }
           ],
-          fillColor: BRAND.primaryBg,
+          fillColor: '#FFFFFF',
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -392,7 +392,7 @@ function generateOpenCodesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " MindCoder Mechanical Task", fontSize: 11, bold: true, marginLeft: 5 }
+        { text: " AI Agent", fontSize: 11, bold: true, color: BRAND.aiPurple }
       ],
       marginTop: 5,
       marginBottom: 6,
@@ -458,7 +458,7 @@ function generateOpenCodesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: BRAND.primaryBg,
+            fillColor: '#FFFFFF',
             margin: [10, 10, 10, 10]
           }]
         ]
@@ -469,13 +469,13 @@ function generateOpenCodesProcessContent(): Content[] {
     });
   }
 
-  // Human Interpretation section
+  // Human Analysis section
   const humanInterpretationContent = [];
 
   humanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Interpretation", fontSize: 11, bold: true, marginLeft: 5 }
+      { text: " Human Analysis", fontSize: 11, bold: true, color: BRAND.humanBlue }
     ],
     marginTop: 5,
     marginBottom: 6,
@@ -607,7 +607,7 @@ function generateOpenCodesProcessContent(): Content[] {
       body: [
         [{
           stack: humanInterpretationContent,
-          fillColor: BRAND.primaryBg,
+          fillColor: '#FFFFFF',
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -672,7 +672,7 @@ function generateSubThemesProcessContent(): Content[] {
               italics: true
             }
           ],
-          fillColor: BRAND.primaryBg,
+          fillColor: '#FFFFFF',
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -691,7 +691,7 @@ function generateSubThemesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " MindCoder Mechanical Task", fontSize: 11, bold: true, marginLeft: 5 }
+        { text: " AI Agent", fontSize: 11, bold: true, color: BRAND.aiPurple }
       ],
       marginTop: 5,
       marginBottom: 6,
@@ -757,7 +757,7 @@ function generateSubThemesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: BRAND.primaryBg,
+            fillColor: '#FFFFFF',
             margin: [10, 10, 10, 10]
           }]
         ]
@@ -768,13 +768,13 @@ function generateSubThemesProcessContent(): Content[] {
     });
   }
 
-  // Human Interpretation section
+  // Human Analysis section
   const subThemesHumanInterpretationContent = [];
 
   subThemesHumanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Interpretation", fontSize: 11, bold: true, marginLeft: 5 }
+      { text: " Human Analysis", fontSize: 11, bold: true, color: BRAND.humanBlue }
     ],
     marginTop: 5,
     marginBottom: 6,
@@ -863,7 +863,7 @@ function generateSubThemesProcessContent(): Content[] {
       body: [
         [{
           stack: subThemesHumanInterpretationContent,
-          fillColor: BRAND.primaryBg,
+          fillColor: '#FFFFFF',
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -929,7 +929,7 @@ function generateThemesProcessContent(): Content[] {
               italics: true
             }
           ],
-          fillColor: BRAND.primaryBg,
+          fillColor: '#FFFFFF',
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -948,7 +948,7 @@ function generateThemesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " MindCoder Mechanical Task", fontSize: 11, bold: true, marginLeft: 5 }
+        { text: " AI Agent", fontSize: 11, bold: true, color: BRAND.aiPurple }
       ],
       marginTop: 5,
       marginBottom: 6,
@@ -1014,7 +1014,7 @@ function generateThemesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: BRAND.primaryBg,
+            fillColor: '#FFFFFF',
             margin: [10, 10, 10, 10]
           }]
         ]
@@ -1025,13 +1025,13 @@ function generateThemesProcessContent(): Content[] {
     });
   }
 
-  // Human Interpretation section
+  // Human Analysis section
   const themesHumanInterpretationContent = [];
 
   themesHumanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Interpretation", fontSize: 11, bold: true, marginLeft: 5 }
+      { text: " Human Analysis", fontSize: 11, bold: true, color: BRAND.humanBlue }
     ],
     marginTop: 5,
     marginBottom: 6,
@@ -1127,7 +1127,7 @@ function generateThemesProcessContent(): Content[] {
       body: [
         [{
           stack: themesHumanInterpretationContent,
-          fillColor: BRAND.primaryBg,
+          fillColor: '#FFFFFF',
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -1989,24 +1989,24 @@ export default async function renderPDF(report: any, concept: concept[]) {
             title: 'Step 1: Open Codes',
             ref: 'openCodesProcessSection',
             items: [
-              { title: 'Human Interpretation', ref: 'topicHumanInterpretation' },
-              { title: 'MindCoder Mechanical Task', ref: 'topicMechanicalTask' }
+              { title: 'Human Analysis', ref: 'topicHumanInterpretation' },
+              { title: 'AI Agent', ref: 'topicMechanicalTask' }
             ]
           },
           {
             title: 'Step 2: Sub-themes',
             ref: 'subThemesProcessSection',
             items: [
-              { title: 'Human Interpretation', ref: 'codeHumanInterpretation' },
-              { title: 'MindCoder Mechanical Task', ref: 'codeMechanicalTask' }
+              { title: 'Human Analysis', ref: 'codeHumanInterpretation' },
+              { title: 'AI Agent', ref: 'codeMechanicalTask' }
             ]
           },
           {
             title: 'Step 3: Themes',
             ref: 'themesProcessSection',
             items: [
-              { title: 'Human Interpretation', ref: 'conceptHumanInterpretation' },
-              { title: 'MindCoder Mechanical Task', ref: 'conceptMechanicalTask' }
+              { title: 'Human Analysis', ref: 'conceptHumanInterpretation' },
+              { title: 'AI Agent', ref: 'conceptMechanicalTask' }
             ]
           }
         ]

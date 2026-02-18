@@ -131,12 +131,35 @@ function FloatingMemo({ stepName }: { stepName: string }) {
   );
 }
 
+// Info tooltip — hover ? icon to show description
+function InfoTooltip({ text }: { text: string }) {
+  return (
+    <span className="relative group inline-flex items-center ml-1 cursor-help">
+      <span className="w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold flex items-center justify-center hover:bg-gray-300 transition-colors">?</span>
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-gray-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-lg">
+        {text}
+      </span>
+    </span>
+  );
+}
+
+// Area label header
+function AreaLabel({ icon, title, tooltip, className = "" }: { icon: string; title: string; tooltip: string; className?: string }) {
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-1.5 ${className}`}>
+      <span className="text-sm">{icon}</span>
+      <span className="text-xs font-semibold text-gray-600">{title}</span>
+      <InfoTooltip text={tooltip} />
+    </div>
+  );
+}
+
 // Collapsible Left Panel
 function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObject<{ saveChangesToStore: () => void } | null>; stepName: string }) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className={`relative flex h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[320px]'}`}>
+    <div className={`relative flex flex-col h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[320px]'}`}>
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="absolute -right-3 top-3 z-10 w-6 h-6 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#AA7667] shadow-md cursor-pointer"
@@ -145,18 +168,26 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
         {collapsed ? '›' : '‹'}
       </button>
       {!collapsed && (
-        <div
-          className="w-full overflow-y-auto scrollbar-thin h-full border-r border-gray-100"
-          style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
-        >
-          <div className="p-3 pb-8">
-            <StyleInputs
-              ref={styleInputsRef}
-              storeType={stepName}
-              className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
-            />
+        <>
+          <AreaLabel
+            icon="🤖"
+            title="AI Agent"
+            tooltip="AI analysis results and suggestions for the current step"
+            className="border-b border-gray-100 bg-indigo-50/30"
+          />
+          <div
+            className="w-full overflow-y-auto scrollbar-thin flex-1 border-r border-gray-100"
+            style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
+          >
+            <div className="p-3 pb-8">
+              <StyleInputs
+                ref={styleInputsRef}
+                storeType={stepName}
+                className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
+              />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
@@ -428,8 +459,14 @@ export default function MainLayout({
 
             {/* Right side - Human Tasks + Content Area */}
             <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+              <AreaLabel
+                icon="📊"
+                title="Data Editor"
+                tooltip="View, edit, and organize your coding data"
+                className="bg-white/60 rounded-t-xl border border-b-0 border-gray-200"
+              />
               <div
-                className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
+                className={`flex-col w-full h-full flex items-center justify-stretch border border-t-0 shadow-lg rounded-b-xl overflow-hidden ${className}`}
                 {...props}
               >
                 {children || <Outlet />}

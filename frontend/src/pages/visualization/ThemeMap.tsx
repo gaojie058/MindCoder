@@ -33,6 +33,7 @@ function darken(hex: string, amount = 0.3): string {
 type OpenCodeItem = {
   id: string;
   name: string;
+  isAI: boolean;
   segments: { id: string; source: string }[];
 };
 
@@ -40,6 +41,8 @@ type SubthemeItem = {
   id: string;
   name: string;
   color: string;
+  isAI: boolean;
+  definition?: string;
   openCodes: OpenCodeItem[];
 };
 
@@ -48,6 +51,7 @@ type ThemeItem = {
   name: string;
   definition: string;
   color: string;
+  isAI: boolean;
   subthemes: SubthemeItem[];
 };
 
@@ -66,6 +70,7 @@ function buildMapData(): MapData {
         const openCodes: OpenCodeItem[] = Object.values(codeItem.data || {}).flat().map((c: card) => ({
           id: c.id,
           name: c.name,
+          isAI: c.isGPT ?? true,
           segments: (c.topics || []).map((dp) => ({
             id: dp.id || dp.uuid,
             source: dp.content || "",
@@ -76,6 +81,8 @@ function buildMapData(): MapData {
           id: codeItem.id,
           name: codeItem.name,
           color: codeItem.color || lighten(color, 0.15),
+          isAI: codeItem.isGPT ?? true,
+          definition: codeItem.definition,
           openCodes,
         };
       })
@@ -86,11 +93,23 @@ function buildMapData(): MapData {
       name: concept.name,
       definition: concept.definition,
       color,
+      isAI: concept.isGPT ?? true,
       subthemes,
     };
   });
 
   return { themes };
+}
+
+// AI/Human badge
+function SourceBadge({ isAI }: { isAI: boolean }) {
+  return (
+    <span className={`px-1.5 py-0.5 rounded text-[9px] font-medium shrink-0 ${
+      isAI ? "bg-indigo-100 text-indigo-600" : "bg-emerald-100 text-emerald-600"
+    }`}>
+      {isAI ? "🤖 AI" : "👤 Human"}
+    </span>
+  );
 }
 
 // Expandable open code card with segments
@@ -102,7 +121,7 @@ function OpenCodeCard({ code, color }: { code: OpenCodeItem; color: string }) {
     <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-gray-50 transition-colors"
       >
         <svg
           className={`w-3 h-3 text-gray-400 transition-transform shrink-0 ${expanded ? "rotate-90" : ""}`}
@@ -114,7 +133,8 @@ function OpenCodeCard({ code, color }: { code: OpenCodeItem; color: string }) {
           className="w-2.5 h-2.5 rounded-full shrink-0"
           style={{ backgroundColor: color }}
         />
-        <span className="text-xs font-medium text-gray-700 flex-1 truncate">{code.name}</span>
+        <span className="text-xs font-medium text-gray-700 flex-1 break-words whitespace-normal leading-snug">{code.name}</span>
+        <SourceBadge isAI={code.isAI} />
         <span className="text-[10px] text-gray-400 shrink-0">{segCount}</span>
       </button>
       {expanded && code.segments.length > 0 && (
@@ -122,9 +142,81 @@ function OpenCodeCard({ code, color }: { code: OpenCodeItem; color: string }) {
           {code.segments.map((seg, i) => (
             <div key={i} className="text-[11px] text-gray-500 leading-relaxed pl-5">
               <span className="text-gray-400">•</span>{" "}
-              <span className="italic">"{seg.source.length > 120 ? seg.source.slice(0, 120) + "..." : seg.source}"</span>
+              <span className="italic">"{seg.source.length > 150 ? seg.source.slice(0, 150) + "..." : seg.source}"</span>
             </div>
           ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Sub-theme card with AI/Human badge and expandable definition
+function SubthemeCard({ subtheme }: { subtheme: SubthemeItem }) {
+  const [showDef, setShowDef] = useState(false);
+  return (
+    <div
+      className="rounded-lg border shadow-sm overflow-hidden"
+      style={{ backgroundColor: lighten(subtheme.color, 0.2), borderColor: subtheme.color }}
+    >
+      <div className="px-3 py-2.5">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-semibold text-gray-700 flex-1 break-words leading-snug">{subtheme.name}</span>
+          <SourceBadge isAI={subtheme.isAI} />
+          {subtheme.definition && (
+            <button
+              onClick={() => setShowDef(!showDef)}
+              className="text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+              title="Toggle definition"
+            >
+              <svg className={`w-3.5 h-3.5 transition-transform ${showDef ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+          )}
+        </div>
+        <div className="text-[10px] text-gray-500 mt-0.5">
+          {subtheme.openCodes.length} code{subtheme.openCodes.length !== 1 ? "s" : ""}
+        </div>
+      </div>
+      {showDef && subtheme.definition && (
+        <div className="border-t px-3 py-2 text-[11px] text-gray-600 leading-relaxed bg-white/40" style={{ borderColor: subtheme.color + "40" }}>
+          {subtheme.definition}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Theme card with AI/Human badge and expandable definition
+function ThemeCard({ theme }: { theme: ThemeItem }) {
+  const [showDef, setShowDef] = useState(false);
+  return (
+    <div
+      className="rounded-xl border shadow-sm w-full overflow-hidden"
+      style={{ backgroundColor: lighten(theme.color, 0.1), borderColor: theme.color }}
+    >
+      <div className="px-4 py-3">
+        <div className="flex items-center gap-1.5">
+          <span className="text-sm font-bold text-gray-800 flex-1 break-words leading-snug">{theme.name}</span>
+          <SourceBadge isAI={theme.isAI} />
+          <button
+            onClick={() => setShowDef(!showDef)}
+            className="text-gray-400 hover:text-gray-600 transition-colors shrink-0"
+            title="Toggle definition"
+          >
+            <svg className={`w-3.5 h-3.5 transition-transform ${showDef ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+        </div>
+        <div className="text-[10px] text-gray-400 mt-1">
+          {theme.subthemes.length} sub-theme{theme.subthemes.length !== 1 ? "s" : ""}
+        </div>
+      </div>
+      {showDef && theme.definition && (
+        <div className="border-t px-4 py-2.5 text-[11px] text-gray-600 leading-relaxed bg-white/40" style={{ borderColor: theme.color + "40" }}>
+          {theme.definition}
         </div>
       )}
     </div>
@@ -138,7 +230,7 @@ function ConnectionLines({ containerRef }: { containerRef: React.RefObject<HTMLD
 }
 
 // Persist codes column width across re-renders
-let persistedCodesWidth = 280;
+let persistedCodesWidth = 360;
 
 export default function ThemeMap() {
   const [codesWidth, _setCodesWidth] = useState(persistedCodesWidth);
@@ -191,11 +283,11 @@ export default function ThemeMap() {
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Open Codes</span>
         </div>
         <div className="w-8" /> {/* resize handle + arrow gap */}
-        <div className="flex-1">
+        <div className="w-[220px] shrink-0">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Sub-themes</span>
         </div>
         <div className="w-6" />
-        <div className="flex-1">
+        <div className="w-[240px] shrink-0">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Themes</span>
         </div>
       </div>
@@ -228,21 +320,9 @@ export default function ThemeMap() {
             </div>
 
             {/* Sub-themes column */}
-            <div className="flex-1 space-y-2 flex flex-col justify-center">
+            <div className="w-[220px] shrink-0 space-y-2 flex flex-col justify-center">
               {theme.subthemes.map((st) => (
-                <div
-                  key={st.id}
-                  className="rounded-lg px-3 py-2.5 border shadow-sm"
-                  style={{
-                    backgroundColor: lighten(st.color, 0.2),
-                    borderColor: st.color,
-                  }}
-                >
-                  <div className="text-xs font-semibold text-gray-700">{st.name}</div>
-                  <div className="text-[10px] text-gray-500 mt-0.5">
-                    {st.openCodes.length} code{st.openCodes.length !== 1 ? "s" : ""} · {st.openCodes.reduce((n, c) => n + c.segments.length, 0)} segments
-                  </div>
-                </div>
+                <SubthemeCard key={st.id} subtheme={st} />
               ))}
             </div>
 
@@ -254,20 +334,8 @@ export default function ThemeMap() {
             </div>
 
             {/* Theme column */}
-            <div className="flex-1 flex items-center">
-              <div
-                className="rounded-xl px-4 py-3 w-full border shadow-sm"
-                style={{
-                  backgroundColor: lighten(theme.color, 0.1),
-                  borderColor: theme.color,
-                }}
-              >
-                <div className="text-sm font-bold text-gray-800">{theme.name}</div>
-                <div className="text-[11px] text-gray-600 mt-1 leading-relaxed">{theme.definition}</div>
-                <div className="text-[10px] text-gray-400 mt-1.5">
-                  {theme.subthemes.length} sub-theme{theme.subthemes.length !== 1 ? "s" : ""}
-                </div>
-              </div>
+            <div className="w-[240px] shrink-0 flex items-center">
+              <ThemeCard theme={theme} />
             </div>
           </div>
         ))}

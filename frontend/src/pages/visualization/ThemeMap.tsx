@@ -298,9 +298,9 @@ export default function ThemeMap() {
       </div>
 
       {/* Theme rows */}
-      <div className="space-y-6">
+      <div className="divide-y divide-gray-200">
         {data.themes.map((theme) => (
-          <div key={theme.id} className="flex items-stretch gap-0">
+          <div key={theme.id} className="flex items-stretch gap-0 py-5 first:pt-0">
             {/* Open Codes column */}
             <div className="flex-[2] min-w-0 space-y-2">
               {theme.subthemes.flatMap((st) =>

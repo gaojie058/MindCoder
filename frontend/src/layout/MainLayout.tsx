@@ -19,14 +19,15 @@ import useAppStore from "@/stores/useAppStore";
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { StyleInputsWithRef as StyleInputs } from "./StyleInputs";
-import HumanActBar from "./HumanActBar";
 import useCardStore from "@/stores/useCardStore";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
 import useEditStore from "@/stores/useEditStore";
 import useInfoStore from "@/stores/useInfoStore";
 import useGenerationStore from "@/stores/useGenerationStore";
+import useVersionStore from "@/stores/useVersionStore";
 import VersionPanel from "./VersionPanel";
+import { CardAreaProvider, EditorPanel, CodesPanel } from "@/pages/reconstruction/CardArea";
 
 // Persist memo open/position across route changes
 const memoState = { open: false, x: 0, y: 0, initialized: false };
@@ -144,12 +145,42 @@ function AreaLabel({ icon, title, tooltip, titleColor = "text-gray-600", tooltip
   );
 }
 
-// Collapsible Left Panel
+// Collapsible Left Panel with TOOLS section
 function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObject<{ saveChangesToStore: () => void } | null>; stepName: string }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [showMemo, setShowMemo] = useState(false);
+  const toggleVersionPanel = useVersionStore((s) => s.togglePanel);
+
+  // Custom instructions
+  const styleKey = stepName === "card" ? "clusteringStyle" : stepName === "code" ? "codingStyle" : "conceptualizingStyle";
+  const currentValue = useAppStore((s) => (s as any)[styleKey] || "");
+  const instructionsRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (instructionsRef.current && instructionsRef.current.value !== currentValue) {
+      instructionsRef.current.value = currentValue;
+    }
+  }, [currentValue]);
+
+  const handleInstructionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const setters: Record<string, string> = { card: "setClusteringStyle", code: "setCodingStyle", concept: "setConceptualizingStyle" };
+    const setter = setters[stepName];
+    if (setter) (useAppStore.getState() as any)[setter](e.target.value);
+  }, [stepName]);
+
+  // Memo
+  const { topicMemo, setTopicMemo, codeMemo, setCodeMemo, conceptMemo, setConceptMemo } = useEditStore();
+  const memo = stepName === "card" ? topicMemo : stepName === "code" ? codeMemo : conceptMemo;
+  const setMemo = stepName === "card" ? setTopicMemo : stepName === "code" ? setCodeMemo : setConceptMemo;
+
+  const placeholders: Record<string, string> = {
+    card: "Guide how open codes are named and grouped...",
+    code: "Guide how sub-themes are formed from open codes...",
+    concept: "Guide how themes are conceptualized from sub-themes...",
+  };
 
   return (
-    <div className={`relative flex flex-col h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[320px]'}`}>
+    <div className={`relative flex flex-col h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[280px]'}`}>
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="absolute -right-3 top-3 z-10 w-6 h-6 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#AA7667] shadow-md cursor-pointer"
@@ -170,12 +201,74 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
             className="w-full overflow-y-auto scrollbar-thin flex-1"
             style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
           >
-            <div className="p-3 pb-8">
+            <div className="p-3 pb-2">
               <StyleInputs
                 ref={styleInputsRef}
                 storeType={stepName}
                 className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
               />
+            </div>
+
+            {/* Custom Instructions */}
+            <div className="px-3 pb-2">
+              <details open className="group rounded-xl mb-2 overflow-hidden border border-[#CB9180]/30 shadow-sm">
+                <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden bg-gradient-to-r from-orange-50 to-rose-50">
+                  <span className="text-sm">✍️</span>
+                  <span className="text-xs font-bold text-gray-700 flex-1">Your Instructions</span>
+                  <svg className="w-3.5 h-3.5 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </summary>
+                <div className="px-3 py-2 bg-white/60">
+                  <textarea
+                    ref={instructionsRef}
+                    defaultValue={currentValue}
+                    onChange={handleInstructionChange}
+                    placeholder={placeholders[stepName] || "Custom instructions..."}
+                    className="w-full outline-none overflow-auto resize-y font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 placeholder:text-gray-300 placeholder:text-[11px]"
+                    style={{ minHeight: "60px" }}
+                  />
+                </div>
+              </details>
+            </div>
+
+            {/* TOOLS section */}
+            <div className="px-3 pb-4">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-1.5 h-4 rounded-full bg-gray-400" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Tools</span>
+                <div className="flex-1 h-px bg-gray-200" />
+              </div>
+              <div className="space-y-1">
+                <button
+                  onClick={() => setShowMemo(!showMemo)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors ${showMemo ? "bg-amber-100 text-amber-800" : "text-gray-600 hover:bg-gray-50"}`}
+                >
+                  <span>📝</span>
+                  <span>Memo</span>
+                </button>
+                <button
+                  onClick={toggleVersionPanel}
+                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition-colors"
+                >
+                  <span>🕐</span>
+                  <span>Version History</span>
+                </button>
+              </div>
+
+              {/* Inline memo */}
+              {showMemo && (
+                <div className="mt-2 p-2.5 bg-amber-50/60 rounded-lg border border-amber-200/50">
+                  <div className="text-xs font-semibold text-amber-700 mb-1.5">📝 Research Memo</div>
+                  <textarea
+                    value={memo || ""}
+                    onChange={(e) => setMemo(e.target.value)}
+                    placeholder="Your research notes..."
+                    className="w-full outline-none resize-y font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80"
+                    style={{ minHeight: "80px" }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -440,42 +533,47 @@ export default function MainLayout({
       )}
 
       {stepToName[step] !== "data" && stepToName[step] !== "display" && (
-        <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
-          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3 pb-4">
-            {/* Left side - Collapsible Panel */}
-            <LeftPanel
-              styleInputsRef={styleInputsRef}
-              stepName={stepToName[step] || "data"}
-            />
+        <CardAreaProvider>
+          <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
+            <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1600px] px-8 pt-3 pb-4">
+              {/* Left — AI Agent Panel (280px) */}
+              <LeftPanel
+                styleInputsRef={styleInputsRef}
+                stepName={stepToName[step] || "data"}
+              />
 
-            {/* Right side - Human Tasks + Content Area */}
-            <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
-              <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
-                <AreaLabel
-                  icon="📊"
-                  title="Data Editor"
-                  tooltip="View, edit, and organize your coding data"
-                  titleColor="text-[#CB9180]"
-                  className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
-                />
-                <div
-                  className={`flex-col w-full flex-1 flex items-center justify-stretch overflow-hidden ${className}`}
-                  {...props}
-                >
-                  {children || <Outlet />}
+              {/* Center — Document Editor (flex-1) */}
+              <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+                <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
+                  <AreaLabel
+                    icon="📊"
+                    title="Data Editor"
+                    tooltip="View, edit, and organize your coding data"
+                    titleColor="text-[#CB9180]"
+                    className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
+                  />
+                  <div className="flex-1 w-full overflow-hidden">
+                    <EditorPanel />
+                  </div>
                 </div>
               </div>
 
-              {/* Human Act Bar with Regenerate + Memo */}
-              <HumanActBar
-                stepName={stepName}
-                onRegenerate={handleRegenerate}
-                onRegenerateSubsequent={handleRegenerateRest}
-                loading={loading || regenRunning}
-              />
+              {/* Right — Codes Panel (320px) */}
+              <div className="w-[320px] shrink-0 flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
+                <AreaLabel
+                  icon="🏷️"
+                  title="Codes"
+                  tooltip="Open codes for the current file"
+                  titleColor="text-[#CB9180]"
+                  className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
+                />
+                <div className="flex-1 overflow-hidden">
+                  <CodesPanel />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </CardAreaProvider>
       )}
 
       {stepToName[step] === "data" ? (
@@ -562,7 +660,7 @@ export default function MainLayout({
       )}
       {/* Loading indicator removed — spinner is now inline in the Regenerate button */}
       <VersionPanel />
-      {/* FloatingMemo moved into HumanActBar */}
+      {/* FloatingMemo removed — memo is now in left panel TOOLS */}
       <HistoryModal />
       <LLMHistoryModal />
     </div>

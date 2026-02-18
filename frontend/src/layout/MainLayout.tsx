@@ -435,25 +435,13 @@ export default function MainLayout({
                 {children || <Outlet />}
               </div>
 
-              {/* Human Act Bar + Bottom buttons */}
-              <HumanActBar stepName={stepName} />
-              <div className="w-full flex justify-between items-center py-2 px-4 border-t border-gray-200 flex-shrink-0">
-                <button
-                  onClick={handleSaveToHistory}
-                  disabled={pdfLoading || showSuccessAlert}
-                  className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-4 py-1.5 rounded-md text-sm font-semibold font-zen ${
-                    (pdfLoading || showSuccessAlert) &&
-                    "opacity-50 cursor-not-allowed"
-                  }`}
-                >
-                  {pdfLoading ? "Adding..." : "Save Version"}
-                </button>
-                <Bottom loading={loading || regenRunning}
-                  bottomType={stepName === "display" ? "display" : "regenerate"}
-                  regenerate={handleRegenerate}
-                  regenerateSubsequent={handleRegenerateRest}
-                />
-              </div>
+              {/* Human Act Bar with Regenerate + Memo */}
+              <HumanActBar
+                stepName={stepName}
+                onRegenerate={handleRegenerate}
+                onRegenerateSubsequent={handleRegenerateRest}
+                loading={loading || regenRunning}
+              />
             </div>
           </div>
         </div>
@@ -532,7 +520,7 @@ export default function MainLayout({
       )}
       {/* Loading indicator removed — spinner is now inline in the Regenerate button */}
       <VersionPanel />
-      <FloatingMemo stepName={stepName} />
+      {/* FloatingMemo moved into HumanActBar */}
       <HistoryModal />
       <LLMHistoryModal />
     </div>

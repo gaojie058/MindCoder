@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import useAppStore from "@/stores/useAppStore";
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
+import useEditStore from "@/stores/useEditStore";
 
 // Expandable Textarea
 const ExpandableTextarea = React.forwardRef<
@@ -74,11 +75,15 @@ const STYLE_KEYS: Record<string, string> = {
 
 interface HumanActBarProps {
   stepName: string;
+  onRegenerate?: () => void;
+  onRegenerateSubsequent?: () => void;
+  loading?: boolean;
 }
 
-export default function HumanActBar({ stepName }: HumanActBarProps) {
+export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubsequent, loading }: HumanActBarProps) {
   const [showHistory, setShowHistory] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [showMemo, setShowMemo] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   const styleKey = STYLE_KEYS[stepName];
@@ -119,6 +124,11 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
     }
   }, [stepName]);
 
+  // Research memo
+  const { topicMemo, setTopicMemo, codeMemo, setCodeMemo, conceptMemo, setConceptMemo } = useEditStore();
+  const memo = stepName === "card" ? topicMemo : stepName === "code" ? codeMemo : conceptMemo;
+  const setMemo = stepName === "card" ? setTopicMemo : stepName === "code" ? setCodeMemo : setConceptMemo;
+
   if (!STYLE_KEYS[stepName]) return null;
 
   const suggestions = SUGGESTIONS[stepName] || [];
@@ -131,15 +141,43 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
         onClick={() => setCollapsed(!collapsed)}
       >
         <span className="text-xs text-amber-500">{collapsed ? "▶" : "▼"}</span>
-        <span className="text-xs font-bold text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded">👤 YOUR INSTRUCTIONS</span>
+        <span className="text-xs font-bold text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded">👤 YOU</span>
         {collapsed && currentValue && (
           <span className="text-[10px] text-gray-400 truncate flex-1">{currentValue}</span>
         )}
+        {/* Regenerate button always visible */}
+        <div className="ml-auto flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+          <button
+            onClick={() => setShowMemo(!showMemo)}
+            className={`px-2 py-1 rounded text-[10px] transition-colors ${showMemo ? "bg-amber-200 text-amber-800" : "text-gray-400 hover:text-amber-600"}`}
+            title="Research Memo"
+          >
+            📝 Memo
+          </button>
+          {onRegenerateSubsequent && (
+            <button
+              onClick={onRegenerateSubsequent}
+              disabled={loading}
+              className="px-2.5 py-1 rounded-md text-[10px] font-medium text-[#CB9180] border border-[#CB9180]/40 hover:bg-[#CB9180]/10 disabled:opacity-50 transition-colors"
+            >
+              ↻ Regen All ▼
+            </button>
+          )}
+          {onRegenerate && (
+            <button
+              onClick={onRegenerate}
+              disabled={loading}
+              className="px-3 py-1 rounded-md text-[10px] font-semibold text-white bg-[#CB9180] hover:bg-[#AA7667] disabled:opacity-50 transition-colors"
+            >
+              {loading ? "⏳ Running..." : "↻ Regenerate"}
+            </button>
+          )}
+        </div>
       </div>
 
       {!collapsed && (
         <div className="px-4 pb-2">
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2">
             {/* Instructions input */}
             <div className="flex-1 min-w-0">
               <ExpandableTextarea
@@ -148,29 +186,39 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
                 onChange={handleChange}
                 placeholder={PLACEHOLDERS[stepName]}
               />
+              <div className="flex items-center gap-1.5 mt-1">
+                {suggestions.map((s) => (
+                  <button
+                    key={s.label}
+                    className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
+                    onClick={() => handleSuggestion(s.text)}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+                <button
+                  className={`px-1.5 py-0.5 text-[10px] transition-colors ${
+                    showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
+                  }`}
+                  onClick={() => setShowHistory(!showHistory)}
+                  title="Prompt history"
+                >
+                  📜 History
+                </button>
+              </div>
             </div>
 
-            {/* Suggestion chips + history */}
-            <div className="flex items-center gap-1 shrink-0">
-              {suggestions.map((s) => (
-                <button
-                  key={s.label}
-                  className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-white/80 hover:border-amber-300 transition-colors"
-                  onClick={() => handleSuggestion(s.text)}
-                >
-                  {s.label}
-                </button>
-              ))}
-              <button
-                className={`px-1.5 py-0.5 text-[10px] transition-colors ${
-                  showHistory ? "text-amber-600 font-medium" : "text-gray-400 hover:text-gray-600"
-                }`}
-                onClick={(e) => { e.stopPropagation(); setShowHistory(!showHistory); }}
-                title="Prompt history"
-              >
-                📜
-              </button>
-            </div>
+            {/* Research Memo (side by side) */}
+            {showMemo && (
+              <div className="w-[220px] shrink-0">
+                <textarea
+                  value={memo || ""}
+                  onChange={(e) => setMemo(e.target.value)}
+                  placeholder="Your research notes..."
+                  className="w-full h-full outline-none resize-none font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80 min-h-[48px]"
+                />
+              </div>
+            )}
           </div>
 
           {/* Prompt history */}

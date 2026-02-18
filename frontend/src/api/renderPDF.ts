@@ -1264,7 +1264,8 @@ function generateThemeMapTable(): Content[] {
   ]);
 
   conceptData.forEach((concept, ci) => {
-    const themeColor = concept.color || THEME_COLORS[ci % THEME_COLORS.length];
+    // Always use palette by index (matching ThemeMap.tsx web view)
+    const themeColor = THEME_COLORS[ci % THEME_COLORS.length];
     const codes = Object.values(concept.codes).flat();
     const allOpenCodes: { name: string; isAI: boolean; count: number }[] = [];
 

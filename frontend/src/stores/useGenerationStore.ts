@@ -8,6 +8,7 @@ import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStor
 import { API_URL } from "@/api/api";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
+import useCardStore from "@/stores/useCardStore";
 import useVersionStore from "@/stores/useVersionStore";
 
 export type GenStage = "idle" | "card" | "code" | "concept" | "display" | "done" | "error";
@@ -125,6 +126,11 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
     set({ regenStage: stepName as GenStage, regenError: "", regenRunning: true });
 
     try {
+      if (stepName === "card") {
+        // Clear card data before regeneration so new results replace old
+        useCardStore.getState().setCardData([]);
+        useCardStore.setState({ fileCardMap: {} });
+      }
       if (stepName === "display") {
         useDisplayStore.getState().set({
           renderedGraphSvg: null, viewState: {}, activeGraphType: "mindmap",

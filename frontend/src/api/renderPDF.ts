@@ -50,33 +50,30 @@ const BRAND = {
 // Function to create AI badge
 function createAIBadge(): any {
   return {
-    text: ' AI ',
+    text: '[AI]',
     color: BRAND.aiPurple,
     bold: true,
     fontSize: 8,
-    background: BRAND.aiLavender,
   };
 }
 
 // Function to create Human badge
 function createHumanBadge(): any {
   return {
-    text: ' Human ',
+    text: '[Human]',
     color: BRAND.humanBlue,
     bold: true,
     fontSize: 8,
-    background: BRAND.humanBlueBg,
   };
 }
 
 // Function to create User badge
 function createUserBadge(): any {
   return {
-    text: ' Human ',
+    text: '[Human]',
     color: BRAND.humanBlue,
     bold: true,
     fontSize: 8,
-    background: BRAND.humanBlueBg,
   };
 }
 
@@ -110,13 +107,9 @@ function sanitizeText(str: string): string {
     .replace(/[\u2039\u203A]/g, "'")                   // single guillemets
     .replace(/\u00B7/g, '-')                           // middle dot
     .replace(/[\u2192\u2794\u279C\u27A1]/g, '->')      // arrows
-    // Remove any remaining chars outside Basic Latin + Latin-1 Supplement that Roboto may not have
-    .replace(/[^\x00-\xFF]/g, (ch) => {
-      // Keep common Latin Extended chars that Roboto supports, strip the rest
-      const code = ch.charCodeAt(0);
-      if (code >= 0x100 && code <= 0x24F) return ch; // Latin Extended-A/B
-      return '';
-    });
+    // Remove only known-problematic invisible/control chars; keep all printable chars
+    // (Roboto covers Latin, Greek, Cyrillic; pdfmake will show □ for unsupported glyphs)
+    .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '');
 }
 
 function cleanContent(text: string): any[] {
@@ -2114,28 +2107,6 @@ export default async function renderPDF(report: any, concept: concept[]) {
         marginBottom: 8
       },
 
-      // Table of Contents with improved styling
-      {
-        toc: {
-          title: {
-            text: 'Table of Contents',
-            style: 'tocTitle'
-          },
-          textStyle: 'tocText',
-          numberStyle: 'tocNumber',
-          textMargin: [0, 0, 0, 0],
-          levels: [
-            { textStyle: 'tocLevel1', textMargin: [0, 0, 0, 0] },
-            { textStyle: 'tocLevel2', textMargin: [20, 0, 0, 0] },
-            { textStyle: 'tocLevel3', textMargin: [40, 0, 0, 0] },
-            { textStyle: 'tocLevel4', textMargin: [60, 0, 0, 0] },
-            { textStyle: 'tocLevel5', textMargin: [80, 0, 0, 0] },
-            { textStyle: 'tocLevel6', textMargin: [100, 0, 0, 0] }
-          ]
-        }
-      },
-
-      // Add horizontal rule after TOC
       createHorizontalRule(),
 
       // Analysis Configuration section (new requirement #4)

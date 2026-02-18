@@ -33,8 +33,8 @@ function countActive(items: any[]): number {
   return items.filter((i: any) => i.active !== false).length;
 }
 
-const NODE_WIDTH = 260;
-const NODE_HEIGHT = 180;
+const NODE_WIDTH = 200;
+const NODE_HEIGHT = 120;
 
 // Compute change summary between two consecutive snapshots
 function computeChangeSummary(prev: VersionSnapshot, curr: VersionSnapshot, stage: "card" | "code" | "concept"): string {
@@ -161,22 +161,12 @@ function VersionNode({ data }: { data: any }) {
       </div>
 
       {/* Stats */}
-      <div className="text-[10px] text-gray-600">
+      <div className="text-[10px] text-gray-600 space-y-0.5">
         <div>📊 {data.cardCount} codes · {data.codeCount} sub · {data.conceptCount} themes</div>
-      </div>
-
-      {/* AI & Human thinking */}
-      <div className="text-[9px] space-y-0.5 mt-1 overflow-hidden flex-1">
-        {data.aiSummary && (
-          <div className="flex items-start gap-1 text-indigo-500 leading-tight">
-            <span className="shrink-0">✦</span>
-            <span className="truncate" title={data.aiSummary}>{data.aiSummary}</span>
-          </div>
-        )}
-        {data.humanInstruction && (
-          <div className="flex items-start gap-1 text-amber-600 leading-tight">
-            <span className="shrink-0">✍️</span>
-            <span className="truncate" title={data.humanInstruction}>{data.humanInstruction}</span>
+        {(data.lockedCount > 0 || data.editedCount > 0) && (
+          <div>
+            {data.lockedCount > 0 && <span>🔒 {data.lockedCount} </span>}
+            {data.editedCount > 0 && <span>✏️ {data.editedCount}</span>}
           </div>
         )}
       </div>
@@ -219,7 +209,7 @@ export default function Trajectory() {
     const nodes: Node[] = [];
     const edges: Edge[] = [];
 
-    const COLUMN_X = { card: 0, code: 320, concept: 640 };
+    const COLUMN_X = { card: 0, code: 280, concept: 560 };
     const ROW_HEIGHT = NODE_HEIGHT + 50;
     const HEADER_Y = 0;
     const START_Y = 60;
@@ -363,9 +353,10 @@ export default function Trajectory() {
         edges={edges}
         nodeTypes={nodeTypes}
         fitView
-        fitViewOptions={{ padding: 0.3 }}
-        minZoom={0.3}
-        maxZoom={2}
+        fitViewOptions={{ padding: 0.2, minZoom: 0.8, maxZoom: 1.2 }}
+        defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+        minZoom={0.4}
+        maxZoom={2.5}
         proOptions={{ hideAttribution: true }}
       >
         <Background color="#f0e6e2" gap={20} />

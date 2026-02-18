@@ -172,14 +172,15 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
         </div>
       )}
       {collapsed && <div className="w-full border-t-2 border-amber-300/60 rounded-t-xl" />}
-      {/* Collapse toggle bar */}
+      {/* Header bar — matches AI Agent / Data Editor style */}
       <div
-        className="flex items-center gap-2 px-4 py-2.5 cursor-pointer hover:bg-amber-100/40 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 cursor-pointer border-b border-amber-200/50 bg-amber-50/50"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <span className="text-sm text-amber-500">{collapsed ? "▶" : "▼"}</span>
-        <span className="text-sm font-bold text-amber-800 bg-amber-200/70 px-2.5 py-0.5 rounded-lg">✍️ Your Instructions</span>
+        <span className="text-sm">✍️</span>
+        <span className="text-xs font-semibold text-amber-700">Your Instructions</span>
         <InfoTooltip text="Write custom instructions to guide AI generation for this step" variant="amber" />
+        <span className="ml-1 text-xs text-amber-400">{collapsed ? "▶" : "▼"}</span>
         {collapsed && currentValue && (
           <span className="text-xs text-gray-400 truncate flex-1">{currentValue}</span>
         )}

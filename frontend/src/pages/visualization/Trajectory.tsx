@@ -150,7 +150,7 @@ function VersionNode({ data }: { data: any }) {
             }}
           >
             {data.label}
-            <span className="opacity-0 group-hover/name:opacity-60 text-[9px] transition-opacity">✏️</span>
+            <span className="opacity-40 text-[9px]">✏️</span>
           </span>
         )}
         {isCurrent && !editing && (

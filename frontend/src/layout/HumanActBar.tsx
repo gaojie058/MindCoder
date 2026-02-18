@@ -124,14 +124,14 @@ export default function HumanActBar({ stepName }: HumanActBarProps) {
   const suggestions = SUGGESTIONS[stepName] || [];
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-50/80 to-orange-50/50 border-t border-amber-200/40 flex-shrink-0">
+    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 border-t-2 border-amber-300/60 flex-shrink-0">
       {/* Collapse toggle bar */}
       <div
-        className="flex items-center gap-2 px-4 py-1.5 cursor-pointer hover:bg-amber-50/50 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 cursor-pointer hover:bg-amber-100/40 transition-colors"
         onClick={() => setCollapsed(!collapsed)}
       >
-        <span className="text-[10px] text-amber-500">{collapsed ? "▶" : "▼"}</span>
-        <span className="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">YOUR INSTRUCTIONS</span>
+        <span className="text-xs text-amber-500">{collapsed ? "▶" : "▼"}</span>
+        <span className="text-xs font-bold text-amber-800 bg-amber-200/70 px-2 py-0.5 rounded">👤 YOUR INSTRUCTIONS</span>
         {collapsed && currentValue && (
           <span className="text-[10px] text-gray-400 truncate flex-1">{currentValue}</span>
         )}

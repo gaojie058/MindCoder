@@ -744,19 +744,16 @@ const StyleInputs = React.forwardRef<
       {/* Card step content */}
       {/* Card step — AI Understand only */}
       <div className={currentStoreType === "card" ? "block" : "hidden"}>
-        <CategoryHeader label="🤖 AI Agent" color="bg-indigo-500" />
         <LLMTaskSection {...cardLLMInfo} />
       </div>
 
       {/* Code step — AI Understand only */}
       <div className={currentStoreType === "code" ? "block" : "hidden"}>
-        <CategoryHeader label="🤖 AI Agent" color="bg-indigo-500" />
         <LLMTaskSection {...codeLLMInfo} />
       </div>
 
       {/* Concept step — AI Understand only */}
       <div className={currentStoreType === "concept" ? "block" : "hidden"}>
-        <CategoryHeader label="🤖 AI Agent" color="bg-indigo-500" />
         <LLMTaskSection {...conceptLLMInfo} />
       </div>
 

@@ -2125,7 +2125,6 @@ export default async function renderPDF(report: any, concept: concept[]) {
       { text: '', pageBreak: 'before' },
       ...generateThemeMapTable(),
 
-      createHorizontalRule(),
 
       // Codebook Development Process section
       {

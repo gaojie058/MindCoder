@@ -29,21 +29,9 @@ interface StyleInputsProps {
 
 // AI Sparkle Icon — used as badge in AI-generated section headers
 const AIBadgeIcon = () => (
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none">
-    <defs>
-      <linearGradient id="ai-grad" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-        <stop stopColor="#818CF8" />
-        <stop offset="1" stopColor="#A78BFA" />
-      </linearGradient>
-    </defs>
-    {/* Brain/circuit style */}
-    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" fill="url(#ai-grad)" opacity="0.12" />
-    <path d="M9 8.5L9 10M15 8.5V10M9 14H10.5M13.5 14H15M12 5V7M12 17V19M5 12H7M17 12H19" stroke="url(#ai-grad)" strokeWidth="1.5" strokeLinecap="round" />
-    <circle cx="9" cy="12" r="1.5" fill="url(#ai-grad)" />
-    <circle cx="15" cy="12" r="1.5" fill="url(#ai-grad)" />
-    <circle cx="12" cy="9" r="1.5" fill="url(#ai-grad)" />
-    <circle cx="12" cy="15" r="1.5" fill="url(#ai-grad)" />
-    <path d="M9 12L12 9M12 9L15 12M15 12L12 15M12 15L9 12" stroke="url(#ai-grad)" strokeWidth="1" opacity="0.5" />
+  <svg className="w-3.5 h-3.5 text-indigo-500" viewBox="0 0 16 16" fill="none">
+    <path d="M8 1l1.5 3.5L13 6l-3.5 1.5L8 11 6.5 7.5 3 6l3.5-1.5L8 1z" fill="currentColor" opacity="0.7" />
+    <path d="M12 9l.75 1.75L14.5 11.5l-1.75.75L12 14l-.75-1.75-1.75-.75 1.75-.75L12 9z" fill="currentColor" opacity="0.5" />
   </svg>
 );
 

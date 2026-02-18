@@ -7,6 +7,7 @@ import Button from "@/components/ui/Button";
 import Dialog from "@/components/ui/Dialog";
 import useCardStore from "@/stores/useCardStore";
 import { nanoid } from "nanoid";
+import AIBadge from "@/components/ui/AIBadge";
 
 export default function Card({ id, topics = [], active, isGPT, name }: card) {
   const {
@@ -254,13 +255,9 @@ export default function Card({ id, topics = [], active, isGPT, name }: card) {
             </div>
             <div className="flex flex-row items-end">
               {isGPT ? (
-                <div className="text-xs font-zen text-indigo-500">
-                  🤖 AI
-                </div>
+                <AIBadge />
               ) : (
-                <div className="text-xs font-zen text-amber-600">
-                  ✏️ Edited
-                </div>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold">✏️ Edited</span>
               )}
               {renderTrashOrRestore()}
             </div>

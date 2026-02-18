@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import AIBadge from "@/components/ui/AIBadge";
 import logoTrashGrey from "@/assets/icon/trash-grey.png";
 import editIcon from "@/assets/icon/edit.png";
 import ColorSelector from "./ColorSelector";
@@ -278,11 +279,9 @@ export default function Code({
               </div>
               <div className="flex gap-4 items-center whitespace-nowrap">
                 {isGPT ? (
-                  <div className="text-xs font-semibold text-indigo-500">🤖 AI</div>
+                  <AIBadge />
                 ) : (
-                  <div className="text-xs font-semibold text-amber-600">
-                    ✏️ Edited
-                  </div>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold">✏️ Edited</span>
                 )}
                 <button onClick={deleteCode}>
                   <img

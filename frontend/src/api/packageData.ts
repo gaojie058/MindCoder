@@ -61,12 +61,23 @@ export async function packageData(
 
       // Include locked/user-edited cards as context for regeneration
       const { cardData: allCards, lockedCardIds } = useCardStore.getState();
-      const preservedCards = allCards.filter(c => c.isGPT === false || lockedCardIds.has(c.id));
+      const preservedCards = allCards.filter(c => 
+        c.active !== false && (c.isGPT === false || lockedCardIds.has(c.id))
+      );
       if (preservedCards.length > 0) {
         templateProps.preservedCodes = JSON.stringify(preservedCards.map(c => ({
           name: c.name,
           chunks: c.topics.map(t => t.content),
         })), null, 2);
+
+        // Collect all text chunks covered by preserved codes — these will be
+        // stripped from file content so AI only sees unhighlighted text
+        const preservedChunks = preservedCards.flatMap(c => 
+          c.topics.map(t => t.content).filter(Boolean)
+        );
+        if (preservedChunks.length > 0) {
+          templateProps._preservedChunks = preservedChunks;
+        }
       } else {
         templateProps.preservedCodes = "None";
       }
@@ -211,17 +222,47 @@ export async function packageData(
   const formData = formulatePrompt(storeType, templateProps, taskType, fewShotData, inputTexts);
 
   // If it's card type and has raw files, add files to FormData
+  // When preserved codes exist, strip their text chunks from file content
+  // so AI only sees unhighlighted (uncovered) text
   if (storeType === "card" && templateProps.hasRawFiles) {
+    const preservedChunks: string[] = templateProps._preservedChunks || [];
+
+    const stripPreservedText = async (file: File): Promise<File> => {
+      if (preservedChunks.length === 0) return file;
+      let text = await file.text();
+      // Remove each preserved chunk from the text (normalize whitespace for matching)
+      for (const chunk of preservedChunks) {
+        if (!chunk || chunk.length < 5) continue;
+        // Try exact match first
+        if (text.includes(chunk)) {
+          text = text.replace(chunk, '');
+          continue;
+        }
+        // Try normalized match (collapse whitespace)
+        const normChunk = chunk.replace(/\s+/g, ' ').trim();
+        // Build a regex that allows flexible whitespace between words
+        const words = normChunk.split(' ').map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        if (words.length > 0) {
+          const pattern = new RegExp(words.join('\\s+'), 'g');
+          text = text.replace(pattern, '');
+        }
+      }
+      // Clean up excessive blank lines left by removal
+      text = text.replace(/\n{3,}/g, '\n\n').trim();
+      return new File([text], file.name, { type: file.type });
+    };
+
     if (specificFile) {
-      // Add only the specific file
-      formData.append('files', specificFile);
+      const processed = await stripPreservedText(specificFile);
+      formData.append('files', processed);
       formData.append('fileName', specificFile.name);
     } else {
       if (uploadedFiles && uploadedFiles.length > 0) {
-        uploadedFiles.forEach((file, index) => {
-          formData.append('files', file);
-          formData.append(`fileName${index}`, file.name);
-        });
+        for (let index = 0; index < uploadedFiles.length; index++) {
+          const processed = await stripPreservedText(uploadedFiles[index]);
+          formData.append('files', processed);
+          formData.append(`fileName${index}`, uploadedFiles[index].name);
+        }
       }
     }
   }

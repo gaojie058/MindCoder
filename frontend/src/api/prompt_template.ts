@@ -28,7 +28,7 @@ Open Codes Style:
 
 Preserved Codes (user-locked/edited — DO NOT regenerate these):
 \${preservedCodes}
-(If preserved codes are listed above, they have been locked or edited by the user. Do NOT generate codes that duplicate or overlap with these existing codes. Instead, generate ONLY new complementary codes that cover aspects of the data NOT already captured by the preserved codes. Adjust the number of new codes so that preserved + new ≈ the target number of codes above. If no preserved codes are listed, generate all codes from scratch.)
+(If preserved codes are listed above, they have been locked or edited by the user. The text associated with these codes has ALREADY BEEN REMOVED from the uploaded data — the data you receive contains ONLY the remaining uncovered text. Generate new codes ONLY for this remaining text. Do NOT duplicate or overlap with preserved codes. Target number of NEW codes = target total − number of preserved codes. If no preserved codes are listed, generate all codes from scratch.)
 
 Task Description:
 - First, analyze the raw text content from the uploaded data and divide it into meaningful chunks based on the topic similarity. Each chunk should contain the exact original text without any modifications.

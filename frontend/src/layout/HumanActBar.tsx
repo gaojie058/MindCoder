@@ -81,11 +81,21 @@ interface HumanActBarProps {
   loading?: boolean;
 }
 
+// Persist panel height across route changes
+let persistedPanelHeight = 140;
+
 export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubsequent, loading }: HumanActBarProps) {
   const [showHistory, setShowHistory] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showMemo, setShowMemo] = useState(false);
-  const [panelHeight, setPanelHeight] = useState(140);
+  const [panelHeight, _setPanelHeight] = useState(persistedPanelHeight);
+  const setPanelHeight = (h: number | ((prev: number) => number)) => {
+    _setPanelHeight((prev) => {
+      const next = typeof h === "function" ? h(prev) : h;
+      persistedPanelHeight = next;
+      return next;
+    });
+  };
   const draggingRef = useRef(false);
   const startYRef = useRef(0);
   const startHeightRef = useRef(0);

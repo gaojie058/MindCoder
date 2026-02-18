@@ -1307,7 +1307,7 @@ function generateThemeMapTable(): Content[] {
   return [{
     table: {
       headerRows: 1,
-      widths: ['*', 15, 'auto', 15, 'auto'],
+      widths: ['*', 15, '*', 15, '*'],
       body: tableBody,
     },
     layout: {
@@ -1980,7 +1980,6 @@ export default async function renderPDF(report: any, concept: concept[]) {
       { title: cleanTitle(reportTitle), ref: 'reportTitle', open: true },
       { title: 'Analysis Configuration', ref: 'analysisConfigurationSection', open: true },
       { title: 'Findings', ref: 'reportSection', open: true },
-      { title: 'Theme Map', ref: 'visualizationSection', open: true },
       {
         title: 'Codebook Development Process',
         ref: 'codebookDevelopmentProcessSection',
@@ -2123,21 +2122,6 @@ export default async function renderPDF(report: any, concept: concept[]) {
       createHorizontalRule(),
       ...reportContent,
       
-      createHorizontalRule(),
-
-      // Theme Map section
-      {
-        text: "Theme Map",
-        fontSize: 20,
-        bold: true,
-        marginBottom: 15,
-        marginTop: 30,
-        headlineLevel: 1,
-        tocItem: true,
-        id: 'visualizationSection',
-        pageBreak: 'before'
-      },
-      createHorizontalRule(),
       ...generateThemeMapTable(),
 
       createHorizontalRule(),

@@ -67,6 +67,9 @@ function connectAttribute(
     updatedContent = updatedContent.replace(bracketRegex, spanTag);
   });
 
+  // Clean up stray backslashes from LLM output
+  updatedContent = updatedContent.replace(/\\"/g, '"').replace(/\\'/g, "'").replace(/\\\\/g, '');
+
   // Render *text* as italic (for evidence/quotes)
   updatedContent = updatedContent.replace(/\*([^*]+)\*/g, '<em class="text-gray-500">$1</em>');
 

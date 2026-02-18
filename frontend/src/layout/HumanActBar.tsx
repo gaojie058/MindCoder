@@ -19,8 +19,7 @@ const ExpandableTextarea = React.forwardRef<
     defaultValue={defaultValue}
     onChange={onChange}
     placeholder={placeholder}
-    className="w-full flex-1 outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm border border-gray-200 rounded-lg p-2.5 placeholder:text-gray-300 placeholder:text-xs"
-    style={{ minHeight: "48px" }}
+    className="w-full flex-1 outline-none overflow-auto resize-none font-zen scrollbar-thin text-sm border border-gray-200 rounded-lg p-2.5 placeholder:text-gray-300 placeholder:text-xs h-full"
   />
 ));
 ExpandableTextarea.displayName = "ExpandableTextarea";
@@ -179,7 +178,7 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       >
         <span className="text-sm">✍️</span>
         <span className="text-xs font-semibold text-amber-700">Your Instructions</span>
-        <InfoTooltip text="Write custom instructions to guide AI generation for this step" variant="amber" />
+        <InfoTooltip text="Write custom instructions to guide AI generation for this step. Locked codes (🔒) will be preserved and not regenerated." variant="amber" />
         <span className="ml-1 text-xs text-amber-400">{collapsed ? "▶" : "▼"}</span>
         {collapsed && currentValue && (
           <span className="text-xs text-gray-400 truncate flex-1">{currentValue}</span>
@@ -207,8 +206,8 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       </div>
 
       {!collapsed && (
-        <div className="px-4 pb-3 overflow-auto" style={{ height: panelHeight }}>
-          <div className="flex gap-3">
+        <div className="px-4 pb-3 overflow-auto flex flex-col" style={{ height: panelHeight }}>
+          <div className="flex gap-3 flex-1 min-h-0">
             {/* Instructions input */}
             <div className="flex-1 min-w-0 flex flex-col">
               <ExpandableTextarea

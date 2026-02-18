@@ -44,8 +44,7 @@ export default function InfoTooltip({ text, variant = "gray" }: { text: string; 
       {show && createPortal(
         <div
           className="fixed z-[9999] px-3 py-2 rounded-lg shadow-xl max-w-[280px] leading-relaxed text-xs text-white"
-          style={{ backgroundColor: "#1f2937" }}
-          style={{ left: pos.x, top: pos.y, transform: "translateX(-50%)" }}
+          style={{ backgroundColor: "#1f2937", left: pos.x, top: pos.y, transform: "translateX(-50%)" }}
         >
           <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 rounded-sm" style={{ backgroundColor: "#1f2937" }} />
           <span className="relative">{text}</span>

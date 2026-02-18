@@ -40,13 +40,16 @@ const useVersionStore = create<VersionStore>((set, get) => ({
     const conceptData = structuredClone(useConceptStore.getState().conceptData);
 
     const now = Date.now();
-    const versionNum = get().versions.length + 1;
-
     const lockedCardIds = Array.from(useCardStore.getState().lockedCardIds);
+
+    // Default label is timestamp
+    const timeLabel = new Date(now).toLocaleString("en-US", {
+      month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
+    });
 
     const snapshot: VersionSnapshot = {
       id: `v-${now}`,
-      label: label || `Version ${versionNum}`,
+      label: label || timeLabel,
       timestamp: now,
       step,
       cardData,
@@ -65,35 +68,6 @@ const useVersionStore = create<VersionStore>((set, get) => ({
     const version = get().versions.find((v) => v.id === versionId);
     if (!version) return;
 
-    // Auto-save current state before restoring, so user can always go back
-    const { activeVersionId, versions } = get();
-    const currentCardData = useCardStore.getState().cardData;
-    const currentCodeData = useCodeStore.getState().codeData;
-    const currentConceptData = useConceptStore.getState().conceptData;
-
-    // Check if current state differs from the active version (avoid duplicate saves)
-    const activeVersion = versions.find((v) => v.id === activeVersionId);
-    const currentAlreadySaved = activeVersion &&
-      JSON.stringify(activeVersion.cardData) === JSON.stringify(currentCardData) &&
-      JSON.stringify(activeVersion.codeData) === JSON.stringify(currentCodeData) &&
-      JSON.stringify(activeVersion.conceptData) === JSON.stringify(currentConceptData);
-
-    let updatedVersions = versions;
-    if (!currentAlreadySaved) {
-      const now = Date.now();
-      const autoSnapshot: VersionSnapshot = {
-        id: `v-${now}`,
-        label: `Auto-save (before restore)`,
-        timestamp: now,
-        step: "restore",
-        cardData: structuredClone(currentCardData),
-        codeData: structuredClone(currentCodeData),
-        conceptData: structuredClone(currentConceptData),
-        lockedCardIds: Array.from(useCardStore.getState().lockedCardIds),
-      };
-      updatedVersions = [...versions, autoSnapshot];
-    }
-
     // Restore all stores (including lockedCardIds)
     useCardStore.setState({
       cardData: structuredClone(version.cardData),
@@ -102,7 +76,7 @@ const useVersionStore = create<VersionStore>((set, get) => ({
     useCodeStore.getState().setCodeData(structuredClone(version.codeData));
     useConceptStore.getState().setConceptData(structuredClone(version.conceptData));
 
-    set({ versions: updatedVersions, activeVersionId: versionId });
+    set({ activeVersionId: versionId });
   },
 
   renameVersion: (versionId: string, newLabel: string) => {

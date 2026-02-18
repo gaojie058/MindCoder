@@ -433,63 +433,41 @@ export default function MainLayout({
       ) : null}
 
       {/* Bottom buttons for data and display pages */}
-      {(stepToName[step] === "data" || stepToName[step] === "display") && (
-        <div className={`w-full mx-auto flex justify-between items-center p-6 border-t border-gray-300 ${stepToName[step] === "display" ? "max-w-[1400px] px-8" : "md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%]"}`}>
-          {stepName === "data" ? (
-            isCustomizePage ? (
-              // Show Save button when on customize page
-              <div className="w-full flex justify-between">
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleCancel}
-                    className="px-4 py-2 bg-gray-400 text-white bg-[#C66B50] rounded-md hover:bg-[#AA7667] transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveCustomization}
-                    className="px-4 py-2 bg-[#CB9180] text-white rounded-md hover:bg-[#AA7667] transition-colors"
-                  >
-                    Save
-                  </button>
-                </div>
+      {stepToName[step] === "data" && (
+        <div className="w-full mx-auto flex justify-between items-center p-6 border-t border-gray-300 md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%]">
+          {isCustomizePage ? (
+            <div className="w-full flex justify-between">
+              <div className="flex gap-4">
+                <button
+                  onClick={handleCancel}
+                  className="px-4 py-2 bg-gray-400 text-white bg-[#C66B50] rounded-md hover:bg-[#AA7667] transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveCustomization}
+                  className="px-4 py-2 bg-[#CB9180] text-white rounded-md hover:bg-[#AA7667] transition-colors"
+                >
+                  Save
+                </button>
               </div>
-            ) : (
-              // Show Delete and Reset buttons on main AllNeeds page
-              <div className="w-full flex justify-between">
-                <div className="flex gap-4">
-                  <button
-                    onClick={handleResetCustomizations}
-                    className="px-4 py-2 bg-[#FFA500] text-white rounded-md hover:bg-[#FF8C00] transition-colors"
-                  >
-                    Reset Customizations
-                  </button>
-                  <button
-                    onClick={handleDeleteAllData}
-                    className="px-4 py-2 bg-[#f64141] text-white rounded-md hover:bg-red-600 transition-colors"
-                  >
-                    Delete All My Data
-                  </button>
-                </div>
-              </div>
-            )
+            </div>
           ) : (
             <div className="w-full flex justify-between">
-              <button
-                onClick={handleSaveToHistory}
-                disabled={pdfLoading || showSuccessAlert}
-                className={`bg-[#CB9180] hover:bg-[#b8816f] text-white px-4 py-2 rounded-md font-zen font-semibold text-sm ${
-                  (pdfLoading || showSuccessAlert) &&
-                  "opacity-50 cursor-not-allowed"
-                }`}
-              >
-                {pdfLoading ? "Adding..." : "Save Current Version"}
-              </button>
-              <Bottom loading={loading || regenRunning}
-                bottomType={stepName === "display" ? "display" : "regenerate"}
-                regenerate={handleRegenerate}
-                regenerateSubsequent={handleRegenerateRest}
-              />
+              <div className="flex gap-4">
+                <button
+                  onClick={handleResetCustomizations}
+                  className="px-4 py-2 bg-[#FFA500] text-white rounded-md hover:bg-[#FF8C00] transition-colors"
+                >
+                  Reset Customizations
+                </button>
+                <button
+                  onClick={handleDeleteAllData}
+                  className="px-4 py-2 bg-[#f64141] text-white rounded-md hover:bg-red-600 transition-colors"
+                >
+                  Delete All My Data
+                </button>
+              </div>
             </div>
           )}
         </div>

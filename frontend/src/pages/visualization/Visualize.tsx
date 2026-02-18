@@ -23,7 +23,7 @@ const Visualize = () => {
   // const [codeNodes, setCodeNodes] = useState<string[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeGraphType, setActiveGraphType] = useState<string>("mindmap");
-  const [activeTab, setActiveTab] = useState<"trajectory" | "report" | "map">("trajectory");
+  const [activeTab, setActiveTab] = useState<"trajectory" | "report" | "map">("report");
 
   const [activeType, setActiveType] = useState<
     "Concept" | "Card" | "Code" | ""
@@ -177,13 +177,12 @@ const Visualize = () => {
         <div className="w-full px-6 py-2 flex items-center justify-between bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
           <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
             {([
-              { key: "trajectory", label: "🔄 Iteration Trajectory" },
               { key: "report", label: "📊 Report" },
               { key: "map", label: "🗺️ Map" },
             ] as const).map(({ key, label }) => (
               <button
                 key={key}
-                onClick={() => setActiveTab(key)}
+                onClick={() => setActiveTab(key as "report" | "map")}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                   activeTab === key
                     ? "bg-[#CB9180] text-white shadow-sm"
@@ -194,13 +193,25 @@ const Visualize = () => {
               </button>
             ))}
           </div>
-          <button
-            onClick={handleViewPDF}
-            disabled={pdfLoading}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
-          >
-            {pdfLoading ? <>⏳ Generating...</> : <>📄 PDF</>}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setActiveTab("trajectory")}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
+                activeTab === "trajectory"
+                  ? "bg-[#CB9180] text-white"
+                  : "bg-white/80 text-[#8B5E4B] hover:bg-[#CB9180]/10 border border-gray-200"
+              }`}
+            >
+              🔄 Iteration Trajectory
+            </button>
+            <button
+              onClick={handleViewPDF}
+              disabled={pdfLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
+            >
+              {pdfLoading ? <>⏳ Generating...</> : <>📄 View Analysis PDF</>}
+            </button>
+          </div>
         </div>
         {activeTab === "trajectory" ? (
           <div className="flex-1 overflow-hidden">

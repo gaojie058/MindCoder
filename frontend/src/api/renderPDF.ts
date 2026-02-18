@@ -1209,6 +1209,17 @@ function generateSubThemesContent(): Content[] {
 }
 
 // Function to generate Themes section content (for Primary Codebook - improved table design)
+// Lighten a hex color by blending with white
+function lightenColor(hex: string, amount: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lr = Math.round(r + (255 - r) * amount);
+  const lg = Math.round(g + (255 - g) * amount);
+  const lb = Math.round(b + (255 - b) * amount);
+  return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
+}
+
 // Generate 3-column Theme Map (Open Codes → Sub-themes → Themes) for PDF
 function generateThemeMapTable(): Content[] {
   const { conceptData } = useConceptStore.getState();
@@ -1233,12 +1244,14 @@ function generateThemeMapTable(): Content[] {
     const allOpenCodes: { name: string; isAI: boolean; count: number }[] = [];
 
     codes.forEach((code) => {
+      const codeColor = code.color || lightenColor(themeColor, 0.15);
       const cards = Object.values(code.data || {}).flat();
       cards.forEach((card) => {
         allOpenCodes.push({
           name: card.name,
           isAI: card.isGPT !== false,
           count: (card.topics || []).length,
+          color: codeColor,
         });
       });
     });
@@ -1246,6 +1259,7 @@ function generateThemeMapTable(): Content[] {
     // Build open codes column text
     const openCodesStack = allOpenCodes.map((oc) => ({
       text: [
+        { text: '● ', color: oc.color, fontSize: 8 },
         oc.isAI ? createAIBadge() : createUserBadge(),
         { text: ` ${cleanTitle(oc.name)}`, fontSize: 8 },
         { text: ` (${oc.count})`, fontSize: 7, color: '#9CA3AF' },
@@ -1256,6 +1270,7 @@ function generateThemeMapTable(): Content[] {
     // Build sub-themes column
     const subthemesStack = codes.map((code) => ({
       text: [
+        { text: '● ', color: code.color || lightenColor(themeColor, 0.15), fontSize: 9 },
         code.isGPT !== false ? createAIBadge() : createUserBadge(),
         { text: ` ${cleanTitle(code.name)}`, fontSize: 9, bold: true },
       ],
@@ -1283,9 +1298,9 @@ function generateThemeMapTable(): Content[] {
     tableBody.push([
       { stack: openCodesStack, margin: [5, 5, 5, 5] },
       { text: '→', fontSize: 10, color: '#D1D5DB', alignment: 'center', margin: [0, 5, 0, 0] },
-      { stack: subthemesStack, margin: [5, 5, 5, 5], fillColor: themeColor + '30' },
+      { stack: subthemesStack, margin: [5, 5, 5, 5], fillColor: lightenColor(themeColor, 0.6) },
       { text: '→', fontSize: 10, color: '#D1D5DB', alignment: 'center', margin: [0, 5, 0, 0] },
-      { stack: themeStack, margin: [5, 5, 5, 5], fillColor: themeColor + '50' },
+      { stack: themeStack, margin: [5, 5, 5, 5], fillColor: lightenColor(themeColor, 0.4) },
     ]);
   });
 

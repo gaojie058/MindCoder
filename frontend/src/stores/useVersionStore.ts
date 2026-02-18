@@ -3,6 +3,7 @@ import { card, code, concept } from "@/types/stores";
 import useCardStore from "./useCardStore";
 import useCodeStore from "./useCodeStore";
 import useConceptStore from "./useConceptStore";
+import useAppStore from "./useAppStore";
 
 export interface VersionSnapshot {
   id: string;
@@ -13,6 +14,8 @@ export interface VersionSnapshot {
   codeData: code[];
   conceptData: concept[];
   lockedCardIds?: string[]; // preserved as array for serialization
+  aiSummary?: string;       // what AI did in this version
+  humanInstruction?: string; // user's custom instruction for this step
 }
 
 interface VersionStore {
@@ -42,6 +45,19 @@ const useVersionStore = create<VersionStore>((set, get) => ({
     const now = Date.now();
     const lockedCardIds = Array.from(useCardStore.getState().lockedCardIds);
 
+    // Capture AI summary (llmDescription from card store) and human instruction
+    const appState = useAppStore.getState() as any;
+    const humanInstruction = step === "card" ? appState.clusteringStyle
+      : step === "code" ? appState.codingStyle
+      : step === "concept" ? appState.conceptualizingStyle
+      : "";
+
+    // AI summary from card store's llmDescription
+    const aiSummary = step === "card" ? (useCardStore.getState() as any).llmDescription
+      : step === "code" ? (useCodeStore.getState() as any).llmDescription
+      : step === "concept" ? (useConceptStore.getState() as any).llmDescription
+      : "";
+
     // Default label is timestamp
     const timeLabel = new Date(now).toLocaleString("en-US", {
       month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
@@ -56,6 +72,8 @@ const useVersionStore = create<VersionStore>((set, get) => ({
       codeData,
       conceptData,
       lockedCardIds,
+      aiSummary: aiSummary || undefined,
+      humanInstruction: humanInstruction || undefined,
     };
 
     set((s) => ({

@@ -3,6 +3,7 @@ import useAppStore from "@/stores/useAppStore";
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
 import useEditStore from "@/stores/useEditStore";
 import BackgroundGenButton from "@/components/ui/BackgroundGenButton";
+import InfoTooltip from "@/components/ui/InfoTooltip";
 
 // Expandable Textarea
 const ExpandableTextarea = React.forwardRef<
@@ -178,10 +179,7 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
       >
         <span className="text-sm text-amber-500">{collapsed ? "▶" : "▼"}</span>
         <span className="text-sm font-bold text-amber-800 bg-amber-200/70 px-2.5 py-0.5 rounded-lg">✍️ Your Instructions</span>
-        <span
-          className="inline-flex items-center cursor-help w-4 h-4 rounded-full bg-amber-200/70 text-amber-600 text-[10px] font-bold justify-center hover:bg-amber-300 transition-colors"
-          title="Write custom instructions to guide AI generation for this step"
-        >?</span>
+        <InfoTooltip text="Write custom instructions to guide AI generation for this step" variant="amber" />
         {collapsed && currentValue && (
           <span className="text-xs text-gray-400 truncate flex-1">{currentValue}</span>
         )}

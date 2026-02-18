@@ -131,17 +131,7 @@ function FloatingMemo({ stepName }: { stepName: string }) {
   );
 }
 
-// Info tooltip — uses native title to avoid overflow clipping
-function InfoTooltip({ text }: { text: string }) {
-  return (
-    <span
-      className="inline-flex items-center ml-1 cursor-help w-4 h-4 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold justify-center hover:bg-gray-300 transition-colors"
-      title={text}
-    >
-      ?
-    </span>
-  );
-}
+import InfoTooltip from "@/components/ui/InfoTooltip";
 
 // Area label header
 function AreaLabel({ icon, title, tooltip, className = "" }: { icon: string; title: string; tooltip: string; className?: string }) {

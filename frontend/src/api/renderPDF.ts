@@ -13,6 +13,7 @@ import useConceptStore from "@/stores/useConceptStore"
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore"
 import { calculateFileCoverageFromCardData } from "./coverageCalculator"
 import useEditStore from "@/stores/useEditStore"
+import useInfoStore from "@/stores/useInfoStore"
 
 // https://github.com/bpampuch/pdfmake/issues/2654
 (<any>pdfMake).fonts = {
@@ -212,6 +213,7 @@ function generateAnalysisConfigurationContent(): Content[] {
   
   // Get data from stores
   const { researchQuestion, numberOfTopicClusters, clusteringStyle, codingStyle, conceptualizingStyle, uploadedFiles } = useAppStore.getState();
+  const { model } = useInfoStore.getState();
 
   result.push({
     text: "Analysis Configuration",
@@ -225,8 +227,6 @@ function generateAnalysisConfigurationContent(): Content[] {
     id: 'analysisConfigurationSection'
   });
 
-  result.push(createHorizontalRule());
-
   // Configuration table
   const configData = [
     // Header row
@@ -235,6 +235,14 @@ function generateAnalysisConfigurationContent(): Content[] {
       { text: 'Setting', style: 'tableHeader', fillColor: BRAND.primaryBg2, bold: true, color: BRAND.primaryDark }
     ]
   ];
+
+  // Model
+  if (model) {
+    configData.push([
+      { text: 'Model', fontSize: 10, bold: true },
+      { text: model, fontSize: 10 }
+    ]);
+  }
 
   // Research Question
   if (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) {
@@ -310,8 +318,6 @@ function generateAnalysisConfigurationContent(): Content[] {
       marginBottom: 12
     });
   }
-
-  result.push(createHorizontalRule());
 
   return result;
 }
@@ -452,7 +458,7 @@ function generateOpenCodesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: BRAND.aiBg,
+            fillColor: BRAND.primaryBg,
             margin: [10, 10, 10, 10]
           }]
         ]
@@ -537,7 +543,7 @@ function generateOpenCodesProcessContent(): Content[] {
   // Prompt to LLM
   humanInterpretationContent.push(
     {
-      text: "Prompt to LLM",
+      text: "Prompt History",
       fontSize: 11,
       bold: true,
       marginTop: 8,
@@ -601,7 +607,7 @@ function generateOpenCodesProcessContent(): Content[] {
       body: [
         [{
           stack: humanInterpretationContent,
-          fillColor: BRAND.humanBlueBg,
+          fillColor: BRAND.primaryBg,
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -751,7 +757,7 @@ function generateSubThemesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: BRAND.aiBg,
+            fillColor: BRAND.primaryBg,
             margin: [10, 10, 10, 10]
           }]
         ]
@@ -793,7 +799,7 @@ function generateSubThemesProcessContent(): Content[] {
   // Prompt to LLM
   subThemesHumanInterpretationContent.push(
     {
-      text: "Prompt to LLM",
+      text: "Prompt History",
       fontSize: 11,
       bold: true,
       marginTop: 8,
@@ -857,7 +863,7 @@ function generateSubThemesProcessContent(): Content[] {
       body: [
         [{
           stack: subThemesHumanInterpretationContent,
-          fillColor: BRAND.humanBlueBg,
+          fillColor: BRAND.primaryBg,
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -1008,7 +1014,7 @@ function generateThemesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: BRAND.aiBg,
+            fillColor: BRAND.primaryBg,
             margin: [10, 10, 10, 10]
           }]
         ]
@@ -1050,7 +1056,7 @@ function generateThemesProcessContent(): Content[] {
   // Prompt to LLM
   themesHumanInterpretationContent.push(
     {
-      text: "Prompt to LLM",
+      text: "Prompt History",
       fontSize: 11,
       bold: true,
       marginTop: 8,
@@ -1121,7 +1127,7 @@ function generateThemesProcessContent(): Content[] {
       body: [
         [{
           stack: themesHumanInterpretationContent,
-          fillColor: BRAND.humanBlueBg,
+          fillColor: BRAND.primaryBg,
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -1153,57 +1159,19 @@ function generateTimelineContent(): Content[] {
     tocStyle: 'tocLevel2'
   });
 
-  // Timeline visualization
+  // Timeline: simple inline text, no color blocks
   result.push({
-    table: {
-      widths: ['*', 30, '*', 30, '*'],
-      body: [
-        [
-          {
-            stack: [
-              { text: "STEP 1", fontSize: 11, bold: true, color: BRAND.accent, alignment: 'center' },
-              { text: "Open Codes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
-              { text: "Raw data -> Initial codes", fontSize: 9, alignment: 'center', marginTop: 3 }
-            ],
-            fillColor: BRAND.primaryBg2,
-            margin: [8, 8, 8, 8]
-          },
-          {
-            text: ">>",
-            fontSize: 16,
-            bold: true,
-            alignment: 'center',
-            color: BRAND.textLight
-          },
-          {
-            stack: [
-              { text: "STEP 2", fontSize: 11, bold: true, color: BRAND.accent, alignment: 'center' },
-              { text: "Sub-themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
-              { text: "Codes -> Grouped patterns", fontSize: 9, alignment: 'center', marginTop: 3 }
-            ],
-            fillColor: BRAND.primaryBg2,
-            margin: [8, 8, 8, 8]
-          },
-          {
-            text: ">>",
-            fontSize: 16,
-            bold: true,
-            alignment: 'center',
-            color: BRAND.textLight
-          },
-          {
-            stack: [
-              { text: "STEP 3", fontSize: 11, bold: true, color: BRAND.accent, alignment: 'center' },
-              { text: "Themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
-              { text: "Sub-themes -> Final themes", fontSize: 9, alignment: 'center', marginTop: 3 }
-            ],
-            fillColor: BRAND.primaryBg2,
-            margin: [8, 8, 8, 8]
-          }
-        ]
-      ]
-    },
-    layout: 'noBorders',
+    text: [
+      { text: 'Step 1 ', fontSize: 10, bold: true, color: BRAND.accent },
+      { text: 'Open Codes', fontSize: 10, bold: true },
+      { text: '  →  ', color: BRAND.textLight, fontSize: 10 },
+      { text: 'Step 2 ', fontSize: 10, bold: true, color: BRAND.accent },
+      { text: 'Sub-themes', fontSize: 10, bold: true },
+      { text: '  →  ', color: BRAND.textLight, fontSize: 10 },
+      { text: 'Step 3 ', fontSize: 10, bold: true, color: BRAND.accent },
+      { text: 'Themes', fontSize: 10, bold: true },
+    ],
+    alignment: 'center',
     marginBottom: 12
   });
 
@@ -1257,49 +1225,37 @@ function generateThemeMapTable(): Content[] {
   ]);
 
   conceptData.forEach((concept, ci) => {
-    // Always use palette by index (matching ThemeMap.tsx web view)
     const themeColor = THEME_COLORS[ci % THEME_COLORS.length];
     const codes = Object.values(concept.codes).flat();
-    const allOpenCodes: { name: string; isAI: boolean; count: number }[] = [];
 
-    codes.forEach((code, codeIdx) => {
-      // Give each sub-theme a slightly different shade
-      const hueShift = codes.length > 1 ? (codeIdx / codes.length) * 0.3 - 0.15 : 0;
-      const baseR = parseInt(themeColor.slice(1, 3), 16);
-      const baseG = parseInt(themeColor.slice(3, 5), 16);
-      const baseB = parseInt(themeColor.slice(5, 7), 16);
-      const sr = Math.min(255, Math.max(0, Math.round(baseR + hueShift * 60)));
-      const sg = Math.min(255, Math.max(0, Math.round(baseG - hueShift * 30)));
-      const sb = Math.min(255, Math.max(0, Math.round(baseB + hueShift * 20)));
-      const codeColor = code.color || `#${sr.toString(16).padStart(2,"0")}${sg.toString(16).padStart(2,"0")}${sb.toString(16).padStart(2,"0")}`;
+    // Build open codes grouped by sub-theme
+    const openCodesStack: any[] = [];
+    codes.forEach((code) => {
       const cards = Object.values(code.data || {}).flat();
+      if (cards.length === 0) return;
+      // Sub-theme label as group header
+      openCodesStack.push({
+        text: sanitizeText(code.name),
+        fontSize: 7, bold: true, color: BRAND.textMed,
+        margin: [0, openCodesStack.length > 0 ? 4 : 0, 0, 1],
+      });
       cards.forEach((card) => {
-        allOpenCodes.push({
-          name: card.name,
-          isAI: card.isGPT !== false,
-          count: (card.topics || []).length,
-          color: codeColor,
+        openCodesStack.push({
+          text: [
+            card.isGPT !== false ? createAIBadge() : createUserBadge(),
+            { text: ` ${sanitizeText(card.name)}`, fontSize: 8 },
+            { text: ` (${(card.topics || []).length})`, fontSize: 7, color: BRAND.textLight },
+          ],
+          margin: [4, 1, 0, 1],
         });
       });
     });
 
-    // Build open codes column text
-    const openCodesStack = allOpenCodes.map((oc) => ({
-      text: [
-        { text: '● ', color: oc.color, fontSize: 8 },
-        oc.isAI ? createAIBadge() : createUserBadge(),
-        { text: ` ${cleanTitle(oc.name)}`, fontSize: 8 },
-        { text: ` (${oc.count})`, fontSize: 7, color: BRAND.textLight },
-      ],
-      margin: [0, 1, 0, 1],
-    }));
-
     // Build sub-themes column
     const subthemesStack = codes.map((code) => ({
       text: [
-        { text: '● ', color: code.color || lightenColor(themeColor, 0.15), fontSize: 9 },
         code.isGPT !== false ? createAIBadge() : createUserBadge(),
-        { text: ` ${cleanTitle(code.name)}`, fontSize: 9, bold: true },
+        { text: ` ${sanitizeText(code.name)}`, fontSize: 9, bold: true },
       ],
       margin: [0, 2, 0, 2],
     }));
@@ -1309,12 +1265,12 @@ function generateThemeMapTable(): Content[] {
       {
         text: [
           concept.isGPT !== false ? createAIBadge() : createUserBadge(),
-          { text: ` ${cleanTitle(concept.name)}`, fontSize: 10, bold: true },
+          { text: ` ${sanitizeText(concept.name)}`, fontSize: 10, bold: true },
         ],
         margin: [0, 0, 0, 3],
       },
       ...(concept.definition ? [{
-        text: cleanContent(concept.definition),
+        text: sanitizeText(concept.definition),
         fontSize: 8,
         color: BRAND.textLight,
         italics: true,
@@ -1362,11 +1318,11 @@ function generateThemesContent(): Content[] {
         [{
           text: [
             concept.isGPT !== false ? createAIBadge() : createUserBadge(),
-            { text: ` ${cleanTitle(concept.name)}`, fontSize: 11, bold: true, marginLeft: 5 }
+            { text: ` ${sanitizeText(concept.name)}`, fontSize: 10, bold: true, marginLeft: 5 }
           ],
           fillColor: BRAND.primary,
           color: '#FFFFFF',
-          margin: [10, 8, 10, 8]
+          margin: [8, 6, 8, 6]
         }]
       ];
 
@@ -1392,11 +1348,11 @@ function generateThemesContent(): Content[] {
             widths: ['*'],
             body: [
               [{
-                text: cleanContent(concept.definition),
-                fontSize: 10,
+                text: sanitizeText(concept.definition),
+                fontSize: 8,
                 italics: true,
                 fillColor: BRAND.primaryBg,
-                margin: [15, 10, 15, 10]
+                margin: [10, 6, 10, 6]
               }]
             ]
           },
@@ -1416,10 +1372,10 @@ function generateThemesContent(): Content[] {
             {
               text: [
                 code.isGPT !== false ? createAIBadge() : createUserBadge(),
-                { text: ` ${cleanTitle(code.name)}`, fontSize: 11, bold: true, marginLeft: 5 }
+                { text: ` ${sanitizeText(code.name)}`, fontSize: 9, bold: true, marginLeft: 5 }
               ],
               fillColor: BRAND.primaryLight,
-              margin: [15, 6, 10, 6]
+              margin: [10, 4, 8, 4]
             }
           ]);
 
@@ -1427,11 +1383,11 @@ function generateThemesContent(): Content[] {
           if (code.definition) {
             subThemeRows.push([
               {
-                text: cleanContent(code.definition),
-                fontSize: 9,
+                text: sanitizeText(code.definition),
+                fontSize: 8,
                 italics: true,
                 fillColor: BRAND.primaryBg2,
-                margin: [20, 6, 15, 6]
+                margin: [12, 4, 10, 4]
               }
             ]);
           }
@@ -1451,7 +1407,7 @@ function generateThemesContent(): Content[] {
                       {
                         text: [
                           cluster.isGPT ? createAIBadge() : createUserBadge(),
-                          { text: ` ${cleanTitle(cluster.name)}`, fontSize: 10, bold: true, marginLeft: 5 }
+                          { text: ` ${sanitizeText(cluster.name)}`, fontSize: 8, bold: true, marginLeft: 5 }
                         ],
                         marginBottom: 3
                       },
@@ -1463,25 +1419,18 @@ function generateThemesContent(): Content[] {
                           marginBottom: 2,
                           color: BRAND.textLight
                         },
-                        ...cluster.topics.slice(0, 3).map((topic: any) => ({
-                          text: `"${topic.content.length > 100 ? topic.content.substring(0, 100) + '...' : topic.content}"`,
-                          fontSize: 8,
-                          marginBottom: 2,
+                        ...cluster.topics.map((topic: any) => ({
+                          text: `"${sanitizeText(topic.content)}"`,
+                          fontSize: 7,
+                          marginBottom: 1,
                           marginLeft: 5,
                           italics: true,
-                          color: BRAND.textDark
-                        })),
-                        ...(cluster.topics.length > 3 ? [{
-                          text: `... and ${cluster.topics.length - 3} more segments`,
-                          fontSize: 8,
-                          italics: true,
-                          color: BRAND.textLight,
-                          marginLeft: 5
-                        }] : [])
+                          color: BRAND.textMed
+                        }))
                       ] : [])
                     ],
                     fillColor,
-                    margin: [25, 8, 15, 8]
+                    margin: [15, 4, 10, 4]
                   }
                 ]);
               }
@@ -1912,14 +1861,38 @@ export default async function renderPDF(report: any, concept: concept[]) {
 
   const reportContent: Content[] = [];
 
+  // Helper: split content into description + evidence bullet points (italic)
+  function formatSectionContent(raw: string, indent: number = 0): Content[] {
+    if (!raw || typeof raw !== 'string') return [];
+    const parts = raw.split(/\nEvidence:\s*/i);
+    const result: Content[] = [];
+    // Description
+    if (parts[0]?.trim()) {
+      result.push({ text: cleanContent(parts[0].trim()), fontSize: 9, marginBottom: 4, marginLeft: indent, alignment: 'justify' as const });
+    }
+    // Evidence bullets
+    if (parts[1]) {
+      const bullets = parts[1].split(/\n-\s*/).filter(s => s.trim());
+      result.push({ text: 'Evidence:', fontSize: 8, bold: true, color: BRAND.textMed, marginLeft: indent, marginBottom: 2 });
+      bullets.forEach(b => {
+        result.push({
+          text: [{ text: '  •  ', color: BRAND.textLight }, ...cleanContent(b.trim()).map((seg: any) => ({ ...seg, italics: true, fontSize: 8 }))],
+          marginLeft: indent + 5,
+          marginBottom: 2,
+        });
+      });
+    }
+    return result;
+  }
+
   reportSections.forEach((section: any, index: number) => {
     const sectionTitle = section.Title || section.title || `Section ${index + 1}`;
     const sectionContent = section.Content || section.content;
 
     reportContent.push(
-      { text: cleanTitle(sectionTitle), fontSize: 11, bold: true, marginTop: 8, marginBottom: 8, headlineLevel: 2 },
-      { text: cleanContent(typeof sectionContent === 'string' ? sectionContent : ''), fontSize: 10, marginBottom: 12, alignment: 'justify' }
+      { text: cleanTitle(sectionTitle), fontSize: 11, bold: true, marginTop: 8, marginBottom: 4, headlineLevel: 2, color: BRAND.primaryDark }
     );
+    reportContent.push(...formatSectionContent(typeof sectionContent === 'string' ? sectionContent : ''));
 
     const subsections = section.Subsections;
     if (subsections && subsections.length > 0) {
@@ -1928,9 +1901,9 @@ export default async function renderPDF(report: any, concept: concept[]) {
         const subsectionContent = subsection.Content || subsection.content;
 
         reportContent.push(
-          { text: cleanTitle(subsectionTitle), fontSize: 11, bold: true, marginTop: 8, marginBottom: 5, marginLeft: 15, headlineLevel: 3 },
-          { text: cleanContent(typeof subsectionContent === 'string' ? subsectionContent : ''), fontSize: 10, marginBottom: 6, marginLeft: 15, alignment: 'justify' }
+          { text: cleanTitle(subsectionTitle), fontSize: 10, bold: true, marginTop: 6, marginBottom: 3, marginLeft: 10, headlineLevel: 3, color: BRAND.textDark }
         );
+        reportContent.push(...formatSectionContent(typeof subsectionContent === 'string' ? subsectionContent : '', 10));
       });
     }
   });
@@ -2082,22 +2055,11 @@ export default async function renderPDF(report: any, concept: concept[]) {
           widths: ['*'],
           body: [
             [{
-              stack: [
-                {
-                  text: "Disclaimer",
-                  fontSize: 9,
-                  bold: true,
-                  marginBottom: 3,
-                  color: BRAND.textLight
-                },
-                {
-                  text: "AI-assisted analysis. Codes and themes were generated by LLM and reviewed by the researcher. Treat as reference, not definitive findings.",
-                  fontSize: 8,
-                  color: BRAND.textLight,
-                  alignment: 'left'
-                }
+              text: [
+                { text: '⚠  ', fontSize: 10, bold: true, color: '#92400E' },
+                { text: 'AI-assisted analysis. Codes and themes were generated by LLM and reviewed by the researcher. Treat as reference, not definitive findings.', fontSize: 8, color: '#92400E' }
               ],
-              fillColor: BRAND.primaryBg,
+              fillColor: '#FEF3C7',
               margin: [10, 8, 10, 8]
             }]
           ]
@@ -2127,11 +2089,34 @@ export default async function renderPDF(report: any, concept: concept[]) {
       createHorizontalRule(),
       ...reportContent,
       
+      // Theme Map
       { text: '', pageBreak: 'before' },
       ...generateThemeMapTable(),
 
+      // Primary Codebook (right after theme map)
+      {
+        text: "Primary Codebook",
+        fontSize: 16,
+        bold: true,
+        color: BRAND.primaryDark,
+        marginBottom: 6,
+        marginTop: 18,
+        headlineLevel: 1,
+        tocItem: true,
+        id: 'primaryCodebookSection',
+        pageBreak: 'before'
+      },
+      {
+        text: "Hierarchical structure of themes, sub-themes, and open codes with their associated data segments.",
+        fontSize: 8,
+        marginBottom: 6,
+        italics: true,
+        color: BRAND.textLight,
+      },
+      ...(await generateDocumentCoverageContent()),
+      ...generateThemesContent(),
 
-      // Codebook Development Process section
+      // Codebook Development Process
       {
         text: "Codebook Development Process",
         fontSize: 16,
@@ -2144,50 +2129,10 @@ export default async function renderPDF(report: any, concept: concept[]) {
         id: 'codebookDevelopmentProcessSection',
         pageBreak: 'before'
       },
-      createHorizontalRule(),
-
-      // Add timeline visualization
       ...generateTimelineContent(),
-
-      // Step 1: Open Codes process section (improved)
       ...generateOpenCodesProcessContent(),
-      
-      // Step 2: Sub-themes process section (improved)
       ...generateSubThemesProcessContent(),
-      
-      // Step 3: Themes process section (improved)
       ...generateThemesProcessContent(),
-
-      // Primary Codebook section
-      {
-        text: "Primary Codebook",
-        fontSize: 16,
-        bold: true,
-        color: BRAND.primaryDark,
-        marginBottom: 8,
-        marginTop: 18,
-        headlineLevel: 1,
-        tocItem: true,
-        id: 'primaryCodebookSection',
-        pageBreak: 'before'
-      },
-      createHorizontalRule(),
-      
-      // Primary Codebook description
-      {
-        text: "This primary codebook is provided as a reference to support your downstream tasks, such as group discussions, the development of higher-level theories, and formal report writing. The table below shows the hierarchical structure of themes, sub-themes, and open codes with their associated data segments.",
-        fontSize: 9,
-        marginBottom: 8,
-        italics: true,
-        color: BRAND.textLight,
-        alignment: 'justify'
-      },
-      
-      // Document Coverage Information
-      ...(await generateDocumentCoverageContent()),
-      
-      // Themes section with improved table-based design (requirement #5)
-      ...generateThemesContent(),
     ],
   } as TDocumentDefinitions;
 

@@ -23,7 +23,7 @@ const Visualize = () => {
   // const [codeNodes, setCodeNodes] = useState<string[]>([]);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeGraphType, setActiveGraphType] = useState<string>("mindmap");
-  const [activeTab, setActiveTab] = useState<"analysis" | "trajectory">("trajectory");
+  const [activeTab, setActiveTab] = useState<"trajectory" | "report" | "map">("trajectory");
 
   const [activeType, setActiveType] = useState<
     "Concept" | "Card" | "Code" | ""
@@ -192,61 +192,48 @@ const Visualize = () => {
         {/* Tab Bar */}
         <div className="w-full px-6 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
           <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
-            <button
-              onClick={() => setActiveTab("trajectory")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                activeTab === "trajectory"
-                  ? "bg-[#CB9180] text-white shadow-sm"
-                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
-              }`}
-            >
-              🔄 Iteration Trajectory
-            </button>
-            <button
-              onClick={() => setActiveTab("analysis")}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                activeTab === "analysis"
-                  ? "bg-[#CB9180] text-white shadow-sm"
-                  : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
-              }`}
-            >
-              📊 Report & Graph
-            </button>
+            {([
+              { key: "trajectory", label: "🔄 Iteration Trajectory" },
+              { key: "report", label: "📊 Report" },
+              { key: "map", label: "🗺️ Map" },
+            ] as const).map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setActiveTab(key)}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                  activeTab === key
+                    ? "bg-[#CB9180] text-white shadow-sm"
+                    : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
           </div>
         </div>
         {activeTab === "trajectory" ? (
           <div className="flex-1 overflow-hidden">
             <Trajectory />
           </div>
-        ) : !isFullScreen ? (
-          <div className="justify-between items-center flex flex-row flex-1 overflow-hidden">
-            <div className="flex flex-col w-[40%] h-full gap-2">
-              <div className="h-full overflow-auto scrollbar-thin">
-                <Report
-                  isFullScreen={isFullScreen}
-                  setIsFullScreen={setIsFullScreen}
-                  setActiveId={setActiveId}
-                  setActiveType={setActiveType}
-                />
-              </div>
-            </div>
-            <div className="w-[60%] h-full">
-              <Display
-                selectedNode={selectedNode}
-                visibleNodes={visibleNodes}
-                onNodesExtracted={handleNodesExtracted}
-                onGraphTypeChange={setActiveGraphType}
-                activeGraphType={activeGraphType}
-              />
-            </div>
+        ) : activeTab === "report" ? (
+          <div className="flex-1 overflow-auto scrollbar-thin">
+            <Report
+              isFullScreen={isFullScreen}
+              setIsFullScreen={setIsFullScreen}
+              setActiveId={setActiveId}
+              setActiveType={setActiveType}
+            />
           </div>
         ) : (
-          <Report
-            isFullScreen={isFullScreen}
-            setIsFullScreen={setIsFullScreen}
-            setActiveId={setActiveId}
-            setActiveType={setActiveType}
-          />
+          <div className="flex-1 overflow-hidden">
+            <Display
+              selectedNode={selectedNode}
+              visibleNodes={visibleNodes}
+              onNodesExtracted={handleNodesExtracted}
+              onGraphTypeChange={setActiveGraphType}
+              activeGraphType={activeGraphType}
+            />
+          </div>
         )}
       </div>
       {activeType && activeId && isDialogOpen && (

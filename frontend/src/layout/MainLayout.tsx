@@ -11,7 +11,7 @@ import frameLogo from "@/assets/frameLogo.png";
 import toplogoright from "@/assets/toplogoright.png";
 import TopLayout from "./TopLayout";
 import { useGenerate, useGenerateStore } from "@/api/useGenerate";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import HistoryModal from "@/layout/HistoryModal";
 import LLMHistoryModal from "@/layout/LLMHistoryModal";
 import useDisplayStore from "@/stores/useDisplayStore";
@@ -29,109 +29,6 @@ import useVersionStore from "@/stores/useVersionStore";
 import VersionPanel from "./VersionPanel";
 import { CardAreaProvider, EditorPanel, CodesPanel } from "@/pages/reconstruction/CardArea";
 
-// Persist memo open/position across route changes
-const memoState = { open: false, x: 0, y: 0, initialized: false };
-
-// Floating Research Memo
-function FloatingMemo({ stepName }: { stepName: string }) {
-  const [open, _setOpen] = useState(memoState.open);
-  const setOpen = (v: boolean) => { memoState.open = v; _setOpen(v); };
-  const [position, _setPosition] = useState({ x: memoState.x, y: memoState.y });
-  const [dragging, setDragging] = useState(false);
-  const dragOffset = useRef({ x: 0, y: 0 });
-
-  const {
-    topicMemo, setTopicMemo,
-    codeMemo, setCodeMemo,
-    conceptMemo, setConceptMemo,
-  } = useEditStore();
-
-  const memo = stepName === "card" ? topicMemo : stepName === "code" ? codeMemo : conceptMemo;
-  const setMemo = stepName === "card" ? setTopicMemo : stepName === "code" ? setCodeMemo : setConceptMemo;
-  const placeholder = stepName === "card" ? "Your notes on the open coding process..."
-    : stepName === "code" ? "Your notes on the sub-theme process..."
-    : "Your notes on the theme process...";
-
-  const setPosition = (p: { x: number; y: number }) => {
-    memoState.x = p.x; memoState.y = p.y; _setPosition(p);
-  };
-
-  // Initialize position on first open
-  useEffect(() => {
-    if (open && !memoState.initialized) {
-      memoState.initialized = true;
-      setPosition({ x: window.innerWidth - 380, y: 120 });
-    }
-  }, [open]);
-
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).tagName === "TEXTAREA") return;
-    setDragging(true);
-    dragOffset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
-  };
-
-  useEffect(() => {
-    if (!dragging) return;
-    const handleMove = (e: MouseEvent) => {
-      setPosition({ x: e.clientX - dragOffset.current.x, y: e.clientY - dragOffset.current.y });
-    };
-    const handleUp = () => setDragging(false);
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseup", handleUp);
-    return () => { window.removeEventListener("mousemove", handleMove); window.removeEventListener("mouseup", handleUp); };
-  }, [dragging]);
-
-  if (stepName === "data" || stepName === "display") return null;
-
-  return (
-    <>
-      {/* Floating toggle button */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 bg-[#CB9180] hover:bg-[#AA7667] text-white rounded-full shadow-lg flex items-center justify-center text-lg transition-all hover:scale-105"
-          title="Research Memo"
-        >
-          📝
-        </button>
-      )}
-
-      {/* Floating memo panel */}
-      {open && (
-        <div
-          className="fixed z-50 w-[320px] bg-white rounded-xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
-          style={{ left: position.x, top: position.y, maxHeight: "400px" }}
-        >
-          <div
-            className="flex items-center justify-between px-3 py-2 bg-gray-50 border-b border-gray-200 cursor-move select-none"
-            onMouseDown={handleMouseDown}
-          >
-            <div className="flex items-center gap-2">
-              <span>📝</span>
-              <span className="text-xs font-bold text-gray-600">Research Memo</span>
-            </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded hover:bg-gray-200 text-xs"
-            >
-              ✕
-            </button>
-          </div>
-          <div className="p-3 flex-1">
-            <textarea
-              value={memo || ""}
-              onChange={(e) => setMemo(e.target.value)}
-              placeholder={placeholder}
-              className="w-full outline-none resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2"
-              style={{ minHeight: "200px", maxHeight: "300px" }}
-            />
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
 import InfoTooltip from "@/components/ui/InfoTooltip";
 
 // Area label header
@@ -145,9 +42,54 @@ function AreaLabel({ icon, title, tooltip, titleColor = "text-gray-600", tooltip
   );
 }
 
-// Collapsible Left Panel with TOOLS section
+// Collapsible Left Panel — AI Agent only
 function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObject<{ saveChangesToStore: () => void } | null>; stepName: string }) {
   const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <div className={`relative flex flex-col h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[280px]'}`}>
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute -right-3 top-3 z-10 w-6 h-6 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#AA7667] shadow-md cursor-pointer"
+        title={collapsed ? "Expand panel" : "Collapse panel"}
+      >
+        {collapsed ? '›' : '‹'}
+      </button>
+      {!collapsed && (
+        <div className="flex flex-col h-full rounded-xl border border-indigo-200/60 shadow-lg overflow-hidden bg-white">
+          <AreaLabel
+            icon="🤖"
+            title="AI Agent"
+            tooltip="AI analysis results and suggestions for the current step"
+            titleColor="text-indigo-600"
+            className="border-b border-indigo-100 bg-indigo-50/50"
+          />
+          <div
+            className="w-full overflow-y-auto scrollbar-thin flex-1"
+            style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
+          >
+            <div className="p-3 pb-2">
+              <StyleInputs
+                ref={styleInputsRef}
+                storeType={stepName}
+                className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Bottom Human Action Bar for analysis steps
+function HumanActionBar({ stepName, onRegenerate, onRegenerateRest, loading, globalIsRunning }: {
+  stepName: string;
+  onRegenerate: () => void;
+  onRegenerateRest: () => void;
+  loading: boolean;
+  globalIsRunning: boolean;
+}) {
   const [showMemo, setShowMemo] = useState(false);
   const toggleVersionPanel = useVersionStore((s) => s.togglePanel);
 
@@ -179,97 +121,67 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
     concept: "Guide how themes are conceptualized from sub-themes...",
   };
 
+  const regenRunning = useGenerationStore((s) => s.regenRunning);
+
   return (
-    <div className={`relative flex flex-col h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[280px]'}`}>
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-3 z-10 w-6 h-6 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#AA7667] shadow-md cursor-pointer"
-        title={collapsed ? "Expand panel" : "Collapse panel"}
-      >
-        {collapsed ? '›' : '‹'}
-      </button>
-      {!collapsed && (
-        <div className="flex flex-col h-full rounded-xl border border-indigo-200/60 shadow-lg overflow-hidden bg-white">
-          <AreaLabel
-            icon="🤖"
-            title="AI Agent"
-            tooltip="AI analysis results and suggestions for the current step"
-            titleColor="text-indigo-600"
-            className="border-b border-indigo-100 bg-indigo-50/50"
+    <div className="w-full border-t border-gray-200 bg-white shrink-0">
+      <div className="max-w-[1400px] mx-auto px-8 py-3 flex items-start gap-4">
+        {/* Custom Instructions textarea */}
+        <div className="flex-1 min-w-0">
+          <textarea
+            ref={instructionsRef}
+            defaultValue={currentValue}
+            onChange={handleInstructionChange}
+            placeholder={placeholders[stepName] || "Custom instructions..."}
+            className="w-full outline-none overflow-auto resize-none font-zen scrollbar-thin text-xs border border-gray-200 rounded-lg p-2.5 placeholder:text-gray-300 placeholder:text-[11px]"
+            style={{ minHeight: "44px", maxHeight: "80px" }}
+            rows={2}
           />
-          <div
-            className="w-full overflow-y-auto scrollbar-thin flex-1"
-            style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2 shrink-0 pt-1">
+          <button
+            onClick={() => setShowMemo(!showMemo)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-zen font-semibold transition-colors flex items-center gap-1.5 border ${showMemo ? "bg-amber-100 text-amber-800 border-amber-200" : "text-gray-600 hover:bg-gray-50 border-gray-200"}`}
           >
-            <div className="p-3 pb-2">
-              <StyleInputs
-                ref={styleInputsRef}
-                storeType={stepName}
-                className="text-[3vw] sm:text-[2vw] md:text-[1.5vw] lg:text-[1vw]"
-              />
-            </div>
+            📝 Memo
+          </button>
+          <button
+            onClick={toggleVersionPanel}
+            className="px-3 py-1.5 rounded-lg text-xs font-zen font-semibold text-gray-600 hover:bg-gray-50 border border-gray-200 transition-colors flex items-center gap-1.5"
+          >
+            🕐 History
+          </button>
+          <button
+            onClick={onRegenerate}
+            disabled={loading || globalIsRunning}
+            className="px-3.5 py-1.5 rounded-lg text-xs font-zen font-semibold text-white bg-[#CB9180] hover:bg-[#AA7667] disabled:opacity-50 transition-colors flex items-center gap-1.5"
+          >
+            {regenRunning ? (
+              <>
+                <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Running...
+              </>
+            ) : (
+              "↻ Regenerate"
+            )}
+          </button>
+        </div>
+      </div>
 
-            {/* Custom Instructions */}
-            <div className="px-3 pb-2">
-              <details open className="group rounded-xl mb-2 overflow-hidden border border-[#CB9180]/30 shadow-sm">
-                <summary className="flex items-center gap-2 px-3 py-2 cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden bg-gradient-to-r from-orange-50 to-rose-50">
-                  <span className="text-sm">✍️</span>
-                  <span className="text-xs font-bold text-gray-700 flex-1">Your Instructions</span>
-                  <svg className="w-3.5 h-3.5 text-gray-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-                <div className="px-3 py-2 bg-white/60">
-                  <textarea
-                    ref={instructionsRef}
-                    defaultValue={currentValue}
-                    onChange={handleInstructionChange}
-                    placeholder={placeholders[stepName] || "Custom instructions..."}
-                    className="w-full outline-none overflow-auto resize-y font-zen scrollbar-thin text-xs border border-gray-200 rounded-md p-2 placeholder:text-gray-300 placeholder:text-[11px]"
-                    style={{ minHeight: "60px" }}
-                  />
-                </div>
-              </details>
-            </div>
-
-            {/* TOOLS section */}
-            <div className="px-3 pb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="w-1.5 h-4 rounded-full bg-gray-400" />
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gray-500">Tools</span>
-                <div className="flex-1 h-px bg-gray-200" />
-              </div>
-              <div className="space-y-1">
-                <button
-                  onClick={() => setShowMemo(!showMemo)}
-                  className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors ${showMemo ? "bg-amber-100 text-amber-800" : "text-gray-600 hover:bg-gray-50"}`}
-                >
-                  <span>📝</span>
-                  <span>Memo</span>
-                </button>
-                <button
-                  onClick={toggleVersionPanel}
-                  className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-600 hover:bg-gray-50 transition-colors"
-                >
-                  <span>🕐</span>
-                  <span>Version History</span>
-                </button>
-              </div>
-
-              {/* Inline memo */}
-              {showMemo && (
-                <div className="mt-2 p-2.5 bg-amber-50/60 rounded-lg border border-amber-200/50">
-                  <div className="text-xs font-semibold text-amber-700 mb-1.5">📝 Research Memo</div>
-                  <textarea
-                    value={memo || ""}
-                    onChange={(e) => setMemo(e.target.value)}
-                    placeholder="Your research notes..."
-                    className="w-full outline-none resize-y font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80"
-                    style={{ minHeight: "80px" }}
-                  />
-                </div>
-              )}
-            </div>
+      {/* Expandable memo area */}
+      {showMemo && (
+        <div className="max-w-[1400px] mx-auto px-8 pb-3">
+          <div className="p-2.5 bg-amber-50/60 rounded-lg border border-amber-200/50">
+            <div className="text-xs font-semibold text-amber-700 mb-1.5">📝 Research Memo</div>
+            <textarea
+              value={memo || ""}
+              onChange={(e) => setMemo(e.target.value)}
+              placeholder="Your research notes..."
+              className="w-full outline-none resize-y font-zen scrollbar-thin text-xs border border-amber-200 rounded-md p-2 bg-white/80"
+              style={{ minHeight: "60px", maxHeight: "120px" }}
+            />
           </div>
         </div>
       )}
@@ -535,8 +447,8 @@ export default function MainLayout({
       {/* Step 1 (card): 3-column layout with EditorPanel + CodesPanel */}
       {stepToName[step] === "card" && (
         <CardAreaProvider>
-          <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
-            <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1600px] px-8 pt-3 pb-4">
+          <div className="w-full flex justify-center flex-1 min-h-0 overflow-hidden">
+            <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3 pb-4">
               {/* Left — AI Agent Panel (280px) */}
               <LeftPanel
                 styleInputsRef={styleInputsRef}
@@ -579,8 +491,8 @@ export default function MainLayout({
 
       {/* Steps 2-3 (code/concept): Left panel + center content (Outlet) */}
       {(stepToName[step] === "code" || stepToName[step] === "concept") && (
-        <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
-          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1600px] px-8 pt-3 pb-4">
+        <div className="w-full flex justify-center flex-1 min-h-0 overflow-hidden">
+          <div className="flex flex-row items-start gap-3 h-full w-full max-w-[1400px] px-8 pt-3 pb-4">
             {/* Left — AI Agent Panel (280px) */}
             <LeftPanel
               styleInputsRef={styleInputsRef}
@@ -607,7 +519,7 @@ export default function MainLayout({
           {children || <Outlet />}
         </div>
       ) : stepToName[step] === "display" ? (
-        <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
+        <div className="w-full flex justify-center flex-1 min-h-0 overflow-hidden">
           <div className="w-full max-w-[1400px] mx-auto px-8 pt-3 pb-4 h-full flex flex-col">
             <div
               className={`flex-col w-full flex-1 flex items-center justify-stretch shadow-lg rounded-xl border border-[#CB9180]/20 overflow-hidden bg-white ${className}`}
@@ -681,7 +593,16 @@ export default function MainLayout({
           )}
         </div>
       )}
-      {/* Loading indicator removed — spinner is now inline in the Regenerate button */}
+      {/* Bottom action bar for analysis steps (human controls) */}
+      {["card", "code", "concept"].includes(stepToName[step]) && (
+        <HumanActionBar
+          stepName={stepToName[step]}
+          onRegenerate={handleRegenerate}
+          onRegenerateRest={handleRegenerateRest}
+          loading={loading}
+          globalIsRunning={globalIsRunning}
+        />
+      )}
       <VersionPanel />
       {/* FloatingMemo removed — memo is now in left panel TOOLS */}
       <HistoryModal />

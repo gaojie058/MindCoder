@@ -1,0 +1,239 @@
+import { useState, useMemo } from "react";
+import useConceptStore from "@/stores/useConceptStore";
+import useCodeStore from "@/stores/useCodeStore";
+import useCardStore from "@/stores/useCardStore";
+import { concept, code, card } from "@/types/stores";
+
+// Colors from the concept store palette
+const CONCEPT_COLORS = [
+  "#E3C8C0", "#FFE2D4", "#C9ECCF", "#C9ECE6",
+  "#D5ECF9", "#DDDDF3", "#F9D5F8", "#F9D5D5",
+];
+
+function lighten(hex: string, amount = 0.3): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const lr = Math.round(r + (255 - r) * amount);
+  const lg = Math.round(g + (255 - g) * amount);
+  const lb = Math.round(b + (255 - b) * amount);
+  return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
+}
+
+function darken(hex: string, amount = 0.3): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const dr = Math.round(r * (1 - amount));
+  const dg = Math.round(g * (1 - amount));
+  const db = Math.round(b * (1 - amount));
+  return `#${dr.toString(16).padStart(2, "0")}${dg.toString(16).padStart(2, "0")}${db.toString(16).padStart(2, "0")}`;
+}
+
+type MapData = {
+  themes: {
+    id: string;
+    name: string;
+    definition: string;
+    color: string;
+    subthemes: {
+      id: string;
+      name: string;
+      color: string;
+      codes: {
+        id: string;
+        name: string;
+        segments: { id: string; name: string; source: string }[];
+      }[];
+    }[];
+  }[];
+};
+
+function buildMapData(): MapData {
+  const { conceptData } = useConceptStore.getState();
+  const { codeData } = useCodeStore.getState();
+  const { cardData } = useCardStore.getState();
+
+  const themes = conceptData.map((concept: concept, ci: number) => {
+    const color = concept.color || CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
+
+    // concept.codes is Record<string, code[]>
+    const subthemes = Object.entries(concept.codes).flatMap(([_key, codes]) =>
+      codes.map((code: code) => {
+        // code.data is Record<string, card[]>
+        const codeCards = Object.values(code.data || {}).flat();
+        const segments = codeCards.flatMap((c: card) =>
+          (c.topics || []).map((dp) => ({
+            id: dp.id || dp.uuid,
+            name: c.name,
+            source: dp.content || "",
+          }))
+        );
+        return {
+          id: code.id,
+          name: code.name,
+          color: code.color || lighten(color, 0.15),
+          codes: [{
+            id: code.id,
+            name: code.name,
+            segments,
+          }],
+        };
+      })
+    );
+
+    return {
+      id: concept.id,
+      name: concept.name,
+      definition: concept.definition,
+      color,
+      subthemes,
+    };
+  });
+
+  return { themes };
+}
+
+// Expandable code card with segments
+function CodeCard({ code, color }: { code: MapData["themes"][0]["subthemes"][0]["codes"][0]; color: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const segCount = code.segments.length;
+
+  return (
+    <div className="rounded-lg border border-gray-200 bg-white overflow-hidden">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-gray-50 transition-colors"
+      >
+        <svg
+          className={`w-3 h-3 text-gray-400 transition-transform shrink-0 ${expanded ? "rotate-90" : ""}`}
+          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+        <div
+          className="w-2.5 h-2.5 rounded-full shrink-0"
+          style={{ backgroundColor: color }}
+        />
+        <span className="text-xs font-medium text-gray-700 flex-1 truncate">{code.name}</span>
+        <span className="text-[10px] text-gray-400 shrink-0">{segCount}</span>
+      </button>
+      {expanded && code.segments.length > 0 && (
+        <div className="border-t border-gray-100 bg-gray-50/50 px-3 py-2 space-y-1.5 max-h-48 overflow-y-auto scrollbar-thin">
+          {code.segments.map((seg, i) => (
+            <div key={i} className="text-[11px] text-gray-500 leading-relaxed pl-5">
+              <span className="text-gray-400">•</span>{" "}
+              <span className="italic">"{seg.source.length > 120 ? seg.source.slice(0, 120) + "..." : seg.source}"</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Connection lines SVG overlay
+function ConnectionLines({ containerRef }: { containerRef: React.RefObject<HTMLDivElement | null> }) {
+  // We'll use simple CSS borders/connectors instead of SVG for simplicity
+  return null;
+}
+
+export default function ThemeMap() {
+  const data = useMemo(() => buildMapData(), [
+    useConceptStore((s) => s.conceptData),
+    useCodeStore((s) => s.codeData),
+  ]);
+
+  if (data.themes.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-full text-gray-400 text-sm">
+        No theme data available. Complete Steps 1-3 first.
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-full overflow-auto p-6 bg-[#FFFBF9]">
+      {/* Column headers */}
+      <div className="flex items-center gap-6 mb-4 px-2">
+        <div className="flex-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Open Codes</span>
+        </div>
+        <div className="w-6" /> {/* arrow gap */}
+        <div className="flex-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Sub-themes</span>
+        </div>
+        <div className="w-6" /> {/* arrow gap */}
+        <div className="flex-1">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Themes</span>
+        </div>
+      </div>
+
+      {/* Theme rows */}
+      <div className="space-y-6">
+        {data.themes.map((theme) => (
+          <div key={theme.id} className="flex items-stretch gap-0">
+            {/* Codes column */}
+            <div className="flex-1 space-y-2">
+              {theme.subthemes.flatMap((st) =>
+                st.codes.map((code) => (
+                  <CodeCard key={code.id} code={code} color={st.color} />
+                ))
+              )}
+            </div>
+
+            {/* Arrow: Codes → Sub-themes */}
+            <div className="w-6 flex items-center justify-center shrink-0">
+              <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+
+            {/* Sub-themes column */}
+            <div className="flex-1 space-y-2 flex flex-col justify-center">
+              {theme.subthemes.map((st) => (
+                <div
+                  key={st.id}
+                  className="rounded-lg px-3 py-2.5 border shadow-sm"
+                  style={{
+                    backgroundColor: lighten(st.color, 0.2),
+                    borderColor: st.color,
+                  }}
+                >
+                  <div className="text-xs font-semibold text-gray-700">{st.name}</div>
+                  <div className="text-[10px] text-gray-500 mt-0.5">
+                    {st.codes.length} code{st.codes.length !== 1 ? "s" : ""} · {st.codes.reduce((n, c) => n + c.segments.length, 0)} segments
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Arrow: Sub-themes → Theme */}
+            <div className="w-6 flex items-center justify-center shrink-0">
+              <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+
+            {/* Theme column */}
+            <div className="flex-1 flex items-center">
+              <div
+                className="rounded-xl px-4 py-3 w-full border shadow-sm"
+                style={{
+                  backgroundColor: lighten(theme.color, 0.1),
+                  borderColor: theme.color,
+                }}
+              >
+                <div className="text-sm font-bold text-gray-800">{theme.name}</div>
+                <div className="text-[11px] text-gray-600 mt-1 leading-relaxed">{theme.definition}</div>
+                <div className="text-[10px] text-gray-400 mt-1.5">
+                  {theme.subthemes.length} sub-theme{theme.subthemes.length !== 1 ? "s" : ""}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}

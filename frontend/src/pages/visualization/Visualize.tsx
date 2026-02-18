@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import Display from "./Display";
 import Report from "./Report";
 import Trajectory from "./Trajectory";
+import ThemeMap from "./ThemeMap";
 import useDisplayStore from "@/stores/useDisplayStore";
 import useHistoryStore from "@/stores/useHistoryStore";
 import { useGSAP } from "@gsap/react";
@@ -217,13 +217,7 @@ const Visualize = () => {
           </div>
         ) : (
           <div className="flex-1 overflow-hidden">
-            <Display
-              selectedNode={selectedNode}
-              visibleNodes={visibleNodes}
-              onNodesExtracted={handleNodesExtracted}
-              onGraphTypeChange={setActiveGraphType}
-              activeGraphType={activeGraphType}
-            />
+            <ThemeMap />
           </div>
         )}
       </div>

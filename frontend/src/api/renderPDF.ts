@@ -27,33 +27,56 @@ import useEditStore from "@/stores/useEditStore"
   },
 }
 
+// Brand colors
+const BRAND = {
+  primary: '#CB9180',       // warm terracotta
+  primaryDark: '#AA7667',   // darker terracotta
+  primaryLight: '#E8CFC8',  // light terracotta
+  primaryBg: '#FFFBF9',     // warm white
+  primaryBg2: '#FFF5F0',    // warm cream
+  aiPurple: '#7C5CCC',      // AI purple (matches web badge)
+  aiLavender: '#E8D5F5',    // AI lavender bg
+  humanBlue: '#2563EB',     // human blue
+  humanBlueBg: '#EFF6FF',   // human blue bg
+  aiBg: '#FDF6F3',          // AI section bg (warm peach)
+  textDark: '#1F2937',      // near-black
+  textMed: '#4B5563',       // medium gray
+  textLight: '#6B7280',     // light gray
+  border: '#E5D5CF',        // warm border
+  borderLight: '#F0E6E0',   // lighter warm border
+  accent: '#DC8B78',        // accent (step numbers)
+};
+
 // Function to create AI badge
 function createAIBadge(): any {
   return {
-    text: "[AI]",
-    color: '#EA580C',
+    text: ' AI ',
+    color: BRAND.aiPurple,
     bold: true,
-    fontSize: 9
+    fontSize: 8,
+    background: BRAND.aiLavender,
   };
 }
 
 // Function to create Human badge
 function createHumanBadge(): any {
   return {
-    text: "[Human]",
-    color: '#1E40AF',
+    text: ' Human ',
+    color: BRAND.humanBlue,
     bold: true,
-    fontSize: 9
+    fontSize: 8,
+    background: BRAND.humanBlueBg,
   };
 }
 
 // Function to create User badge
 function createUserBadge(): any {
   return {
-    text: "[User]",
-    color: '#1E40AF',
+    text: ' Human ',
+    color: BRAND.humanBlue,
     bold: true,
-    fontSize: 9
+    fontSize: 8,
+    background: BRAND.humanBlueBg,
   };
 }
 
@@ -65,7 +88,7 @@ function createHorizontalRule(): any {
         type: 'line',
         x1: 0, y1: 0, x2: 515, y2: 0,
         lineWidth: 1,
-        lineColor: '#D1D5DB'
+        lineColor: BRAND.border
       }
     ],
     margin: [0, 10, 0, 10]
@@ -201,6 +224,7 @@ function generateAnalysisConfigurationContent(): Content[] {
     text: "Analysis Configuration",
     fontSize: 20,
     bold: true,
+    color: BRAND.primaryDark,
     marginBottom: 15,
     marginTop: 30,
     headlineLevel: 1,
@@ -214,8 +238,8 @@ function generateAnalysisConfigurationContent(): Content[] {
   const configData = [
     // Header row
     [
-      { text: 'Configuration Parameter', style: 'tableHeader', fillColor: '#F3F4F6', bold: true },
-      { text: 'Setting', style: 'tableHeader', fillColor: '#F3F4F6', bold: true }
+      { text: 'Configuration Parameter', style: 'tableHeader', fillColor: BRAND.primaryBg2, bold: true, color: BRAND.primaryDark },
+      { text: 'Setting', style: 'tableHeader', fillColor: BRAND.primaryBg2, bold: true, color: BRAND.primaryDark }
     ]
   ];
 
@@ -283,7 +307,7 @@ function generateAnalysisConfigurationContent(): Content[] {
           return 0;
         },
         hLineColor: function (i: number, node: any) {
-          return '#E5E7EB';
+          return BRAND.borderLight;
         },
         paddingLeft: function (i: number, node: any) { return 8; },
         paddingRight: function (i: number, node: any) { return 8; },
@@ -314,7 +338,7 @@ function generateOpenCodesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 1: ", fontSize: 18, bold: true, color: '#DC2626' },
+      { text: "Step 1: ", fontSize: 18, bold: true, color: BRAND.accent },
       { text: "Open Codes", fontSize: 18, bold: true }
     ],
     marginBottom: 10,
@@ -337,7 +361,7 @@ function generateOpenCodesProcessContent(): Content[] {
               fontSize: 12,
               bold: true,
               marginBottom: 5,
-              color: '#374151'
+              color: BRAND.textDark
             },
             {
               text: `Total Open Codes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
@@ -350,7 +374,7 @@ function generateOpenCodesProcessContent(): Content[] {
               italics: true
             }
           ],
-          fillColor: '#F9FAFB',
+          fillColor: BRAND.primaryBg,
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -435,7 +459,7 @@ function generateOpenCodesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: '#FFF3EE',
+            fillColor: BRAND.aiBg,
             margin: [15, 15, 15, 15]
           }]
         ]
@@ -584,7 +608,7 @@ function generateOpenCodesProcessContent(): Content[] {
       body: [
         [{
           stack: humanInterpretationContent,
-          fillColor: '#E3F2FD',
+          fillColor: BRAND.humanBlueBg,
           margin: [15, 15, 15, 15]
         }]
       ]
@@ -613,7 +637,7 @@ function generateSubThemesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 2: ", fontSize: 18, bold: true, color: '#DC2626' },
+      { text: "Step 2: ", fontSize: 18, bold: true, color: BRAND.accent },
       { text: "Sub-themes", fontSize: 18, bold: true }
     ],
     marginBottom: 10,
@@ -636,7 +660,7 @@ function generateSubThemesProcessContent(): Content[] {
               fontSize: 12,
               bold: true,
               marginBottom: 5,
-              color: '#374151'
+              color: BRAND.textDark
             },
             {
               text: `Total Sub-themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
@@ -649,7 +673,7 @@ function generateSubThemesProcessContent(): Content[] {
               italics: true
             }
           ],
-          fillColor: '#F9FAFB',
+          fillColor: BRAND.primaryBg,
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -734,7 +758,7 @@ function generateSubThemesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: '#FFF3EE',
+            fillColor: BRAND.aiBg,
             margin: [15, 15, 15, 15]
           }]
         ]
@@ -840,7 +864,7 @@ function generateSubThemesProcessContent(): Content[] {
       body: [
         [{
           stack: subThemesHumanInterpretationContent,
-          fillColor: '#E3F2FD',
+          fillColor: BRAND.humanBlueBg,
           margin: [15, 15, 15, 15]
         }]
       ]
@@ -870,7 +894,7 @@ function generateThemesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 3: ", fontSize: 18, bold: true, color: '#DC2626' },
+      { text: "Step 3: ", fontSize: 18, bold: true, color: BRAND.accent },
       { text: "Themes", fontSize: 18, bold: true }
     ],
     marginBottom: 10,
@@ -893,7 +917,7 @@ function generateThemesProcessContent(): Content[] {
               fontSize: 12,
               bold: true,
               marginBottom: 5,
-              color: '#374151'
+              color: BRAND.textDark
             },
             {
               text: `Total Themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
@@ -906,7 +930,7 @@ function generateThemesProcessContent(): Content[] {
               italics: true
             }
           ],
-          fillColor: '#F9FAFB',
+          fillColor: BRAND.primaryBg,
           margin: [10, 10, 10, 10]
         }]
       ]
@@ -991,7 +1015,7 @@ function generateThemesProcessContent(): Content[] {
         body: [
           [{
             stack: mechanicalTaskContent,
-            fillColor: '#FFF3EE',
+            fillColor: BRAND.aiBg,
             margin: [15, 15, 15, 15]
           }]
         ]
@@ -1104,7 +1128,7 @@ function generateThemesProcessContent(): Content[] {
       body: [
         [{
           stack: themesHumanInterpretationContent,
-          fillColor: '#E3F2FD',
+          fillColor: BRAND.humanBlueBg,
           margin: [15, 15, 15, 15]
         }]
       ]
@@ -1127,6 +1151,7 @@ function generateTimelineContent(): Content[] {
     text: "Analysis Timeline",
     fontSize: 16,
     bold: true,
+    color: BRAND.primaryDark,
     marginTop: 20,
     marginBottom: 15,
     headlineLevel: 2,
@@ -1143,11 +1168,11 @@ function generateTimelineContent(): Content[] {
         [
           {
             stack: [
-              { text: "STEP 1", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
+              { text: "STEP 1", fontSize: 12, bold: true, color: BRAND.accent, alignment: 'center' },
               { text: "Open Codes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
               { text: "Raw data -> Initial codes", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
-            fillColor: '#FEF2F2',
+            fillColor: BRAND.primaryBg2,
             margin: [8, 8, 8, 8]
           },
           {
@@ -1155,15 +1180,15 @@ function generateTimelineContent(): Content[] {
             fontSize: 20,
             bold: true,
             alignment: 'center',
-            color: '#9CA3AF'
+            color: BRAND.textLight
           },
           {
             stack: [
-              { text: "STEP 2", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
+              { text: "STEP 2", fontSize: 12, bold: true, color: BRAND.accent, alignment: 'center' },
               { text: "Sub-themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
               { text: "Codes -> Grouped patterns", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
-            fillColor: '#FEF2F2',
+            fillColor: BRAND.primaryBg2,
             margin: [8, 8, 8, 8]
           },
           {
@@ -1171,15 +1196,15 @@ function generateTimelineContent(): Content[] {
             fontSize: 20,
             bold: true,
             alignment: 'center',
-            color: '#9CA3AF'
+            color: BRAND.textLight
           },
           {
             stack: [
-              { text: "STEP 3", fontSize: 12, bold: true, color: '#DC2626', alignment: 'center' },
+              { text: "STEP 3", fontSize: 12, bold: true, color: BRAND.accent, alignment: 'center' },
               { text: "Themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
               { text: "Sub-themes -> Final themes", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
-            fillColor: '#FEF2F2',
+            fillColor: BRAND.primaryBg2,
             margin: [8, 8, 8, 8]
           }
         ]
@@ -1231,11 +1256,11 @@ function generateThemeMapTable(): Content[] {
 
   // Header row
   tableBody.push([
-    { text: 'OPEN CODES', fontSize: 8, bold: true, color: '#6B7280', margin: [5, 4, 5, 4], fillColor: '#F9FAFB' },
-    { text: '', width: 15, fillColor: '#F9FAFB', margin: [0, 0, 0, 0] },
-    { text: 'SUB-THEMES', fontSize: 8, bold: true, color: '#6B7280', margin: [5, 4, 5, 4], fillColor: '#F9FAFB' },
-    { text: '', width: 15, fillColor: '#F9FAFB', margin: [0, 0, 0, 0] },
-    { text: 'THEMES', fontSize: 8, bold: true, color: '#6B7280', margin: [5, 4, 5, 4], fillColor: '#F9FAFB' },
+    { text: 'OPEN CODES', fontSize: 8, bold: true, color: BRAND.textLight, margin: [5, 4, 5, 4], fillColor: BRAND.primaryBg },
+    { text: '', width: 15, fillColor: BRAND.primaryBg, margin: [0, 0, 0, 0] },
+    { text: 'SUB-THEMES', fontSize: 8, bold: true, color: BRAND.textLight, margin: [5, 4, 5, 4], fillColor: BRAND.primaryBg },
+    { text: '', width: 15, fillColor: BRAND.primaryBg, margin: [0, 0, 0, 0] },
+    { text: 'THEMES', fontSize: 8, bold: true, color: BRAND.textLight, margin: [5, 4, 5, 4], fillColor: BRAND.primaryBg },
   ]);
 
   conceptData.forEach((concept, ci) => {
@@ -1270,7 +1295,7 @@ function generateThemeMapTable(): Content[] {
         { text: '● ', color: oc.color, fontSize: 8 },
         oc.isAI ? createAIBadge() : createUserBadge(),
         { text: ` ${cleanTitle(oc.name)}`, fontSize: 8 },
-        { text: ` (${oc.count})`, fontSize: 7, color: '#9CA3AF' },
+        { text: ` (${oc.count})`, fontSize: 7, color: BRAND.textLight },
       ],
       margin: [0, 1, 0, 1],
     }));
@@ -1297,7 +1322,7 @@ function generateThemeMapTable(): Content[] {
       ...(concept.definition ? [{
         text: cleanContent(concept.definition),
         fontSize: 8,
-        color: '#6B7280',
+        color: BRAND.textLight,
         italics: true,
         margin: [0, 0, 0, 0],
       }] : []),
@@ -1305,9 +1330,9 @@ function generateThemeMapTable(): Content[] {
 
     tableBody.push([
       { stack: openCodesStack, margin: [5, 5, 5, 5] },
-      { text: '→', fontSize: 10, color: '#D1D5DB', alignment: 'center', margin: [0, 5, 0, 0] },
+      { text: '→', fontSize: 10, color: BRAND.primaryLight, alignment: 'center', margin: [0, 5, 0, 0] },
       { stack: subthemesStack, margin: [5, 5, 5, 5], fillColor: lightenColor(themeColor, 0.6) },
-      { text: '→', fontSize: 10, color: '#D1D5DB', alignment: 'center', margin: [0, 5, 0, 0] },
+      { text: '→', fontSize: 10, color: BRAND.primaryLight, alignment: 'center', margin: [0, 5, 0, 0] },
       { stack: themeStack, margin: [5, 5, 5, 5], fillColor: lightenColor(themeColor, 0.4) },
     ]);
   });
@@ -1321,7 +1346,7 @@ function generateThemeMapTable(): Content[] {
     layout: {
       hLineWidth: (i: number) => (i <= 1 ? 1 : 0.5),
       vLineWidth: () => 0,
-      hLineColor: () => '#E5E7EB',
+      hLineColor: () => BRAND.borderLight,
       paddingLeft: () => 2,
       paddingRight: () => 2,
     },
@@ -1345,7 +1370,7 @@ function generateThemesContent(): Content[] {
             concept.isGPT !== false ? createAIBadge() : createUserBadge(),
             { text: ` ${cleanTitle(concept.name)}`, fontSize: 13, bold: true, marginLeft: 5 }
           ],
-          fillColor: '#1E3A8A',
+          fillColor: BRAND.primary,
           color: '#FFFFFF',
           margin: [10, 8, 10, 8]
         }]
@@ -1376,7 +1401,7 @@ function generateThemesContent(): Content[] {
                 text: cleanContent(concept.definition),
                 fontSize: 10,
                 italics: true,
-                fillColor: '#F8FAFC',
+                fillColor: BRAND.primaryBg,
                 margin: [15, 10, 15, 10]
               }]
             ]
@@ -1399,7 +1424,7 @@ function generateThemesContent(): Content[] {
                 code.isGPT !== false ? createAIBadge() : createUserBadge(),
                 { text: ` ${cleanTitle(code.name)}`, fontSize: 11, bold: true, marginLeft: 5 }
               ],
-              fillColor: '#E0E7FF',
+              fillColor: BRAND.primaryLight,
               margin: [15, 6, 10, 6]
             }
           ]);
@@ -1411,7 +1436,7 @@ function generateThemesContent(): Content[] {
                 text: cleanContent(code.definition),
                 fontSize: 9,
                 italics: true,
-                fillColor: '#F1F5F9',
+                fillColor: BRAND.primaryBg2,
                 margin: [20, 6, 15, 6]
               }
             ]);
@@ -1424,7 +1449,7 @@ function generateThemesContent(): Content[] {
               if (cluster.active !== false) {
                 // Alternate row colors for open codes
                 const isEvenRow = clusterIndex % 2 === 0;
-                const fillColor = isEvenRow ? '#FFFFFF' : '#F9FAFB';
+                const fillColor = isEvenRow ? '#FFFFFF' : BRAND.primaryBg;
                 
                 subThemeRows.push([
                   {
@@ -1442,7 +1467,7 @@ function generateThemesContent(): Content[] {
                           fontSize: 8,
                           bold: true,
                           marginBottom: 2,
-                          color: '#6B7280'
+                          color: BRAND.textLight
                         },
                         ...cluster.topics.slice(0, 3).map((topic: any) => ({
                           text: `"${topic.content.length > 100 ? topic.content.substring(0, 100) + '...' : topic.content}"`,
@@ -1450,13 +1475,13 @@ function generateThemesContent(): Content[] {
                           marginBottom: 2,
                           marginLeft: 5,
                           italics: true,
-                          color: '#374151'
+                          color: BRAND.textDark
                         })),
                         ...(cluster.topics.length > 3 ? [{
                           text: `... and ${cluster.topics.length - 3} more segments`,
                           fontSize: 8,
                           italics: true,
-                          color: '#6B7280',
+                          color: BRAND.textLight,
                           marginLeft: 5
                         }] : [])
                       ] : [])
@@ -1485,7 +1510,7 @@ function generateThemesContent(): Content[] {
               return 0;
             },
             hLineColor: function (i: number, node: any) {
-              return '#E5E7EB';
+              return BRAND.borderLight;
             },
             paddingLeft: function (i: number, node: any) { return 0; },
             paddingRight: function (i: number, node: any) { return 0; },
@@ -1589,7 +1614,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
         coverageItems.push({
           text: [
             { text: displayName, bold: true },
-            { text: " - Coverage calculation error", fontSize: 10, italics: true, color: '#DC2626' }
+            { text: " - Coverage calculation error", fontSize: 10, italics: true, color: BRAND.accent }
           ],
           fontSize: 11
         });
@@ -1950,7 +1975,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         fontSize: 12,
         bold: true,
         margin: [0, 8, 0, 4],
-        color: '#1976d2'
+        color: '#AA7667'
       },
       tocLevel2: {
         fontSize: 11,
@@ -1965,17 +1990,17 @@ export default async function renderPDF(report: any, concept: concept[]) {
       tocLevel4: {
         fontSize: 9,
         margin: [60, 3, 0, 3],
-        color: '#666666'
+        color: '#9B8578'
       },
       tocLevel5: {
         fontSize: 9,
         margin: [80, 2, 0, 2],
-        color: '#666666'
+        color: '#9B8578'
       },
       tocLevel6: {
         fontSize: 9,
         margin: [100, 2, 0, 2],
-        color: '#666666'
+        color: '#9B8578'
       },
       tableHeader: {
         bold: true,
@@ -2040,7 +2065,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
       {
         text: formatDate(new Date()),
         fontSize: 10,
-        color: "#707070",
+        color: BRAND.textMed,
         alignment: "center",
         margin: [0, 15, 0, 15],
       },
@@ -2069,17 +2094,17 @@ export default async function renderPDF(report: any, concept: concept[]) {
                   bold: true,
                   marginTop: 5,
                   marginBottom: 5,
-                  color: '#9CA3AF'
+                  color: BRAND.textLight
                 },
                 {
                   text: "AI-assisted analysis. Codes and themes were generated by LLM and reviewed by the researcher. Treat as reference, not definitive findings.",
                   fontSize: 9,
                   marginBottom: 5,
-                  color: '#9CA3AF',
+                  color: BRAND.textLight,
                   alignment: 'left'
                 }
               ],
-              fillColor: '#F9FAFB',
+              fillColor: BRAND.primaryBg,
               margin: [15, 15, 15, 15]
             }]
           ]
@@ -2121,6 +2146,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         text: "Findings",
         fontSize: 20,
         bold: true,
+        color: BRAND.primaryDark,
         marginBottom: 15,
         marginTop: 30,
         headlineLevel: 1,
@@ -2139,6 +2165,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         text: "Codebook Development Process",
         fontSize: 20,
         bold: true,
+        color: BRAND.primaryDark,
         marginBottom: 15,
         marginTop: 30,
         headlineLevel: 1,
@@ -2165,6 +2192,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         text: "Primary Codebook",
         fontSize: 20,
         bold: true,
+        color: BRAND.primaryDark,
         marginBottom: 15,
         marginTop: 30,
         headlineLevel: 1,
@@ -2180,7 +2208,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
         fontSize: 12,
         marginBottom: 20,
         italics: true,
-        color: '#6B7280',
+        color: BRAND.textLight,
         alignment: 'justify'
       },
       

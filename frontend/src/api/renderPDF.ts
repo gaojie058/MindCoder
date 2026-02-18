@@ -91,7 +91,7 @@ function createHorizontalRule(): any {
         lineColor: BRAND.border
       }
     ],
-    margin: [0, 10, 0, 10]
+    margin: [0, 6, 0, 6]
   };
 }
 
@@ -222,11 +222,11 @@ function generateAnalysisConfigurationContent(): Content[] {
 
   result.push({
     text: "Analysis Configuration",
-    fontSize: 20,
+    fontSize: 16,
     bold: true,
     color: BRAND.primaryDark,
-    marginBottom: 15,
-    marginTop: 30,
+    marginBottom: 8,
+    marginTop: 18,
     headlineLevel: 1,
     tocItem: true,
     id: 'analysisConfigurationSection'
@@ -314,7 +314,7 @@ function generateAnalysisConfigurationContent(): Content[] {
         paddingTop: function (i: number, node: any) { return 6; },
         paddingBottom: function (i: number, node: any) { return 6; }
       },
-      marginBottom: 20
+      marginBottom: 12
     });
   }
 
@@ -338,11 +338,11 @@ function generateOpenCodesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 1: ", fontSize: 18, bold: true, color: BRAND.accent },
-      { text: "Open Codes", fontSize: 18, bold: true }
+      { text: "Step 1: ", fontSize: 11, bold: true, color: BRAND.accent },
+      { text: "Open Codes", fontSize: 11, bold: true }
     ],
-    marginBottom: 10,
-    marginTop: 25,
+    marginBottom: 6,
+    marginTop: 8,
     headlineLevel: 2,
     tocItem: true,
     id: 'openCodesProcessSection',
@@ -358,7 +358,7 @@ function generateOpenCodesProcessContent(): Content[] {
           stack: [
             {
               text: "Step Summary",
-              fontSize: 12,
+              fontSize: 11,
               bold: true,
               marginBottom: 5,
               color: BRAND.textDark
@@ -380,7 +380,7 @@ function generateOpenCodesProcessContent(): Content[] {
       ]
     },
     layout: 'noBorders',
-    marginBottom: 15
+    marginBottom: 8
   });
 
   // AI Mechanical Task section
@@ -393,10 +393,10 @@ function generateOpenCodesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " MindCoder Mechanical Task", fontSize: 14, bold: true, marginLeft: 5 }
+        { text: " MindCoder Mechanical Task", fontSize: 11, bold: true, marginLeft: 5 }
       ],
       marginTop: 5,
-      marginBottom: 10,
+      marginBottom: 6,
       headlineLevel: 3,
       tocItem: false,
       id: 'topicMechanicalTask',
@@ -408,7 +408,7 @@ function generateOpenCodesProcessContent(): Content[] {
       mechanicalTaskContent.push({
         text: cleanContent(cardLlmDescription),
         fontSize: 10,
-        marginBottom: 10,
+        marginBottom: 6,
         marginLeft: 5
       });
     }
@@ -417,9 +417,9 @@ function generateOpenCodesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 12,
+          fontSize: 11,
           bold: true,
-          marginTop: 10,
+          marginTop: 8,
           marginBottom: 5,
           headlineLevel: 4,
           id: 'cardWhatLLMDidParam'
@@ -427,7 +427,7 @@ function generateOpenCodesProcessContent(): Content[] {
         {
           text: cleanContent(cardWhatLLMDid),
           fontSize: 10,
-          marginBottom: 10,
+          marginBottom: 6,
           marginLeft: 5
         }
       );
@@ -437,9 +437,9 @@ function generateOpenCodesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 12,
+          fontSize: 11,
           bold: true,
-          marginTop: 10,
+          marginTop: 8,
           marginBottom: 5,
           headlineLevel: 4,
           id: 'cardRationaleParam'
@@ -447,7 +447,7 @@ function generateOpenCodesProcessContent(): Content[] {
         {
           text: cleanContent(cardRationale),
           fontSize: 10,
-          marginBottom: 10,
+          marginBottom: 6,
           marginLeft: 5
         }
       );
@@ -460,13 +460,13 @@ function generateOpenCodesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: BRAND.aiBg,
-            margin: [15, 15, 15, 15]
+            margin: [10, 10, 10, 10]
           }]
         ]
       },
       layout: 'noBorders',
-      marginTop: 10,
-      marginBottom: 15
+      marginTop: 8,
+      marginBottom: 8
     });
   }
 
@@ -476,10 +476,10 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Interpretation", fontSize: 14, bold: true, marginLeft: 5 }
+      { text: " Human Interpretation", fontSize: 11, bold: true, marginLeft: 5 }
     ],
     marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 6,
     headlineLevel: 3,
     tocItem: false,
     id: 'topicHumanInterpretation',
@@ -492,7 +492,7 @@ function generateOpenCodesProcessContent(): Content[] {
     {
       text: "In this stage, the LLM offers an exploratory coding draft, while you should bring critical interpretation, contextual knowledge, and methodological rigor. Your revisions, notes, and reflections ensure that the analysis stays trustworthy and grounded in both the data and the research aims.",
       fontSize: 10,
-      marginBottom: 10,
+      marginBottom: 6,
       marginLeft: 5,
       alignment: 'justify'
     }
@@ -503,9 +503,9 @@ function generateOpenCodesProcessContent(): Content[] {
     humanInterpretationContent.push(
       {
         text: "Research Question",
-        fontSize: 12,
+        fontSize: 11,
         bold: true,
-        marginTop: 10,
+        marginTop: 8,
         marginBottom: 5,
         headlineLevel: 4,
         id: 'researchQuestionParam'
@@ -513,7 +513,7 @@ function generateOpenCodesProcessContent(): Content[] {
       {
         text: cleanContent(researchQuestion),
         fontSize: 10,
-        marginBottom: 10,
+        marginBottom: 6,
         marginLeft: 5
       }
     );
@@ -525,9 +525,9 @@ function generateOpenCodesProcessContent(): Content[] {
     humanInterpretationContent.push(
       {
         text: "Number of Open Codes",
-        fontSize: 12,
+        fontSize: 11,
         bold: true,
-        marginTop: 10,
+        marginTop: 8,
         marginBottom: 5,
         headlineLevel: 4,
         id: 'topicClustersParam'
@@ -535,7 +535,7 @@ function generateOpenCodesProcessContent(): Content[] {
       {
         text: `Range: ${min} - ${max} open codes per file`,
         fontSize: 10,
-        marginBottom: 10,
+        marginBottom: 6,
         marginLeft: 5
       }
     );
@@ -545,9 +545,9 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push(
     {
       text: "Prompt to LLM",
-      fontSize: 12,
+      fontSize: 11,
       bold: true,
-      marginTop: 10,
+      marginTop: 8,
       marginBottom: 5,
       headlineLevel: 4,
       id: 'clusteringStyleParam'
@@ -587,9 +587,9 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 12,
+      fontSize: 11,
       bold: true,
-      marginTop: 10,
+      marginTop: 8,
       marginBottom: 5,
       headlineLevel: 4,
       id: 'topicMemoParam'
@@ -597,7 +597,7 @@ function generateOpenCodesProcessContent(): Content[] {
     {
       text: cleanContent(topicMemo && typeof topicMemo === 'string' && topicMemo.trim() ? topicMemo : "No memo added yet"),
       fontSize: 10,
-      marginBottom: 10,
+      marginBottom: 6,
       marginLeft: 5
     }
   );
@@ -609,13 +609,13 @@ function generateOpenCodesProcessContent(): Content[] {
         [{
           stack: humanInterpretationContent,
           fillColor: BRAND.humanBlueBg,
-          margin: [15, 15, 15, 15]
+          margin: [10, 10, 10, 10]
         }]
       ]
     },
     layout: 'noBorders',
     marginTop: 5,
-    marginBottom: 20
+    marginBottom: 12
   });
 
   result.push(createHorizontalRule());
@@ -637,11 +637,11 @@ function generateSubThemesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 2: ", fontSize: 18, bold: true, color: BRAND.accent },
-      { text: "Sub-themes", fontSize: 18, bold: true }
+      { text: "Step 2: ", fontSize: 11, bold: true, color: BRAND.accent },
+      { text: "Sub-themes", fontSize: 11, bold: true }
     ],
-    marginBottom: 10,
-    marginTop: 25,
+    marginBottom: 6,
+    marginTop: 8,
     headlineLevel: 2,
     tocItem: true,
     id: 'subThemesProcessSection',
@@ -657,7 +657,7 @@ function generateSubThemesProcessContent(): Content[] {
           stack: [
             {
               text: "Step Summary",
-              fontSize: 12,
+              fontSize: 11,
               bold: true,
               marginBottom: 5,
               color: BRAND.textDark
@@ -679,7 +679,7 @@ function generateSubThemesProcessContent(): Content[] {
       ]
     },
     layout: 'noBorders',
-    marginBottom: 15
+    marginBottom: 8
   });
 
   // AI Mechanical Task section
@@ -692,10 +692,10 @@ function generateSubThemesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " MindCoder Mechanical Task", fontSize: 14, bold: true, marginLeft: 5 }
+        { text: " MindCoder Mechanical Task", fontSize: 11, bold: true, marginLeft: 5 }
       ],
       marginTop: 5,
-      marginBottom: 10,
+      marginBottom: 6,
       headlineLevel: 3,
       tocItem: false,
       id: 'codeMechanicalTask',
@@ -707,7 +707,7 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push({
         text: cleanContent(codeLlmDescription),
         fontSize: 10,
-        marginBottom: 10,
+        marginBottom: 6,
         marginLeft: 5
       });
     }
@@ -716,9 +716,9 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 12,
+          fontSize: 11,
           bold: true,
-          marginTop: 10,
+          marginTop: 8,
           marginBottom: 5,
           headlineLevel: 4,
           id: 'codeWhatLLMDidParam'
@@ -726,7 +726,7 @@ function generateSubThemesProcessContent(): Content[] {
         {
           text: cleanContent(codeWhatLLMDid),
           fontSize: 10,
-          marginBottom: 10,
+          marginBottom: 6,
           marginLeft: 5
         }
       );
@@ -736,9 +736,9 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 12,
+          fontSize: 11,
           bold: true,
-          marginTop: 10,
+          marginTop: 8,
           marginBottom: 5,
           headlineLevel: 4,
           id: 'codeRationaleParam'
@@ -746,7 +746,7 @@ function generateSubThemesProcessContent(): Content[] {
         {
           text: cleanContent(codeRationale),
           fontSize: 10,
-          marginBottom: 10,
+          marginBottom: 6,
           marginLeft: 5
         }
       );
@@ -759,13 +759,13 @@ function generateSubThemesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: BRAND.aiBg,
-            margin: [15, 15, 15, 15]
+            margin: [10, 10, 10, 10]
           }]
         ]
       },
       layout: 'noBorders',
-      marginTop: 10,
-      marginBottom: 15
+      marginTop: 8,
+      marginBottom: 8
     });
   }
 
@@ -775,10 +775,10 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Interpretation", fontSize: 14, bold: true, marginLeft: 5 }
+      { text: " Human Interpretation", fontSize: 11, bold: true, marginLeft: 5 }
     ],
     marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 6,
     headlineLevel: 3,
     tocItem: false,
     id: 'codeHumanInterpretation',
@@ -791,7 +791,7 @@ function generateSubThemesProcessContent(): Content[] {
     {
       text: "In this stage, the LLM provides an initial map of sub-themes, while you should bring judgment, contextual understanding, and methodological rigor to confirm, adjust, or expand the map. Your engagement ensures that the sub-themes stay trustworthy, relevant, and analytically useful.",
       fontSize: 10,
-      marginBottom: 10,
+      marginBottom: 6,
       marginLeft: 5,
       alignment: 'justify'
     }
@@ -801,9 +801,9 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push(
     {
       text: "Prompt to LLM",
-      fontSize: 12,
+      fontSize: 11,
       bold: true,
-      marginTop: 10,
+      marginTop: 8,
       marginBottom: 5,
       headlineLevel: 4,
       id: 'codingStyleParam'
@@ -843,9 +843,9 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 12,
+      fontSize: 11,
       bold: true,
-      marginTop: 10,
+      marginTop: 8,
       marginBottom: 5,
       headlineLevel: 4,
       id: 'codeMemoParam'
@@ -853,7 +853,7 @@ function generateSubThemesProcessContent(): Content[] {
     {
       text: cleanContent(codeMemo && typeof codeMemo === 'string' && codeMemo.trim() ? codeMemo : "No memo added yet"),
       fontSize: 10,
-      marginBottom: 10,
+      marginBottom: 6,
       marginLeft: 5
     }
   );
@@ -865,13 +865,13 @@ function generateSubThemesProcessContent(): Content[] {
         [{
           stack: subThemesHumanInterpretationContent,
           fillColor: BRAND.humanBlueBg,
-          margin: [15, 15, 15, 15]
+          margin: [10, 10, 10, 10]
         }]
       ]
     },
     layout: 'noBorders',
     marginTop: 5,
-    marginBottom: 20
+    marginBottom: 12
   });
 
   result.push(createHorizontalRule());
@@ -894,11 +894,11 @@ function generateThemesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 3: ", fontSize: 18, bold: true, color: BRAND.accent },
-      { text: "Themes", fontSize: 18, bold: true }
+      { text: "Step 3: ", fontSize: 11, bold: true, color: BRAND.accent },
+      { text: "Themes", fontSize: 11, bold: true }
     ],
-    marginBottom: 10,
-    marginTop: 25,
+    marginBottom: 6,
+    marginTop: 8,
     headlineLevel: 2,
     tocItem: true,
     id: 'themesProcessSection',
@@ -914,7 +914,7 @@ function generateThemesProcessContent(): Content[] {
           stack: [
             {
               text: "Step Summary",
-              fontSize: 12,
+              fontSize: 11,
               bold: true,
               marginBottom: 5,
               color: BRAND.textDark
@@ -936,7 +936,7 @@ function generateThemesProcessContent(): Content[] {
       ]
     },
     layout: 'noBorders',
-    marginBottom: 15
+    marginBottom: 8
   });
 
   // AI Mechanical Task section
@@ -949,10 +949,10 @@ function generateThemesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " MindCoder Mechanical Task", fontSize: 14, bold: true, marginLeft: 5 }
+        { text: " MindCoder Mechanical Task", fontSize: 11, bold: true, marginLeft: 5 }
       ],
       marginTop: 5,
-      marginBottom: 10,
+      marginBottom: 6,
       headlineLevel: 3,
       tocItem: false,
       id: 'conceptMechanicalTask',
@@ -964,7 +964,7 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push({
         text: cleanContent(conceptLlmDescription),
         fontSize: 10,
-        marginBottom: 10,
+        marginBottom: 6,
         marginLeft: 5
       });
     }
@@ -973,9 +973,9 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 12,
+          fontSize: 11,
           bold: true,
-          marginTop: 10,
+          marginTop: 8,
           marginBottom: 5,
           headlineLevel: 4,
           id: 'conceptWhatLLMDidParam'
@@ -983,7 +983,7 @@ function generateThemesProcessContent(): Content[] {
         {
           text: cleanContent(conceptWhatLLMDid),
           fontSize: 10,
-          marginBottom: 10,
+          marginBottom: 6,
           marginLeft: 5
         }
       );
@@ -993,9 +993,9 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 12,
+          fontSize: 11,
           bold: true,
-          marginTop: 10,
+          marginTop: 8,
           marginBottom: 5,
           headlineLevel: 4,
           id: 'conceptRationaleParam'
@@ -1003,7 +1003,7 @@ function generateThemesProcessContent(): Content[] {
         {
           text: cleanContent(conceptRationale),
           fontSize: 10,
-          marginBottom: 10,
+          marginBottom: 6,
           marginLeft: 5
         }
       );
@@ -1016,13 +1016,13 @@ function generateThemesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: BRAND.aiBg,
-            margin: [15, 15, 15, 15]
+            margin: [10, 10, 10, 10]
           }]
         ]
       },
       layout: 'noBorders',
-      marginTop: 10,
-      marginBottom: 15
+      marginTop: 8,
+      marginBottom: 8
     });
   }
 
@@ -1032,10 +1032,10 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Interpretation", fontSize: 14, bold: true, marginLeft: 5 }
+      { text: " Human Interpretation", fontSize: 11, bold: true, marginLeft: 5 }
     ],
     marginTop: 5,
-    marginBottom: 10,
+    marginBottom: 6,
     headlineLevel: 3,
     tocItem: false,
     id: 'conceptHumanInterpretation',
@@ -1048,7 +1048,7 @@ function generateThemesProcessContent(): Content[] {
     {
       text: "This stage transforms the analysis from a preliminary structure into a coherent thematic framework. The LLM offers a draft map of themes, and you should provide the critical review, interpretive judgment, and theoretical alignment necessary to produce a trustworthy and meaningful set of final themes.",
       fontSize: 10,
-      marginBottom: 10,
+      marginBottom: 6,
       marginLeft: 5,
       alignment: 'justify'
     }
@@ -1058,9 +1058,9 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push(
     {
       text: "Prompt to LLM",
-      fontSize: 12,
+      fontSize: 11,
       bold: true,
-      marginTop: 10,
+      marginTop: 8,
       marginBottom: 5,
       headlineLevel: 4,
       id: 'conceptualizingStyleParam'
@@ -1107,9 +1107,9 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 12,
+      fontSize: 11,
       bold: true,
-      marginTop: 10,
+      marginTop: 8,
       marginBottom: 5,
       headlineLevel: 4,
       id: 'conceptMemoParam'
@@ -1117,7 +1117,7 @@ function generateThemesProcessContent(): Content[] {
     {
       text: cleanContent(conceptMemo && typeof conceptMemo === 'string' && conceptMemo.trim() ? conceptMemo : "No memo added yet"),
       fontSize: 10,
-      marginBottom: 10,
+      marginBottom: 6,
       marginLeft: 5
     }
   );
@@ -1129,13 +1129,13 @@ function generateThemesProcessContent(): Content[] {
         [{
           stack: themesHumanInterpretationContent,
           fillColor: BRAND.humanBlueBg,
-          margin: [15, 15, 15, 15]
+          margin: [10, 10, 10, 10]
         }]
       ]
     },
     layout: 'noBorders',
     marginTop: 5,
-    marginBottom: 20
+    marginBottom: 12
   });
 
   result.push(createHorizontalRule());
@@ -1153,7 +1153,7 @@ function generateTimelineContent(): Content[] {
     bold: true,
     color: BRAND.primaryDark,
     marginTop: 20,
-    marginBottom: 15,
+    marginBottom: 8,
     headlineLevel: 2,
     tocItem: true,
     id: 'analysisTimelineSection',
@@ -1168,7 +1168,7 @@ function generateTimelineContent(): Content[] {
         [
           {
             stack: [
-              { text: "STEP 1", fontSize: 12, bold: true, color: BRAND.accent, alignment: 'center' },
+              { text: "STEP 1", fontSize: 11, bold: true, color: BRAND.accent, alignment: 'center' },
               { text: "Open Codes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
               { text: "Raw data -> Initial codes", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
@@ -1177,14 +1177,14 @@ function generateTimelineContent(): Content[] {
           },
           {
             text: ">>",
-            fontSize: 20,
+            fontSize: 16,
             bold: true,
             alignment: 'center',
             color: BRAND.textLight
           },
           {
             stack: [
-              { text: "STEP 2", fontSize: 12, bold: true, color: BRAND.accent, alignment: 'center' },
+              { text: "STEP 2", fontSize: 11, bold: true, color: BRAND.accent, alignment: 'center' },
               { text: "Sub-themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
               { text: "Codes -> Grouped patterns", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
@@ -1193,14 +1193,14 @@ function generateTimelineContent(): Content[] {
           },
           {
             text: ">>",
-            fontSize: 20,
+            fontSize: 16,
             bold: true,
             alignment: 'center',
             color: BRAND.textLight
           },
           {
             stack: [
-              { text: "STEP 3", fontSize: 12, bold: true, color: BRAND.accent, alignment: 'center' },
+              { text: "STEP 3", fontSize: 11, bold: true, color: BRAND.accent, alignment: 'center' },
               { text: "Themes", fontSize: 11, bold: true, alignment: 'center', marginTop: 5 },
               { text: "Sub-themes -> Final themes", fontSize: 9, alignment: 'center', marginTop: 3 }
             ],
@@ -1211,7 +1211,7 @@ function generateTimelineContent(): Content[] {
       ]
     },
     layout: 'noBorders',
-    marginBottom: 20
+    marginBottom: 12
   });
 
   result.push(createHorizontalRule());
@@ -1351,8 +1351,8 @@ function generateThemeMapTable(): Content[] {
       paddingLeft: () => 2,
       paddingRight: () => 2,
     },
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 8,
+    marginBottom: 8,
   }];
 }
 
@@ -1369,7 +1369,7 @@ function generateThemesContent(): Content[] {
         [{
           text: [
             concept.isGPT !== false ? createAIBadge() : createUserBadge(),
-            { text: ` ${cleanTitle(concept.name)}`, fontSize: 13, bold: true, marginLeft: 5 }
+            { text: ` ${cleanTitle(concept.name)}`, fontSize: 11, bold: true, marginLeft: 5 }
           ],
           fillColor: BRAND.primary,
           color: '#FFFFFF',
@@ -1408,7 +1408,7 @@ function generateThemesContent(): Content[] {
             ]
           },
           layout: 'noBorders',
-          marginBottom: 10
+          marginBottom: 6
         });
       }
 
@@ -1518,7 +1518,7 @@ function generateThemesContent(): Content[] {
             paddingTop: function (i: number, node: any) { return 0; },
             paddingBottom: function (i: number, node: any) { return 0; }
           },
-          marginBottom: 15
+          marginBottom: 8
         });
       }
     });
@@ -1646,8 +1646,8 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
       text: "Document Coverage",
       fontSize: 16,
       bold: true,
-      marginTop: 15,
-      marginBottom: 10,
+      marginTop: 8,
+      marginBottom: 6,
       headlineLevel: 3,
       tocItem: true,
       id: 'documentCoverageSection',
@@ -1662,7 +1662,7 @@ async function generateDocumentCoverageContent(): Promise<Content[]> {
       });
     });
 
-    result.push({ text: "", marginBottom: 20 });
+    result.push({ text: "", marginBottom: 12 });
   }
 
   return result;
@@ -1924,7 +1924,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
     const sectionContent = section.Content || section.content;
 
     reportContent.push(
-      { text: cleanTitle(sectionTitle), fontSize: 12, bold: true, marginTop: 15, marginBottom: 8, headlineLevel: 2 },
+      { text: cleanTitle(sectionTitle), fontSize: 11, bold: true, marginTop: 8, marginBottom: 8, headlineLevel: 2 },
       { text: cleanContent(typeof sectionContent === 'string' ? sectionContent : ''), fontSize: 10, marginBottom: 12, alignment: 'justify' }
     );
 
@@ -1935,8 +1935,8 @@ export default async function renderPDF(report: any, concept: concept[]) {
         const subsectionContent = subsection.Content || subsection.content;
 
         reportContent.push(
-          { text: cleanTitle(subsectionTitle), fontSize: 11, bold: true, marginTop: 10, marginBottom: 5, marginLeft: 15, headlineLevel: 3 },
-          { text: cleanContent(typeof subsectionContent === 'string' ? subsectionContent : ''), fontSize: 10, marginBottom: 10, marginLeft: 15, alignment: 'justify' }
+          { text: cleanTitle(subsectionTitle), fontSize: 11, bold: true, marginTop: 8, marginBottom: 5, marginLeft: 15, headlineLevel: 3 },
+          { text: cleanContent(typeof subsectionContent === 'string' ? subsectionContent : ''), fontSize: 10, marginBottom: 6, marginLeft: 15, alignment: 'justify' }
         );
       });
     }
@@ -1946,7 +1946,7 @@ export default async function renderPDF(report: any, concept: concept[]) {
     const conclusion = report.Conclusion || report.conclusion;
     if (typeof conclusion === 'string') {
       reportContent.push(
-        { text: "Conclusion", fontSize: 12, bold: true, marginTop: 15, marginBottom: 8, headlineLevel: 2 },
+        { text: "Conclusion", fontSize: 11, bold: true, marginTop: 8, marginBottom: 8, headlineLevel: 2 },
         { text: cleanContent(conclusion), fontSize: 10, marginBottom: 12, alignment: 'justify' }
       );
     }
@@ -1957,35 +1957,35 @@ export default async function renderPDF(report: any, concept: concept[]) {
     pageOrientation: 'portrait',
     compress: true,
     pdfVersion: '1.7',
-    pageMargins: [60, 60, 60, 60],
+    pageMargins: [50, 45, 50, 45],
 
     styles: {
       tocTitle: {
-        fontSize: 14,
+        fontSize: 11,
         bold: true,
-        margin: [0, 25, 0, 15]
+        margin: [0, 15, 0, 10]
       },
       tocText: {
-        fontSize: 11
+        fontSize: 10
       },
       tocNumber: {
-        fontSize: 10,
+        fontSize: 9,
         italics: true
       },
       tocLevel1: {
-        fontSize: 12,
+        fontSize: 11,
         bold: true,
-        margin: [0, 8, 0, 4],
+        margin: [0, 5, 0, 2],
         color: '#AA7667'
       },
       tocLevel2: {
-        fontSize: 11,
-        margin: [20, 6, 0, 4],
+        fontSize: 10,
+        margin: [15, 3, 0, 2],
         italics: false
       },
       tocLevel3: {
-        fontSize: 10,
-        margin: [40, 4, 0, 4],
+        fontSize: 9,
+        margin: [30, 2, 0, 2],
         color: '#000000'
       },
       tocLevel4: {
@@ -2062,22 +2062,23 @@ export default async function renderPDF(report: any, concept: concept[]) {
 
     content: [
       // Header with logo and date
-      { image: logoBase64, width: 120, alignment: "center" },
+      { image: logoBase64, width: 100, alignment: "center" },
       {
         text: formatDate(new Date()),
-        fontSize: 10,
-        color: BRAND.textMed,
+        fontSize: 9,
+        color: BRAND.textLight,
         alignment: "center",
-        margin: [0, 15, 0, 15],
+        margin: [0, 8, 0, 8],
       },
       
       // Main title
       {
         text: cleanTitle(reportTitle),
-        fontSize: 16,
+        fontSize: 11,
         bold: true,
+        color: BRAND.textDark,
         alignment: "center",
-        margin: [0, 0, 0, 20],
+        margin: [0, 0, 0, 12],
         headlineLevel: 1,
         id: 'reportTitle'
       },
@@ -2091,28 +2092,26 @@ export default async function renderPDF(report: any, concept: concept[]) {
               stack: [
                 {
                   text: "Disclaimer",
-                  fontSize: 11,
+                  fontSize: 9,
                   bold: true,
-                  marginTop: 5,
-                  marginBottom: 5,
+                  marginBottom: 3,
                   color: BRAND.textLight
                 },
                 {
                   text: "AI-assisted analysis. Codes and themes were generated by LLM and reviewed by the researcher. Treat as reference, not definitive findings.",
-                  fontSize: 9,
-                  marginBottom: 5,
+                  fontSize: 8,
                   color: BRAND.textLight,
                   alignment: 'left'
                 }
               ],
               fillColor: BRAND.primaryBg,
-              margin: [15, 15, 15, 15]
+              margin: [10, 8, 10, 8]
             }]
           ]
         },
         layout: 'noBorders',
-        marginTop: 20,
-        marginBottom: 25
+        marginTop: 8,
+        marginBottom: 8
       },
 
       // Table of Contents with improved styling
@@ -2145,11 +2144,11 @@ export default async function renderPDF(report: any, concept: concept[]) {
       // Key Finding Summary section
       {
         text: "Findings",
-        fontSize: 20,
+        fontSize: 16,
         bold: true,
         color: BRAND.primaryDark,
-        marginBottom: 15,
-        marginTop: 30,
+        marginBottom: 8,
+        marginTop: 18,
         headlineLevel: 1,
         tocItem: true,
         id: 'reportSection'
@@ -2164,11 +2163,11 @@ export default async function renderPDF(report: any, concept: concept[]) {
       // Codebook Development Process section
       {
         text: "Codebook Development Process",
-        fontSize: 20,
+        fontSize: 16,
         bold: true,
         color: BRAND.primaryDark,
-        marginBottom: 15,
-        marginTop: 30,
+        marginBottom: 8,
+        marginTop: 18,
         headlineLevel: 1,
         tocItem: true,
         id: 'codebookDevelopmentProcessSection',
@@ -2191,11 +2190,11 @@ export default async function renderPDF(report: any, concept: concept[]) {
       // Primary Codebook section
       {
         text: "Primary Codebook",
-        fontSize: 20,
+        fontSize: 16,
         bold: true,
         color: BRAND.primaryDark,
-        marginBottom: 15,
-        marginTop: 30,
+        marginBottom: 8,
+        marginTop: 18,
         headlineLevel: 1,
         tocItem: true,
         id: 'primaryCodebookSection',
@@ -2206,8 +2205,8 @@ export default async function renderPDF(report: any, concept: concept[]) {
       // Primary Codebook description
       {
         text: "This primary codebook is provided as a reference to support your downstream tasks, such as group discussions, the development of higher-level theories, and formal report writing. The table below shows the hierarchical structure of themes, sub-themes, and open codes with their associated data segments.",
-        fontSize: 12,
-        marginBottom: 20,
+        fontSize: 9,
+        marginBottom: 8,
         italics: true,
         color: BRAND.textLight,
         alignment: 'justify'

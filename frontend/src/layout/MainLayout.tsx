@@ -487,11 +487,13 @@ export default function MainLayout({
         </div>
       ) : stepToName[step] === "display" ? (
         <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
-          <div
-            className={`flex-col w-full h-full max-w-[1400px] mx-auto px-8 pt-3 pb-4 flex items-center justify-stretch shadow-lg rounded-xl overflow-hidden ${className}`}
-            {...props}
-          >
-            {children || <Outlet />}
+          <div className="w-full max-w-[1400px] mx-auto px-8 pt-3 pb-4 h-full flex flex-col">
+            <div
+              className={`flex-col w-full flex-1 flex items-center justify-stretch shadow-lg rounded-xl border border-[#CB9180]/20 overflow-hidden bg-white ${className}`}
+              {...props}
+            >
+              {children || <Outlet />}
+            </div>
           </div>
         </div>
       ) : null}

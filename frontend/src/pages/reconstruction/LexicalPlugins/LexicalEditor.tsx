@@ -10,11 +10,7 @@ import useAppStore from "@/stores/useAppStore";
 import { Select, MenuItem } from "@mui/material";
 import { exampleTheme } from "./theme";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
-import {
-  DatapointHighlightPlugin,
-  DatapointTooltipPlugin,
-  // AddDatapointPlugin,
-} from "./CodeHighLight";
+import { HighlightEnginePlugin } from "./CodeHighLight";
 import { DatapointNode } from "./DatapointView";
 import ListMaxIndentLevelPlugin from "./ListMaxIndentLevel";
 import { ListNode, ListItemNode } from "@lexical/list";
@@ -243,213 +239,7 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
     [selectedFileLocal, getEditorState, setEditorState]
   );
 
-  // Helper: find all editor elements belonging to a card ID
-  const findCardElements = (codeId: string): Element[] => {
-    if (!editorRef.current) return [];
-    // Try data-card-id attribute first
-    let elements = Array.from(editorRef.current.querySelectorAll(`[data-card-id="${codeId}"]`));
-    if (elements.length > 0) return elements;
-    // Fallback: scan for --card-id CSS custom property
-    const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
-    elements = Array.from(allHighlighted).filter((el) => {
-      const style = (el as HTMLElement).style.cssText;
-      return style.includes(`--card-id: ${codeId}`) || style.includes(`--card-id:${codeId}`);
-    });
-    return elements;
-  };
-
-  // Listen for highlightInEditor — flash highlight using data-card-id attributes
-  useEffect(() => {
-    const handleHighlight = (e: CustomEvent) => {
-      const { codeId, color } = e.detail;
-      if (!editorRef.current) return;
-
-      const elements = findCardElements(codeId);
-      if (elements.length === 0) return;
-
-      // Scroll to first element
-      elements[0].scrollIntoView({ behavior: "smooth", block: "center" });
-
-      // Flash all elements with the code's color
-      elements.forEach((el: Element) => {
-        const htmlEl = el as HTMLElement;
-        const origBg = htmlEl.style.backgroundColor;
-        const flashColor = color || "#E8B4B8";
-        htmlEl.style.transition = "outline 0.2s";
-        htmlEl.style.outline = `2px solid ${flashColor}`;
-        setTimeout(() => {
-          htmlEl.style.outline = "";
-          htmlEl.style.transition = "";
-        }, 1500);
-      });
-    };
-
-    window.addEventListener("highlightInEditor", handleHighlight as EventListener);
-    return () => window.removeEventListener("highlightInEditor", handleHighlight as EventListener);
-  }, []);
-
-  // Listen for selectCodeInEditor — persistent outline + pen indicator
-  useEffect(() => {
-    let activeElements: { el: HTMLElement; origOutline: string }[] = [];
-    let penEl: HTMLElement | null = null;
-
-    const handleSelect = (e: CustomEvent) => {
-      // Clear previous — restore all modified elements
-      activeElements.forEach((item: any) => {
-        if (item.key === "opacity") item.el.style.opacity = item.orig;
-        else if (item.key === "bg") item.el.style.backgroundColor = item.orig;
-        else if (item.key === "boxShadow") item.el.style.boxShadow = item.orig;
-      });
-      activeElements = [];
-      if (penEl) { penEl.remove(); penEl = null; }
-
-      const { codeId, color, newCardText } = e.detail;
-      if (!codeId || !editorRef.current) return;
-
-      const selectColor = color || "#E8B4B8";
-
-      // For new cards: find text by content, apply highlight directly, dim others
-      if (newCardText) {
-        // Dim all existing highlighted elements
-        const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
-        allHighlighted.forEach((el: Element) => {
-          const htmlEl = el as HTMLElement;
-          const origOpacity = htmlEl.style.opacity;
-          htmlEl.style.opacity = "0.3";
-          activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);
-        });
-
-        // Find and highlight the matching text in the editor using TreeWalker
-        const walker = document.createTreeWalker(
-          editorRef.current,
-          NodeFilter.SHOW_TEXT,
-          null
-        );
-        const normalizedTarget = newCardText.replace(/\s+/g, " ").trim();
-        let textNode: Text | null;
-        const matchedNodes: HTMLElement[] = [];
-
-        while ((textNode = walker.nextNode() as Text | null)) {
-          const nodeText = (textNode.textContent || "").replace(/\s+/g, " ");
-          if (nodeText && normalizedTarget.includes(nodeText.trim()) && nodeText.trim().length > 0) {
-            const parent = textNode.parentElement;
-            if (parent) {
-              const origBg = parent.style.backgroundColor;
-              parent.style.backgroundColor = selectColor + "99";
-              parent.style.boxShadow = `inset 0 -2px 0 0 ${selectColor}`;
-              parent.style.setProperty("--card-id", codeId);
-              activeElements.push({ el: parent, orig: origBg, key: "bg" } as any);
-              matchedNodes.push(parent);
-            }
-          }
-        }
-
-        // Scroll to first match
-        if (matchedNodes.length > 0) {
-          matchedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" });
-          const pen = document.createElement("span");
-          pen.textContent = "✏️";
-          pen.style.cssText = "position:absolute;left:-18px;top:-2px;font-size:13px;pointer-events:none;z-index:20;";
-          matchedNodes[0].style.position = "relative";
-          matchedNodes[0].appendChild(pen);
-          penEl = pen;
-        }
-        return;
-      }
-
-      // Existing cards: find by card ID, fall back to text matching
-      const elements = findCardElements(codeId);
-      if (elements.length === 0) {
-        // Fallback: find by topic text content
-        const { topics } = e.detail;
-        if (topics && topics.length > 0 && editorRef.current) {
-          const topicTexts = topics.map((t: any) => (t.content || "").replace(/\s+/g, " ").trim()).filter(Boolean);
-          if (topicTexts.length > 0) {
-            // Dim all existing highlighted elements
-            const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
-            allHighlighted.forEach((el: Element) => {
-              const htmlEl = el as HTMLElement;
-              const origOpacity = htmlEl.style.opacity;
-              htmlEl.style.opacity = "0.3";
-              activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);
-            });
-
-            // Find matching text nodes
-            const walker = document.createTreeWalker(editorRef.current, NodeFilter.SHOW_TEXT, null);
-            let textNode: Text | null;
-            const matchedNodes: HTMLElement[] = [];
-            while ((textNode = walker.nextNode() as Text | null)) {
-              const nodeText = (textNode.textContent || "").replace(/\s+/g, " ").trim();
-              if (nodeText && topicTexts.some((t: string) => t.includes(nodeText) && nodeText.length > 5)) {
-                const parent = textNode.parentElement;
-                if (parent) {
-                  const origBg = parent.style.backgroundColor;
-                  parent.style.backgroundColor = selectColor + "99";
-                  parent.style.boxShadow = `inset 0 -2px 0 0 ${selectColor}`;
-                  activeElements.push({ el: parent, orig: origBg, key: "bg" } as any);
-                  matchedNodes.push(parent);
-                }
-              }
-            }
-            if (matchedNodes.length > 0) {
-              matchedNodes[0].scrollIntoView({ behavior: "smooth", block: "center" });
-              const pen = document.createElement("span");
-              pen.textContent = "✏️";
-              pen.style.cssText = "position:absolute;left:-18px;top:-2px;font-size:13px;pointer-events:none;z-index:20;";
-              matchedNodes[0].style.position = "relative";
-              matchedNodes[0].appendChild(pen);
-              penEl = pen;
-            }
-          }
-        }
-        return;
-      }
-
-      // Scroll to first
-      elements[0].scrollIntoView({ behavior: "smooth", block: "center" });
-
-      // Add pen on first element
-      const firstEl = elements[0] as HTMLElement;
-      const pen = document.createElement("span");
-      pen.textContent = "✏️";
-      pen.style.cssText = "position:absolute;left:-18px;top:-2px;font-size:13px;pointer-events:none;z-index:20;";
-      firstEl.style.position = "relative";
-      firstEl.appendChild(pen);
-      penEl = pen;
-
-      // Apply persistent solid background to selected code's segments, dim others
-      const allHighlighted = editorRef.current.querySelectorAll('[style*="background-color"]');
-      allHighlighted.forEach((el: Element) => {
-        const htmlEl = el as HTMLElement;
-        const isThisCode = htmlEl.getAttribute("data-card-id") === codeId ||
-          htmlEl.style.cssText.includes(`--card-id: ${codeId}`) ||
-          htmlEl.style.cssText.includes(`--card-id:${codeId}`);
-        if (isThisCode) {
-          const origBg = htmlEl.style.backgroundColor;
-          const origShadow = htmlEl.style.boxShadow;
-          htmlEl.style.backgroundColor = selectColor + "99";
-          htmlEl.style.boxShadow = `inset 0 -2px 0 0 ${selectColor}`;
-          activeElements.push({ el: htmlEl, orig: origBg, key: "bg" } as any);
-          activeElements.push({ el: htmlEl, orig: origShadow, key: "boxShadow" } as any);
-        } else {
-          const origOpacity = htmlEl.style.opacity;
-          htmlEl.style.opacity = "0.3";
-          activeElements.push({ el: htmlEl, orig: origOpacity, key: "opacity" } as any);
-        }
-      });
-    };
-
-    window.addEventListener("selectCodeInEditor", handleSelect as EventListener);
-    return () => {
-      window.removeEventListener("selectCodeInEditor", handleSelect as EventListener);
-      activeElements.forEach((item: any) => {
-        if (item.key === "opacity") item.el.style.opacity = item.orig;
-        else if (item.key === "bg") item.el.style.backgroundColor = item.orig;
-        else if (item.key === "boxShadow") item.el.style.boxShadow = item.orig;
-      });
-      if (penEl) penEl.remove();
-    };
-  }, []);
+  // highlightInEditor + selectCodeInEditor — now handled by HighlightEnginePlugin
 
   // Call onHighlightReady only once
   useEffect(() => {
@@ -540,8 +330,7 @@ export default function LexicalEditor({ onHighlightReady = () => {} }) {
           {/* Only render these plugins when we have a selected file */}
           {selectedFileLocal && (
             <>
-              <DatapointHighlightPlugin currentFileName={selectedFileLocal} />
-              <DatapointTooltipPlugin currentFileName={selectedFileLocal} />
+              <HighlightEnginePlugin currentFileName={selectedFileLocal} />
             </>
           )}
         </div>

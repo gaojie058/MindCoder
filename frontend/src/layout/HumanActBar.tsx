@@ -202,7 +202,6 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
           >
             📝 Memo
           </button>
-          <BackgroundGenButton />
           {onRegenerate && (
             <button
               onClick={onRegenerate}

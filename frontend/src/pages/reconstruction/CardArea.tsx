@@ -198,6 +198,7 @@ export function CodesPanel() {
     activeCodes, filteredCodes, selectedCodeId, handleSelect,
     searchQuery, setSearchQuery, activeFilter, setActiveFilter, stats,
   } = useCardAreaContext();
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   const trashedCard = () => navigate(`/reconstruction/${project}/${step}/trash`);
 
@@ -210,6 +211,12 @@ export function CodesPanel() {
             Open Codes {selectedFile && <span className="text-[10px] font-normal text-[#CB9180]/60">— {selectedFile}</span>}
           </span>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setViewMode(viewMode === "list" ? "grid" : "list")}
+              className="text-[11px] text-gray-400 hover:text-[#CB9180] transition-colors flex items-center gap-1"
+            >
+              {viewMode === "list" ? "⊞ Expand" : "☰ List"}
+            </button>
             <Button
               onClick={trashedCard}
               className="h-7 rounded-lg !text-deepbg !bg-white/80 text-[11px] px-2.5 border border-gray-200"
@@ -255,7 +262,7 @@ export function CodesPanel() {
 
       {/* Code cards list */}
       <div className="flex-1 overflow-auto scrollbar-thin px-3 py-3">
-        <div className="space-y-0.5">
+        <div className={viewMode === "grid" ? "grid grid-cols-2 gap-2" : "space-y-0.5"}>
           {filteredCodes.map((card, index) => {
             const origIndex = activeCodes.findIndex((c) => c.id === card.id);
             return (

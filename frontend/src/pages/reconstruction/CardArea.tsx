@@ -34,7 +34,7 @@ interface CardAreaContextValue {
 
 const CardAreaContext = createContext<CardAreaContextValue | null>(null);
 
-export export function useCardAreaContext() {
+export function useCardAreaContext() {
   const ctx = useContext(CardAreaContext);
   if (!ctx) throw new Error("useCardAreaContext must be used within CardAreaProvider");
   return ctx;

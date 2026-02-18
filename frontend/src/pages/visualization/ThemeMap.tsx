@@ -73,7 +73,8 @@ function buildMapData(): MapData {
   const { conceptData } = useConceptStore.getState();
 
   const themes = conceptData.map((concept: concept, ci: number) => {
-    const color = concept.color || CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
+    // Always assign a distinct palette color per theme index (ignore stored color which may be identical across themes)
+    const color = CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
 
     // concept.codes is Record<string, code[]> — these are sub-themes
     // Collect all codes across all keys, assign distinct colors

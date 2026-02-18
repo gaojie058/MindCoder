@@ -478,18 +478,27 @@ export default function MainLayout({
         </div>
       )}
 
-      {stepToName[step] === "data" || stepToName[step] === "display" ? (
+      {stepToName[step] === "data" ? (
         <div
           className={`flex-col w-full flex-1 mx-auto md:w-11/12 lg:w-5/6 my-3 2xl:my-5 xl:w-4/5 2xl:w-[65%] flex items-center justify-stretch shadow-lg rounded-xl overflow-hidden ${className}`}
           {...props}
         >
           {children || <Outlet />}
         </div>
+      ) : stepToName[step] === "display" ? (
+        <div className="w-full flex justify-center h-[calc(100vh-73px)] overflow-hidden">
+          <div
+            className={`flex-col w-full h-full max-w-[1400px] mx-auto px-8 pt-3 pb-4 flex items-center justify-stretch shadow-lg rounded-xl overflow-hidden ${className}`}
+            {...props}
+          >
+            {children || <Outlet />}
+          </div>
+        </div>
       ) : null}
 
       {/* Bottom buttons for data and display pages */}
       {(stepToName[step] === "data" || stepToName[step] === "display") && (
-        <div className="w-full mx-auto md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%] flex justify-between items-center p-6 border-t border-gray-300">
+        <div className={`w-full mx-auto flex justify-between items-center p-6 border-t border-gray-300 ${stepToName[step] === "display" ? "max-w-[1400px] px-8" : "md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%]"}`}>
           {stepName === "data" ? (
             isCustomizePage ? (
               // Show Save button when on customize page

@@ -19,6 +19,7 @@ import useAppStore from "@/stores/useAppStore";
 import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { StyleInputsWithRef as StyleInputs } from "./StyleInputs";
+import HumanActBar from "./HumanActBar";
 import useCardStore from "@/stores/useCardStore";
 import useCodeStore from "@/stores/useCodeStore";
 import useConceptStore from "@/stores/useConceptStore";
@@ -425,12 +426,14 @@ export default function MainLayout({
               stepName={stepToName[step] || "data"}
             />
 
-            {/* Right side - Content Area */}
+            {/* Right side - Human Tasks + Content Area */}
             <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
               <div
                 className={`flex-col w-full h-full flex items-center justify-stretch border shadow-lg rounded-xl overflow-hidden ${className}`}
                 {...props}
               >
+                {/* Human Act Bar — above content */}
+                <HumanActBar stepName={stepName} />
                 {children || <Outlet />}
               </div>
 

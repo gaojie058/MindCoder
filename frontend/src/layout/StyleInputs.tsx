@@ -742,72 +742,22 @@ const StyleInputs = React.forwardRef<
   return (
     <div className={`flex flex-col w-full ${className}`}>
       {/* Card step content */}
+      {/* Card step — AI Understand only */}
       <div className={currentStoreType === "card" ? "block" : "hidden"}>
-        <CategoryHeader label="Understand" color="bg-indigo-500" />
+        <CategoryHeader label="🤖 AI Agent" color="bg-indigo-500" />
         <LLMTaskSection {...cardLLMInfo} />
-
-        <CategoryHeader label="Act" color="bg-amber-500" />
-        <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
-          <ExpandableTextarea
-            ref={clusteringTextAreaRef}
-            defaultValue={clusteringStyle || ""}
-            onChange={handleClusterChange}
-            placeholder="Guide how open codes are named and grouped. E.g., 'Use participants' own words as code names' or 'Focus on emotional responses related to AI adoption'."
-          />
-          <div className="mt-2 flex flex-wrap gap-1">
-            <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("In-Vivo coding: Use the direct language of raw data as codes", "clustering")}>In-Vivo</button>
-            <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Descriptive coding: Assign basic labels to describe the main topic", "clustering")}>Descriptive</button>
-          </div>
-        </HumanSection>
-        <HumanSection title="Prompt History" icon="📜">
-          <PromptHistorySection step="card" />
-        </HumanSection>
       </div>
 
-      {/* Code step content */}
+      {/* Code step — AI Understand only */}
       <div className={currentStoreType === "code" ? "block" : "hidden"}>
-        <CategoryHeader label="Understand" color="bg-indigo-500" />
+        <CategoryHeader label="🤖 AI Agent" color="bg-indigo-500" />
         <LLMTaskSection {...codeLLMInfo} />
-
-        <CategoryHeader label="Act" color="bg-amber-500" />
-        <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
-          <ExpandableTextarea
-            ref={codingTextAreaRef}
-            defaultValue={codingStyle || ""}
-            onChange={handleCodeChange}
-            placeholder="Guide how sub-themes are formed from open codes. E.g., 'Group codes by behavioral patterns' or 'Prioritize codes related to user frustration'."
-          />
-          <div className="mt-2 flex flex-wrap gap-1">
-            <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("In-Vivo coding: Use the direct words of raw data as sub-themes", "coding")}>In-Vivo</button>
-            <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Descriptive coding: Assign basic labels to describe the main sub-theme", "coding")}>Descriptive</button>
-          </div>
-        </HumanSection>
-        <HumanSection title="Prompt History" icon="📜">
-          <PromptHistorySection step="code" />
-        </HumanSection>
       </div>
 
-      {/* Concept step content */}
+      {/* Concept step — AI Understand only */}
       <div className={currentStoreType === "concept" ? "block" : "hidden"}>
-        <CategoryHeader label="Understand" color="bg-indigo-500" />
+        <CategoryHeader label="🤖 AI Agent" color="bg-indigo-500" />
         <LLMTaskSection {...conceptLLMInfo} />
-
-        <CategoryHeader label="Act" color="bg-amber-500" />
-        <HumanSection title="Custom Instructions" icon="💬" defaultOpen>
-          <ExpandableTextarea
-            ref={conceptualizingTextAreaRef}
-            defaultValue={conceptualizingStyle || ""}
-            onChange={handleConceptChange}
-            placeholder="Guide how themes are conceptualized from sub-themes. E.g., 'Connect themes to Technology Acceptance Model (TAM)' or 'Focus on overarching narratives about human-AI collaboration'."
-          />
-          <div className="mt-2 flex flex-wrap gap-1">
-            <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Thematic analysis: Identify patterns and themes across sub-themes", "conceptualizing")}>Thematic</button>
-            <button className="px-2 py-0.5 border border-gray-200 rounded text-[10px] text-gray-500 hover:bg-gray-50" onClick={() => handleSuggestionClick("Theoretical conceptualization: Link findings to established theories", "conceptualizing")}>Theoretical</button>
-          </div>
-        </HumanSection>
-        <HumanSection title="Prompt History" icon="📜">
-          <PromptHistorySection step="concept" />
-        </HumanSection>
       </div>
 
       {/* Display step content */}

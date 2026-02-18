@@ -168,15 +168,15 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
         {collapsed ? '›' : '‹'}
       </button>
       {!collapsed && (
-        <>
+        <div className="flex flex-col h-full rounded-xl border border-indigo-200/60 overflow-hidden bg-white">
           <AreaLabel
             icon="🤖"
             title="AI Agent"
             tooltip="AI analysis results and suggestions for the current step"
-            className="border-b border-gray-100 bg-indigo-50/30"
+            className="border-b border-indigo-100 bg-indigo-50/40"
           />
           <div
-            className="w-full overflow-y-auto scrollbar-thin flex-1 border-r border-gray-100"
+            className="w-full overflow-y-auto scrollbar-thin flex-1"
             style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
           >
             <div className="p-3 pb-8">
@@ -187,7 +187,7 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
               />
             </div>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
@@ -459,17 +459,19 @@ export default function MainLayout({
 
             {/* Right side - Human Tasks + Content Area */}
             <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
-              <AreaLabel
-                icon="📊"
-                title="Data Editor"
-                tooltip="View, edit, and organize your coding data"
-                className="bg-white/60 rounded-t-xl border border-b-0 border-gray-200"
-              />
-              <div
-                className={`flex-col w-full h-full flex items-center justify-stretch border border-t-0 shadow-lg rounded-b-xl overflow-hidden ${className}`}
-                {...props}
-              >
-                {children || <Outlet />}
+              <div className="flex flex-col h-full rounded-xl border border-gray-200 shadow-lg overflow-hidden bg-white">
+                <AreaLabel
+                  icon="📊"
+                  title="Data Editor"
+                  tooltip="View, edit, and organize your coding data"
+                  className="border-b border-gray-100 bg-gray-50/40"
+                />
+                <div
+                  className={`flex-col w-full flex-1 flex items-center justify-stretch overflow-hidden ${className}`}
+                  {...props}
+                >
+                  {children || <Outlet />}
+                </div>
               </div>
 
               {/* Human Act Bar with Regenerate + Memo */}

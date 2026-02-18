@@ -160,6 +160,10 @@ export default function CardArea() {
   return (
     <>
       <div className="w-full h-full flex flex-col bg-[#FFFBF9]">
+        {/* Step description */}
+        <div className="w-full px-6 py-1.5 bg-white border-b border-gray-100 flex-shrink-0">
+          <p className="text-xs text-gray-500 font-zen">📋 Organize your data into open codes based on semantic meaning</p>
+        </div>
         {/* Stats Bar + Trash + Search */}
         <div className="w-full px-6 py-2 flex items-center gap-2 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
           {([

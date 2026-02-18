@@ -300,6 +300,10 @@ export default function Labeling() {
 
   return (
     <div className="w-full h-full flex flex-col justify-between items-center overflow-auto bg-[#FFFBF9]">
+      {/* Step description */}
+      <div className="w-full px-8 py-1.5 bg-white border-b border-gray-100 flex-shrink-0">
+        <p className="text-xs text-gray-500 font-zen">🏷️ Group similar open codes into sub-themes that share high-level overlap</p>
+      </div>
       {/* Stats Bar */}
       <div className="w-full px-8 py-2 flex items-center gap-4 bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0 text-xs">
         <span className="text-[#8B5E4B] font-medium">Total: {stats.total}</span>

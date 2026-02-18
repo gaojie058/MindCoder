@@ -67,6 +67,9 @@ function connectAttribute(
     updatedContent = updatedContent.replace(bracketRegex, spanTag);
   });
 
+  // Render *text* as italic (for evidence/quotes)
+  updatedContent = updatedContent.replace(/\*([^*]+)\*/g, '<em class="text-gray-500">$1</em>');
+
   if (tier === "1")
     return `<div class="text-md font-semibold text-[#707070] ">${updatedContent}</div>`;
   else if (tier === "2") {

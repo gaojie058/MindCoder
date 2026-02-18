@@ -312,6 +312,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
   - Summarize each theme as one finding in 2-3 sentences max.
   - Reference sub-themes and codes by name (keep original labels like {Theme 1}, {Sub-Theme 2}, {Code 3}).
   - Be direct and evidence-based. No filler, no repetition. Each finding should state the core insight and cite 1-2 supporting codes or quotes.
+  - Wrap direct quotes or evidence excerpts in *single asterisks* for italic emphasis, e.g., *"I always modify them because they're never perfect."*
   - ALL themes must be covered. No omissions.
 
   Requirements:

@@ -51,10 +51,7 @@ const Visualize = () => {
   }, []);
 
   const handleViewPDF = useCallback(async () => {
-    const { history } = useHistoryStore.getState();
-    if (history.length > 0 && history[0].pdfData) {
-      openPdfInNewTab(history[0]);
-    } else if (generatePDF) {
+    if (generatePDF) {
       await generatePDF(activeGraphType);
       const { history: updatedHistory } = useHistoryStore.getState();
       if (updatedHistory.length > 0 && updatedHistory[0].pdfData) {

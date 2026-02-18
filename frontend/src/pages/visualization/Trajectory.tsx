@@ -36,6 +36,49 @@ function countActive(items: any[]): number {
 const NODE_WIDTH = 200;
 const NODE_HEIGHT = 120;
 
+// Compute change summary between two consecutive snapshots
+function computeChangeSummary(prev: VersionSnapshot, curr: VersionSnapshot, stage: "card" | "code" | "concept"): string {
+  const parts: string[] = [];
+
+  if (stage === "card") {
+    const prevActive = prev.cardData.filter(c => c.active !== false);
+    const currActive = curr.cardData.filter(c => c.active !== false);
+    const prevNames = new Set(prevActive.map(c => c.name));
+    const currNames = new Set(currActive.map(c => c.name));
+    const added = currActive.filter(c => !prevNames.has(c.name)).length;
+    const removed = prevActive.filter(c => !currNames.has(c.name)).length;
+    const renamed = currActive.filter(c => {
+      const prevCard = prevActive.find(p => p.id === c.id);
+      return prevCard && prevCard.name !== c.name;
+    }).length;
+    if (added > 0) parts.push(`+${added} codes`);
+    if (removed > 0) parts.push(`-${removed} codes`);
+    if (renamed > 0) parts.push(`${renamed} renamed`);
+  } else if (stage === "code") {
+    const diff = curr.codeData.length - prev.codeData.length;
+    if (diff > 0) parts.push(`+${diff} sub-themes`);
+    else if (diff < 0) parts.push(`${diff} sub-themes`);
+    // Check name changes
+    const prevNames = new Set(prev.codeData.map(c => c.name));
+    const newNames = curr.codeData.filter(c => !prevNames.has(c.name)).length;
+    if (newNames > 0 && diff === 0) parts.push(`${newNames} changed`);
+  } else if (stage === "concept") {
+    const diff = curr.conceptData.length - prev.conceptData.length;
+    if (diff > 0) parts.push(`+${diff} themes`);
+    else if (diff < 0) parts.push(`${diff} themes`);
+    const prevNames = new Set(prev.conceptData.map(c => c.name));
+    const newNames = curr.conceptData.filter(c => !prevNames.has(c.name)).length;
+    if (newNames > 0 && diff === 0) parts.push(`${newNames} changed`);
+  }
+
+  // Check if prompt changed (via label hint)
+  if (curr.label?.includes("regen") || curr.label?.includes("Regen")) {
+    parts.push("regenerated");
+  }
+
+  return parts.length > 0 ? parts.join(", ") : "minor changes";
+}
+
 function VersionNode({ data }: { data: any }) {
   const style = STAGE_COLORS[data.stage as keyof typeof STAGE_COLORS] || STAGE_COLORS.card;
   const isCurrent = data.isCurrent;
@@ -161,7 +204,7 @@ export default function Trajectory() {
     const edges: Edge[] = [];
 
     const COLUMN_X = { card: 0, code: 280, concept: 560 };
-    const ROW_HEIGHT = NODE_HEIGHT + 30;
+    const ROW_HEIGHT = NODE_HEIGHT + 50;
     const HEADER_Y = 0;
     const START_Y = 60;
 
@@ -220,16 +263,22 @@ export default function Trajectory() {
           targetPosition: Position.Left,
         });
 
-        // Vertical edge to next version in same column
+        // Vertical edge to next version in same column — with change summary
         if (index > 0) {
+          const prevVersion = versionList[index - 1];
+          const changeSummary = computeChangeSummary(prevVersion, v, stage);
           edges.push({
-            id: `e-${versionList[index - 1].id}-${v.id}`,
-            source: versionList[index - 1].id,
+            id: `e-${prevVersion.id}-${v.id}`,
+            source: prevVersion.id,
             target: v.id,
             type: "smoothstep",
             style: { stroke: STAGE_COLORS[stage].border, strokeWidth: 2 },
             animated: false,
             markerEnd: { type: MarkerType.ArrowClosed, color: STAGE_COLORS[stage].border, width: 12, height: 12 },
+            label: changeSummary,
+            labelStyle: { fontSize: 9, fill: STAGE_COLORS[stage].text, fontWeight: 600 },
+            labelBgStyle: { fill: "white", fillOpacity: 0.9 },
+            labelBgPadding: [4, 2] as [number, number],
           });
         }
       });

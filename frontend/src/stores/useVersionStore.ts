@@ -12,6 +12,7 @@ export interface VersionSnapshot {
   cardData: card[];
   codeData: code[];
   conceptData: concept[];
+  lockedCardIds?: string[]; // preserved as array for serialization
 }
 
 interface VersionStore {
@@ -41,6 +42,8 @@ const useVersionStore = create<VersionStore>((set, get) => ({
     const now = Date.now();
     const versionNum = get().versions.length + 1;
 
+    const lockedCardIds = Array.from(useCardStore.getState().lockedCardIds);
+
     const snapshot: VersionSnapshot = {
       id: `v-${now}`,
       label: label || `Version ${versionNum}`,
@@ -49,6 +52,7 @@ const useVersionStore = create<VersionStore>((set, get) => ({
       cardData,
       codeData,
       conceptData,
+      lockedCardIds,
     };
 
     set((s) => ({
@@ -85,12 +89,16 @@ const useVersionStore = create<VersionStore>((set, get) => ({
         cardData: structuredClone(currentCardData),
         codeData: structuredClone(currentCodeData),
         conceptData: structuredClone(currentConceptData),
+        lockedCardIds: Array.from(useCardStore.getState().lockedCardIds),
       };
       updatedVersions = [...versions, autoSnapshot];
     }
 
-    // Restore all stores
-    useCardStore.setState({ cardData: structuredClone(version.cardData) });
+    // Restore all stores (including lockedCardIds)
+    useCardStore.setState({
+      cardData: structuredClone(version.cardData),
+      lockedCardIds: new Set(version.lockedCardIds || []),
+    });
     useCodeStore.getState().setCodeData(structuredClone(version.codeData));
     useConceptStore.getState().setConceptData(structuredClone(version.conceptData));
 

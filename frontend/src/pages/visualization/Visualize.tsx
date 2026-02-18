@@ -209,7 +209,7 @@ const Visualize = () => {
               disabled={pdfLoading}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
             >
-              {pdfLoading ? <>⏳ Generating...</> : <>📄 View Analysis PDF</>}
+              {pdfLoading ? <>⏳ Generating...</> : <>📄 Export to PDF</>}
             </button>
           </div>
         </div>

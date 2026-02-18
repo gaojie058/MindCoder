@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import useConceptStore from "@/stores/useConceptStore";
 import useCodeStore from "@/stores/useCodeStore";
 import useCardStore from "@/stores/useCardStore";
@@ -138,7 +138,39 @@ function ConnectionLines({ containerRef }: { containerRef: React.RefObject<HTMLD
   return null;
 }
 
+// Persist codes column width across re-renders
+let persistedCodesWidth = 280;
+
 export default function ThemeMap() {
+  const [codesWidth, _setCodesWidth] = useState(persistedCodesWidth);
+  const draggingRef = useRef(false);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(0);
+
+  const setCodesWidth = (w: number) => {
+    persistedCodesWidth = w;
+    _setCodesWidth(w);
+  };
+
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    draggingRef.current = true;
+    startXRef.current = e.clientX;
+    startWidthRef.current = codesWidth;
+    const handleMove = (ev: MouseEvent) => {
+      if (!draggingRef.current) return;
+      const delta = ev.clientX - startXRef.current;
+      setCodesWidth(Math.max(160, Math.min(500, startWidthRef.current + delta)));
+    };
+    const handleUp = () => {
+      draggingRef.current = false;
+      window.removeEventListener("mousemove", handleMove);
+      window.removeEventListener("mouseup", handleUp);
+    };
+    window.addEventListener("mousemove", handleMove);
+    window.addEventListener("mouseup", handleUp);
+  }, [codesWidth]);
+
   const data = useMemo(() => buildMapData(), [
     useConceptStore((s) => s.conceptData),
     useCodeStore((s) => s.codeData),
@@ -155,15 +187,15 @@ export default function ThemeMap() {
   return (
     <div className="w-full h-full overflow-auto p-6 bg-[#FFFBF9]">
       {/* Column headers */}
-      <div className="flex items-center gap-6 mb-4 px-2">
-        <div className="flex-1">
+      <div className="flex items-center mb-4 px-2">
+        <div style={{ width: codesWidth }} className="shrink-0">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Open Codes</span>
         </div>
-        <div className="w-6" /> {/* arrow gap */}
+        <div className="w-8" /> {/* resize handle + arrow gap */}
         <div className="flex-1">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Sub-themes</span>
         </div>
-        <div className="w-6" /> {/* arrow gap */}
+        <div className="w-6" />
         <div className="flex-1">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Themes</span>
         </div>
@@ -173,8 +205,8 @@ export default function ThemeMap() {
       <div className="space-y-6">
         {data.themes.map((theme) => (
           <div key={theme.id} className="flex items-stretch gap-0">
-            {/* Codes column */}
-            <div className="flex-1 space-y-2">
+            {/* Codes column — resizable */}
+            <div className="shrink-0 space-y-2" style={{ width: codesWidth }}>
               {theme.subthemes.flatMap((st) =>
                 st.codes.map((code) => (
                   <CodeCard key={code.id} code={code} color={st.color} />
@@ -182,8 +214,15 @@ export default function ThemeMap() {
               )}
             </div>
 
-            {/* Arrow: Codes → Sub-themes */}
-            <div className="w-6 flex items-center justify-center shrink-0">
+            {/* Drag handle + Arrow: Codes → Sub-themes */}
+            <div className="w-8 flex items-center justify-center shrink-0 relative group">
+              <div
+                className="absolute inset-y-0 -left-1 w-3 cursor-col-resize z-10 flex items-center justify-center hover:bg-gray-200/50 rounded transition-colors"
+                onMouseDown={handleDragStart}
+                title="Drag to resize codes column"
+              >
+                <div className="w-0.5 h-8 bg-gray-300 group-hover:bg-gray-400 rounded-full transition-colors" />
+              </div>
               <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

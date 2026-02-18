@@ -58,18 +58,45 @@ function connectAttribute(
   // Render *text* as italic (for evidence/quotes)
   updatedContent = updatedContent.replace(/\*([^*]+)\*/g, '<em class="text-gray-500">$1</em>');
 
+  // Convert bullet points (lines starting with - or •) into styled list items
+  if (type === "content") {
+    const lines = updatedContent.split(/\n/);
+    const hasBullets = lines.some(l => /^\s*[-•]\s/.test(l));
+    if (hasBullets || lines.length > 1) {
+      let mainText = '';
+      let bulletItems: string[] = [];
+      lines.forEach(line => {
+        const trimmed = line.trim();
+        if (/^[-•]\s/.test(trimmed)) {
+          bulletItems.push(trimmed.replace(/^[-•]\s*/, ''));
+        } else if (trimmed) {
+          if (bulletItems.length > 0) {
+            // flush bullets before new paragraph
+            mainText += `<ul class="list-disc list-inside mt-1.5 mb-1.5 space-y-1 ml-2">${bulletItems.map(b => `<li>${b}</li>`).join('')}</ul>`;
+            bulletItems = [];
+          }
+          mainText += `<p class="mb-1.5">${trimmed}</p>`;
+        }
+      });
+      if (bulletItems.length > 0) {
+        mainText += `<ul class="list-disc list-inside mt-1.5 space-y-1 ml-2">${bulletItems.map(b => `<li>${b}</li>`).join('')}</ul>`;
+      }
+      updatedContent = mainText;
+    }
+  }
+
   if (tier === "1")
     return `<div class="text-md font-semibold text-[#707070] ">${updatedContent}</div>`;
   else if (tier === "2") {
     if (type === "title")
       return `<div class="text-lg font-bold text-[#505050] mt-4">${updatedContent}</div>`;
     if (type === "content")
-      return `<div class="text-sm text-gray-600">${updatedContent}</div>`;
+      return `<div class="text-sm text-gray-600 leading-relaxed">${updatedContent}</div>`;
   } else if (tier === "3") {
     if (type === "title")
       return `<div className="text-md font-semibold text-[#606060] mt-2">${updatedContent}</div>`;
     if (type === "content")
-      return `<div className="text-sm text-gray-600">${updatedContent}</div>`;
+      return `<div className="text-sm text-gray-600 leading-relaxed">${updatedContent}</div>`;
   }
 }
 

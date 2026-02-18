@@ -34,7 +34,7 @@ Provide the output strictly in JSON format without any additional text or explan
 
 Cluster Example:
 {
-  "Cluster X":{ 
+  "Cluster X":{
   "name": "placeholder",
   "chunks":
     [
@@ -74,7 +74,7 @@ Few-shot example:
 '''
 
 code_prompt='''
-You are a helpful qualitative analysis assistant. Your task is to perform axial coding based on topic clusters provided. 
+You are a helpful qualitative analysis assistant. Your task is to perform axial coding based on topic clusters provided.
 
 Task Description:
 - Data: The qualitative data for axial coding analysis is under "Uploaded Data", comprising different Clusters that can be grouped.
@@ -84,7 +84,7 @@ Task Description:
 - The number of codes should be between 4 and the total number of clusters in the uploaded data, ensuring sufficient thematic granularity while maintaining meaningful groupings.
 
 Requirement:
-- Do not modify, rephrase, or revise any part of the original cluster names, numbers, or chunk content—only organize and label them based on thematic similarity 
+- Do not modify, rephrase, or revise any part of the original cluster names, numbers, or chunk content-only organize and label them based on thematic similarity
 - ALL clusters from the input data MUST be grouped. No clusters can be omitted.
 
 
@@ -104,14 +104,14 @@ Generate the output strictly in JSON format with NO additional text or explanati
     "Code1": {
       "name": "xxxx",
       "clusters": {
-        "Cluster 1": { 
+        "Cluster 1": {
             "name": "placeholder",
             "chunks":[
                 "xxxx",
                 "xxxx"
                 ]
             },
-        "Cluster 2": { 
+        "Cluster 2": {
             "name": "placeholder",
             "chunks":[
                 "xxxx",
@@ -123,7 +123,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
     "Code2": {
       "name": "xxxx",
       "clusters": {
-        "Cluster 3": { 
+        "Cluster 3": {
             "name": "placeholder",
             "chunks":[
                 "xxxx",
@@ -136,7 +136,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
     },
     # add more codes as needed
   }
-  
+
   Few-shot example:
   {
   "Code1": {
@@ -180,11 +180,11 @@ Generate the output strictly in JSON format with NO additional text or explanati
   },
   # add more entries as needed
 }
-  
+
   '''
-  
-concept_prompt=''' 
-You are a helpful qualitative analysis assistant. I have developed codes,please assist by developing high-level descriptive concepts by grouping codes together. 
+
+concept_prompt='''
+You are a helpful qualitative analysis assistant. I have developed codes,please assist by developing high-level descriptive concepts by grouping codes together.
 
 Research Questions
 {researchQuestion}
@@ -198,10 +198,10 @@ Codes Need To Be Analysed:
 Task Description:
 1.	Group the uploaded codes based on shared high-level concepts, with the grouping guided by the underlying research question.
 2.	2.	For each concept, generate a high-level, concise, abstract name (around 2~3 words) and a clear definition. Definitions should incorporate concrete terms and patterns from the original codes, clusters, and chunks to support interpretation.
-3.	The number of concepts should be fewer than the number of codes—ideally three to five.
+3.	The number of concepts should be fewer than the number of codes-ideally three to five.
 
 Requirement:
-- Do not modify, rephrase, or revise any part of the original code names, numbers, cluster names, or content—only organize and label them based on thematic similarity.
+- Do not modify, rephrase, or revise any part of the original code names, numbers, cluster names, or content-only organize and label them based on thematic similarity.
 - ALL codes from the input data MUST be grouped. No codes can be omitted.
 
 
@@ -325,7 +325,7 @@ display_report_prompt = ''' You are an analytical assistant specializing in qual
 
 
   Requirements:
-  - Do not modify, rephrase, or revise any part of the original code names, numbers, cluster names, or content—only organize and label them based on thematic similarity.
+  - Do not modify, rephrase, or revise any part of the original code names, numbers, cluster names, or content-only organize and label them based on thematic similarity.
   - ALL concepts from the input data MUST be reported. No concepts can be omitted.
 
   Output Format:
@@ -339,15 +339,15 @@ display_report_prompt = ''' You are an analytical assistant specializing in qual
     "Sections": [
       {
         "Title": "Introduction",
-        "Content": "The data described [summary of findings]. To answer the research question, “[Insert research question here],” [insert number] key findings were identified."
+        "Content": "The data described [summary of findings]. To answer the research question, "[Insert research question here]," [insert number] key findings were identified."
       },
       {
         "Title": "Key Finding 1: [Placeholder Concept Title {Concept 1}] could affect [insert theme].",
-        "Content": "Description about the influence of this group. For example, under [Placeholder Code Title {Code 1}], it is revealed that [insert insight or example]. As noted in [Placeholder Cluster Title {Cluster 2}], '[insert representative quote or insight].'"
+        "Content": "Description about the influence of this group.\nEvidence:\n- Under [Placeholder Code Title {Code 1}], it is revealed that [insert insight or example].\n- As noted in [Placeholder Cluster Title {Cluster 2}], '[insert representative quote or insight].'"
       },
       {
         "Title": "Key Finding 2: [Placeholder Concept Title {Concept 2}] is important for [insert theme].",
-        "Content": "Description about the importance of this group. For example, [Placeholder Cluster Title {Cluster 3}], under [Placeholder Code Title {Code 2}], emphasized that '[insert quote or observation].'"
+        "Content": "Description about the importance of this group.\nEvidence:\n- [Placeholder Cluster Title {Cluster 3}], under [Placeholder Code Title {Code 2}], emphasized that '[insert quote or observation]'.\n- Another example from [Placeholder Cluster Title], '[insert quote].'"
       },
       # add more findings as needed
     ]
@@ -363,53 +363,53 @@ Here is the few-shot example in JSON format (must start with ```json\n):
     "Sections": [
       {
         "Title": "Introduction",
-        "Content": "The data described factors that contribute to effective teaching and enhanced student engagement in the classroom. To answer the research question, “What are the important factors for effective teaching?” four key findings were identified."
+        "Content": "The data described factors that contribute to effective teaching and enhanced student engagement in the classroom. To answer the research question, "What are the important factors for effective teaching?" four key findings were identified."
       },
       {
         "Title": "Key Finding 1: [Professional Development and Continuous Learning {Concept 1}] could be important for effective teaching.",
-        "Content": "Since teaching can span a long period in a teacher’s life, changes are inevitable, and teachers may also need to adopt the role of a 'student' to learn new teaching skills and reflect on their practices. For example, under [Professional Development {Code 1}], it is revealed that engaging in continuous professional development activities—such as workshops, online courses, and peer observations—is essential for educators to stay updated with the latest teaching strategies and educational research. As noted in [Mentorship {Cluster 2}], 'Mentorship is an invaluable part of professional development. Experienced teachers can provide guidance and support to new educators, helping them navigate challenges and refine their teaching skills.'"
+        "Content": "Since teaching can span a long period in a teacher's life, changes are inevitable, and teachers may also need to adopt the role of a 'student' to learn new teaching skills and reflect on their practices.\nEvidence:\n- Under [Professional Development {Code 1}], engaging in continuous professional development activities—such as workshops, online courses, and peer observations—is essential for educators to stay updated with the latest teaching strategies and educational research.\n- As noted in [Mentorship {Cluster 2}], 'Mentorship is an invaluable part of professional development. Experienced teachers can provide guidance and support to new educators, helping them navigate challenges and refine their teaching skills.'"
       },
       {
         "Title": "Key Finding 2: [Classroom Management and Engagement Strategies {Concept 2}] is important for student engagement skills.",
-        "Content": "Effective classroom management begins with establishing clear expectations and consistent routines. For example, [Classroom Management {Cluster 3}], under [Classroom {Code 2}], emphasized that 'Effective classroom management starts with establishing clear expectations and consistent routines. When students know what to expect, they’re more likely to stay engaged and participate actively in the lesson.'"
+        "Content": "Effective classroom management begins with establishing clear expectations and consistent routines.\nEvidence:\n- [Classroom Management {Cluster 3}], under [Classroom {Code 2}], emphasized that 'Effective classroom management starts with establishing clear expectations and consistent routines.'\n- 'When students know what to expect, they're more likely to stay engaged and participate actively in the lesson.'"
       },
       {
         "Title": "Key Finding 3: [Student-Centered Pedagogy {Concept 3}] encourages deeper learning.",
-        "Content": "Teachers who use student-centered methods foster greater participation and ownership of learning. For instance, under [Active Learning {Code 3}], one participant mentioned that 'Involving students in discussions and projects makes them feel more connected to the material.' This is echoed in [Collaborative Learning {Cluster 4}], which suggests that 'When students work together to solve problems, they not only understand content better but also develop communication and teamwork skills.'"
+        "Content": "Teachers who use student-centered methods foster greater participation and ownership of learning.\nEvidence:\n- Under [Active Learning {Code 3}], one participant mentioned that 'Involving students in discussions and projects makes them feel more connected to the material.'\n- This is echoed in [Collaborative Learning {Cluster 4}], which suggests that 'When students work together to solve problems, they not only understand content better but also develop communication and teamwork skills.'"
       },
       {
         "Title": "Key Finding 4: [Use of Technology in Teaching {Concept 4}] enhances instructional effectiveness.",
-        "Content": "The integration of technology can support diverse learning needs and provide access to dynamic resources. Under [Digital Tools {Code 4}], participants shared that 'Technology allows me to tailor instruction and offer interactive content that keeps students motivated.' As highlighted in [Multimedia Resources {Cluster 5}], 'Videos, simulations, and educational apps help clarify abstract concepts and engage different learning styles.'"
+        "Content": "The integration of technology can support diverse learning needs and provide access to dynamic resources.\nEvidence:\n- Under [Digital Tools {Code 4}], participants shared that 'Technology allows me to tailor instruction and offer interactive content that keeps students motivated.'\n- As highlighted in [Multimedia Resources {Cluster 5}], 'Videos, simulations, and educational apps help clarify abstract concepts and engage different learning styles.'"
       }
     ]
   }
 }
 ```
 '''
- 
-display_graph_prompt = ''' You are a helpful assistant in both qualitative analysis and dot lanaguage graph designer. Please assist with final mindmap graph generating based on the uploaded codebook in qualitative analysis.  
+
+display_graph_prompt = ''' You are a helpful assistant in both qualitative analysis and dot lanaguage graph designer. Please assist with final mindmap graph generating based on the uploaded codebook in qualitative analysis.
 
 
-    Research Questions 
-    {researchQuestions} 
+    Research Questions
+    {researchQuestions}
     (Use this question to identify the direction of the final analysis strategy. The whole analysis is for answering these questions.)
 
     Uploaded Codebook:
     {inputData}
 
     Task description:
-    1. Identify the hierarchy within the codebook and generate a dot diagram with four levels, where the root node is “Research Question,” the first level is “Concept N: XX,” the second level is “Code N: X,” and the third level is “Cluster N: XX.” 
+    1. Identify the hierarchy within the codebook and generate a dot diagram with four levels, where the root node is "Research Question," the first level is "Concept N: XX," the second level is "Code N: X," and the third level is "Cluster N: XX."
     2. Generate a mindmap graph representation using DOT language
     3. The root node of the graph should be research question.
 
 
     Requirement:
-    - Do not modify, rephrase, or revise any part of the original code names, numbers, and cluster names—only organize and label them based on thematic similarity.
-    - All concepts, codes, and cluster names should be visualized and included. 
-    - DO NOT add any chunks in mindmap. 
+    - Do not modify, rephrase, or revise any part of the original code names, numbers, and cluster names-only organize and label them based on thematic similarity.
+    - All concepts, codes, and cluster names should be visualized and included.
+    - DO NOT add any chunks in mindmap.
 
     Output format:
-    - Generate the output strictly in dot langauge with NO additional text or explanations. 
+    - Generate the output strictly in dot langauge with NO additional text or explanations.
     - If the node label is too long, break the line using (\n) line breaks in DOT to format the text. Within each line, allow no more than three words.
     - Use color scheme in few-shot example
     Here is an example of the output format:
@@ -446,7 +446,7 @@ display_graph_prompt = ''' You are a helpful assistant in both qualitative analy
       "Code 3" -> "Cluster 4";
       "Code 3" -> "Cluster 5";
     }
-    
+
     Few shot Examples:
     Here is the few-shot example in DOT language (must included in ```dot ```):
 ```dot
@@ -510,4 +510,4 @@ digraph G {
     "Code:\nIssues" -> "Cluster:\nLack of\nSupport";
 }
 ```
-    ''' 
+    '''

@@ -284,15 +284,15 @@ export default function ThemeMap() {
     <div className="w-full h-full overflow-auto p-6 bg-[#FFFBF9]">
       {/* Column headers */}
       <div className="flex items-center mb-4 px-2">
-        <div style={{ width: codesWidth }} className="shrink-0">
+        <div className="flex-1">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Open Codes</span>
         </div>
-        <div className="w-8" /> {/* resize handle + arrow gap */}
-        <div className="w-[220px] shrink-0">
+        <div className="w-8" />
+        <div className="flex-1">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Sub-themes</span>
         </div>
         <div className="w-6" />
-        <div className="w-[240px] shrink-0">
+        <div className="flex-1">
           <span className="text-[11px] font-bold uppercase tracking-wider text-gray-400">Themes</span>
         </div>
       </div>
@@ -301,8 +301,8 @@ export default function ThemeMap() {
       <div className="space-y-6">
         {data.themes.map((theme) => (
           <div key={theme.id} className="flex items-stretch gap-0">
-            {/* Open Codes column — resizable */}
-            <div className="shrink-0 space-y-2" style={{ width: codesWidth }}>
+            {/* Open Codes column */}
+            <div className="flex-1 min-w-0 space-y-2">
               {theme.subthemes.flatMap((st) =>
                 st.openCodes.map((oc) => (
                   <OpenCodeCard key={oc.id} code={oc} color={st.color} />
@@ -310,22 +310,15 @@ export default function ThemeMap() {
               )}
             </div>
 
-            {/* Drag handle + Arrow: Codes → Sub-themes */}
-            <div className="w-8 flex items-center justify-center shrink-0 relative group">
-              <div
-                className="absolute inset-y-0 -left-1 w-3 cursor-col-resize z-10 flex items-center justify-center hover:bg-gray-200/50 rounded transition-colors"
-                onMouseDown={handleDragStart}
-                title="Drag to resize codes column"
-              >
-                <div className="w-0.5 h-8 bg-gray-300 group-hover:bg-gray-400 rounded-full transition-colors" />
-              </div>
+            {/* Arrow: Codes → Sub-themes */}
+            <div className="w-8 flex items-center justify-center shrink-0">
               <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </div>
 
             {/* Sub-themes column */}
-            <div className="w-[220px] shrink-0 space-y-2 flex flex-col justify-center">
+            <div className="flex-1 min-w-0 space-y-2 flex flex-col justify-center">
               {theme.subthemes.map((st) => (
                 <SubthemeCard key={st.id} subtheme={st} />
               ))}
@@ -339,7 +332,7 @@ export default function ThemeMap() {
             </div>
 
             {/* Theme column */}
-            <div className="w-[240px] shrink-0 flex items-center">
+            <div className="flex-1 min-w-0 flex items-center">
               <ThemeCard theme={theme} />
             </div>
           </div>

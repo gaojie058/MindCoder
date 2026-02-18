@@ -30,54 +30,53 @@ function darken(hex: string, amount = 0.3): string {
   return `#${dr.toString(16).padStart(2, "0")}${dg.toString(16).padStart(2, "0")}${db.toString(16).padStart(2, "0")}`;
 }
 
-type MapData = {
-  themes: {
-    id: string;
-    name: string;
-    definition: string;
-    color: string;
-    subthemes: {
-      id: string;
-      name: string;
-      color: string;
-      codes: {
-        id: string;
-        name: string;
-        segments: { id: string; name: string; source: string }[];
-      }[];
-    }[];
-  }[];
+type OpenCodeItem = {
+  id: string;
+  name: string;
+  segments: { id: string; source: string }[];
 };
+
+type SubthemeItem = {
+  id: string;
+  name: string;
+  color: string;
+  openCodes: OpenCodeItem[];
+};
+
+type ThemeItem = {
+  id: string;
+  name: string;
+  definition: string;
+  color: string;
+  subthemes: SubthemeItem[];
+};
+
+type MapData = { themes: ThemeItem[] };
 
 function buildMapData(): MapData {
   const { conceptData } = useConceptStore.getState();
-  const { codeData } = useCodeStore.getState();
-  const { cardData } = useCardStore.getState();
 
   const themes = conceptData.map((concept: concept, ci: number) => {
     const color = concept.color || CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
 
-    // concept.codes is Record<string, code[]>
+    // concept.codes is Record<string, code[]> — these are sub-themes
     const subthemes = Object.entries(concept.codes).flatMap(([_key, codes]) =>
-      codes.map((code: code) => {
-        // code.data is Record<string, card[]>
-        const codeCards = Object.values(code.data || {}).flat();
-        const segments = codeCards.flatMap((c: card) =>
-          (c.topics || []).map((dp) => ({
+      codes.map((codeItem: code) => {
+        // codeItem.data is Record<string, card[]> — these are open codes
+        const openCodes: OpenCodeItem[] = Object.values(codeItem.data || {}).flat().map((c: card) => ({
+          id: c.id,
+          name: c.name,
+          segments: (c.topics || []).map((dp) => ({
             id: dp.id || dp.uuid,
-            name: c.name,
             source: dp.content || "",
-          }))
-        );
+          })),
+        }));
+
         return {
-          id: code.id,
-          name: code.name,
-          color: code.color || lighten(color, 0.15),
-          codes: [{
-            id: code.id,
-            name: code.name,
-            segments,
-          }],
+          id: codeItem.id,
+          name: codeItem.name,
+          color: codeItem.color || lighten(color, 0.15),
+          openCodes,
         };
       })
     );
@@ -94,8 +93,8 @@ function buildMapData(): MapData {
   return { themes };
 }
 
-// Expandable code card with segments
-function CodeCard({ code, color }: { code: MapData["themes"][0]["subthemes"][0]["codes"][0]; color: string }) {
+// Expandable open code card with segments
+function OpenCodeCard({ code, color }: { code: OpenCodeItem; color: string }) {
   const [expanded, setExpanded] = useState(false);
   const segCount = code.segments.length;
 
@@ -205,11 +204,11 @@ export default function ThemeMap() {
       <div className="space-y-6">
         {data.themes.map((theme) => (
           <div key={theme.id} className="flex items-stretch gap-0">
-            {/* Codes column — resizable */}
+            {/* Open Codes column — resizable */}
             <div className="shrink-0 space-y-2" style={{ width: codesWidth }}>
               {theme.subthemes.flatMap((st) =>
-                st.codes.map((code) => (
-                  <CodeCard key={code.id} code={code} color={st.color} />
+                st.openCodes.map((oc) => (
+                  <OpenCodeCard key={oc.id} code={oc} color={st.color} />
                 ))
               )}
             </div>
@@ -241,7 +240,7 @@ export default function ThemeMap() {
                 >
                   <div className="text-xs font-semibold text-gray-700">{st.name}</div>
                   <div className="text-[10px] text-gray-500 mt-0.5">
-                    {st.codes.length} code{st.codes.length !== 1 ? "s" : ""} · {st.codes.reduce((n, c) => n + c.segments.length, 0)} segments
+                    {st.openCodes.length} code{st.openCodes.length !== 1 ? "s" : ""} · {st.openCodes.reduce((n, c) => n + c.segments.length, 0)} segments
                   </div>
                 </div>
               ))}

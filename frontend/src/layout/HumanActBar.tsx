@@ -160,7 +160,7 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
   const suggestions = SUGGESTIONS[stepName] || [];
 
   return (
-    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 flex-shrink-0 rounded-xl mt-2 border border-amber-200/50 overflow-hidden">
+    <div className="w-full bg-gradient-to-r from-amber-50 to-orange-50/60 flex-shrink-0 rounded-xl mt-2 border border-amber-200/50 shadow-lg overflow-hidden">
       {/* Drag handle */}
       {!collapsed && (
         <div

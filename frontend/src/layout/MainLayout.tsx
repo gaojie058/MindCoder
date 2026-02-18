@@ -158,7 +158,7 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
         {collapsed ? '›' : '‹'}
       </button>
       {!collapsed && (
-        <div className="flex flex-col h-full rounded-xl border border-indigo-200/60 overflow-hidden bg-white">
+        <div className="flex flex-col h-full rounded-xl border border-indigo-200/60 shadow-lg overflow-hidden bg-white">
           <AreaLabel
             icon="🤖"
             title="AI Agent"

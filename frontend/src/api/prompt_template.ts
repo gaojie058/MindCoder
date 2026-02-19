@@ -101,7 +101,7 @@ Task Description:
 - Grouping: Group similar "Code X" based on high-level thematic overlap. Maintain the original Code numbers (e.g., "Code 4" should remain "Code 4"), even after grouping.
 - Coding: Propose and assign a group name (i.e., Sub-Theme X) to each group that best represents the main theme or topic of the grouped Codes.
 - Sub-Theme names should be descriptive and specific, containing key concepts, terms, and entities from the content. Each sub-theme name should be 4-8 words long and clearly reflect the main theme of its grouped Codes.
-- For each sub-theme, write a plain-language definition (2-3 sentences) that starts with a verb. Explain what these codes talk about, what they share, and why they form one group.
+- For each sub-theme, write a plain-language definition (2-3 sentences). Start with "This sub-theme..." as the subject, then a verb describing what it covers. Then explain why the codes are grouped together (e.g. "They are grouped because...").
 - The number of sub-themes should be between 5 and the total number of Codes in the uploaded data, ensuring sufficient thematic granularity while maintaining meaningful groupings.
 - In "metadata", provide 2 short examples showing why specific codes belong to a sub-theme.
 - In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 examples:
@@ -113,8 +113,8 @@ Task Description:
 Requirement:
 - Do not modify, rephrase, or revise any part of the original Code names, Code numbers, or chunk content-only organize and label them based on thematic similarity
 - ALL Codes from the input data MUST be grouped. No Codes can be omitted.
-- Definition: 2-3 sentences (max 300 characters) in plain everyday language. Start with a verb. No examples, no jargon.
-    1) Describe what the codes talk about and what connects them — in words anyone can understand.
+- Definition: 2-3 sentences (max 300 characters) in plain everyday language. No examples, no jargon.
+    1) Start with "This sub-theme..." then describe what it covers. Follow with why the codes belong together.
     2) Stick to what the data actually says — don't speculate or interpret beyond the surface meaning.
 - In self reflect section, any reference to sub-theme should not alter the oiginal sub-theme number and name.
 - Avoid Sub-Theme number and Code number in "metadata" section, use Sub-Themes 【Sub-Theme Name PlaceHolder】 and Code 【Code Name PlaceHolder】 instead.
@@ -130,7 +130,7 @@ Follow the structure below:
 {
     "Sub-Theme 1": {
       "name": "xxxx",
-      "definition": "Describes what these codes talk about and what connects them.",
+      "definition": "This sub-theme covers XXX. They are grouped together because YYY.",
       "codes": {
         "Code 1": {
             "name": "placeholder",
@@ -150,7 +150,7 @@ Follow the structure below:
     },
     "Sub-Theme 2": {
       "name": "xxxx",
-      "definition": "Describes what these codes talk about and what connects them.",
+      "definition": "This sub-theme covers XXX. They are grouped together because YYY.",
       "codes": {
         "Code 3": {
             "name": "placeholder",
@@ -196,7 +196,7 @@ Theme Style
 
 Task Description:
 1.	Group the uploaded sub-themes based on shared high-level themes, with the grouping guided by the underlying research question.
-2.	For each theme, write a plain-language definition (2-3 sentences) that starts with a verb. Explain what these sub-themes talk about, what they share, and why they form one group.
+2.	For each theme, write a plain-language definition (2-3 sentences). Start with "This theme..." as the subject, then a verb describing what it covers. Then explain why the sub-themes are grouped together.
 3.	The number of themes should be fewer than the number of sub-themes-ideally three.
 4. In "metadata", provide 2 short examples showing why specific sub-themes belong to a theme.
 5. In "metadata" self_reflection, be concise but ALWAYS reference specific Code【Name】 or sub-theme examples:
@@ -207,8 +207,8 @@ Task Description:
 Requirement:
 - Do not modify, rephrase, or revise any part of the original sub-theme names,  sub-theme numbers, code names, code numbers, or content-only organize and label them based on thematic similarity.
 - ALL sub-themes from the input data MUST be grouped. No sub-themes can be omitted.
-- Definition: 2-3 sentences (max 300 characters) in plain everyday language. Start with a verb. No examples, no jargon.
-    1) Describe what the sub-themes talk about and what connects them — in words anyone can understand.
+- Definition: 2-3 sentences (max 300 characters) in plain everyday language. No examples, no jargon.
+    1) Start with "This theme..." then describe what it covers. Follow with why the sub-themes belong together.
     2) Stick to what the data actually says — don't speculate or interpret beyond the surface meaning.
 - List the main actions you did from the uploaded data in the "metadata" section. And the rationale for the actions you did.
 - In self reflect section, any reference to theme should not alter the oiginal theme number and name.
@@ -220,7 +220,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
 {
   "Theme 1": {
     "name": "xxx",
-    "definition": "Describes what these sub-themes talk about and what connects them.",
+    "definition": "This theme covers XXX. They are grouped together because YYY.",
     "subthemes": {
       "Sub-Theme 1": {
         "name": "xxxx",
@@ -258,7 +258,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
     },
     "Theme 2": {
     "name": "xxx",
-    "definition": "Describes what these sub-themes talk about and what connects them.",
+    "definition": "This theme covers XXX. They are grouped together because YYY.",
     "subthemes": {
       "Sub-Theme 3": {
         "name": "xxxx",

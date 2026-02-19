@@ -53,8 +53,9 @@ function san(str: string): string {
     .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '')
     .replace(/[\u2500-\u27BF]/g, '')
     .replace(/[\uFE00-\uFE0F]/g, '')
-    .replace(/[\u3010\u3011]/g, '')        // 【】
-    .replace(/[\u300C\u300D\u300E\u300F]/g, '')  // 「」『』
+    .replace(/\u3010/g, '[').replace(/\u3011/g, ']')        // 【→[ 】→]
+    .replace(/\u300C/g, '[').replace(/\u300D/g, ']')      // 「→[ 」→]
+    .replace(/\u300E/g, '[').replace(/\u300F/g, ']')      // 『→[ 』→]
     .replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))  // fullwidth → ASCII
     .replace(/[^\x20-\x7E\n\r\t]/g, '');  // strip any remaining non-ASCII
 }

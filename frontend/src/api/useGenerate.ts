@@ -7,7 +7,7 @@ import { updateStoreData } from "@/stores/useCardStore";
 import { updateCodeStoreData } from "@/stores/useCodeStore";
 import useConceptStore, { updateConceptStoreData } from "@/stores/useConceptStore";
 import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStore";
-import { generatePDFFromServer } from "./pdfService";
+import renderPDF from "./renderPDF";
 import { API_URL } from "./api";
 import { create } from "zustand";
 import useHistoryStore from "@/stores/useHistoryStore";
@@ -250,26 +250,9 @@ export const useGenerate = () => {
 
       useDisplayStore.getState().set({ activeGraphType });
 
-      // Call Python ReportLab server
-      const blob = await generatePDFFromServer();
-
-      // Convert Blob to base64 and save to history
-      return new Promise<void>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = function () {
-          const base64data = reader.result as string;
-          if (base64data && typeof base64data === 'string') {
-            const { addHistoryEntry } = useHistoryStore.getState();
-            const title = `${report.title || `Report ${new Date().toLocaleString()}`}`;
-            addHistoryEntry(base64data, title);
-            resolve();
-          } else {
-            reject(new Error("Failed to convert PDF to base64"));
-          }
-        };
-        reader.onerror = () => reject(new Error("Error reading PDF blob"));
-        reader.readAsDataURL(blob);
-      });
+      // Use frontend pdfmake
+      const conceptData = useConceptStore.getState().conceptData;
+      await renderPDF(report, conceptData);
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {

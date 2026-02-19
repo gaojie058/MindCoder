@@ -309,30 +309,7 @@ export default function Labeling() {
         <span className="text-[#CB9180]">🤖 AI-generated: {stats.aiGenerated}</span>
         <span className="text-[#CB9180]">•</span>
         <span className="text-[#8B5E4B]">✏️ User edited: {stats.userEdited}</span>
-        <button
-          className="ml-auto text-[#CB9180] hover:text-[#8B5E4B] transition-colors text-xs underline"
-          onClick={() => setSummaryOpen(!summaryOpen)}
-        >
-          {summaryOpen ? "Hide" : "Show"} per-file summary
-        </button>
       </div>
-      {/* Per-file Summary Panel */}
-      {summaryOpen && (
-        <div className="w-full px-8 py-3 bg-[#FFFBF9] border-b border-[#CB9180]/10 flex-shrink-0">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 text-xs">
-            {Object.entries(stats.perFile)
-              .filter(([, v]) => v.codeCount > 0)
-              .map(([id, v]) => (
-                <div key={id} className="bg-white rounded-lg p-2 border border-[#CB9180]/15 shadow-sm">
-                  <div className="font-medium text-[#8B5E4B] truncate">{v.name}</div>
-                  <div className="text-gray-500 mt-0.5">
-                    {v.codeCount} codes ({v.aiCount} AI, {v.codeCount - v.aiCount} user)
-                  </div>
-                </div>
-              ))}
-          </div>
-        </div>
-      )}
       <div className="px-6 pt-6 pb-6 w-full flex-1 flex overflow-auto gap-4">
         <div className="flex-1 flex flex-col overflow-auto scrollbar-thin">
           <div className="flex flex-col gap-4">

@@ -52,7 +52,11 @@ function san(str: string): string {
     .replace(/[\u27E9\u232A\u3009]/g, '>')
     .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '')
     .replace(/[\u2500-\u27BF]/g, '')
-    .replace(/[\uFE00-\uFE0F]/g, '');
+    .replace(/[\uFE00-\uFE0F]/g, '')
+    .replace(/[\u3010\u3011]/g, '')        // 【】
+    .replace(/[\u300C\u300D\u300E\u300F]/g, '')  // 「」『』
+    .replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))  // fullwidth → ASCII
+    .replace(/[^\x20-\x7E\n\r\t]/g, '');  // strip any remaining non-ASCII
 }
 
 // Bold text inside [brackets], clean {group} tags

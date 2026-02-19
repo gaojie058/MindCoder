@@ -108,9 +108,14 @@ function sanitizeText(str: string): string {
     .replace(/[\u2039\u203A]/g, "'")                   // single guillemets
     .replace(/\u00B7/g, '-')                           // middle dot
     .replace(/[\u2192\u2794\u279C\u27A1]/g, '->')      // arrows
-    // Remove only known-problematic invisible/control chars; keep all printable chars
-    // (Roboto covers Latin, Greek, Cyrillic; pdfmake will show □ for unsupported glyphs)
-    .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '');
+    .replace(/[\u27E8\u2329\u3008]/g, '<')             // left angle brackets ⟨〈
+    .replace(/[\u27E9\u232A\u3009]/g, '>')             // right angle brackets ⟩〉
+    .replace(/[\u2018\u2019\u02BC\u02BB]/g, "'")       // modifier apostrophes
+    .replace(/[\u201C\u201D]/g, '"')                    // curly double quotes (catch-all)
+    // Remove invisible/control chars + any remaining chars Roboto can't render (U+2500+ symbols)
+    .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '')
+    .replace(/[\u2500-\u27BF]/g, '')                    // box drawing, misc symbols
+    .replace(/[\uFE00-\uFE0F]/g, '');                   // variation selectors
 }
 
 function cleanContent(text: string): any[] {

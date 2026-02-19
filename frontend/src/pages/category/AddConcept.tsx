@@ -130,38 +130,38 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
       className=" w-full  shadow-md border rounded-xl overflow-visible"
       style={{ backgroundColor: tempColor || "#E3C8C0" }}
     >
-      <div className=" w-full p-3 rounded-xl shadow-md flex justify-between items-center text-[#C66B50] ">
-        <div className=" text-lg font-zen font-semibold ">Add New Theme</div>
-        <div className="flex items-center gap-4">
+      <div className="w-full px-3 py-2 rounded-xl shadow-sm flex justify-between items-center text-[#C66B50]">
+        <div className="text-sm font-zen font-semibold">Add New Theme</div>
+        <div className="flex items-center gap-2">
           <div
-            className="flex items-center gap-1 p-2 bg-[#FFF3EE] rounded-md cursor-pointer"
+            className="flex items-center gap-1 px-2 py-1.5 bg-[#FFF3EE] rounded-md cursor-pointer"
             onClick={handleCancel}
           >
-            <div className="text-sm">Cancel</div>
+            <div className="text-xs">Cancel</div>
           </div>
           <div
-            className="flex items-center gap-1 p-2 bg-[#FFF3EE] rounded-md cursor-pointer"
+            className="flex items-center gap-1 px-2 py-1.5 bg-[#FFF3EE] rounded-md cursor-pointer"
             onClick={handleSave}
           >
-            <img src={savelogo} className="w-5 h-5" />
-            <div className="text-sm">Save changes</div>
+            <img src={savelogo} className="w-4 h-4" />
+            <div className="text-xs">Save</div>
           </div>
         </div>
       </div>
-      <div className="w-full p-3">
-        <div className="w-[96%] flex items-center border rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
+      <div className="w-full px-3 py-2">
+        <div className="w-[96%] flex items-center border rounded-lg shadow-sm mb-2 p-1 mx-auto bg-white">
           <Input
             type="text"
-            className="text-ellipsis resize-none outline-none h-10 font-semibold border border-gray"
+            className="text-ellipsis resize-none outline-none h-8 text-sm border border-gray"
             value={value}
             onChange={handleChange}
-            placeholder="Enter Theme name"
+            placeholder="Enter theme name"
           />
           <AIGenerateButton onClick={handleAIGenerateName} loading={loadingName} />
         </div>
-        <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
+        <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-2 p-1 mx-auto bg-white">
           <textarea
-            className="rounded-lg text-ellipsis p-1 min-h-[50px] flex-grow outline-none font-semibold border border-gray text-sm"
+            className="rounded-lg text-ellipsis p-1 min-h-[40px] flex-grow outline-none text-xs border border-gray"
             value={definition}
             placeholder="Enter definition"
             onChange={(e) => setDefinition(e.target.value)}
@@ -170,11 +170,11 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
         </div>
       </div>
 
-      <div className="text-[#707070] text-lg px-3 font-zen font-semibold rounded-md">
-        <div className="mb-2">Choose a color for this Theme</div>
+      <div className="text-[#707070] text-xs px-3 font-zen font-semibold rounded-md">
+        <div className="mb-1.5">Choose a color for this Theme</div>
         <ColorSelector conceptId="" onColorChange={setTempColor} />
       </div>
-      <div className="w-full p-3">
+      <div className="w-full px-3 py-2">
         <MultiSelectDropdown
           label="Choose Sub-Theme(s) for this Theme"
           options={codeData.map((code) => ({ id: code.id, label: code.name }))}

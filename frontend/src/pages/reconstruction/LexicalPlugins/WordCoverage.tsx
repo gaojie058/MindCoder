@@ -53,17 +53,21 @@ export default function WordCoverage() {
   const [isRecalculating, setIsRecalculating] = useState(false);
 
   // Auto-trigger coverage calculation when file or cards change
+  // Use cardData.length as a dependency to detect when cards are regenerated
+  const cardDataLength = cardData.length;
+  const cardDataSignature = useMemo(() => {
+    // Create a lightweight signature from card IDs + topic counts to detect actual changes
+    return cardData.map(c => `${c.id}:${c.topics?.length || 0}`).join(',');
+  }, [cardData]);
+
   useEffect(() => {
-    if (!selectedFile || !cardData.length) return;
-    const saved = fileCoverageData[selectedFile];
-    if (!saved || saved.coveragePercentage === 0 || saved.coveragePercentage === -1) {
-      // Auto-recalculate after a short delay
-      const timer = setTimeout(() => {
-        handleManualRecalculation();
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedFile, cardData, fileCardMap]);
+    if (!selectedFile || !cardDataLength) return;
+    // Always recalculate when cardData changes (not just when coverage is 0/-1)
+    const timer = setTimeout(() => {
+      handleManualRecalculation();
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [selectedFile, cardDataSignature, fileCardMap]);
 
   const handleManualRecalculation = async () => {
     if (!selectedFile || isRecalculating) return;

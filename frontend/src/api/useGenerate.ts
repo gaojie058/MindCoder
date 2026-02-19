@@ -209,9 +209,25 @@ export const useGenerate = () => {
   // Add this new function to trigger coverage recalculation for all files
   const triggerCoverageRecalculationForAllFiles = async () => {
     const { uploadedFiles, setFileCoverageData } = useAppStore.getState();
-    const { cardData, fileCardMap } = useCardStore.getState();
 
     console.log('Triggering coverage recalculation for all files after card regeneration');
+
+    // Small delay to ensure Zustand store has fully settled after updateStoreData
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    // Read cardData and fileCardMap AFTER the delay so we get the latest state
+    const { cardData, fileCardMap } = useCardStore.getState();
+
+    console.log('Coverage recalc using cardData length:', cardData.length, 'fileCardMap keys:', Object.keys(fileCardMap));
+
+    // Clear all existing coverage data first to force fresh calculation
+    for (const file of uploadedFiles) {
+      setFileCoverageData(file.name, {
+        totalWords: 0,
+        coveredWords: 0,
+        coveragePercentage: 0,
+      });
+    }
 
     // Process each file
     for (const file of uploadedFiles) {
@@ -223,7 +239,7 @@ export const useGenerate = () => {
           reader.readAsText(file);
         });
 
-        // Trigger coverage calculation
+        // Trigger coverage calculation with fresh store data
         manuallyTriggerCoverageCalculation(
           file.name,
           fileContent,

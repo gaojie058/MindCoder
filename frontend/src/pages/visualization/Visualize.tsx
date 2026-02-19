@@ -33,7 +33,7 @@ const Visualize = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const containerRef = useRef();
   const { codeData } = useCodeStore();
-  const { graph, report } = useDisplayStore();
+  // graph no longer needed
   const { generatePDF, pdfLoading } = useGenerate();
 
   const openPdfInNewTab = useCallback((entry: any) => {
@@ -128,7 +128,9 @@ const Visualize = () => {
     useDisplayStore.getState().set({ activeGraphType });
   }, [activeGraphType]);
 
-  if (!graph || !graph.dot) {
+  // Graph is no longer generated (ThemeMap replaces it), so only check report
+  const { report } = useDisplayStore();
+  if (!report) {
     return <div>Loading...</div>;
   }
 

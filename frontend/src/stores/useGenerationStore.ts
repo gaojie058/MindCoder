@@ -14,7 +14,7 @@ import useVersionStore from "@/stores/useVersionStore";
 export type GenStage = "idle" | "card" | "code" | "concept" | "display" | "done" | "error";
 
 export const stageLabels: Record<GenStage, string> = {
-  idle: "Generate All Steps",
+  idle: "Generate Sub-themes & Themes",
   card: "Generating Open Codes…",
   code: "Generating Sub-themes…",
   concept: "Generating Themes…",

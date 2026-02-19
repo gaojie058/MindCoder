@@ -163,12 +163,17 @@ export default function MainLayout({
   const autoRunTriggered = useRef(false);
 
   // Auto-run generation when coming directly from HomePage
+  // Step 1 (card) runs via regenerateStep → shows Regenerate button spinning
+  // Then code+concept run via runRemaining → shows "Generate Sub-themes & Themes" button spinning
   useEffect(() => {
     const { autoRun, setAutoRun } = useInfoStore.getState();
     if (autoRun && !autoRunTriggered.current && stepName === "card") {
       autoRunTriggered.current = true;
       setAutoRun(false);
-      useGenerationStore.getState().runAllSelected();
+      const gen = useGenerationStore.getState();
+      gen.regenerateStep("card").then(() => {
+        useGenerationStore.getState().runRemaining();
+      });
     }
   }, [stepName]);
 

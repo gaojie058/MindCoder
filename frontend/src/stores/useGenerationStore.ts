@@ -68,18 +68,9 @@ async function executeStep(step: string, taskType?: string) {
     const res = await axios.post(API_URL, await packageData("concept"));
     await updateConceptStoreData(res.data, true);
   } else if (step === "display") {
-    if (!taskType) {
-      const [reportRes, graphRes] = await Promise.all([
-        axios.post(API_URL, await packageData("display", "report")),
-        axios.post(API_URL, await packageData("display", "graph")),
-      ]);
-      await updateDisplayStoreData({ report: reportRes.data });
-      await updateDisplayStoreData({ graph: graphRes.data });
-    } else {
-      const res = await axios.post(API_URL, await packageData("display", taskType));
-      if (taskType === "report") await updateDisplayStoreData({ report: res.data });
-      else await updateDisplayStoreData({ graph: res.data });
-    }
+    // Only generate report — graph is no longer needed (ThemeMap replaces it)
+    const reportRes = await axios.post(API_URL, await packageData("display", "report"));
+    await updateDisplayStoreData({ report: reportRes.data });
   }
 }
 

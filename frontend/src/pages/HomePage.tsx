@@ -132,7 +132,6 @@ function HomePage() {
     card: "Step 1: Open Coding",
     code: "Step 2: Sub-themes",
     concept: "Step 3: Themes",
-    display: "Step 4: Visualization (Report + Mind Map)",
   };
 
   return (
@@ -258,7 +257,7 @@ function HomePage() {
           <div className="bg-white rounded-2xl shadow-md p-6">
             <h2 className="text-lg font-semibold font-zen mb-3">Run Steps</h2>
             <div className="space-y-2 mb-4">
-              {(["card", "code", "concept", "display"] as const).map((step) => (
+              {(["card", "code", "concept"] as const).map((step) => (
                 <label key={step} className="flex items-center gap-3 cursor-pointer">
                   <input
                     type="checkbox"

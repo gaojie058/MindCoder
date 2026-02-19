@@ -168,7 +168,7 @@ export default function MainLayout({
     if (autoRun && !autoRunTriggered.current && stepName === "card") {
       autoRunTriggered.current = true;
       setAutoRun(false);
-      useGenerationStore.getState().regenerateStep("card");
+      useGenerationStore.getState().runAllSelected();
     }
   }, [stepName]);
 

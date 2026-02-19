@@ -29,6 +29,7 @@ interface GenerationStore {
   bgRunning: boolean;
   bgError: string;
   runRemaining: () => Promise<void>;
+  runAllSelected: () => Promise<void>;
 
   // Regenerate (single step / subsequent) state
   regenStage: GenStage;
@@ -104,6 +105,33 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
       set({ bgStage: "done", bgRunning: false });
     } catch (err: any) {
       console.error("Background generation error:", err);
+      set({ bgStage: "error", bgError: err?.message || "Generation failed", bgRunning: false });
+    }
+  },
+
+  runAllSelected: async () => {
+    if (get().bgRunning || get().regenRunning) return;
+
+    const { selectedSteps } = useInfoStore.getState();
+    const allSteps: string[] = ["card", "code", "concept"];
+    const stepsToRun = allSteps.filter((s) => selectedSteps.includes(s));
+
+    if (stepsToRun.length === 0) return;
+
+    set({ bgStage: stepsToRun[0] as GenStage, bgError: "", bgRunning: true });
+
+    try {
+      for (const step of stepsToRun) {
+        set({ bgStage: step as GenStage });
+        if (step === "card") {
+          useCardStore.getState().setCardData([]);
+          useCardStore.setState({ fileCardMap: {} });
+        }
+        await executeStepAndSave(step);
+      }
+      set({ bgStage: "done", bgRunning: false });
+    } catch (err: any) {
+      console.error("Run all selected error:", err);
       set({ bgStage: "error", bgError: err?.message || "Generation failed", bgRunning: false });
     }
   },

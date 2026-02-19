@@ -7,9 +7,8 @@ import { updateStoreData } from "@/stores/useCardStore";
 import { updateCodeStoreData } from "@/stores/useCodeStore";
 import useConceptStore, { updateConceptStoreData } from "@/stores/useConceptStore";
 import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStore";
-import renderPDF from "./renderPDF";
+import { generatePDFFromServer } from "./pdfService";
 import { API_URL } from "./api";
-import pdfMake from "pdfmake/build/pdfmake";
 import { create } from "zustand";
 import useHistoryStore from "@/stores/useHistoryStore";
 import useVersionStore from "@/stores/useVersionStore";
@@ -244,50 +243,33 @@ export const useGenerate = () => {
     try {
       setPdfLoading(true);
       const { report } = useDisplayStore.getState();
-      const { conceptData } = useConceptStore.getState();
 
       if (!report) {
         throw new Error("Report data is not available");
       }
 
-      // Before generating the PDF, save the active graph type to DisplayStore
-      // This way the PDF generation can access it if needed
       useDisplayStore.getState().set({ activeGraphType });
 
-      const generatedDocDefinition = await renderPDF(report, conceptData);
-      if (generatedDocDefinition) {
-        const pdfDocGenerator = pdfMake.createPdf(generatedDocDefinition);
+      // Call Python ReportLab server
+      const blob = await generatePDFFromServer();
 
-        // Use Promise to handle the async PDF generation
-        return new Promise<void>((resolve, reject) => {
-          pdfDocGenerator.getBlob((blob: Blob) => {
-            // Convert Blob to base64 string and save to history
-            const reader = new FileReader();
-            reader.onloadend = function () {
-              const base64data = reader.result as string;
-              // Make sure we're getting a valid base64 string
-              if (base64data && typeof base64data === 'string') {
-                const { addHistoryEntry } = useHistoryStore.getState();
-                // Include graph type in the title
-                const title = `${report.title || `Report ${new Date().toLocaleString()}`}`;
-                addHistoryEntry(base64data, title);
-
-                // For debugging
-                // console.log("PDF saved to history with length:", base64data.length);
-                // console.log("PDF saved successfully with title:", title);
-                resolve();
-              } else {
-                console.error("Failed to convert PDF to base64:", base64data);
-                reject(new Error("Failed to convert PDF to base64"));
-              }
-            };
-            reader.onerror = () => {
-              reject(new Error("Error reading PDF blob"));
-            };
-            reader.readAsDataURL(blob);
-          });
-        });
-      }
+      // Convert Blob to base64 and save to history
+      return new Promise<void>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = function () {
+          const base64data = reader.result as string;
+          if (base64data && typeof base64data === 'string') {
+            const { addHistoryEntry } = useHistoryStore.getState();
+            const title = `${report.title || `Report ${new Date().toLocaleString()}`}`;
+            addHistoryEntry(base64data, title);
+            resolve();
+          } else {
+            reject(new Error("Failed to convert PDF to base64"));
+          }
+        };
+        reader.onerror = () => reject(new Error("Error reading PDF blob"));
+        reader.readAsDataURL(blob);
+      });
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {

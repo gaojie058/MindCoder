@@ -479,7 +479,6 @@ async function ensureCoverage() {
   const { uploadedFiles, fileCoverageData, setFileCoverageData } = useAppStore.getState();
   const { cardData, fileCardMap } = useCardStore.getState();
   for (const file of uploadedFiles) {
-    if (fileCoverageData[file.name]) continue;
     try {
       const content = await new Promise<string>(resolve => {
         const reader = new FileReader();

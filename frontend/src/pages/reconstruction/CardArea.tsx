@@ -217,9 +217,18 @@ export function CodesPanel() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCodesExpanded(!codesExpanded)}
-              className="text-[11px] text-gray-400 hover:text-[#CB9180] transition-colors flex items-center gap-1"
+              className="text-gray-400 hover:text-[#CB9180] transition-colors p-1"
+              title={codesExpanded ? "Collapse" : "Expand"}
             >
-              {codesExpanded ? "☰ Show Original" : "⊞ Expand"}
+              {codesExpanded ? (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 9L4 4m0 0v4m0-4h4m6 6l5 5m0 0v-4m0 4h-4" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 3h6m0 0v6m0-6l-7 7M9 21H3m0 0v-6m0 6l7-7" />
+                </svg>
+              )}
             </button>
           </div>
         </div>

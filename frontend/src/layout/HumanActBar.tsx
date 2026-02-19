@@ -79,12 +79,13 @@ interface HumanActBarProps {
   onRegenerate?: () => void;
   onRegenerateSubsequent?: () => void;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 // Persist panel height across route changes
 let persistedPanelHeight = 140;
 
-export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubsequent, loading }: HumanActBarProps) {
+export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubsequent, loading, disabled }: HumanActBarProps) {
   const [showHistory, setShowHistory] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showMemo, setShowMemo] = useState(false);
@@ -205,7 +206,7 @@ export default function HumanActBar({ stepName, onRegenerate, onRegenerateSubseq
           {onRegenerate && (
             <button
               onClick={onRegenerate}
-              disabled={loading}
+              disabled={loading || disabled}
               className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#CB9180] hover:bg-[#AA7667] disabled:opacity-50 transition-colors"
             >
               {loading ? "⏳ Running..." : "↻ Regenerate"}

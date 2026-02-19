@@ -484,7 +484,8 @@ export default function MainLayout({
             stepName={stepToName[step]}
             onRegenerate={handleRegenerate}
             onRegenerateSubsequent={handleRegenerateRest}
-            loading={loading || globalIsRunning}
+            loading={loading || regenRunning}
+            disabled={bgRunning}
           />
         </div>
       )}

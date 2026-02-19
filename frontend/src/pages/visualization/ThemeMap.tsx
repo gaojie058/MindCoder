@@ -73,14 +73,14 @@ function buildMapData(): MapData {
   const { conceptData } = useConceptStore.getState();
 
   const themes = conceptData.map((concept: concept, ci: number) => {
-    // Always assign a distinct palette color per theme index (ignore stored color which may be identical across themes)
-    const color = CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
+    // Use the stored color from the concept (assigned during generation), fallback to palette
+    const color = concept.color || CONCEPT_COLORS[ci % CONCEPT_COLORS.length];
 
     // concept.codes is Record<string, code[]> — these are sub-themes
-    // Collect all codes across all keys, assign distinct colors
+    // Collect all codes across all keys, use their stored colors
     const allCodes = Object.entries(concept.codes).flatMap(([_key, codes]) => codes);
     const subthemes = allCodes.map((codeItem: code, idx: number) => {
-      // Vary hue slightly per sub-theme within the same theme
+      // Use stored color from the code store (sub-theme), fallback to theme color variant
       const hueShift = allCodes.length > 1 ? (idx / allCodes.length) * 0.3 - 0.15 : 0;
       const baseColor = codeItem.color || shiftColor(color, hueShift);
 

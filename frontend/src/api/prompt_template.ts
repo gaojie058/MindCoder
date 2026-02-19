@@ -113,10 +113,9 @@ Task Description:
 Requirement:
 - Do not modify, rephrase, or revise any part of the original Code names, Code numbers, or chunk content-only organize and label them based on thematic similarity
 - ALL Codes from the input data MUST be grouped. No Codes can be omitted.
-- Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters).
-    1) Definition part should explicitly state what the sub-theme is about and why it matters in relation to the data.
-    2) Follow this output style: "This sub-theme captures XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.".
-    3）Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
+- Definition should be 1-2 concise sentences (max 200 characters) that directly state what the sub-theme captures and why the grouped codes belong together. No examples needed.
+    1) Be specific and direct — do not merely restate the sub-theme name.
+    2) Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
 - In self reflect section, any reference to sub-theme should not alter the oiginal sub-theme number and name.
 - Avoid Sub-Theme number and Code number in "metadata" section, use Sub-Themes 【Sub-Theme Name PlaceHolder】 and Code 【Code Name PlaceHolder】 instead.
 
@@ -131,7 +130,7 @@ Follow the structure below:
 {
     "Sub-Theme 1": {
       "name": "xxxx",
-      "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
+      "definition": "A concise definition of what this sub-theme captures and why its codes belong together.",
       "codes": {
         "Code 1": {
             "name": "placeholder",
@@ -151,7 +150,7 @@ Follow the structure below:
     },
     "Sub-Theme 2": {
       "name": "xxxx",
-      "definition": "This sub-theme describes XXX. Examples:  1) Code 【Code Name PlaceHolder】, because yyy. 2) Code 【Code Name PlaceHolder】, because yyy. 3) Code 【Code Name PlaceHolder】, because yyy.",
+      "definition": "A concise definition of what this sub-theme captures and why its codes belong together.",
       "codes": {
         "Code 3": {
             "name": "placeholder",
@@ -208,10 +207,9 @@ Task Description:
 Requirement:
 - Do not modify, rephrase, or revise any part of the original sub-theme names,  sub-theme numbers, code names, code numbers, or content-only organize and label them based on thematic similarity.
 - ALL sub-themes from the input data MUST be grouped. No sub-themes can be omitted.
-- Definition should inlcude a definition part no longer than 2 sentences (max 200 characters) and example part contains 3 (if have) examples (max 600 characters).
-    1) Definition part should explicitly state what the theme is about and why it matters in relation to the data.
-    2) Follow this output style: "This theme captures XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.".
-    3）Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
+- Definition should be 1-2 concise sentences (max 200 characters) that directly state what the theme captures and why the grouped sub-themes belong together. No examples needed.
+    1) Be specific and direct — do not merely restate the theme name.
+    2) Be written at the semantic level (surface meaning of the data), avoid speculation or latent interpretation.
 - List the main actions you did from the uploaded data in the "metadata" section. And the rationale for the actions you did.
 - In self reflect section, any reference to theme should not alter the oiginal theme number and name.
 - Avoid Theme number, Sub-Thme number, and code number in "metadata" section, use Theme 【Theme Name PlaceHolder, Sub-Theme 【Sub-Theme Name PlaceHolder】 and Code 【Code Name PlaceHolder】 instead.
@@ -222,7 +220,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
 {
   "Theme 1": {
     "name": "xxx",
-    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "definition": "A concise definition of what this theme captures and why its sub-themes belong together.",
     "subthemes": {
       "Sub-Theme 1": {
         "name": "xxxx",
@@ -260,7 +258,7 @@ Generate the output strictly in JSON format with NO additional text or explanati
     },
     "Theme 2": {
     "name": "xxx",
-    "definition": "This theme describes XXX. Examples:  1) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 2) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy. 3) Sub-Theme 【Sub-Theme Name PlaceHolder】, because yyy.",
+    "definition": "A concise definition of what this theme captures and why its sub-themes belong together.",
     "subthemes": {
       "Sub-Theme 3": {
         "name": "xxxx",

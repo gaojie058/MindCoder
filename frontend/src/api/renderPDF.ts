@@ -610,8 +610,6 @@ export default async function renderPDF(report: any, _conceptArr: concept[]): Pr
 
     content: [
       ...buildCoverPage(),
-      ...buildExecutiveSummary(report),
-      ...buildFindingsDetail(report),
       ...buildCodebook(),
       ...buildProcessPage(),
     ],

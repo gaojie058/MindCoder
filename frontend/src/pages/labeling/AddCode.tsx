@@ -8,6 +8,8 @@ import useCardStore from "@/stores/useCardStore";
 import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { card } from "@/types/stores";
 import { nanoid } from "nanoid";
+import { useGenerateButton } from "@/api/useGenerateButton";
+import AIGenerateButton from "@/components/ui/AIGenerateButton";
 
 type AddCodeProps = {
   setShow: (show: boolean) => void;
@@ -25,6 +27,9 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
   );
 
   const [unselectedCards, setUnselectedCards] = useState<card[]>([]);
+  const [loadingName, setLoadingName] = useState(false);
+  const [loadingDef, setLoadingDef] = useState(false);
+  const { generateName } = useGenerateButton();
 
   useEffect(() => {
     const unselected = cardData.filter((card) => !selectedCardIds.has(card.id));
@@ -32,6 +37,20 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
   }, [selectedCardIds, cardData]);
 
   const handleChange = (value: string) => setValue(value);
+
+  const handleAIGenerateName = async () => {
+    setLoadingName(true);
+    const result = await generateName(Array.from(selectedCardIds), cardData, "code");
+    setLoadingName(false);
+    if (result) setValue(result);
+  };
+
+  const handleAIGenerateDefinition = async () => {
+    setLoadingDef(true);
+    const result = await generateName(Array.from(selectedCardIds), cardData, "codedefinition");
+    setLoadingDef(false);
+    if (result) setDefinition(result);
+  };
 
   const generateNewId = () => {
     if (codeData.length === 0) return "1";
@@ -134,20 +153,25 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
         </div>
       </div>
       <div className="w-full p-3">
-        <Input
-          type="text"
-          value={value}
-          onChange={handleChange}
-          placeholder="Enter sub-theme name"
-        />
-      </div>
-      <div className="w-full p-3">
-        <textarea
-          className="w-full p-2 border border-gray-300 rounded-lg resize-none min-h-[60px] outline-none"
-          value={definition}
-          onChange={(e) => setDefinition(e.target.value)}
-          placeholder="Enter rationale"
-        />
+        <div className="w-[96%] flex items-center border rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
+          <Input
+            type="text"
+            className="text-ellipsis resize-none outline-none h-10 font-semibold border border-gray"
+            value={value}
+            onChange={handleChange}
+            placeholder="Enter sub-theme name"
+          />
+          <AIGenerateButton onClick={handleAIGenerateName} loading={loadingName} />
+        </div>
+        <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
+          <textarea
+            className="rounded-lg text-ellipsis p-1 min-h-[50px] flex-grow outline-none font-semibold border border-gray text-sm"
+            value={definition}
+            onChange={(e) => setDefinition(e.target.value)}
+            placeholder="Enter rationale"
+          />
+          <AIGenerateButton onClick={handleAIGenerateDefinition} loading={loadingDef} />
+        </div>
       </div>
       <div className="w-full p-3">
         <ColorSelector codeId="" onColorChange={setTempColor} />

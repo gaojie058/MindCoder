@@ -9,8 +9,7 @@ import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
 import { code } from "@/types/stores";
 import { nanoid } from "nanoid";
 import { useGenerateButton } from "@/api/useGenerateButton";
-import Button from "@/components/ui/Button";
-import lightbulb from "@/assets/icon/lightbulb.png";
+import AIGenerateButton from "@/components/ui/AIGenerateButton";
 
 type addConceptProps = {
   setShow: (show: boolean) => void;
@@ -158,13 +157,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
             onChange={handleChange}
             placeholder="Enter Theme name"
           />
-          <Button
-            onClick={handleAIGenerateName}
-            className="ml-3 flex-shrink-0 h-[36px] w-[140px] rounded-lg text-xs !text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-sm"
-          >
-            <img src={lightbulb} alt="" className="w-3.5 h-3.5 mr-1" />
-            {loadingName ? "Generating..." : "AI Generate"}
-          </Button>
+          <AIGenerateButton onClick={handleAIGenerateName} loading={loadingName} />
         </div>
         <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-3 p-1 mx-auto bg-white">
           <textarea
@@ -173,13 +166,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
             placeholder="Enter definition"
             onChange={(e) => setDefinition(e.target.value)}
           />
-          <Button
-            onClick={handleAIGenerateDefinition}
-            className="ml-3 flex-shrink-0 h-[36px] w-[140px] rounded-lg text-xs !text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-sm"
-          >
-            <img src={lightbulb} alt="" className="w-3.5 h-3.5 mr-1" />
-            {loadingDef ? "Generating..." : "AI Generate"}
-          </Button>
+          <AIGenerateButton onClick={handleAIGenerateDefinition} loading={loadingDef} />
         </div>
       </div>
 

@@ -4,7 +4,7 @@ import logoTrashGrey from "@/assets/icon/trash-grey.png";
 import editIcon from "@/assets/icon/edit.png";
 import ColorSelector from "./ConceptColorSelector";
 import savelogo from "@/assets/icon/save.png";
-import lightbulb from "@/assets/icon/lightbulb.png";
+import AIGenerateButton from "@/components/ui/AIGenerateButton";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import useConceptStore from "@/stores/useConceptStore";
@@ -359,17 +359,7 @@ export default function Concept({
                     value={value}
                     onChange={handleChange}
                   />
-                  <Button
-                    onClick={handleAIGenerateConcept}
-                    className="ml-4 flex-shrink-0 h-[40px] w-[160px] rounded-lg text-sm !text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-md"
-                  >
-                    <img
-                      src={lightbulb}
-                      alt="Lightbulb"
-                      className="w-4 h-4 mr-2"
-                    />
-                    {loadingConcept ? "Generating..." : "Get AI Generated"}
-                  </Button>
+                  <AIGenerateButton onClick={handleAIGenerateConcept} loading={loadingConcept} />
                 </div>
                 <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-4 p-1 mx-auto bg-white ">
                   <textarea
@@ -378,13 +368,7 @@ export default function Concept({
                     placeholder="Enter definition"
                     onChange={handleTextAreaChange}
                   />
-                  <Button
-                    onClick={handleAIGenerateDefinition}
-                    className="ml-4 flex-shrink-0 h-[40px] p-2 w-[160px] rounded-lg text-sm !text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-md"
-                  >
-                    <img src={lightbulb} alt="Lightbulb" className="w-4 h-4" />
-                    {loadingDefinition ? "Generating..." : "Get AI Generated"}
-                  </Button>
+                  <AIGenerateButton onClick={handleAIGenerateDefinition} loading={loadingDefinition} />
                 </div>
               </div>
 

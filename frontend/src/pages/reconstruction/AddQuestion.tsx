@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Loading from "@/components/ui/Loading";
-import lightbulb from "@/assets/icon/lightbulb.png";
+import AIGenerateButton from "@/components/ui/AIGenerateButton";
 import Bottom from "@/components/ui/Bottom";
 import frameLogo from "@/assets/frameLogo.png";
 import Button from "@/components/ui/Button";
@@ -62,13 +62,7 @@ export default function AddQuestion() {
             onChange={handleChange}
           />
           <div className="flex justify-between items-center p-4 gap-4">
-            <Button
-              onClick={handleAIGenerate}
-              className="p-2 px-3 rounded-lg text-sm text-[#62AD3C] font-semibold bg-gradient-to-r from-green-200 to-teal-200 shadow-md"
-            >
-              <img src={lightbulb} alt="Lightbulb" className="w-4 h-4 mr-2" />
-              get AI generated
-            </Button>
+            <AIGenerateButton onClick={handleAIGenerate} className="ml-0" />
             <Button
               onClick={handleSave}
               className="p-2 px-3 rounded-lg !bg-[#CB9180] hover:!bg-[#AA7667] text-sm"

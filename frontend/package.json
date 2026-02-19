@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "python3 ../scripts/pdf_server.py & vite",
+    "dev": "vite",
     "dev:frontend": "vite",
     "pdf-server": "python3 ../scripts/pdf_server.py",
     "build": "vite build",

@@ -342,8 +342,8 @@ function generateOpenCodesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 1: ", fontSize: 11, bold: true, color: BRAND.accent },
-      { text: "Open Codes", fontSize: 11, bold: true }
+      { text: "Step 1: ", fontSize: 12, bold: true, color: BRAND.accent },
+      { text: "Open Codes", fontSize: 12, bold: true }
     ],
     marginBottom: 6,
     marginTop: 8,
@@ -362,24 +362,24 @@ function generateOpenCodesProcessContent(): Content[] {
           stack: [
             {
               text: "Step Summary",
-              fontSize: 11,
+              fontSize: 9,
               bold: true,
               marginBottom: 5,
               color: BRAND.textDark
             },
             {
               text: `Total Open Codes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
-              fontSize: 10,
+              fontSize: 8,
               marginBottom: 5
             },
             {
               text: "LLM generates initial open codes from raw data segments, while human researcher reviews, refines, and validates the coding scheme.",
-              fontSize: 10,
+              fontSize: 8,
               italics: true
             }
           ],
           fillColor: '#FFFFFF',
-          margin: [10, 10, 10, 10]
+          margin: [8, 6, 8, 6]
         }]
       ]
     },
@@ -397,7 +397,7 @@ function generateOpenCodesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " AI Agent", fontSize: 11, bold: true, color: BRAND.aiPurple }
+        { text: " AI Agent", fontSize: 10, bold: true, color: BRAND.aiPurple }
       ],
       marginTop: 5,
       marginBottom: 6,
@@ -411,9 +411,9 @@ function generateOpenCodesProcessContent(): Content[] {
     if (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim()) {
       mechanicalTaskContent.push({
         text: cleanContent(cardLlmDescription),
-        fontSize: 10,
+        fontSize: 8,
         marginBottom: 6,
-        marginLeft: 5
+        marginLeft: 3
       });
     }
 
@@ -421,7 +421,7 @@ function generateOpenCodesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           marginTop: 8,
           marginBottom: 5,
@@ -430,9 +430,9 @@ function generateOpenCodesProcessContent(): Content[] {
         },
         {
           text: cleanContent(cardWhatLLMDid),
-          fontSize: 10,
+          fontSize: 8,
           marginBottom: 6,
-          marginLeft: 5
+          marginLeft: 3
         }
       );
     }
@@ -441,7 +441,7 @@ function generateOpenCodesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           marginTop: 8,
           marginBottom: 5,
@@ -450,9 +450,9 @@ function generateOpenCodesProcessContent(): Content[] {
         },
         {
           text: cleanContent(cardRationale),
-          fontSize: 10,
+          fontSize: 8,
           marginBottom: 6,
-          marginLeft: 5
+          marginLeft: 3
         }
       );
     }
@@ -464,7 +464,7 @@ function generateOpenCodesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: '#FFFFFF',
-            margin: [10, 10, 10, 10]
+            margin: [8, 6, 8, 6]
           }]
         ]
       },
@@ -480,7 +480,7 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Analysis", fontSize: 11, bold: true, color: BRAND.humanBlue }
+      { text: " Human Analysis", fontSize: 10, bold: true, color: BRAND.humanBlue }
     ],
     marginTop: 5,
     marginBottom: 6,
@@ -495,9 +495,9 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push(
     {
       text: "In this stage, the LLM offers an exploratory coding draft, while you should bring critical interpretation, contextual knowledge, and methodological rigor. Your revisions, notes, and reflections ensure that the analysis stays trustworthy and grounded in both the data and the research aims.",
-      fontSize: 10,
+      fontSize: 8,
       marginBottom: 6,
-      marginLeft: 5,
+      marginLeft: 3,
       alignment: 'justify'
     }
   );
@@ -507,7 +507,7 @@ function generateOpenCodesProcessContent(): Content[] {
     humanInterpretationContent.push(
       {
         text: "Research Question",
-        fontSize: 11,
+        fontSize: 9,
         bold: true,
         marginTop: 8,
         marginBottom: 5,
@@ -516,9 +516,9 @@ function generateOpenCodesProcessContent(): Content[] {
       },
       {
         text: cleanContent(researchQuestion),
-        fontSize: 10,
+        fontSize: 8,
         marginBottom: 6,
-        marginLeft: 5
+        marginLeft: 3
       }
     );
   }
@@ -529,7 +529,7 @@ function generateOpenCodesProcessContent(): Content[] {
     humanInterpretationContent.push(
       {
         text: "Number of Open Codes",
-        fontSize: 11,
+        fontSize: 9,
         bold: true,
         marginTop: 8,
         marginBottom: 5,
@@ -538,9 +538,9 @@ function generateOpenCodesProcessContent(): Content[] {
       },
       {
         text: `Range: ${min} - ${max} open codes per file`,
-        fontSize: 10,
+        fontSize: 8,
         marginBottom: 6,
-        marginLeft: 5
+        marginLeft: 3
       }
     );
   }
@@ -549,7 +549,7 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push(
     {
       text: "Prompt History",
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       marginTop: 8,
       marginBottom: 5,
@@ -565,15 +565,15 @@ function generateOpenCodesProcessContent(): Content[] {
       humanInterpretationContent.push(
         {
           text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 9,
+          fontSize: 7,
           bold: true,
-          marginLeft: 5,
+          marginLeft: 3,
           marginBottom: 3
         },
         {
           text: cleanContent(entry.userPrompt || ""),
-          fontSize: 9,
-          marginLeft: 5,
+          fontSize: 7,
+          marginLeft: 3,
           marginBottom: 8
         }
       );
@@ -581,8 +581,8 @@ function generateOpenCodesProcessContent(): Content[] {
   } else {
     humanInterpretationContent.push({
       text: "No customized prompt yet",
-      fontSize: 9,
-      marginLeft: 5,
+      fontSize: 7,
+      marginLeft: 3,
       marginBottom: 8
     });
   }
@@ -591,7 +591,7 @@ function generateOpenCodesProcessContent(): Content[] {
   humanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       marginTop: 8,
       marginBottom: 5,
@@ -600,9 +600,9 @@ function generateOpenCodesProcessContent(): Content[] {
     },
     {
       text: cleanContent(topicMemo && typeof topicMemo === 'string' && topicMemo.trim() ? topicMemo : "No memo added yet"),
-      fontSize: 10,
+      fontSize: 8,
       marginBottom: 6,
-      marginLeft: 5
+      marginLeft: 3
     }
   );
 
@@ -613,7 +613,7 @@ function generateOpenCodesProcessContent(): Content[] {
         [{
           stack: humanInterpretationContent,
           fillColor: '#FFFFFF',
-          margin: [10, 10, 10, 10]
+          margin: [8, 6, 8, 6]
         }]
       ]
     },
@@ -641,8 +641,8 @@ function generateSubThemesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 2: ", fontSize: 11, bold: true, color: BRAND.accent },
-      { text: "Sub-themes", fontSize: 11, bold: true }
+      { text: "Step 2: ", fontSize: 12, bold: true, color: BRAND.accent },
+      { text: "Sub-themes", fontSize: 12, bold: true }
     ],
     marginBottom: 6,
     marginTop: 8,
@@ -661,24 +661,24 @@ function generateSubThemesProcessContent(): Content[] {
           stack: [
             {
               text: "Step Summary",
-              fontSize: 11,
+              fontSize: 9,
               bold: true,
               marginBottom: 5,
               color: BRAND.textDark
             },
             {
               text: `Total Sub-themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
-              fontSize: 10,
+              fontSize: 8,
               marginBottom: 5
             },
             {
               text: "LLM groups open codes into coherent sub-themes, while human researcher validates groupings and refines thematic boundaries.",
-              fontSize: 10,
+              fontSize: 8,
               italics: true
             }
           ],
           fillColor: '#FFFFFF',
-          margin: [10, 10, 10, 10]
+          margin: [8, 6, 8, 6]
         }]
       ]
     },
@@ -696,7 +696,7 @@ function generateSubThemesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " AI Agent", fontSize: 11, bold: true, color: BRAND.aiPurple }
+        { text: " AI Agent", fontSize: 10, bold: true, color: BRAND.aiPurple }
       ],
       marginTop: 5,
       marginBottom: 6,
@@ -710,9 +710,9 @@ function generateSubThemesProcessContent(): Content[] {
     if (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim()) {
       mechanicalTaskContent.push({
         text: cleanContent(codeLlmDescription),
-        fontSize: 10,
+        fontSize: 8,
         marginBottom: 6,
-        marginLeft: 5
+        marginLeft: 3
       });
     }
 
@@ -720,7 +720,7 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           marginTop: 8,
           marginBottom: 5,
@@ -729,9 +729,9 @@ function generateSubThemesProcessContent(): Content[] {
         },
         {
           text: cleanContent(codeWhatLLMDid),
-          fontSize: 10,
+          fontSize: 8,
           marginBottom: 6,
-          marginLeft: 5
+          marginLeft: 3
         }
       );
     }
@@ -740,7 +740,7 @@ function generateSubThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           marginTop: 8,
           marginBottom: 5,
@@ -749,9 +749,9 @@ function generateSubThemesProcessContent(): Content[] {
         },
         {
           text: cleanContent(codeRationale),
-          fontSize: 10,
+          fontSize: 8,
           marginBottom: 6,
-          marginLeft: 5
+          marginLeft: 3
         }
       );
     }
@@ -763,7 +763,7 @@ function generateSubThemesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: '#FFFFFF',
-            margin: [10, 10, 10, 10]
+            margin: [8, 6, 8, 6]
           }]
         ]
       },
@@ -779,7 +779,7 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Analysis", fontSize: 11, bold: true, color: BRAND.humanBlue }
+      { text: " Human Analysis", fontSize: 10, bold: true, color: BRAND.humanBlue }
     ],
     marginTop: 5,
     marginBottom: 6,
@@ -794,9 +794,9 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push(
     {
       text: "In this stage, the LLM provides an initial map of sub-themes, while you should bring judgment, contextual understanding, and methodological rigor to confirm, adjust, or expand the map. Your engagement ensures that the sub-themes stay trustworthy, relevant, and analytically useful.",
-      fontSize: 10,
+      fontSize: 8,
       marginBottom: 6,
-      marginLeft: 5,
+      marginLeft: 3,
       alignment: 'justify'
     }
   );
@@ -805,7 +805,7 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push(
     {
       text: "Prompt History",
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       marginTop: 8,
       marginBottom: 5,
@@ -821,15 +821,15 @@ function generateSubThemesProcessContent(): Content[] {
       subThemesHumanInterpretationContent.push(
         {
           text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 9,
+          fontSize: 7,
           bold: true,
-          marginLeft: 5,
+          marginLeft: 3,
           marginBottom: 3
         },
         {
           text: cleanContent(entry.userPrompt || ""),
-          fontSize: 9,
-          marginLeft: 5,
+          fontSize: 7,
+          marginLeft: 3,
           marginBottom: 8
         }
       );
@@ -837,8 +837,8 @@ function generateSubThemesProcessContent(): Content[] {
   } else {
     subThemesHumanInterpretationContent.push({
       text: "No customized prompt yet",
-      fontSize: 9,
-      marginLeft: 5,
+      fontSize: 7,
+      marginLeft: 3,
       marginBottom: 8
     });
   }
@@ -847,7 +847,7 @@ function generateSubThemesProcessContent(): Content[] {
   subThemesHumanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       marginTop: 8,
       marginBottom: 5,
@@ -856,9 +856,9 @@ function generateSubThemesProcessContent(): Content[] {
     },
     {
       text: cleanContent(codeMemo && typeof codeMemo === 'string' && codeMemo.trim() ? codeMemo : "No memo added yet"),
-      fontSize: 10,
+      fontSize: 8,
       marginBottom: 6,
-      marginLeft: 5
+      marginLeft: 3
     }
   );
 
@@ -869,7 +869,7 @@ function generateSubThemesProcessContent(): Content[] {
         [{
           stack: subThemesHumanInterpretationContent,
           fillColor: '#FFFFFF',
-          margin: [10, 10, 10, 10]
+          margin: [8, 6, 8, 6]
         }]
       ]
     },
@@ -898,8 +898,8 @@ function generateThemesProcessContent(): Content[] {
 
   result.push({
     text: [
-      { text: "Step 3: ", fontSize: 11, bold: true, color: BRAND.accent },
-      { text: "Themes", fontSize: 11, bold: true }
+      { text: "Step 3: ", fontSize: 12, bold: true, color: BRAND.accent },
+      { text: "Themes", fontSize: 12, bold: true }
     ],
     marginBottom: 6,
     marginTop: 8,
@@ -918,24 +918,24 @@ function generateThemesProcessContent(): Content[] {
           stack: [
             {
               text: "Step Summary",
-              fontSize: 11,
+              fontSize: 9,
               bold: true,
               marginBottom: 5,
               color: BRAND.textDark
             },
             {
               text: `Total Themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
-              fontSize: 10,
+              fontSize: 8,
               marginBottom: 5
             },
             {
               text: "LLM synthesizes sub-themes into overarching themes, while human researcher provides interpretive depth and theoretical alignment.",
-              fontSize: 10,
+              fontSize: 8,
               italics: true
             }
           ],
           fillColor: '#FFFFFF',
-          margin: [10, 10, 10, 10]
+          margin: [8, 6, 8, 6]
         }]
       ]
     },
@@ -953,7 +953,7 @@ function generateThemesProcessContent(): Content[] {
     mechanicalTaskContent.push({
       text: [
         createAIBadge(),
-        { text: " AI Agent", fontSize: 11, bold: true, color: BRAND.aiPurple }
+        { text: " AI Agent", fontSize: 10, bold: true, color: BRAND.aiPurple }
       ],
       marginTop: 5,
       marginBottom: 6,
@@ -967,9 +967,9 @@ function generateThemesProcessContent(): Content[] {
     if (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim()) {
       mechanicalTaskContent.push({
         text: cleanContent(conceptLlmDescription),
-        fontSize: 10,
+        fontSize: 8,
         marginBottom: 6,
-        marginLeft: 5
+        marginLeft: 3
       });
     }
 
@@ -977,7 +977,7 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "What LLM Did",
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           marginTop: 8,
           marginBottom: 5,
@@ -986,9 +986,9 @@ function generateThemesProcessContent(): Content[] {
         },
         {
           text: cleanContent(conceptWhatLLMDid),
-          fontSize: 10,
+          fontSize: 8,
           marginBottom: 6,
-          marginLeft: 5
+          marginLeft: 3
         }
       );
     }
@@ -997,7 +997,7 @@ function generateThemesProcessContent(): Content[] {
       mechanicalTaskContent.push(
         {
           text: "LLM Self Criticize",
-          fontSize: 11,
+          fontSize: 9,
           bold: true,
           marginTop: 8,
           marginBottom: 5,
@@ -1006,9 +1006,9 @@ function generateThemesProcessContent(): Content[] {
         },
         {
           text: cleanContent(conceptRationale),
-          fontSize: 10,
+          fontSize: 8,
           marginBottom: 6,
-          marginLeft: 5
+          marginLeft: 3
         }
       );
     }
@@ -1020,7 +1020,7 @@ function generateThemesProcessContent(): Content[] {
           [{
             stack: mechanicalTaskContent,
             fillColor: '#FFFFFF',
-            margin: [10, 10, 10, 10]
+            margin: [8, 6, 8, 6]
           }]
         ]
       },
@@ -1036,7 +1036,7 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push({
     text: [
       createHumanBadge(),
-      { text: " Human Analysis", fontSize: 11, bold: true, color: BRAND.humanBlue }
+      { text: " Human Analysis", fontSize: 10, bold: true, color: BRAND.humanBlue }
     ],
     marginTop: 5,
     marginBottom: 6,
@@ -1051,9 +1051,9 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push(
     {
       text: "This stage transforms the analysis from a preliminary structure into a coherent thematic framework. The LLM offers a draft map of themes, and you should provide the critical review, interpretive judgment, and theoretical alignment necessary to produce a trustworthy and meaningful set of final themes.",
-      fontSize: 10,
+      fontSize: 8,
       marginBottom: 6,
-      marginLeft: 5,
+      marginLeft: 3,
       alignment: 'justify'
     }
   );
@@ -1062,7 +1062,7 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push(
     {
       text: "Prompt History",
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       marginTop: 8,
       marginBottom: 5,
@@ -1078,15 +1078,15 @@ function generateThemesProcessContent(): Content[] {
       themesHumanInterpretationContent.push(
         {
           text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 9,
+          fontSize: 7,
           bold: true,
-          marginLeft: 5,
+          marginLeft: 3,
           marginBottom: 3
         },
         {
           text: cleanContent(entry.userPrompt || ""),
-          fontSize: 9,
-          marginLeft: 5,
+          fontSize: 7,
+          marginLeft: 3,
           marginBottom: 8
         }
       );
@@ -1094,15 +1094,15 @@ function generateThemesProcessContent(): Content[] {
   } else if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
     themesHumanInterpretationContent.push({
       text: cleanContent(conceptualizingStyle),
-      fontSize: 9,
-      marginLeft: 5,
+      fontSize: 7,
+      marginLeft: 3,
       marginBottom: 8
     });
   } else {
     themesHumanInterpretationContent.push({
       text: "No customized prompt yet",
-      fontSize: 9,
-      marginLeft: 5,
+      fontSize: 7,
+      marginLeft: 3,
       marginBottom: 8
     });
   }
@@ -1111,7 +1111,7 @@ function generateThemesProcessContent(): Content[] {
   themesHumanInterpretationContent.push(
     {
       text: "User Memo",
-      fontSize: 11,
+      fontSize: 9,
       bold: true,
       marginTop: 8,
       marginBottom: 5,
@@ -1120,9 +1120,9 @@ function generateThemesProcessContent(): Content[] {
     },
     {
       text: cleanContent(conceptMemo && typeof conceptMemo === 'string' && conceptMemo.trim() ? conceptMemo : "No memo added yet"),
-      fontSize: 10,
+      fontSize: 8,
       marginBottom: 6,
-      marginLeft: 5
+      marginLeft: 3
     }
   );
 
@@ -1133,7 +1133,7 @@ function generateThemesProcessContent(): Content[] {
         [{
           stack: themesHumanInterpretationContent,
           fillColor: '#FFFFFF',
-          margin: [10, 10, 10, 10]
+          margin: [8, 6, 8, 6]
         }]
       ]
     },

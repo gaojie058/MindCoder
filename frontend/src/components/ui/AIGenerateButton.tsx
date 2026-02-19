@@ -9,7 +9,7 @@ interface AIGenerateButtonProps {
 export default function AIGenerateButton({
   onClick,
   loading = false,
-  label = "AI Generate",
+  label = "Get AI Generate",
   loadingLabel = "Generating...",
   className = "",
 }: AIGenerateButtonProps) {

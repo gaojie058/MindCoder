@@ -266,9 +266,26 @@ export const useGenerate = () => {
 
       useDisplayStore.getState().set({ activeGraphType });
 
-      // Use frontend pdfmake
+      // Use frontend pdfmake — renderPDF now returns base64 PDF data
       const conceptData = useConceptStore.getState().conceptData;
-      await renderPDF(report, conceptData);
+      const pdfDataUri = await renderPDF(report, conceptData);
+
+      // Save to history
+      const { addHistoryEntry } = useHistoryStore.getState();
+      addHistoryEntry(pdfDataUri, `Report ${new Date().toLocaleString()}`);
+
+      // Open PDF in new tab
+      const binaryString = window.atob(
+        pdfDataUri.replace(/^data:application\/pdf;base64,/, "")
+      );
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (error) {
       console.error("Error generating PDF:", error);
     } finally {

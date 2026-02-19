@@ -591,7 +591,7 @@ function buildProcessPage(): Content[] {
 // ══════════════════════════════════════════════════════════════
 //  Main export — assemble all pages
 // ══════════════════════════════════════════════════════════════
-export default async function renderPDF(report: any, _conceptArr: concept[]) {
+export default async function renderPDF(report: any, _conceptArr: concept[]): Promise<string> {
   // Ensure coverage data is ready
   await ensureCoverage();
 
@@ -617,5 +617,16 @@ export default async function renderPDF(report: any, _conceptArr: concept[]) {
     ],
   };
 
-  return docDefinition;
+  // Actually generate the PDF and return base64 data
+  return new Promise<string>((resolve, reject) => {
+    try {
+      const pdfDoc = pdfMake.createPdf(docDefinition);
+      pdfDoc.getBase64((base64: string) => {
+        const pdfDataUri = `data:application/pdf;base64,${base64}`;
+        resolve(pdfDataUri);
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
 }

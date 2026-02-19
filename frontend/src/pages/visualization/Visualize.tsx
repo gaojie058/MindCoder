@@ -3,7 +3,6 @@ import Report from "./Report";
 import Trajectory from "./Trajectory";
 import ThemeMap from "./ThemeMap";
 import useDisplayStore from "@/stores/useDisplayStore";
-import useHistoryStore from "@/stores/useHistoryStore";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import Dialog from "@/components/ui/Dialog";
@@ -36,36 +35,9 @@ const Visualize = () => {
   // graph no longer needed
   const { generatePDF, pdfLoading } = useGenerate();
 
-  const openPdfInNewTab = useCallback((entry: any) => {
-    const binaryString = window.atob(
-      entry.pdfData.replace(/^data:application\/pdf;base64,/, "")
-    );
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    const blob = new Blob([bytes], { type: "application/pdf" });
-    const url = URL.createObjectURL(blob);
-    window.open(url, "_blank");
-    setTimeout(() => URL.revokeObjectURL(url), 60000);
-  }, []);
-
-  const handleViewPDF = useCallback(async () => {
+  const handleExportPDF = useCallback(async () => {
     if (generatePDF) {
       await generatePDF(activeGraphType);
-      const { history: updatedHistory } = useHistoryStore.getState();
-      if (updatedHistory.length > 0 && updatedHistory[0].pdfData) {
-        openPdfInNewTab(updatedHistory[0]);
-      }
-    }
-  }, [generatePDF, activeGraphType, openPdfInNewTab]);
-
-  const [saveDone, setSaveDone] = useState(false);
-  const handleSavePDF = useCallback(async () => {
-    if (generatePDF) {
-      await generatePDF(activeGraphType);
-      setSaveDone(true);
-      setTimeout(() => setSaveDone(false), 2000);
     }
   }, [generatePDF, activeGraphType]);
 
@@ -213,18 +185,11 @@ const Visualize = () => {
               🔄 Iteration Trajectory
             </button>
             <button
-              onClick={handleViewPDF}
+              onClick={handleExportPDF}
               disabled={pdfLoading}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#C66B50] hover:bg-[#B55A40] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
             >
               {pdfLoading ? <>⏳ Generating...</> : <>📄 Export to PDF</>}
-            </button>
-            <button
-              onClick={handleSavePDF}
-              disabled={pdfLoading}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#8B5E4B] hover:bg-[#7A4F3D] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
-            >
-              {pdfLoading ? <>⏳ Saving...</> : saveDone ? <>✅ Saved!</> : <>💾 Save PDF</>}
             </button>
           </div>
         </div>

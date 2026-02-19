@@ -1,11 +1,7 @@
-import html2canvas from "html2canvas"
 import pdfMake from "pdfmake/build/pdfmake";
-import { Content, TDocumentDefinitions, ContentSvg } from "pdfmake/interfaces"
-import 'd3-transition'
-import { graphviz } from "d3-graphviz"
+import { Content, TDocumentDefinitions } from "pdfmake/interfaces"
 import { concept } from "@/types/stores"
 import { logoBase64 } from "./pdfutils"
-import useDisplayStore from "@/stores/useDisplayStore"
 import useAppStore from "@/stores/useAppStore"
 import useCardStore from "@/stores/useCardStore"
 import useCodeStore from "@/stores/useCodeStore"
@@ -18,2160 +14,604 @@ import useInfoStore from "@/stores/useInfoStore"
 // https://github.com/bpampuch/pdfmake/issues/2654
 (<any>pdfMake).fonts = {
   Roboto: {
-    normal:
-      "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
+    normal: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
     bold: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf",
-    italics:
-      "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
-    bolditalics:
-      "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
+    italics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
+    bolditalics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
   },
 }
 
-// Brand colors
-const BRAND = {
-  primary: '#CB9180',       // warm terracotta
-  primaryDark: '#AA7667',   // darker terracotta
-  primaryLight: '#E8CFC8',  // light terracotta
-  primaryBg: '#FFFBF9',     // warm white
-  primaryBg2: '#FFF5F0',    // warm cream
-  aiPurple: '#7C5CCC',      // AI purple (matches web badge)
-  aiLavender: '#E8D5F5',    // AI lavender bg
-  humanBlue: '#2563EB',     // human blue
-  humanBlueBg: '#EFF6FF',   // human blue bg
-  aiBg: '#FDF6F3',          // AI section bg (warm peach)
-  textDark: '#1F2937',      // near-black
-  textMed: '#4B5563',       // medium gray
-  textLight: '#6B7280',     // light gray
-  border: '#E5D5CF',        // warm border
-  borderLight: '#F0E6E0',   // lighter warm border
-  accent: '#DC8B78',        // accent (step numbers)
+// ── Brand palette (redesign v2) ──
+const B = {
+  amber:      '#C17A3A',
+  amberLight: '#EFE5D8',
+  bgCallout:  '#FDF6ED',
+  text:       '#2C2C2C',
+  muted:      '#6B6B6B',
+  divider:    '#E8E0D5',
+  badge:      '#EFE5D8',
+  white:      '#FFFFFF',
 };
 
-// Function to create AI badge
-function createAIBadge(): any {
-  return {
-    text: '[AI]',
-    color: BRAND.aiPurple,
-    bold: true,
-    fontSize: 8,
-  };
-}
-
-// Function to create Human badge
-function createHumanBadge(): any {
-  return {
-    text: '[Human]',
-    color: BRAND.humanBlue,
-    bold: true,
-    fontSize: 8,
-  };
-}
-
-// Function to create User badge
-function createUserBadge(): any {
-  return {
-    text: '[Human]',
-    color: BRAND.humanBlue,
-    bold: true,
-    fontSize: 8,
-  };
-}
-
-// Function to create horizontal rule separator
-function createHorizontalRule(): any {
-  return {
-    canvas: [
-      {
-        type: 'line',
-        x1: 0, y1: 0, x2: 515, y2: 0,
-        lineWidth: 1,
-        lineColor: BRAND.border
-      }
-    ],
-    margin: [0, 6, 0, 6]
-  };
-}
-
-// Function to clean inline references in text content
-// Sanitize Unicode chars that Roboto can't render in pdfmake
-function sanitizeText(str: string): string {
+// ── Text sanitiser ──
+function san(str: string): string {
+  if (!str || typeof str !== 'string') return '';
   return str
-    .replace(/[\u2018\u2019\u201A\uFFFD]/g, "'")   // smart single quotes
-    .replace(/[\u201C\u201D\u201E]/g, '"')            // smart double quotes
-    .replace(/[\u2013\u2014]/g, '-')                   // en/em dash
-    .replace(/\u2026/g, '...')                         // ellipsis
-    .replace(/\u00A0/g, ' ')                           // non-breaking space
-    .replace(/[\u2022\u2023\u25E6\u2043]/g, '-')      // bullet variants
-    .replace(/[\u2003\u2002\u2009]/g, ' ')             // em/en/thin space
-    .replace(/[\u00AB\u00BB]/g, '"')                   // guillemets
-    .replace(/[\u2039\u203A]/g, "'")                   // single guillemets
-    .replace(/\u00B7/g, '-')                           // middle dot
-    .replace(/[\u2192\u2794\u279C\u27A1]/g, '->')      // arrows
-    .replace(/[\u27E8\u2329\u3008]/g, '<')             // left angle brackets ⟨〈
-    .replace(/[\u27E9\u232A\u3009]/g, '>')             // right angle brackets ⟩〉
-    .replace(/[\u2018\u2019\u02BC\u02BB]/g, "'")       // modifier apostrophes
-    .replace(/[\u201C\u201D]/g, '"')                    // curly double quotes (catch-all)
-    // Remove invisible/control chars + any remaining chars Roboto can't render (U+2500+ symbols)
+    .replace(/[\u2018\u2019\u201A\uFFFD\u02BC\u02BB]/g, "'")
+    .replace(/[\u201C\u201D\u201E]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/\u2026/g, '...')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u2022\u2023\u25E6\u2043]/g, '-')
+    .replace(/[\u2003\u2002\u2009]/g, ' ')
+    .replace(/[\u00AB\u00BB]/g, '"')
+    .replace(/[\u2039\u203A]/g, "'")
+    .replace(/\u00B7/g, '-')
+    .replace(/[\u2192\u2794\u279C\u27A1]/g, '->')
+    .replace(/[\u27E8\u2329\u3008]/g, '<')
+    .replace(/[\u27E9\u232A\u3009]/g, '>')
     .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '')
-    .replace(/[\u2500-\u27BF]/g, '')                    // box drawing, misc symbols
-    .replace(/[\uFE00-\uFE0F]/g, '');                   // variation selectors
+    .replace(/[\u2500-\u27BF]/g, '')
+    .replace(/[\uFE00-\uFE0F]/g, '');
 }
 
-function cleanContent(text: string): any[] {
-  if (!text || typeof text !== 'string') return [{ text: '' }];
-
-  text = sanitizeText(text);
-
-  // Regular expression to match [Text {Group X}] or [Text] patterns
+// Bold text inside [brackets], clean {group} tags
+function richText(raw: string): any[] {
+  if (!raw) return [{ text: '' }];
+  const text = san(raw);
   const regex = /\[(.*?)(?:\s*\{.*?\})?\]/g;
-
-  // Create a result array for the formatted text parts
   const result: any[] = [];
-
-  // Find all matches in the text
-  let match;
-  let lastIndex = 0;
-
+  let last = 0, match;
   while ((match = regex.exec(text)) !== null) {
-    // Add text before the match
-    if (match.index > lastIndex) {
-      result.push({ text: text.substring(lastIndex, match.index) });
-    }
-
-    // Extract the actual text without brackets and group info
-    const cleanedMatch = match[1].trim();
-
-    // Add the matched text with bold formatting
-    result.push({ text: cleanedMatch, bold: true });
-
-    // Update lastIndex to end of this match
-    lastIndex = regex.lastIndex;
+    if (match.index > last) result.push({ text: text.substring(last, match.index) });
+    result.push({ text: match[1].trim(), bold: true });
+    last = regex.lastIndex;
   }
-
-  // Add any remaining text after the last match
-  if (lastIndex < text.length) {
-    result.push({ text: text.substring(lastIndex) });
-  }
-
+  if (last < text.length) result.push({ text: text.substring(last) });
   return result.length ? result : [{ text }];
 }
 
-// Function to clean title text
-function cleanTitle(title: string): string {
-  if (title === undefined || title === null || typeof title !== 'string') {
-    return "MindCoder Trustworthy Codebook with a Transparent Trajectory";
-  }
-
-  const sanitized = sanitizeText(title);
-  const withoutBraces = sanitized.replace(/\{[^}]*\}/g, '');
-  const cleanedTitle = withoutBraces.replace(/\[|\]/g, '');
-  return cleanedTitle.trim();
+// Clean title (strip brackets/braces)
+function cleanTitle(t: string): string {
+  if (!t) return 'Untitled';
+  return san(t).replace(/\{[^}]*\}/g, '').replace(/\[|\]/g, '').trim();
 }
 
-// Function to format timestamp for PDF
-function formatTimestampForPDF(timestamp: number): string {
-  const date = new Date(timestamp);
-  return date.toLocaleString("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+// Horizontal rule
+function hr(): any {
+  return { canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 0.5, lineColor: B.divider }], margin: [0, 4, 0, 4] };
 }
 
-// Function to calculate statistics for a step
-function calculateStepStatistics(data: any[], isCard: boolean = false): { total: number, aiGenerated: number, userEdited: number } {
-  if (!data || !Array.isArray(data)) {
-    return { total: 0, aiGenerated: 0, userEdited: 0 };
-  }
-
-  const total = data.length;
-  let aiGenerated = 0;
-  let userEdited = 0;
-
-  data.forEach(item => {
-    if (isCard) {
-      // For cards, check if it's GPT-generated
-      if (item.isGPT) {
-        aiGenerated++;
-      } else {
-        userEdited++;
-      }
-    } else {
-      // For codes/concepts, check if it has been user-modified
-      if (item.isGPT !== false) {
-        aiGenerated++;
-      } else {
-        userEdited++;
-      }
-    }
-  });
-
-  return { total, aiGenerated, userEdited };
+// Format timestamp
+function fmtTime(ts: number): string {
+  return new Date(ts).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
 
-// Function to generate Analysis Configuration section
-function generateAnalysisConfigurationContent(): Content[] {
-  const result: Content[] = [];
-  
-  // Get data from stores
-  const { researchQuestion, numberOfTopicClusters, clusteringStyle, codingStyle, conceptualizingStyle, uploadedFiles } = useAppStore.getState();
+function fmtDate(d: Date): string {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const h = d.getHours(), m = d.getMinutes(), ap = h >= 12 ? 'PM' : 'AM';
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}, ${h % 12 || 12}:${m < 10 ? '0' + m : m}${ap}`;
+}
+
+// ── Badges ──
+function aiBadge(): any { return { text: ' AI ', fontSize: 7, bold: true, color: B.amber, background: B.amberLight }; }
+function humanBadge(): any { return { text: ' Human ', fontSize: 7, bold: true, color: '#2563EB', background: '#EFF6FF' }; }
+function _theoryBadge(name: string): any {
+  return {
+    table: { body: [[{ text: san(name).toUpperCase(), fontSize: 6, bold: true, color: B.amber, margin: [4, 2, 4, 2] }]] },
+    layout: { hLineWidth: () => 0.5, vLineWidth: () => 0.5, hLineColor: () => B.amberLight, vLineColor: () => B.amberLight,
+      fillColor: () => B.badge, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+    margin: [0, 2, 4, 2],
+  };
+}
+function _codeBadge(name: string): any {
+  return { text: ` ${san(name)} `, fontSize: 7, color: B.amber, background: B.amberLight, italics: false };
+}
+
+// Quote block with left amber border
+function quoteBlock(quote: string, source?: string): any {
+  return {
+    table: {
+      widths: [3, '*'],
+      body: [[
+        { text: '', fillColor: B.amber },
+        {
+          stack: [
+            { text: san(quote), fontSize: 8, italics: true, color: B.text, margin: [6, 4, 4, 2] },
+            ...(source ? [{ text: `— ${san(source)}`, fontSize: 7, color: B.muted, margin: [6, 0, 4, 4] }] : []),
+          ]
+        }
+      ]]
+    },
+    layout: { hLineWidth: () => 0, vLineWidth: (i: number) => i === 0 ? 0 : 0, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+    margin: [10, 3, 0, 3],
+  };
+}
+
+// Progress bar (simple table-based)
+function progressBar(pct: number, width: number = 200): any {
+  const filled = Math.max(1, Math.round(width * (pct / 100)));
+  const empty = width - filled;
+  return {
+    table: {
+      widths: [filled, empty > 0 ? empty : 0],
+      heights: [8],
+      body: [[
+        { text: '', fillColor: B.amber },
+        ...(empty > 0 ? [{ text: '', fillColor: B.amberLight }] : []),
+      ]]
+    },
+    layout: { hLineWidth: () => 0, vLineWidth: () => 0, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+  };
+}
+
+// ── Step statistics ──
+function stepStats(data: any[], isCard = false) {
+  if (!data?.length) return { total: 0, ai: 0, human: 0 };
+  let ai = 0, human = 0;
+  data.forEach(d => { if (isCard ? d.isGPT : d.isGPT !== false) ai++; else human++; });
+  return { total: data.length, ai, human };
+}
+
+// ══════════════════════════════════════════════════════════════
+//  PAGE 1 — Cover
+// ══════════════════════════════════════════════════════════════
+function buildCoverPage(): Content[] {
+  const { researchQuestion, numberOfTopicClusters, uploadedFiles, fileCoverageData } = useAppStore.getState();
   const { model } = useInfoStore.getState();
+  const result: Content[] = [];
 
-  result.push({
-    text: "Analysis Configuration",
-    fontSize: 16,
-    bold: true,
-    color: BRAND.primaryDark,
-    marginBottom: 8,
-    marginTop: 18,
-    headlineLevel: 1,
-    tocItem: true,
-    id: 'analysisConfigurationSection'
-  });
+  // Logo + title
+  result.push({ image: logoBase64, width: 90, alignment: 'center' });
+  result.push({ text: 'MindCoder Analysis Report', fontSize: 18, bold: true, color: B.amber, alignment: 'center', margin: [0, 10, 0, 4] });
+  result.push({ text: fmtDate(new Date()), fontSize: 9, color: B.muted, alignment: 'center', margin: [0, 0, 0, 12] });
 
-  // Configuration table
-  const configData = [
-    // Header row
-    [
-      { text: 'Configuration Parameter', style: 'tableHeader', fillColor: BRAND.primaryBg2, bold: true, color: BRAND.primaryDark },
-      { text: 'Setting', style: 'tableHeader', fillColor: BRAND.primaryBg2, bold: true, color: BRAND.primaryDark }
-    ]
+  // Configuration summary table
+  const configRows: any[][] = [
+    [{ text: 'Parameter', fontSize: 8, bold: true, color: B.amber }, { text: 'Setting', fontSize: 8, bold: true, color: B.amber }]
   ];
+  if (model) configRows.push([{ text: 'Model', fontSize: 8, bold: true }, { text: model, fontSize: 8 }]);
+  if (researchQuestion?.trim()) configRows.push([{ text: 'Research Question', fontSize: 8, bold: true }, { text: san(researchQuestion.trim()), fontSize: 8 }]);
+  if (numberOfTopicClusters?.length === 2) configRows.push([{ text: 'Open Codes Range', fontSize: 8, bold: true }, { text: `${numberOfTopicClusters[0]}–${numberOfTopicClusters[1]} per file`, fontSize: 8 }]);
+  if (uploadedFiles?.length) configRows.push([{ text: 'Files', fontSize: 8, bold: true }, { text: uploadedFiles.map(f => f.name.replace(/\.txt$/i, '')).join(', '), fontSize: 8 }]);
 
-  // Model
-  if (model) {
-    configData.push([
-      { text: 'Model', fontSize: 10, bold: true },
-      { text: model, fontSize: 10 }
-    ]);
-  }
-
-  // Research Question
-  if (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) {
-    configData.push([
-      { text: 'Research Question', fontSize: 10, bold: true },
-      { text: researchQuestion.trim(), fontSize: 10 }
-    ]);
-  }
-
-  // Number of Open Codes Range
-  if (numberOfTopicClusters && numberOfTopicClusters.length === 2) {
-    const [min, max] = numberOfTopicClusters;
-    configData.push([
-      { text: 'Open Codes Range', fontSize: 10, bold: true },
-      { text: `${min} - ${max} codes per file`, fontSize: 10 }
-    ]);
-  }
-
-  // Clustering Style
-  if (clusteringStyle && typeof clusteringStyle === 'string' && clusteringStyle.trim()) {
-    configData.push([
-      { text: 'Clustering Style', fontSize: 10, bold: true },
-      { text: clusteringStyle.trim(), fontSize: 10 }
-    ]);
-  }
-
-  // Coding Style
-  if (codingStyle && typeof codingStyle === 'string' && codingStyle.trim()) {
-    configData.push([
-      { text: 'Coding Style', fontSize: 10, bold: true },
-      { text: codingStyle.trim(), fontSize: 10 }
-    ]);
-  }
-
-  // Conceptualizing Style
-  if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
-    configData.push([
-      { text: 'Conceptualizing Style', fontSize: 10, bold: true },
-      { text: conceptualizingStyle.trim(), fontSize: 10 }
-    ]);
-  }
-
-  // Uploaded Files
-  if (uploadedFiles && uploadedFiles.length > 0) {
-    const fileNames = uploadedFiles.map(file => file.name.replace(/\.txt$/i, '')).join(', ');
-    configData.push([
-      { text: 'Uploaded Files', fontSize: 10, bold: true },
-      { text: fileNames, fontSize: 10 }
-    ]);
-  }
-
-  if (configData.length > 1) {
+  if (configRows.length > 1) {
     result.push({
-      table: {
-        widths: ['25%', '75%'],
-        body: configData
-      },
-      layout: {
-        hLineWidth: function (i: number, node: any) {
-          return i === 0 || i === node.table.body.length ? 1 : 0.5;
-        },
-        vLineWidth: function (i: number, node: any) {
-          return 0;
-        },
-        hLineColor: function (i: number, node: any) {
-          return BRAND.borderLight;
-        },
-        paddingLeft: function (i: number, node: any) { return 8; },
-        paddingRight: function (i: number, node: any) { return 8; },
-        paddingTop: function (i: number, node: any) { return 6; },
-        paddingBottom: function (i: number, node: any) { return 6; }
-      },
-      marginBottom: 12
+      table: { widths: ['25%', '*'], body: configRows },
+      layout: { hLineWidth: (i: number, node: any) => i === 0 || i === 1 || i === node.table.body.length ? 0.5 : 0, vLineWidth: () => 0, hLineColor: () => B.divider, paddingLeft: () => 6, paddingRight: () => 6, paddingTop: () => 4, paddingBottom: () => 4, fillColor: (row: number) => row === 0 ? B.bgCallout : null },
+      margin: [0, 0, 0, 10],
     });
   }
+
+  // Document coverage with progress bars
+  if (uploadedFiles?.length && fileCoverageData) {
+    result.push({ text: 'Document Coverage', fontSize: 10, bold: true, color: B.amber, margin: [0, 6, 0, 4] });
+    uploadedFiles.forEach(f => {
+      const cov = fileCoverageData[f.name];
+      const pct = cov?.coveragePercentage ?? 0;
+      const name = f.name.replace(/\.txt$/i, '');
+      result.push({
+        columns: [
+          { text: san(name), fontSize: 8, width: 120 },
+          { stack: [progressBar(pct, 180)], width: 190 },
+          { text: `${pct}%`, fontSize: 8, color: B.muted, width: 40, alignment: 'right' },
+        ],
+        margin: [0, 2, 0, 2],
+      });
+    });
+    result.push({ text: 'Coverage above 70% is generally considered sufficient for thematic saturation.', fontSize: 7, color: B.muted, italics: true, margin: [0, 2, 0, 8] });
+  }
+
+  // Disclaimer as footnote
+  result.push(hr());
+  result.push({ text: 'AI-assisted analysis. Codes and themes were generated by LLM and reviewed by the researcher. Treat as reference, not definitive findings.', fontSize: 7, color: B.muted, italics: true, margin: [0, 2, 0, 0] });
 
   return result;
 }
 
-// Function to generate Open Codes process content (Step 1)
-function generateOpenCodesProcessContent(): Content[] {
+// ══════════════════════════════════════════════════════════════
+//  PAGE 2 — Executive Summary
+// ══════════════════════════════════════════════════════════════
+function buildExecutiveSummary(report: any): Content[] {
+  const { researchQuestion } = useAppStore.getState();
   const result: Content[] = [];
+  result.push({ text: '', pageBreak: 'before' });
 
-  // Get data from stores
-  const { cardData } = useCardStore.getState();
-  const { whatLLMDid: cardWhatLLMDid, rationale: cardRationale, llmDescription: cardLlmDescription } = useCardStore.getState();
-  const { researchQuestion, numberOfTopicClusters } = useAppStore.getState();
-  const { topicMemo } = useEditStore.getState();
+  result.push({ text: 'Executive Summary', fontSize: 16, bold: true, color: B.amber, margin: [0, 0, 0, 8] });
 
-  // Calculate statistics
-  const stats = calculateStepStatistics(cardData || [], true);
-
-  result.push({
-    text: [
-      { text: "Step 1: ", fontSize: 12, bold: true, color: BRAND.accent },
-      { text: "Open Codes", fontSize: 12, bold: true }
-    ],
-    marginBottom: 6,
-    marginTop: 8,
-    headlineLevel: 2,
-    tocItem: true,
-    id: 'openCodesProcessSection',
-    tocStyle: 'tocLevel2'
-  });
-
-  // Step summary box
-  result.push({
-    table: {
-      widths: ['*'],
-      body: [
-        [{
-          stack: [
-            {
-              text: "Step Summary",
-              fontSize: 9,
-              bold: true,
-              marginBottom: 5,
-              color: BRAND.textDark
-            },
-            {
-              text: `Total Open Codes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
-              fontSize: 8,
-              marginBottom: 5
-            },
-            {
-              text: "LLM generates initial open codes from raw data segments, while human researcher reviews, refines, and validates the coding scheme.",
-              fontSize: 8,
-              italics: true
-            }
-          ],
-          fillColor: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ]
-    },
-    layout: 'noBorders',
-    marginBottom: 8
-  });
-
-  // AI Mechanical Task section
-  if ((cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) ||
-      (cardRationale && typeof cardRationale === 'string' && cardRationale.trim()) ||
-      (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim())) {
-
-    const mechanicalTaskContent = [];
-
-    mechanicalTaskContent.push({
-      text: [
-        createAIBadge(),
-        { text: " AI Agent", fontSize: 10, bold: true, color: BRAND.aiPurple }
-      ],
-      marginTop: 5,
-      marginBottom: 6,
-      headlineLevel: 3,
-      tocItem: false,
-      id: 'topicMechanicalTask',
-      tocStyle: 'tocLevel3',
-      tocMargin: [10, 0, 0, 0]
-    });
-
-    if (cardLlmDescription && typeof cardLlmDescription === 'string' && cardLlmDescription.trim()) {
-      mechanicalTaskContent.push({
-        text: cleanContent(cardLlmDescription),
-        fontSize: 8,
-        marginBottom: 6,
-        marginLeft: 3
-      });
-    }
-
-    if (cardWhatLLMDid && typeof cardWhatLLMDid === 'string' && cardWhatLLMDid.trim()) {
-      mechanicalTaskContent.push(
-        {
-          text: "What LLM Did",
-          fontSize: 9,
-          bold: true,
-          marginTop: 8,
-          marginBottom: 5,
-          headlineLevel: 4,
-          id: 'cardWhatLLMDidParam'
-        },
-        {
-          text: cleanContent(cardWhatLLMDid),
-          fontSize: 8,
-          marginBottom: 6,
-          marginLeft: 3
-        }
-      );
-    }
-
-    if (cardRationale && typeof cardRationale === 'string' && cardRationale.trim()) {
-      mechanicalTaskContent.push(
-        {
-          text: "LLM Self Criticize",
-          fontSize: 9,
-          bold: true,
-          marginTop: 8,
-          marginBottom: 5,
-          headlineLevel: 4,
-          id: 'cardRationaleParam'
-        },
-        {
-          text: cleanContent(cardRationale),
-          fontSize: 8,
-          marginBottom: 6,
-          marginLeft: 3
-        }
-      );
-    }
-
+  // Research question callout
+  if (researchQuestion?.trim()) {
     result.push({
-      table: {
-        widths: ['*'],
-        body: [
-          [{
-            stack: mechanicalTaskContent,
-            fillColor: '#FFFFFF',
-            margin: [8, 6, 8, 6]
-          }]
-        ]
-      },
-      layout: 'noBorders',
-      marginTop: 8,
-      marginBottom: 8
+      table: { widths: ['*'], body: [[{
+        stack: [
+          { text: 'Research Question', fontSize: 8, bold: true, color: B.amber, margin: [0, 0, 0, 3] },
+          { text: san(researchQuestion.trim()), fontSize: 10, color: B.text },
+        ],
+        margin: [10, 8, 10, 8],
+        fillColor: B.bgCallout,
+      }]] },
+      layout: { hLineWidth: () => 0.5, vLineWidth: () => 0.5, hLineColor: () => B.divider, vLineColor: () => B.divider, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+      margin: [0, 0, 0, 10],
     });
   }
 
-  // Human Analysis section
-  const humanInterpretationContent = [];
+  // Extract sections as finding cards
+  let sections: any[] = [];
+  if (report?.Sections?.length) sections = report.Sections;
+  else if (report?.sections?.length) sections = report.sections;
+  else if (report?.Report?.Sections?.length) sections = report.Report.Sections;
 
-  humanInterpretationContent.push({
-    text: [
-      createHumanBadge(),
-      { text: " Human Analysis", fontSize: 10, bold: true, color: BRAND.humanBlue }
-    ],
-    marginTop: 5,
-    marginBottom: 6,
-    headlineLevel: 3,
-    tocItem: false,
-    id: 'topicHumanInterpretation',
-    tocStyle: 'tocLevel3',
-    tocMargin: [10, 0, 0, 0]
+  sections.forEach((sec: any, i: number) => {
+    const title = cleanTitle(sec.Title || sec.title || `Finding ${i + 1}`);
+    const content = san(typeof (sec.Content || sec.content) === 'string' ? (sec.Content || sec.content) : '');
+    // Take first 2 sentences as summary
+    const sentences = content.split(/(?<=[.!?])\s+/).slice(0, 2).join(' ');
+
+    result.push({
+      table: { widths: ['*'], body: [[{
+        stack: [
+          { text: `${i + 1}. ${title}`, fontSize: 10, bold: true, color: B.amber, margin: [0, 0, 0, 3] },
+          { text: sentences, fontSize: 8, color: B.text },
+        ],
+        margin: [10, 6, 10, 6],
+      }]] },
+      layout: { hLineWidth: () => 0.5, vLineWidth: () => 0.5, hLineColor: () => B.divider, vLineColor: () => B.divider, paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+      margin: [0, 0, 0, 6],
+    });
   });
 
-  // Human interpretation guidance
-  humanInterpretationContent.push(
-    {
-      text: "In this stage, the LLM offers an exploratory coding draft, while you should bring critical interpretation, contextual knowledge, and methodological rigor. Your revisions, notes, and reflections ensure that the analysis stays trustworthy and grounded in both the data and the research aims.",
-      fontSize: 8,
-      marginBottom: 6,
-      marginLeft: 3,
-      alignment: 'justify'
-    }
-  );
+  return result;
+}
 
-  // Research Question
-  if (researchQuestion && typeof researchQuestion === 'string' && researchQuestion.trim()) {
-    humanInterpretationContent.push(
-      {
-        text: "Research Question",
-        fontSize: 9,
-        bold: true,
-        marginTop: 8,
-        marginBottom: 5,
-        headlineLevel: 4,
-        id: 'researchQuestionParam'
-      },
-      {
-        text: cleanContent(researchQuestion),
-        fontSize: 8,
-        marginBottom: 6,
-        marginLeft: 3
+// ══════════════════════════════════════════════════════════════
+//  PAGE 3+ — Findings Detail
+// ══════════════════════════════════════════════════════════════
+function buildFindingsDetail(report: any): Content[] {
+  const result: Content[] = [];
+  result.push({ text: '', pageBreak: 'before' });
+  result.push({ text: 'Findings', fontSize: 16, bold: true, color: B.amber, margin: [0, 0, 0, 8] });
+
+  let sections: any[] = [];
+  if (report?.Sections?.length) sections = report.Sections;
+  else if (report?.sections?.length) sections = report.sections;
+  else if (report?.Report?.Sections?.length) sections = report.Report.Sections;
+
+  sections.forEach((sec: any, i: number) => {
+    const title = cleanTitle(sec.Title || sec.title || `Finding ${i + 1}`);
+    const rawContent = typeof (sec.Content || sec.content) === 'string' ? (sec.Content || sec.content) : '';
+
+    result.push({ text: `${i + 1}. ${title}`, fontSize: 12, bold: true, color: B.amber, margin: [0, 10, 0, 4] });
+
+    // Split into description + evidence
+    const parts = rawContent.split(/\nEvidence:\s*/i);
+    if (parts[0]?.trim()) {
+      result.push({ text: richText(parts[0].trim()), fontSize: 9, color: B.text, margin: [0, 0, 0, 4], alignment: 'justify' });
+    }
+    if (parts[1]) {
+      result.push({ text: 'Evidence', fontSize: 8, bold: true, color: B.amber, margin: [0, 4, 0, 2] });
+      const bullets = parts[1].split(/\n-\s*/).filter((s: string) => s.trim());
+      bullets.forEach((b: string) => {
+        result.push(quoteBlock(b.trim()));
+      });
+    }
+
+    // Subsections
+    const subsections = sec.Subsections || [];
+    subsections.forEach((sub: any) => {
+      const subTitle = cleanTitle(sub.Title || sub.title || '');
+      const subContent = typeof (sub.Content || sub.content) === 'string' ? (sub.Content || sub.content) : '';
+
+      result.push(hr());
+      result.push({ text: subTitle, fontSize: 10, bold: true, color: B.text, margin: [8, 4, 0, 3] });
+
+      const subParts = subContent.split(/\nEvidence:\s*/i);
+      if (subParts[0]?.trim()) {
+        result.push({ text: richText(subParts[0].trim()), fontSize: 8, color: B.text, margin: [8, 0, 0, 3], alignment: 'justify' });
       }
-    );
-  }
-
-  // Number of Open Codes Range
-  if (numberOfTopicClusters && numberOfTopicClusters.length > 0) {
-    const [min, max] = numberOfTopicClusters;
-    humanInterpretationContent.push(
-      {
-        text: "Number of Open Codes",
-        fontSize: 9,
-        bold: true,
-        marginTop: 8,
-        marginBottom: 5,
-        headlineLevel: 4,
-        id: 'topicClustersParam'
-      },
-      {
-        text: `Range: ${min} - ${max} open codes per file`,
-        fontSize: 8,
-        marginBottom: 6,
-        marginLeft: 3
+      if (subParts[1]) {
+        const subBullets = subParts[1].split(/\n-\s*/).filter((s: string) => s.trim());
+        subBullets.forEach((b: string) => result.push(quoteBlock(b.trim())));
       }
-    );
-  }
-
-  // Prompt to LLM
-  humanInterpretationContent.push(
-    {
-      text: "Prompt History",
-      fontSize: 9,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 5,
-      headlineLevel: 4,
-      id: 'clusteringStyleParam'
-    }
-  );
-
-  const { llmHistory = [] } = useLLMHistoryStore.getState();
-  const cardHistory = llmHistory.filter(entry => entry.step === "card");
-  if (cardHistory.length > 0) {
-    cardHistory.forEach((entry) => {
-      humanInterpretationContent.push(
-        {
-          text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 7,
-          bold: true,
-          marginLeft: 3,
-          marginBottom: 3
-        },
-        {
-          text: cleanContent(entry.userPrompt || ""),
-          fontSize: 7,
-          marginLeft: 3,
-          marginBottom: 8
-        }
-      );
     });
-  } else {
-    humanInterpretationContent.push({
-      text: "No customized prompt yet",
-      fontSize: 7,
-      marginLeft: 3,
-      marginBottom: 8
-    });
-  }
-
-  // User Memo
-  humanInterpretationContent.push(
-    {
-      text: "User Memo",
-      fontSize: 9,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 5,
-      headlineLevel: 4,
-      id: 'topicMemoParam'
-    },
-    {
-      text: cleanContent(topicMemo && typeof topicMemo === 'string' && topicMemo.trim() ? topicMemo : "No memo added yet"),
-      fontSize: 8,
-      marginBottom: 6,
-      marginLeft: 3
-    }
-  );
-
-  result.push({
-    table: {
-      widths: ['*'],
-      body: [
-        [{
-          stack: humanInterpretationContent,
-          fillColor: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ]
-    },
-    layout: 'noBorders',
-    marginTop: 5,
-    marginBottom: 12
   });
 
-  result.push(createHorizontalRule());
+  // Conclusion
+  const conclusion = report?.Conclusion || report?.conclusion;
+  if (typeof conclusion === 'string' && conclusion.trim()) {
+    result.push(hr());
+    result.push({ text: 'Conclusion', fontSize: 12, bold: true, color: B.amber, margin: [0, 8, 0, 4] });
+    result.push({ text: richText(conclusion), fontSize: 9, color: B.text, alignment: 'justify' });
+  }
 
   return result;
 }
 
-// Function to generate Sub-themes process content (Step 2)
-function generateSubThemesProcessContent(): Content[] {
-  const result: Content[] = [];
-
-  // Get data from stores
-  const { codeData } = useCodeStore.getState();
-  const { whatLLMDid: codeWhatLLMDid, rationale: codeRationale, llmDescription: codeLlmDescription } = useCodeStore.getState();
-  const { codeMemo } = useEditStore.getState();
-
-  // Calculate statistics
-  const stats = calculateStepStatistics(codeData || []);
-
-  result.push({
-    text: [
-      { text: "Step 2: ", fontSize: 12, bold: true, color: BRAND.accent },
-      { text: "Sub-themes", fontSize: 12, bold: true }
-    ],
-    marginBottom: 6,
-    marginTop: 8,
-    headlineLevel: 2,
-    tocItem: true,
-    id: 'subThemesProcessSection',
-    tocStyle: 'tocLevel2'
-  });
-
-  // Step summary box
-  result.push({
-    table: {
-      widths: ['*'],
-      body: [
-        [{
-          stack: [
-            {
-              text: "Step Summary",
-              fontSize: 9,
-              bold: true,
-              marginBottom: 5,
-              color: BRAND.textDark
-            },
-            {
-              text: `Total Sub-themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
-              fontSize: 8,
-              marginBottom: 5
-            },
-            {
-              text: "LLM groups open codes into coherent sub-themes, while human researcher validates groupings and refines thematic boundaries.",
-              fontSize: 8,
-              italics: true
-            }
-          ],
-          fillColor: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ]
-    },
-    layout: 'noBorders',
-    marginBottom: 8
-  });
-
-  // AI Mechanical Task section
-  if ((codeWhatLLMDid && typeof codeWhatLLMDid === 'string' && codeWhatLLMDid.trim()) ||
-      (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) ||
-      (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim())) {
-
-    const mechanicalTaskContent = [];
-
-    mechanicalTaskContent.push({
-      text: [
-        createAIBadge(),
-        { text: " AI Agent", fontSize: 10, bold: true, color: BRAND.aiPurple }
-      ],
-      marginTop: 5,
-      marginBottom: 6,
-      headlineLevel: 3,
-      tocItem: false,
-      id: 'codeMechanicalTask',
-      tocStyle: 'tocLevel3',
-      tocMargin: [10, 0, 0, 0]
-    });
-
-    if (codeLlmDescription && typeof codeLlmDescription === 'string' && codeLlmDescription.trim()) {
-      mechanicalTaskContent.push({
-        text: cleanContent(codeLlmDescription),
-        fontSize: 8,
-        marginBottom: 6,
-        marginLeft: 3
-      });
-    }
-
-    if (codeWhatLLMDid && typeof codeWhatLLMDid === 'string' && codeWhatLLMDid.trim()) {
-      mechanicalTaskContent.push(
-        {
-          text: "What LLM Did",
-          fontSize: 9,
-          bold: true,
-          marginTop: 8,
-          marginBottom: 5,
-          headlineLevel: 4,
-          id: 'codeWhatLLMDidParam'
-        },
-        {
-          text: cleanContent(codeWhatLLMDid),
-          fontSize: 8,
-          marginBottom: 6,
-          marginLeft: 3
-        }
-      );
-    }
-
-    if (codeRationale && typeof codeRationale === 'string' && codeRationale.trim()) {
-      mechanicalTaskContent.push(
-        {
-          text: "LLM Self Criticize",
-          fontSize: 9,
-          bold: true,
-          marginTop: 8,
-          marginBottom: 5,
-          headlineLevel: 4,
-          id: 'codeRationaleParam'
-        },
-        {
-          text: cleanContent(codeRationale),
-          fontSize: 8,
-          marginBottom: 6,
-          marginLeft: 3
-        }
-      );
-    }
-
-    result.push({
-      table: {
-        widths: ['*'],
-        body: [
-          [{
-            stack: mechanicalTaskContent,
-            fillColor: '#FFFFFF',
-            margin: [8, 6, 8, 6]
-          }]
-        ]
-      },
-      layout: 'noBorders',
-      marginTop: 8,
-      marginBottom: 8
-    });
-  }
-
-  // Human Analysis section
-  const subThemesHumanInterpretationContent = [];
-
-  subThemesHumanInterpretationContent.push({
-    text: [
-      createHumanBadge(),
-      { text: " Human Analysis", fontSize: 10, bold: true, color: BRAND.humanBlue }
-    ],
-    marginTop: 5,
-    marginBottom: 6,
-    headlineLevel: 3,
-    tocItem: false,
-    id: 'codeHumanInterpretation',
-    tocStyle: 'tocLevel3',
-    tocMargin: [10, 0, 0, 0]
-  });
-
-  // Human interpretation guidance
-  subThemesHumanInterpretationContent.push(
-    {
-      text: "In this stage, the LLM provides an initial map of sub-themes, while you should bring judgment, contextual understanding, and methodological rigor to confirm, adjust, or expand the map. Your engagement ensures that the sub-themes stay trustworthy, relevant, and analytically useful.",
-      fontSize: 8,
-      marginBottom: 6,
-      marginLeft: 3,
-      alignment: 'justify'
-    }
-  );
-
-  // Prompt to LLM
-  subThemesHumanInterpretationContent.push(
-    {
-      text: "Prompt History",
-      fontSize: 9,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 5,
-      headlineLevel: 4,
-      id: 'codingStyleParam'
-    }
-  );
-
-  const { llmHistory = [] } = useLLMHistoryStore.getState();
-  const codeHistory = llmHistory.filter(entry => entry.step === "code");
-  if (codeHistory.length > 0) {
-    codeHistory.forEach((entry) => {
-      subThemesHumanInterpretationContent.push(
-        {
-          text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 7,
-          bold: true,
-          marginLeft: 3,
-          marginBottom: 3
-        },
-        {
-          text: cleanContent(entry.userPrompt || ""),
-          fontSize: 7,
-          marginLeft: 3,
-          marginBottom: 8
-        }
-      );
-    });
-  } else {
-    subThemesHumanInterpretationContent.push({
-      text: "No customized prompt yet",
-      fontSize: 7,
-      marginLeft: 3,
-      marginBottom: 8
-    });
-  }
-
-  // User Memo
-  subThemesHumanInterpretationContent.push(
-    {
-      text: "User Memo",
-      fontSize: 9,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 5,
-      headlineLevel: 4,
-      id: 'codeMemoParam'
-    },
-    {
-      text: cleanContent(codeMemo && typeof codeMemo === 'string' && codeMemo.trim() ? codeMemo : "No memo added yet"),
-      fontSize: 8,
-      marginBottom: 6,
-      marginLeft: 3
-    }
-  );
-
-  result.push({
-    table: {
-      widths: ['*'],
-      body: [
-        [{
-          stack: subThemesHumanInterpretationContent,
-          fillColor: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ]
-    },
-    layout: 'noBorders',
-    marginTop: 5,
-    marginBottom: 12
-  });
-
-  result.push(createHorizontalRule());
-
-  return result;
+// ══════════════════════════════════════════════════════════════
+//  Codebook — Theme Map table
+// ══════════════════════════════════════════════════════════════
+const PALETTE = ["#E3C8C0","#FFE2D4","#C9ECCF","#C9ECE6","#D5ECF9","#DDDDF3","#F9D5F8","#F9D5D5"];
+function lighten(hex: string, a = 0.3) {
+  const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return `#${Math.round(r+(255-r)*a).toString(16).padStart(2,'0')}${Math.round(g+(255-g)*a).toString(16).padStart(2,'0')}${Math.round(b+(255-b)*a).toString(16).padStart(2,'0')}`;
 }
 
-// Function to generate Themes process content (Step 3)
-function generateThemesProcessContent(): Content[] {
-  const result: Content[] = [];
-
-  // Get data from stores
+function buildCodebook(): Content[] {
   const { conceptData } = useConceptStore.getState();
-  const { whatLLMDid: conceptWhatLLMDid, rationale: conceptRationale, llmDescription: conceptLlmDescription } = useConceptStore.getState();
-  const { conceptualizingStyle } = useAppStore.getState();
-  const { conceptMemo } = useEditStore.getState();
-
-  // Calculate statistics
-  const stats = calculateStepStatistics(conceptData || []);
-
-  result.push({
-    text: [
-      { text: "Step 3: ", fontSize: 12, bold: true, color: BRAND.accent },
-      { text: "Themes", fontSize: 12, bold: true }
-    ],
-    marginBottom: 6,
-    marginTop: 8,
-    headlineLevel: 2,
-    tocItem: true,
-    id: 'themesProcessSection',
-    tocStyle: 'tocLevel2'
-  });
-
-  // Step summary box
-  result.push({
-    table: {
-      widths: ['*'],
-      body: [
-        [{
-          stack: [
-            {
-              text: "Step Summary",
-              fontSize: 9,
-              bold: true,
-              marginBottom: 5,
-              color: BRAND.textDark
-            },
-            {
-              text: `Total Themes: ${stats.total} | AI-Generated: ${stats.aiGenerated} | User-Edited: ${stats.userEdited}`,
-              fontSize: 8,
-              marginBottom: 5
-            },
-            {
-              text: "LLM synthesizes sub-themes into overarching themes, while human researcher provides interpretive depth and theoretical alignment.",
-              fontSize: 8,
-              italics: true
-            }
-          ],
-          fillColor: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ]
-    },
-    layout: 'noBorders',
-    marginBottom: 8
-  });
-
-  // AI Mechanical Task section
-  if ((conceptWhatLLMDid && typeof conceptWhatLLMDid === 'string' && conceptWhatLLMDid.trim()) ||
-      (conceptRationale && typeof conceptRationale === 'string' && conceptRationale.trim()) ||
-      (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim())) {
-
-    const mechanicalTaskContent = [];
-
-    mechanicalTaskContent.push({
-      text: [
-        createAIBadge(),
-        { text: " AI Agent", fontSize: 10, bold: true, color: BRAND.aiPurple }
-      ],
-      marginTop: 5,
-      marginBottom: 6,
-      headlineLevel: 3,
-      tocItem: false,
-      id: 'conceptMechanicalTask',
-      tocStyle: 'tocLevel3',
-      tocMargin: [10, 0, 0, 0]
-    });
-
-    if (conceptLlmDescription && typeof conceptLlmDescription === 'string' && conceptLlmDescription.trim()) {
-      mechanicalTaskContent.push({
-        text: cleanContent(conceptLlmDescription),
-        fontSize: 8,
-        marginBottom: 6,
-        marginLeft: 3
-      });
-    }
-
-    if (conceptWhatLLMDid && typeof conceptWhatLLMDid === 'string' && conceptWhatLLMDid.trim()) {
-      mechanicalTaskContent.push(
-        {
-          text: "What LLM Did",
-          fontSize: 9,
-          bold: true,
-          marginTop: 8,
-          marginBottom: 5,
-          headlineLevel: 4,
-          id: 'conceptWhatLLMDidParam'
-        },
-        {
-          text: cleanContent(conceptWhatLLMDid),
-          fontSize: 8,
-          marginBottom: 6,
-          marginLeft: 3
-        }
-      );
-    }
-
-    if (conceptRationale && typeof conceptRationale === 'string' && conceptRationale.trim()) {
-      mechanicalTaskContent.push(
-        {
-          text: "LLM Self Criticize",
-          fontSize: 9,
-          bold: true,
-          marginTop: 8,
-          marginBottom: 5,
-          headlineLevel: 4,
-          id: 'conceptRationaleParam'
-        },
-        {
-          text: cleanContent(conceptRationale),
-          fontSize: 8,
-          marginBottom: 6,
-          marginLeft: 3
-        }
-      );
-    }
-
-    result.push({
-      table: {
-        widths: ['*'],
-        body: [
-          [{
-            stack: mechanicalTaskContent,
-            fillColor: '#FFFFFF',
-            margin: [8, 6, 8, 6]
-          }]
-        ]
-      },
-      layout: 'noBorders',
-      marginTop: 8,
-      marginBottom: 8
-    });
-  }
-
-  // Human Analysis section
-  const themesHumanInterpretationContent = [];
-
-  themesHumanInterpretationContent.push({
-    text: [
-      createHumanBadge(),
-      { text: " Human Analysis", fontSize: 10, bold: true, color: BRAND.humanBlue }
-    ],
-    marginTop: 5,
-    marginBottom: 6,
-    headlineLevel: 3,
-    tocItem: false,
-    id: 'conceptHumanInterpretation',
-    tocStyle: 'tocLevel3',
-    tocMargin: [10, 0, 0, 0]
-  });
-
-  // Human interpretation guidance
-  themesHumanInterpretationContent.push(
-    {
-      text: "This stage transforms the analysis from a preliminary structure into a coherent thematic framework. The LLM offers a draft map of themes, and you should provide the critical review, interpretive judgment, and theoretical alignment necessary to produce a trustworthy and meaningful set of final themes.",
-      fontSize: 8,
-      marginBottom: 6,
-      marginLeft: 3,
-      alignment: 'justify'
-    }
-  );
-
-  // Prompt to LLM
-  themesHumanInterpretationContent.push(
-    {
-      text: "Prompt History",
-      fontSize: 9,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 5,
-      headlineLevel: 4,
-      id: 'conceptualizingStyleParam'
-    }
-  );
-
-  const { llmHistory = [] } = useLLMHistoryStore.getState();
-  const conceptHistory = llmHistory.filter(entry => entry.step === "concept");
-  if (conceptHistory.length > 0) {
-    conceptHistory.forEach((entry) => {
-      themesHumanInterpretationContent.push(
-        {
-          text: formatTimestampForPDF(entry.timestamp),
-          fontSize: 7,
-          bold: true,
-          marginLeft: 3,
-          marginBottom: 3
-        },
-        {
-          text: cleanContent(entry.userPrompt || ""),
-          fontSize: 7,
-          marginLeft: 3,
-          marginBottom: 8
-        }
-      );
-    });
-  } else if (conceptualizingStyle && typeof conceptualizingStyle === 'string' && conceptualizingStyle.trim()) {
-    themesHumanInterpretationContent.push({
-      text: cleanContent(conceptualizingStyle),
-      fontSize: 7,
-      marginLeft: 3,
-      marginBottom: 8
-    });
-  } else {
-    themesHumanInterpretationContent.push({
-      text: "No customized prompt yet",
-      fontSize: 7,
-      marginLeft: 3,
-      marginBottom: 8
-    });
-  }
-
-  // User Memo
-  themesHumanInterpretationContent.push(
-    {
-      text: "User Memo",
-      fontSize: 9,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 5,
-      headlineLevel: 4,
-      id: 'conceptMemoParam'
-    },
-    {
-      text: cleanContent(conceptMemo && typeof conceptMemo === 'string' && conceptMemo.trim() ? conceptMemo : "No memo added yet"),
-      fontSize: 8,
-      marginBottom: 6,
-      marginLeft: 3
-    }
-  );
-
-  result.push({
-    table: {
-      widths: ['*'],
-      body: [
-        [{
-          stack: themesHumanInterpretationContent,
-          fillColor: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ]
-    },
-    layout: 'noBorders',
-    marginTop: 5,
-    marginBottom: 12
-  });
-
-  result.push(createHorizontalRule());
-
-  return result;
-}
-
-// Function to generate timeline/flow visualization
-function generateTimelineContent(): Content[] {
+  if (!conceptData?.length) return [];
   const result: Content[] = [];
+  result.push({ text: '', pageBreak: 'before' });
+  result.push({ text: 'Codebook', fontSize: 16, bold: true, color: B.amber, margin: [0, 0, 0, 6] });
+  result.push({ text: 'Hierarchical structure of themes, sub-themes, and open codes.', fontSize: 8, color: B.muted, italics: true, margin: [0, 0, 0, 8] });
 
-  result.push({
-    text: "Analysis Timeline",
-    fontSize: 16,
-    bold: true,
-    color: BRAND.primaryDark,
-    marginTop: 20,
-    marginBottom: 8,
-    headlineLevel: 2,
-    tocItem: true,
-    id: 'analysisTimelineSection',
-    tocStyle: 'tocLevel2'
-  });
-
-  // Timeline: simple inline text, no color blocks
-  result.push({
-    text: [
-      { text: 'Step 1 ', fontSize: 10, bold: true, color: BRAND.accent },
-      { text: 'Open Codes', fontSize: 10, bold: true },
-      { text: '  →  ', color: BRAND.textLight, fontSize: 10 },
-      { text: 'Step 2 ', fontSize: 10, bold: true, color: BRAND.accent },
-      { text: 'Sub-themes', fontSize: 10, bold: true },
-      { text: '  →  ', color: BRAND.textLight, fontSize: 10 },
-      { text: 'Step 3 ', fontSize: 10, bold: true, color: BRAND.accent },
-      { text: 'Themes', fontSize: 10, bold: true },
-    ],
-    alignment: 'center',
-    marginBottom: 12
-  });
-
-  result.push(createHorizontalRule());
-
-  return result;
-}
-
-// Function to generate Open Codes section content (for Primary Codebook - data only)
-function generateOpenCodesContent(): Content[] {
-  const result: Content[] = [];
-  // This section is now integrated into the main theme codebook
-  return result;
-}
-
-// Function to generate Sub-themes section content (for Primary Codebook - data only)
-function generateSubThemesContent(): Content[] {
-  const result: Content[] = [];
-  // This section is now integrated into the main theme codebook
-  return result;
-}
-
-// Function to generate Themes section content (for Primary Codebook - improved table design)
-// Lighten a hex color by blending with white
-function lightenColor(hex: string, amount: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  const lr = Math.round(r + (255 - r) * amount);
-  const lg = Math.round(g + (255 - g) * amount);
-  const lb = Math.round(b + (255 - b) * amount);
-  return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
-}
-
-// Generate 3-column Theme Map (Open Codes → Sub-themes → Themes) for PDF
-function generateThemeMapTable(): Content[] {
-  const { conceptData } = useConceptStore.getState();
-  if (!conceptData || conceptData.length === 0) return [];
-
-  const THEME_COLORS = ["#E3C8C0", "#FFE2D4", "#C9ECCF", "#C9ECE6", "#D5ECF9", "#DDDDF3", "#F9D5F8", "#F9D5D5"];
-
-  const tableBody: any[][] = [];
-
-  // Header row
-  tableBody.push([
-    { text: 'OPEN CODES', fontSize: 8, bold: true, color: BRAND.textLight, margin: [5, 4, 5, 4], fillColor: BRAND.primaryBg },
-    { text: '', width: 15, fillColor: BRAND.primaryBg, margin: [0, 0, 0, 0] },
-    { text: 'SUB-THEMES', fontSize: 8, bold: true, color: BRAND.textLight, margin: [5, 4, 5, 4], fillColor: BRAND.primaryBg },
-    { text: '', width: 15, fillColor: BRAND.primaryBg, margin: [0, 0, 0, 0] },
-    { text: 'THEMES', fontSize: 8, bold: true, color: BRAND.textLight, margin: [5, 4, 5, 4], fillColor: BRAND.primaryBg },
-  ]);
+  // Theme Map table: 3 columns
+  const tBody: any[][] = [[
+    { text: 'OPEN CODES', fontSize: 7, bold: true, color: B.muted, fillColor: B.bgCallout, margin: [4,3,4,3] },
+    { text: '', fillColor: B.bgCallout, margin: [0,0,0,0] },
+    { text: 'SUB-THEMES', fontSize: 7, bold: true, color: B.muted, fillColor: B.bgCallout, margin: [4,3,4,3] },
+    { text: '', fillColor: B.bgCallout, margin: [0,0,0,0] },
+    { text: 'THEMES', fontSize: 7, bold: true, color: B.muted, fillColor: B.bgCallout, margin: [4,3,4,3] },
+  ]];
 
   conceptData.forEach((concept, ci) => {
-    const themeColor = THEME_COLORS[ci % THEME_COLORS.length];
+    const color = PALETTE[ci % PALETTE.length];
     const codes = Object.values(concept.codes).flat();
 
-    // Build open codes grouped by sub-theme
-    const openCodesStack: any[] = [];
-    codes.forEach((code) => {
+    // Open codes grouped by sub-theme
+    const ocStack: any[] = [];
+    codes.forEach(code => {
       const cards = Object.values(code.data || {}).flat();
-      if (cards.length === 0) return;
-      // Sub-theme label as group header
-      openCodesStack.push({
-        text: sanitizeText(code.name),
-        fontSize: 7, bold: true, color: BRAND.textMed,
-        margin: [0, openCodesStack.length > 0 ? 4 : 0, 0, 1],
-      });
-      cards.forEach((card) => {
-        openCodesStack.push({
-          text: [
-            card.isGPT !== false ? createAIBadge() : createUserBadge(),
-            { text: ` ${sanitizeText(card.name)}`, fontSize: 8 },
-            { text: ` (${(card.topics || []).length})`, fontSize: 7, color: BRAND.textLight },
-          ],
-          margin: [4, 1, 0, 1],
-        });
+      if (!cards.length) return;
+      ocStack.push({ text: san(code.name), fontSize: 6, bold: true, color: B.muted, margin: [0, ocStack.length ? 3 : 0, 0, 1] });
+      cards.forEach(card => {
+        ocStack.push({ text: [
+          card.isGPT !== false ? aiBadge() : humanBadge(),
+          { text: ` ${san(card.name)}`, fontSize: 7 },
+          { text: ` (${(card.topics||[]).length})`, fontSize: 6, color: B.muted },
+        ], margin: [3, 1, 0, 1] });
       });
     });
 
-    // Build sub-themes column
-    const subthemesStack = codes.map((code) => ({
+    const stStack = codes.map(code => ({
       text: [
-        code.isGPT !== false ? createAIBadge() : createUserBadge(),
-        { text: ` ${sanitizeText(code.name)}`, fontSize: 9, bold: true },
+        code.isGPT !== false ? aiBadge() : humanBadge(),
+        { text: ` ${san(code.name)}`, fontSize: 8, bold: true },
       ],
       margin: [0, 2, 0, 2],
     }));
 
-    // Theme column
-    const themeStack = [
-      {
-        text: [
-          concept.isGPT !== false ? createAIBadge() : createUserBadge(),
-          { text: ` ${sanitizeText(concept.name)}`, fontSize: 10, bold: true },
-        ],
-        margin: [0, 0, 0, 3],
-      },
-      ...(concept.definition ? [{
-        text: sanitizeText(concept.definition),
-        fontSize: 8,
-        color: BRAND.textLight,
-        italics: true,
-        margin: [0, 0, 0, 0],
-      }] : []),
+    const thStack = [
+      { text: [
+        concept.isGPT !== false ? aiBadge() : humanBadge(),
+        { text: ` ${san(concept.name)}`, fontSize: 9, bold: true },
+      ], margin: [0, 0, 0, 2] },
+      ...(concept.definition ? [{ text: san(concept.definition), fontSize: 7, color: B.muted, italics: true }] : []),
     ];
 
-    tableBody.push([
-      { stack: openCodesStack, margin: [5, 5, 5, 5] },
-      { text: '→', fontSize: 10, color: BRAND.primaryLight, alignment: 'center', margin: [0, 5, 0, 0] },
-      { stack: subthemesStack, margin: [5, 5, 5, 5], fillColor: lightenColor(themeColor, 0.6) },
-      { text: '→', fontSize: 10, color: BRAND.primaryLight, alignment: 'center', margin: [0, 5, 0, 0] },
-      { stack: themeStack, margin: [5, 5, 5, 5], fillColor: lightenColor(themeColor, 0.4) },
+    tBody.push([
+      { stack: ocStack, margin: [4,4,4,4] },
+      { text: '→', fontSize: 9, color: B.divider, alignment: 'center', margin: [0,4,0,0] },
+      { stack: stStack, margin: [4,4,4,4], fillColor: lighten(color, 0.6) },
+      { text: '→', fontSize: 9, color: B.divider, alignment: 'center', margin: [0,4,0,0] },
+      { stack: thStack, margin: [4,4,4,4], fillColor: lighten(color, 0.4) },
     ]);
   });
 
-  return [{
-    table: {
-      headerRows: 1,
-      widths: ['*', 15, '*', 15, '*'],
-      body: tableBody,
-    },
-    layout: {
-      hLineWidth: (i: number) => (i <= 1 ? 1 : 0.5),
-      vLineWidth: () => 0,
-      hLineColor: () => BRAND.borderLight,
-      paddingLeft: () => 2,
-      paddingRight: () => 2,
-    },
-    marginTop: 8,
-    marginBottom: 8,
-  }];
-}
-
-function generateThemesContent(): Content[] {
-  const result: Content[] = [];
-
-  // Get data from stores
-  const { conceptData } = useConceptStore.getState();
-
-  if (conceptData && conceptData.length > 0) {
-    conceptData.forEach((concept, conceptIndex) => {
-      // Theme header (colored row)
-      const themeHeaderData = [
-        [{
-          text: [
-            concept.isGPT !== false ? createAIBadge() : createUserBadge(),
-            { text: ` ${sanitizeText(concept.name)}`, fontSize: 10, bold: true, marginLeft: 5 }
-          ],
-          fillColor: BRAND.primary,
-          color: '#FFFFFF',
-          margin: [8, 6, 8, 6]
-        }]
-      ];
-
-      result.push({
-        table: {
-          widths: ['*'],
-          body: themeHeaderData
-        },
-        layout: 'noBorders',
-        marginTop: conceptIndex > 0 ? 20 : 10,
-        marginBottom: 5,
-        headlineLevel: 3,
-        tocItem: true,
-        id: `themes_concept_${concept.nanoid || concept.id}`,
-        tocStyle: 'tocLevel3',
-        tocMargin: [10, 0, 0, 0]
-      });
-
-      // Theme definition
-      if (concept.definition) {
-        result.push({
-          table: {
-            widths: ['*'],
-            body: [
-              [{
-                text: sanitizeText(concept.definition),
-                fontSize: 8,
-                italics: true,
-                fillColor: BRAND.primaryBg,
-                margin: [10, 6, 10, 6]
-              }]
-            ]
-          },
-          layout: 'noBorders',
-          marginBottom: 6
-        });
-      }
-
-      // Sub-themes table
-      const subThemeRows = [];
-      
-      for (const codeKey in concept.codes) {
-        const codes = concept.codes[codeKey];
-        codes.forEach((code, codeIndex) => {
-          // Sub-theme header row
-          subThemeRows.push([
-            {
-              text: [
-                code.isGPT !== false ? createAIBadge() : createUserBadge(),
-                { text: ` ${sanitizeText(code.name)}`, fontSize: 9, bold: true, marginLeft: 5 }
-              ],
-              fillColor: BRAND.primaryLight,
-              margin: [10, 4, 8, 4]
-            }
-          ]);
-
-          // Sub-theme definition row
-          if (code.definition) {
-            subThemeRows.push([
-              {
-                text: sanitizeText(code.definition),
-                fontSize: 8,
-                italics: true,
-                fillColor: BRAND.primaryBg2,
-                margin: [12, 4, 10, 4]
-              }
-            ]);
-          }
-
-          // Open codes rows
-          for (const dataKey in code.data) {
-            const clusters = code.data[dataKey];
-            clusters.forEach((cluster, clusterIndex) => {
-              if (cluster.active !== false) {
-                // Alternate row colors for open codes
-                const isEvenRow = clusterIndex % 2 === 0;
-                const fillColor = isEvenRow ? '#FFFFFF' : BRAND.primaryBg;
-                
-                subThemeRows.push([
-                  {
-                    stack: [
-                      {
-                        text: [
-                          cluster.isGPT ? createAIBadge() : createUserBadge(),
-                          { text: ` ${sanitizeText(cluster.name)}`, fontSize: 8, bold: true, marginLeft: 5 }
-                        ],
-                        marginBottom: 3
-                      },
-                      ...(cluster.topics && cluster.topics.length > 0 ? [
-                        {
-                          text: `Data Segments (${cluster.topics.length}):`,
-                          fontSize: 8,
-                          bold: true,
-                          marginBottom: 2,
-                          color: BRAND.textLight
-                        },
-                        ...cluster.topics.map((topic: any) => ({
-                          text: `"${sanitizeText(topic.content)}"`,
-                          fontSize: 7,
-                          marginBottom: 1,
-                          marginLeft: 5,
-                          italics: true,
-                          color: BRAND.textMed
-                        }))
-                      ] : [])
-                    ],
-                    fillColor,
-                    margin: [15, 4, 10, 4]
-                  }
-                ]);
-              }
-            });
-          }
-        });
-      }
-
-      if (subThemeRows.length > 0) {
-        result.push({
-          table: {
-            widths: ['*'],
-            body: subThemeRows
-          },
-          layout: {
-            hLineWidth: function (i: number, node: any) {
-              return i === 0 || i === node.table.body.length ? 1 : 0.5;
-            },
-            vLineWidth: function (i: number, node: any) {
-              return 0;
-            },
-            hLineColor: function (i: number, node: any) {
-              return BRAND.borderLight;
-            },
-            paddingLeft: function (i: number, node: any) { return 0; },
-            paddingRight: function (i: number, node: any) { return 0; },
-            paddingTop: function (i: number, node: any) { return 0; },
-            paddingBottom: function (i: number, node: any) { return 0; }
-          },
-          marginBottom: 8
-        });
-      }
-    });
-  }
-
-  return result;
-}
-
-// Card data type for PDF calculation
-interface CardDataForPDF {
-  id: string;
-  topics?: Array<{ content: string }>;
-  active?: boolean;
-}
-
-// Function to calculate coverage for a file using the unified algorithm
-function calculateFileCoverage(
-  file: File,
-  cardData: CardDataForPDF[],
-  fileCardMap: Record<string, string[]>
-) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const fileContent = (event.target?.result as string) || "";
-
-      // Use the unified coverage calculation algorithm
-      const coverage = calculateFileCoverageFromCardData(fileContent, file.name, cardData, fileCardMap);
-
-      resolve({
-        totalWords: coverage.totalWords,
-        coveredWords: coverage.coveredWords,
-        coveragePercentage: coverage.coveragePercentage
-      });
-    };
-    reader.readAsText(file);
-  });
-}
-
-// Function to generate Document Coverage section content
-async function generateDocumentCoverageContent(): Promise<Content[]> {
-  const result: Content[] = [];
-
-  // Get data from stores
-  const { fileCoverageData, uploadedFiles, setFileCoverageData } = useAppStore.getState();
-  const { cardData, fileCardMap } = useCardStore.getState();
-
-  console.log('PDF Coverage Calculation - Store data:', {
-    uploadedFileNames: uploadedFiles.map(f => f.name),
-    cardDataLength: cardData.length,
-    allCardIds: cardData.map(c => c.id),
+  result.push({
+    table: { headerRows: 1, widths: ['*', 12, '*', 12, '*'], body: tBody },
+    layout: { hLineWidth: (i: number) => i <= 1 ? 0.5 : 0.3, vLineWidth: () => 0, hLineColor: () => B.divider, paddingLeft: () => 1, paddingRight: () => 1 },
+    margin: [0, 0, 0, 10],
   });
 
-  // Use existing coverage data, only calculate if missing
-  const coveragePromises = uploadedFiles.map(async (file) => {
-    const existingCoverage = fileCoverageData[file.name];
+  // Detailed codebook: full theme → sub-theme → open codes with data segments
+  result.push(hr());
+  result.push({ text: 'Primary Codebook', fontSize: 12, bold: true, color: B.amber, margin: [0, 6, 0, 6] });
 
-    if (existingCoverage) {
-      console.log(`Using existing coverage data for ${file.name}:`, existingCoverage);
-      return { fileName: file.name, coverage: existingCoverage };
-    }
-
-    // Only calculate if no existing data
-    try {
-      console.log(`No existing coverage data for ${file.name}, calculating...`);
-      const coverage = await calculateFileCoverage(file, cardData, fileCardMap);
-      setFileCoverageData(file.name, coverage);
-      return { fileName: file.name, coverage };
-    } catch (error) {
-      console.error(`Error calculating coverage for ${file.name}:`, error);
-      return { fileName: file.name, coverage: null };
-    }
-  });
-
-  // Wait for all coverage calculations to complete
-  await Promise.all(coveragePromises);
-
-  // Get updated coverage data
-  const updatedFileCoverageData = useAppStore.getState().fileCoverageData;
-
-  // Create coverage list for all files
-  const coverageItems: any[] = [];
-
-  uploadedFiles.forEach((file) => {
-    const coverage = updatedFileCoverageData[file.name];
-    // Remove .txt postfix from file name for display
-    const displayName = file.name.replace(/\.txt$/i, '');
-
-    console.log(`PDF Coverage for ${file.name}:`, coverage);
-
-    if (coverage) {
-      // Check if there's a calculation error
-      if (coverage.coveragePercentage === -1) {
-        coverageItems.push({
-          text: [
-            { text: displayName, bold: true },
-            { text: " - Coverage calculation error", fontSize: 10, italics: true, color: BRAND.accent }
-          ],
-          fontSize: 11
-        });
-      } else {
-        coverageItems.push({
-          text: [
-            { text: displayName, bold: true },
-            { text: ` - ${coverage.coveragePercentage}% coverage (${coverage.coveredWords}/${coverage.totalWords} words)`, fontSize: 10 }
-          ],
-          fontSize: 11
-        });
-      }
-    } else {
-      // If no coverage data available, show file name with no coverage
-      console.log(`No coverage data found for ${file.name} in PDF generation`);
-      coverageItems.push({
-        text: [
-          { text: displayName, bold: true },
-          { text: " - No coverage data available", fontSize: 10, italics: true }
-        ],
-        fontSize: 11
-      });
-    }
-  });
-
-  if (coverageItems.length > 0) {
+  conceptData.forEach((concept, ci) => {
+    const _color = PALETTE[ci % PALETTE.length];
+    // Theme header
     result.push({
-      text: "Document Coverage",
-      fontSize: 16,
-      bold: true,
-      marginTop: 8,
-      marginBottom: 6,
-      headlineLevel: 3,
-      tocItem: true,
-      id: 'documentCoverageSection',
-      tocStyle: 'tocLevel3'
+      table: { widths: ['*'], body: [[{
+        text: [concept.isGPT !== false ? { text: '[AI] ', fontSize: 7, bold: true, color: B.white } : { text: '[Human] ', fontSize: 7, bold: true, color: B.white }, { text: san(concept.name), fontSize: 9, bold: true }],
+        fillColor: B.amber, color: B.white, margin: [8, 5, 8, 5],
+      }]] },
+      layout: 'noBorders',
+      margin: [0, ci > 0 ? 10 : 4, 0, 2],
     });
 
-    coverageItems.forEach(item => {
+    if (concept.definition) {
+      result.push({ text: san(concept.definition), fontSize: 7, italics: true, color: B.muted, margin: [8, 2, 8, 4] });
+    }
+
+    const codes = Object.values(concept.codes).flat();
+    codes.forEach(code => {
+      // Sub-theme
       result.push({
-        ...item,
-        marginBottom: 5,
-        marginLeft: 10
+        table: { widths: ['*'], body: [[{
+          text: [code.isGPT !== false ? { text: '[AI] ', fontSize: 6, bold: true, color: B.amber } : { text: '[Human] ', fontSize: 6, bold: true, color: '#2563EB' }, { text: san(code.name), fontSize: 8, bold: true }],
+          fillColor: B.amberLight, margin: [10, 3, 8, 3],
+        }]] },
+        layout: 'noBorders',
+        margin: [0, 2, 0, 1],
+      });
+
+      if (code.definition) {
+        result.push({ text: san(code.definition), fontSize: 7, italics: true, color: B.muted, margin: [12, 1, 8, 3] });
+      }
+
+      // Open codes
+      const cards = Object.values(code.data || {}).flat();
+      cards.forEach((card, idx) => {
+        if (card.active === false) return;
+        const bg = idx % 2 === 0 ? B.white : B.bgCallout;
+        const segments = card.topics || [];
+        result.push({
+          table: { widths: ['*'], body: [[{
+            stack: [
+              { text: [
+                card.isGPT ? { text: '[AI] ', fontSize: 6, color: B.amber, bold: true } : { text: '[Human] ', fontSize: 6, color: '#2563EB', bold: true },
+                { text: san(card.name), fontSize: 7, bold: true },
+                { text: ` — ${segments.length} segment${segments.length !== 1 ? 's' : ''}`, fontSize: 6, color: B.muted },
+              ], margin: [0, 0, 0, 2] },
+              ...segments.map((t: any) => ({
+                text: `"${san(t.content)}"`, fontSize: 6, italics: true, color: B.muted, margin: [4, 0, 0, 1],
+              })),
+            ],
+            fillColor: bg, margin: [14, 3, 8, 3],
+          }]] },
+          layout: 'noBorders',
+        });
       });
     });
-
-    result.push({ text: "", marginBottom: 12 });
-  }
+  });
 
   return result;
 }
 
-export default async function renderPDF(report: any, concept: concept[]) {
-  const svgsData: ContentSvg[] = [];
-
-  // Get the rendered graph SVG and active graph type from the store
-  const { renderedGraphSvg, activeGraphType, graphs, graph } = useDisplayStore.getState();
-
-  // Use renderedGraphType if available, otherwise fall back to activeGraphType
-  const graphTypeForPDF = activeGraphType || "mindmap";
-
-  console.log(`PDF: Using ${graphTypeForPDF} visualization`);
-
-  const pdfGraphWidth = 700;
-  const pdfGraphHeight = 600;
-  const minSvgDimension = 300;
-  const scaleFactor = 2.0;
-
-  // Check if we have a rendered SVG for the active graph type
-  if (renderedGraphSvg && graphTypeForPDF !== "mindmap") {
-    console.log("Using pre-rendered SVG for PDF from:", graphTypeForPDF);
-
-    const parser = new DOMParser();
-    const svgDoc = parser.parseFromString(renderedGraphSvg, "image/svg+xml");
-    const svgElement = svgDoc.documentElement;
-
-    const originalWidth = svgElement.getAttribute("width");
-    const originalHeight = svgElement.getAttribute("height");
-
-    // Parse dimensions
-    let widthValue = originalWidth ? parseFloat(originalWidth) : 0;
-    let heightValue = originalHeight ? parseFloat(originalHeight) : 0;
-
-    if ((!widthValue || !heightValue) && svgElement.getAttribute("viewBox")) {
-      const viewBoxValues = svgElement.getAttribute("viewBox")!.split(' ').map(parseFloat);
-      if (viewBoxValues.length >= 4) {
-        widthValue = viewBoxValues[2];
-        heightValue = viewBoxValues[3];
-      }
-    }
-
-    console.log(`Setting fixed dimensions for ${graphTypeForPDF} in PDF: ${pdfGraphWidth}x${pdfGraphHeight}`);
-    widthValue = pdfGraphWidth;
-    heightValue = pdfGraphHeight;
-
-    // Make all elements visible in the PDF
-    svgElement.querySelectorAll(".node").forEach((node) => {
-      (node as HTMLElement).style.display = "block";
-      (node as HTMLElement).style.opacity = "1";
-    });
-
-    svgElement.querySelectorAll(".edge").forEach((edge) => {
-      (edge as HTMLElement).style.display = "block";
-      (edge as HTMLElement).style.opacity = "1";
-      const path = edge.querySelector("path");
-      if (path) {
-        path.setAttribute("stroke-width", "1");
-        path.setAttribute("opacity", "1");
-      }
-    });
-
-    svgElement.setAttribute("width", widthValue.toString());
-    svgElement.setAttribute("height", heightValue.toString());
-    svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    svgElement.setAttribute("style", "max-width: 100%; height: auto;");
-
-    const updatedSvgString = new XMLSerializer().serializeToString(svgElement);
-
-    svgsData.push({
-      svg: updatedSvgString,
-      width: widthValue,
-      height: heightValue,
-      alignment: "center",
-      fit: [pdfGraphWidth, pdfGraphHeight]
-    });
-
-    console.log(`Added ${graphTypeForPDF} graph to PDF with dimensions ${widthValue}x${heightValue}`);
-  }
-  else if ((graphTypeForPDF === "mindmap" || !renderedGraphSvg) && graph && graph.dot) {
+// ══════════════════════════════════════════════════════════════
+//  Document Coverage (async file reading)
+// ══════════════════════════════════════════════════════════════
+async function ensureCoverage() {
+  const { uploadedFiles, fileCoverageData, setFileCoverageData } = useAppStore.getState();
+  const { cardData, fileCardMap } = useCardStore.getState();
+  for (const file of uploadedFiles) {
+    if (fileCoverageData[file.name]) continue;
     try {
-      console.log("Generating fresh mindmap visualization for PDF");
-
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.visibility = 'hidden';
-      tempContainer.style.width = `${pdfGraphWidth}px`;
-      tempContainer.style.height = `${pdfGraphHeight}px`;
-      document.body.appendChild(tempContainer);
-
-      await new Promise<void>((resolve, reject) => {
-        try {
-          graphviz(tempContainer)
-            .width(pdfGraphWidth)
-            .height(pdfGraphHeight)
-            .fit(true)
-            .scale(0.98)
-            .engine('dot')
-            .renderDot(graph.dot)
-            .on("end", () => {
-              const svgElement = tempContainer.querySelector("svg");
-              if (svgElement) {
-                // Make sure SVG has appropriate attributes
-                svgElement.setAttribute("width", `${pdfGraphWidth}`);
-                svgElement.setAttribute("height", `${pdfGraphHeight}`);
-                svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
-                svgElement.setAttribute("style", "max-width: 100%; height: auto;");
-
-                const originalViewBox = svgElement.getAttribute("viewBox");
-                if (originalViewBox) {
-                  const [x, y, w, h] = originalViewBox.split(" ").map(Number);
-                  const padding = Math.max(w, h) * 0.05;
-                  svgElement.setAttribute(
-                    "viewBox",
-                    `${x - padding} ${y - padding} ${w + padding * 2} ${h + padding * 2}`
-                  );
-                }
-
-                // Make all nodes visible for the PDF
-                svgElement.querySelectorAll(".node").forEach((node) => {
-                  (node as HTMLElement).style.display = "block";
-                  (node as HTMLElement).style.opacity = "1";
-                });
-
-                // Make all edges visible for the PDF
-                svgElement.querySelectorAll(".edge").forEach((edge) => {
-                  (edge as HTMLElement).style.display = "block";
-                  (edge as HTMLElement).style.opacity = "1";
-                  const path = edge.querySelector("path");
-                  if (path) {
-                    path.setAttribute("stroke-width", "1");
-                    path.setAttribute("opacity", "1");
-                  }
-                });
-
-                const svgString = new XMLSerializer().serializeToString(svgElement);
-
-                // Add the SVG to the PDF content with specific fit parameters for mindmap
-                svgsData.push({
-                  svg: svgString,
-                  width: pdfGraphWidth,
-                  height: pdfGraphHeight,
-                  alignment: "center",
-                  fit: [pdfGraphWidth, pdfGraphHeight]
-                });
-
-                console.log(`Generated mindmap for PDF with dimensions ${pdfGraphWidth}x${pdfGraphHeight}`);
-              }
-              document.body.removeChild(tempContainer);
-              resolve();
-            });
-        } catch (err) {
-          console.error("Error generating mindmap SVG:", err);
-          document.body.removeChild(tempContainer);
-          reject(err);
-        }
+      const content = await new Promise<string>(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => resolve((e.target?.result as string) || '');
+        reader.readAsText(file);
       });
-    } catch (error) {
-      console.error("Failed to create mindmap SVG:", error);
-    }
-  } else if (graphTypeForPDF && graphs && graphs[graphTypeForPDF]) {
-    try {
-      // console.log(`Generating ${graphTypeForPDF} visualization for PDF from DOT data`);
-
-      const tempContainer = document.createElement('div');
-      tempContainer.style.position = 'absolute';
-      tempContainer.style.visibility = 'hidden';
-      tempContainer.style.width = `${pdfGraphWidth}px`;
-      tempContainer.style.height = `${pdfGraphHeight}px`;
-      document.body.appendChild(tempContainer);
-
-      await new Promise<void>((resolve, reject) => {
-        try {
-          graphviz(tempContainer)
-            .width(pdfGraphWidth)
-            .height(pdfGraphWidth)
-            .fit(true)
-            .scale(0.98)
-            .engine('dot')
-            .renderDot(graphs[graphTypeForPDF]!)
-            .on("end", () => {
-              const svgElement = tempContainer.querySelector("svg");
-              if (svgElement) {
-                svgElement.setAttribute("width", `${pdfGraphWidth}`);
-                svgElement.setAttribute("height", `${pdfGraphHeight}`);
-                svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
-                svgElement.setAttribute("style", "max-width: 100%; height: auto;");
-
-                svgElement.querySelectorAll(".node").forEach((node) => {
-                  (node as HTMLElement).style.display = "block";
-                  (node as HTMLElement).style.opacity = "1";
-                });
-
-                svgElement.querySelectorAll(".edge").forEach((edge) => {
-                  (edge as HTMLElement).style.display = "block";
-                  (edge as HTMLElement).style.opacity = "1";
-                  const path = edge.querySelector("path");
-                  if (path) {
-                    path.setAttribute("stroke-width", "1");
-                    path.setAttribute("opacity", "1");
-                  }
-                });
-
-                const svgString = new XMLSerializer().serializeToString(svgElement);
-
-                svgsData.push({
-                  svg: svgString,
-                  width: pdfGraphWidth,
-                  height: pdfGraphHeight,
-                  alignment: "center",
-                  fit: [pdfGraphWidth, pdfGraphHeight]
-                });
-
-                // console.log(`Generated ${graphTypeForPDF} for PDF with dimensions ${pdfGraphWidth}x${pdfGraphHeight}`);
-              }
-              document.body.removeChild(tempContainer);
-              resolve();
-            });
-        } catch (err) {
-          console.error(`Error generating ${graphTypeForPDF} SVG:`, err);
-          document.body.removeChild(tempContainer);
-          reject(err);
-        }
-      });
-    } catch (error) {
-      console.error(`Failed to create ${graphTypeForPDF} SVG:`, error);
-    }
-  } else {
-    console.error(`No graph data found for ${graphTypeForPDF} visualization`);
+      const cov = calculateFileCoverageFromCardData(content, file.name, cardData, fileCardMap);
+      setFileCoverageData(file.name, cov);
+    } catch {}
   }
+}
 
-  let reportTitle = "MindCoder Trustworthy Codebook with a Transparent Trajectory";
-  let reportSections = [];
+// ══════════════════════════════════════════════════════════════
+//  Final Page — Codebook Development Process
+// ══════════════════════════════════════════════════════════════
+function buildProcessPage(): Content[] {
+  const result: Content[] = [];
+  result.push({ text: '', pageBreak: 'before' });
+  result.push({ text: 'Codebook Development Process', fontSize: 16, bold: true, color: B.amber, margin: [0, 0, 0, 6] });
 
-  if (report) {
-    if (report.Title) {
-      reportTitle = report.Title;
-    } else if (report.title) {
-      reportTitle = report.title;
-    } else if (report.Report && report.Report.Title) {
-      reportTitle = report.Report.Title;
-    }
-
-    if (report.Sections && report.Sections.length > 0) {
-      reportSections = report.Sections;
-    } else if (report.sections && report.sections.length > 0) {
-      reportSections = report.sections;
-    } else if (report.Report && report.Report.Sections && report.Report.Sections.length > 0) {
-      reportSections = report.Report.Sections;
-    }
-  }
-
-  const reportContent: Content[] = [];
-
-  // Helper: split content into description + evidence bullet points (italic)
-  function formatSectionContent(raw: string, indent: number = 0): Content[] {
-    if (!raw || typeof raw !== 'string') return [];
-    const parts = raw.split(/\nEvidence:\s*/i);
-    const result: Content[] = [];
-    // Description
-    if (parts[0]?.trim()) {
-      result.push({ text: cleanContent(parts[0].trim()), fontSize: 9, marginBottom: 4, marginLeft: indent, alignment: 'justify' as const });
-    }
-    // Evidence bullets
-    if (parts[1]) {
-      const bullets = parts[1].split(/\n-\s*/).filter(s => s.trim());
-      result.push({ text: 'Evidence:', fontSize: 8, bold: true, color: BRAND.textMed, marginLeft: indent, marginBottom: 2 });
-      bullets.forEach(b => {
-        result.push({
-          text: [{ text: '  •  ', color: BRAND.textLight }, ...cleanContent(b.trim()).map((seg: any) => ({ ...seg, italics: true, fontSize: 8 }))],
-          marginLeft: indent + 5,
-          marginBottom: 2,
-        });
-      });
-    }
-    return result;
-  }
-
-  reportSections.forEach((section: any, index: number) => {
-    const sectionTitle = section.Title || section.title || `Section ${index + 1}`;
-    const sectionContent = section.Content || section.content;
-
-    reportContent.push(
-      { text: cleanTitle(sectionTitle), fontSize: 11, bold: true, marginTop: 8, marginBottom: 4, headlineLevel: 2, color: BRAND.primaryDark }
-    );
-    reportContent.push(...formatSectionContent(typeof sectionContent === 'string' ? sectionContent : ''));
-
-    const subsections = section.Subsections;
-    if (subsections && subsections.length > 0) {
-      subsections.forEach((subsection: any, subIndex: number) => {
-        const subsectionTitle = subsection.Title || subsection.title || `Subsection ${subIndex + 1}`;
-        const subsectionContent = subsection.Content || subsection.content;
-
-        reportContent.push(
-          { text: cleanTitle(subsectionTitle), fontSize: 10, bold: true, marginTop: 6, marginBottom: 3, marginLeft: 10, headlineLevel: 3, color: BRAND.textDark }
-        );
-        reportContent.push(...formatSectionContent(typeof subsectionContent === 'string' ? subsectionContent : '', 10));
-      });
-    }
+  // Timeline
+  result.push({
+    text: [
+      { text: 'Step 1 ', bold: true, color: B.amber, fontSize: 9 },
+      { text: 'Open Codes', bold: true, fontSize: 9 },
+      { text: '  →  ', color: B.divider, fontSize: 9 },
+      { text: 'Step 2 ', bold: true, color: B.amber, fontSize: 9 },
+      { text: 'Sub-themes', bold: true, fontSize: 9 },
+      { text: '  →  ', color: B.divider, fontSize: 9 },
+      { text: 'Step 3 ', bold: true, color: B.amber, fontSize: 9 },
+      { text: 'Themes', bold: true, fontSize: 9 },
+    ],
+    alignment: 'center', margin: [0, 0, 0, 10],
   });
 
-  if (report.Conclusion || report.conclusion) {
-    const conclusion = report.Conclusion || report.conclusion;
-    if (typeof conclusion === 'string') {
-      reportContent.push(
-        { text: "Conclusion", fontSize: 11, bold: true, marginTop: 8, marginBottom: 8, headlineLevel: 2 },
-        { text: cleanContent(conclusion), fontSize: 10, marginBottom: 12, alignment: 'justify' }
-      );
-    }
-  }
+  // Build each step
+  const steps = [
+    { label: 'Step 1: Open Codes', store: useCardStore, storeKey: 'cardData', isCard: true, memoKey: 'topicMemo', historyStep: 'card' },
+    { label: 'Step 2: Sub-themes', store: useCodeStore, storeKey: 'codeData', isCard: false, memoKey: 'codeMemo', historyStep: 'code' },
+    { label: 'Step 3: Themes', store: useConceptStore, storeKey: 'conceptData', isCard: false, memoKey: 'conceptMemo', historyStep: 'concept' },
+  ];
 
-  const docDefinition = {
-    pageSize: 'LETTER',
+  const { llmHistory = [] } = useLLMHistoryStore.getState();
+  const editState = useEditStore.getState();
+
+  steps.forEach(step => {
+    const storeState = step.store.getState() as any;
+    const data = storeState[step.storeKey] || [];
+    const stats = stepStats(data, step.isCard);
+    const llmDesc = storeState.llmDescription || '';
+    const whatDid = storeState.whatLLMDid || '';
+    const rationale = storeState.rationale || '';
+    const memo = (editState as any)[step.memoKey] || '';
+    const history = llmHistory.filter((e: any) => e.step === step.historyStep);
+
+    result.push(hr());
+    result.push({ text: step.label, fontSize: 11, bold: true, color: B.amber, margin: [0, 6, 0, 2] });
+    result.push({ text: `Total: ${stats.total} | AI: ${stats.ai} | Human: ${stats.human}`, fontSize: 7, color: B.muted, margin: [0, 0, 0, 6] });
+
+    // AI Agent section
+    if (llmDesc || whatDid || rationale) {
+      result.push({ text: 'AI Agent', fontSize: 9, bold: true, color: B.amber, margin: [0, 4, 0, 3] });
+
+      if (llmDesc) result.push({ text: san(llmDesc), fontSize: 8, color: B.text, margin: [4, 0, 0, 3] });
+
+      if (whatDid) {
+        result.push({ text: 'What LLM Did', fontSize: 8, bold: true, color: B.text, margin: [4, 2, 0, 1] });
+        result.push({ text: san(whatDid), fontSize: 7, color: B.text, margin: [8, 0, 0, 3] });
+      }
+
+      if (rationale) {
+        // LLM Self-Criticize — dashed border distinct style
+        result.push({
+          table: { widths: ['*'], body: [[{
+            stack: [
+              { text: 'LLM Self-Criticize', fontSize: 7, bold: true, color: B.muted, margin: [0, 0, 0, 2] },
+              { text: san(rationale), fontSize: 7, color: B.muted },
+            ],
+            margin: [8, 5, 8, 5],
+          }]] },
+          layout: { hLineWidth: () => 0.5, vLineWidth: () => 0.5, hLineColor: () => B.divider, vLineColor: () => B.divider, hLineStyle: () => ({ dash: { length: 3, space: 2 } }), vLineStyle: () => ({ dash: { length: 3, space: 2 } }),
+            paddingLeft: () => 0, paddingRight: () => 0, paddingTop: () => 0, paddingBottom: () => 0 },
+          margin: [4, 2, 0, 4],
+        });
+      }
+    }
+
+    // Human Analysis section
+    result.push({ text: 'Human Analysis', fontSize: 9, bold: true, color: '#2563EB', margin: [0, 4, 0, 3] });
+
+    // Prompt history
+    if (history.length > 0) {
+      result.push({ text: 'Prompt History', fontSize: 8, bold: true, color: B.text, margin: [4, 2, 0, 2] });
+      history.forEach((entry: any) => {
+        result.push({ text: fmtTime(entry.timestamp), fontSize: 6, bold: true, color: B.muted, margin: [8, 1, 0, 0] });
+        result.push({ text: san(entry.userPrompt || ''), fontSize: 7, color: B.text, margin: [8, 0, 0, 3] });
+      });
+    } else {
+      result.push({ text: 'No prompt history.', fontSize: 7, color: B.muted, margin: [4, 0, 0, 3] });
+    }
+
+    // User memo
+    result.push({ text: 'User Memo', fontSize: 8, bold: true, color: B.text, margin: [4, 3, 0, 1] });
+    result.push({ text: san(memo?.trim() || 'No memo added yet.'), fontSize: 7, color: memo?.trim() ? B.text : B.muted, margin: [8, 0, 0, 4] });
+  });
+
+  return result;
+}
+
+// ══════════════════════════════════════════════════════════════
+//  Main export — assemble all pages
+// ══════════════════════════════════════════════════════════════
+export default async function renderPDF(report: any, _conceptArr: concept[]) {
+  // Ensure coverage data is ready
+  await ensureCoverage();
+
+  const docDefinition: TDocumentDefinitions = {
+    pageSize: 'A4',
     pageOrientation: 'portrait',
     compress: true,
-    pdfVersion: '1.7',
     pageMargins: [50, 45, 50, 45],
 
-    styles: {
-      tocTitle: {
-        fontSize: 11,
-        bold: true,
-        margin: [0, 15, 0, 10]
-      },
-      tocText: {
-        fontSize: 10
-      },
-      tocNumber: {
-        fontSize: 9,
-        italics: true
-      },
-      tocLevel1: {
-        fontSize: 11,
-        bold: true,
-        margin: [0, 5, 0, 2],
-        color: '#AA7667'
-      },
-      tocLevel2: {
-        fontSize: 10,
-        margin: [15, 3, 0, 2],
-        italics: false
-      },
-      tocLevel3: {
-        fontSize: 9,
-        margin: [30, 2, 0, 2],
-        color: '#000000'
-      },
-      tocLevel4: {
-        fontSize: 9,
-        margin: [60, 3, 0, 3],
-        color: '#9B8578'
-      },
-      tocLevel5: {
-        fontSize: 9,
-        margin: [80, 2, 0, 2],
-        color: '#9B8578'
-      },
-      tocLevel6: {
-        fontSize: 9,
-        margin: [100, 2, 0, 2],
-        color: '#9B8578'
-      },
-      tableHeader: {
-        bold: true,
-        fontSize: 11,
-        fillColor: '#F3F4F6'
-      }
-    },
-
-    outline: [
-      { title: cleanTitle(reportTitle), ref: 'reportTitle', open: true },
-      { title: 'Analysis Configuration', ref: 'analysisConfigurationSection', open: true },
-      { title: 'Findings', ref: 'reportSection', open: true },
-      {
-        title: 'Codebook Development Process',
-        ref: 'codebookDevelopmentProcessSection',
-        open: true,
-        items: [
-          {
-            title: 'Step 1: Open Codes',
-            ref: 'openCodesProcessSection',
-            items: [
-              { title: 'Human Analysis', ref: 'topicHumanInterpretation' },
-              { title: 'AI Agent', ref: 'topicMechanicalTask' }
-            ]
-          },
-          {
-            title: 'Step 2: Sub-themes',
-            ref: 'subThemesProcessSection',
-            items: [
-              { title: 'Human Analysis', ref: 'codeHumanInterpretation' },
-              { title: 'AI Agent', ref: 'codeMechanicalTask' }
-            ]
-          },
-          {
-            title: 'Step 3: Themes',
-            ref: 'themesProcessSection',
-            items: [
-              { title: 'Human Analysis', ref: 'conceptHumanInterpretation' },
-              { title: 'AI Agent', ref: 'conceptMechanicalTask' }
-            ]
-          }
-        ]
-      },
-      {
-        title: 'Primary Codebook',
-        ref: 'primaryCodebookSection',
-        open: true
-      }
-    ],
-
-    viewerPreferences: {
-      displayDocTitle: true,
-      noPrintScaling: true,
-      viewArea: 'CropBox',
-      viewClip: 'CropBox',
-      pageMode: 'UseOutlines',
+    defaultStyle: {
+      font: 'Roboto',
+      fontSize: 9,
+      color: B.text,
+      lineHeight: 1.3,
     },
 
     content: [
-      // Header with logo and date
-      { image: logoBase64, width: 100, alignment: "center" },
-      {
-        text: formatDate(new Date()),
-        fontSize: 9,
-        color: BRAND.textLight,
-        alignment: "center",
-        margin: [0, 8, 0, 8],
-      },
-      
-      // Main title
-      {
-        text: cleanTitle(reportTitle),
-        fontSize: 11,
-        bold: true,
-        color: BRAND.textDark,
-        alignment: "center",
-        margin: [0, 0, 0, 12],
-        headlineLevel: 1,
-        id: 'reportTitle'
-      },
-
-      // Disclaimer section with improved styling
-      {
-        table: {
-          widths: ['*'],
-          body: [
-            [{
-              text: [
-                { text: '⚠  ', fontSize: 10, bold: true, color: '#92400E' },
-                { text: 'AI-assisted analysis. Codes and themes were generated by LLM and reviewed by the researcher. Treat as reference, not definitive findings.', fontSize: 8, color: '#92400E' }
-              ],
-              fillColor: '#FEF3C7',
-              margin: [10, 8, 10, 8]
-            }]
-          ]
-        },
-        layout: 'noBorders',
-        marginTop: 8,
-        marginBottom: 8
-      },
-
-      createHorizontalRule(),
-
-      // Analysis Configuration section (new requirement #4)
-      ...generateAnalysisConfigurationContent(),
-
-      // Key Finding Summary section
-      {
-        text: "Findings",
-        fontSize: 16,
-        bold: true,
-        color: BRAND.primaryDark,
-        marginBottom: 8,
-        marginTop: 18,
-        headlineLevel: 1,
-        tocItem: true,
-        id: 'reportSection'
-      },
-      createHorizontalRule(),
-      ...reportContent,
-      
-      // Theme Map
-      { text: '', pageBreak: 'before' },
-      ...generateThemeMapTable(),
-
-      // Primary Codebook (right after theme map)
-      {
-        text: "Primary Codebook",
-        fontSize: 16,
-        bold: true,
-        color: BRAND.primaryDark,
-        marginBottom: 6,
-        marginTop: 18,
-        headlineLevel: 1,
-        tocItem: true,
-        id: 'primaryCodebookSection',
-        pageBreak: 'before'
-      },
-      {
-        text: "Hierarchical structure of themes, sub-themes, and open codes with their associated data segments.",
-        fontSize: 8,
-        marginBottom: 6,
-        italics: true,
-        color: BRAND.textLight,
-      },
-      ...(await generateDocumentCoverageContent()),
-      ...generateThemesContent(),
-
-      // Codebook Development Process
-      {
-        text: "Codebook Development Process",
-        fontSize: 16,
-        bold: true,
-        color: BRAND.primaryDark,
-        marginBottom: 8,
-        marginTop: 18,
-        headlineLevel: 1,
-        tocItem: true,
-        id: 'codebookDevelopmentProcessSection',
-        pageBreak: 'before'
-      },
-      ...generateTimelineContent(),
-      ...generateOpenCodesProcessContent(),
-      ...generateSubThemesProcessContent(),
-      ...generateThemesProcessContent(),
+      ...buildCoverPage(),
+      ...buildExecutiveSummary(report),
+      ...buildFindingsDetail(report),
+      ...buildCodebook(),
+      ...buildProcessPage(),
     ],
-  } as TDocumentDefinitions;
+  };
 
   return docDefinition;
-}
-
-function formatDate(date: Date) {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ]
-
-  const day = date.getDate()
-  const month = months[date.getMonth()]
-  const year = date.getFullYear()
-
-  let hours = date.getHours()
-  const minutes = date.getMinutes()
-  const ampm = hours >= 12 ? "PM" : "AM"
-
-  hours = hours % 12
-  hours = hours ? hours : 12
-
-  const minutesStr = minutes < 10 ? "0" + minutes : minutes
-
-  return `${day} ${month} ${year}, ${hours}:${minutesStr}${ampm}`
 }

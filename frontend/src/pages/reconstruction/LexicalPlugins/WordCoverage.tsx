@@ -113,16 +113,8 @@ export default function WordCoverage() {
     const savedCoverage = fileCoverageData[selectedFile];
 
     if (savedCoverage) {
-      console.log(
-        `Using saved coverage data for ${selectedFile}:`,
-        savedCoverage
-      );
-
-      // Check if there's a coverage calculation error or 0 coverage
-      if (
-        savedCoverage.coveragePercentage === -1 ||
-        savedCoverage.coveragePercentage === 0
-      ) {
+      // Only treat -1 as error (explicit error indicator), not 0
+      if (savedCoverage.coveragePercentage === -1) {
         return {
           totalWords: savedCoverage.totalWords,
           coveredWords: savedCoverage.coveredWords,
@@ -168,12 +160,8 @@ export default function WordCoverage() {
     );
   }
 
-  // If there's a coverage calculation error or 0 coverage, show error message
-  if (
-    coverage.error ||
-    coverage.coveragePercentage === -1 ||
-    coverage.coveragePercentage === 0
-  ) {
+  // Only show error for explicit error state (-1)
+  if (coverage.error || coverage.coveragePercentage === -1) {
     return (
       <div className="bg-white rounded-lg px-3 py-2 shadow-sm border text-sm">
         <div className="flex items-center gap-2">

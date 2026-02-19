@@ -289,24 +289,15 @@ export function manuallyTriggerCoverageCalculation(
 ) {
   console.log(`Manually triggering coverage calculation for ${fileName}`);
 
-  // Clear existing coverage data first
-  setFileCoverageData(fileName, {
-    totalWords: 0,
-    coveredWords: 0,
-    coveragePercentage: 0,
-  });
+  // Calculate directly without clearing first (avoids UI flash)
+  calculateAndSaveFileCoverage(fileName, fileContent, cardData, fileCardMap, setFileCoverageData);
 
-  // Force a small delay to ensure the UI updates
-  setTimeout(() => {
-    calculateAndSaveFileCoverage(fileName, fileContent, cardData, fileCardMap, setFileCoverageData);
-
-    // Dispatch event to notify UI components
-    window.dispatchEvent(
-      new CustomEvent("coverageRecalculated", {
-        detail: { fileName }
-      })
-    );
-  }, 100);
+  // Dispatch event to notify UI components
+  window.dispatchEvent(
+    new CustomEvent("coverageRecalculated", {
+      detail: { fileName }
+    })
+  );
 }
 
 // Global console function for manual coverage recalculation

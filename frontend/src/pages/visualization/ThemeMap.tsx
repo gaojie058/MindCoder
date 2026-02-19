@@ -159,11 +159,11 @@ function OpenCodeCard({ code, color }: { code: OpenCodeItem; color: string }) {
         <span className="text-[10px] text-gray-400 shrink-0">{segCount}</span>
       </button>
       {expanded && code.segments.length > 0 && (
-        <div className="border-t border-gray-100 bg-gray-50/50 px-3 py-2 space-y-1.5 max-h-48 overflow-y-auto scrollbar-thin">
+        <div className="border-t border-gray-100 bg-gray-50/50 px-3 py-2.5 space-y-2 max-h-64 overflow-y-auto scrollbar-thin">
           {code.segments.map((seg, i) => (
-            <div key={i} className="text-[11px] text-gray-500 leading-relaxed pl-5">
+            <div key={i} className="text-[13px] text-gray-600 leading-relaxed pl-5">
               <span className="text-gray-400">•</span>{" "}
-              <span className="italic">"{seg.source.length > 150 ? seg.source.slice(0, 150) + "..." : seg.source}"</span>
+              <span className="italic">"{seg.source}"</span>
             </div>
           ))}
         </div>

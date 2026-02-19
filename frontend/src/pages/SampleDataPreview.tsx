@@ -1,4 +1,4 @@
-import logo from "@/assets/mindcoder.png";
+import logo from "@/assets/frameLogo.png";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAppStore from "@/stores/useAppStore";
@@ -47,9 +47,12 @@ function SampleDataPreview() {
   return (
     <div className="min-h-screen bg-[#FFFBF9] flex flex-col">
       {/* Header */}
-      <div className="flex items-center gap-4 px-8 py-4 border-b border-gray-200">
-        <img src={logo} className="h-12 object-contain" alt="MindCoder" />
-        <h1 className="text-2xl font-semibold font-zen">MindCoder</h1>
+      <div className="border-b border-gray-200">
+        <div className="flex items-center justify-between px-8 py-4 max-w-[1400px] mx-auto w-full">
+          <div className="flex items-center gap-4">
+            <img src={logo} className="h-10 object-contain" alt="MindCoder" />
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 p-6 max-w-4xl mx-auto w-full">

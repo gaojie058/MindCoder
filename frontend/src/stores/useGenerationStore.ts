@@ -100,10 +100,7 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
         set({ bgStage: "concept" });
         await executeStepAndSave("concept");
       }
-      if (selectedSteps.includes("display")) {
-        set({ bgStage: "display" });
-        await executeStepAndSave("display");
-      }
+      // display (report) generation skipped — user can generate via Export to PDF
       set({ bgStage: "done", bgRunning: false });
     } catch (err: any) {
       console.error("Background generation error:", err);

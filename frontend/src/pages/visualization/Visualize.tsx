@@ -60,30 +60,12 @@ const Visualize = () => {
     }
   }, [generatePDF, activeGraphType, openPdfInNewTab]);
 
+  const [saveDone, setSaveDone] = useState(false);
   const handleSavePDF = useCallback(async () => {
     if (generatePDF) {
       await generatePDF(activeGraphType);
-      const { history: updatedHistory } = useHistoryStore.getState();
-      if (updatedHistory.length > 0 && updatedHistory[0].pdfData) {
-        const entry = updatedHistory[0];
-        const binaryString = window.atob(
-          entry.pdfData.replace(/^data:application\/pdf;base64,/, "")
-        );
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
-          bytes[i] = binaryString.charCodeAt(i);
-        }
-        const blob = new Blob([bytes], { type: "application/pdf" });
-        const url = URL.createObjectURL(blob);
-        const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `MindCoder-Report-${ts}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
-      }
+      setSaveDone(true);
+      setTimeout(() => setSaveDone(false), 2000);
     }
   }, [generatePDF, activeGraphType]);
 
@@ -240,7 +222,7 @@ const Visualize = () => {
               disabled={pdfLoading}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-[#8B5E4B] hover:bg-[#7A4F3D] disabled:bg-gray-300 text-white text-xs font-medium rounded-lg transition-colors"
             >
-              {pdfLoading ? <>⏳ Saving...</> : <>💾 Save PDF</>}
+              {pdfLoading ? <>⏳ Saving...</> : saveDone ? <>✅ Saved!</> : <>💾 Save PDF</>}
             </button>
           </div>
         </div>

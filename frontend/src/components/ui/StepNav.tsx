@@ -33,11 +33,11 @@ const StepNav = () => {
       content: "Step 3: Themes",
       imgSrc: logo3active,
     },
-    {
-      step: 4,
-      content: "Step 4: Summary",
-      imgSrc: logo4active,
-    },
+    // {
+    //   step: 4,
+    //   content: "Step 4: Summary",
+    //   imgSrc: logo4active,
+    // },
   ];
 
   return (

@@ -22,6 +22,10 @@ function SampleDataPreview() {
     Promise.all(
       SAMPLE_FILES.map(async (f) => {
         const res = await fetch(f.path);
+        if (!res.ok) {
+          console.error(`Failed to load ${f.path}: ${res.status}`);
+          return [f.name, ""] as [string, string];
+        }
         const text = await res.text();
         return [f.name, text] as [string, string];
       })

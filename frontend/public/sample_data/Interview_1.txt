@@ -1,0 +1,67 @@
+Assistant: Hi there! I'm Claude from Anthropic's research team. Thank you so much for taking the time to speak with me today.
+
+We're conducting interviews to better understand how people are incorporating AI tools like Claude into their work routines. Your experiences and perspectives will help us gain valuable insights into human-AI interaction in professional settings.
+
+During our conversation, I'll ask questions about how you use AI in your work, your preferences, and your thoughts about working with these tools. There are no right or wrong answers – we're genuinely interested in your unique experiences. This should take about 10 minutes.
+
+I'll be taking notes during our chat, but rest assured that anything you share won't be personally attributed to you. The insights we gather will be used to improve our understanding of AI's role in work environments.
+
+Does that sound good? Do you have any questions before we begin?
+
+User: No, I don't have any questions. Let's do it!
+
+AI: Great! Let's dive in.
+
+Could you tell me about how AI fits into your typical workday? What kinds of tasks do you use it for?
+
+User: I pretty rarely use AI in my typical workday. I tend to only use it when I need help coming up with new sales strategies or different ways to improve interactions with customers.
+
+AI: Tell me more about those situations where you do turn to AI for sales strategies or customer interactions. What does that process look like for you?
+
+User: I will open the AI model and provide it with a scenario that I may run into at work and ask it to come up with a unique strategy to increase my chances of making a sale.
+
+AI: What happens after the AI gives you those strategies? Do you typically use them as-is, or do you find yourself modifying them based on your own experience?
+
+User: I always modify them. They're never "perfect". Sometimes they're repetitive or not relevant for my work. However, I still use the overall strategy.
+
+AI: That's really interesting - you're essentially using AI as a starting point and then applying your own judgment. I'm curious about your preferences when working with AI. Are there certain tasks you prefer to handle yourself, even though AI could help with them? What makes those tasks different?
+
+User: I do not believe there are any tasks that AI could help with that I prefer to do myself in my line of work.
+
+AI: That's fascinating - so it sounds like when AI can help, you're open to using it. But you mentioned you only use it rarely in your typical workday. What determines when you actually turn to AI versus handling things on your own?
+
+User: I turn to AI when I'm stuck. For example, if there's a new product I'm selling and I don't know how to pitch it to someone, I will turn to AI for help.
+
+AI: So AI becomes your go-to when you hit a roadblock. When you use AI for help with something like pitching a new product, could you describe your typical interaction pattern? Are you more likely to go back and forth with it throughout figuring out the pitch, or do you tend to give it all the context upfront and let it handle the task independently?
+
+User: I tend to give it all the context up front. I do not typically go back and forth with the AI.
+
+AI: How have your colleagues or your workplace culture influenced the way you use AI in your work?
+
+User: My colleagues have influenced the way I use AI because I tend to use it more often when I need to "compete" with them. If my sales for the month are low compared to them, I tend to turn to AI for help.
+
+AI: That's a really interesting dynamic - using AI as a competitive edge when you need to catch up. Can you share a time when using AI at work made you feel particularly satisfied or frustrated? What was happening in that situation?
+
+User: One time I used AI to develop a strategy for selling a product I wasn't familiar with and it worked extremely well. I was very satisfied because I made the most sales that month out of my whole team.
+
+AI: That sounds like a great success! What made that AI-generated strategy work so well compared to other times you've used it? Was there something different about how you approached it or the situation itself?
+
+User: I gave a lot of details in this specific scenario. I provided as much details as possible and I noticed it really made a difference. I also included information about myself and my personality to help the AI cater the strategy to myself as a person.
+
+AI: That's a valuable insight about the importance of detailed context and personal information. How do you think about maintaining your skills in areas where AI could potentially take over? Is this something you actively consider?
+
+User: I've thought about it a bit but I prefer to work with AI and use it to better myself instead of competing.
+
+AI: Looking ahead, how do you envision your relationship with AI at work evolving?
+
+User: I think I will continue to use it the way I have. I hope in the future, the AI will improve and thus improve my performance at work as well.
+
+AI: Those are all the questions I had prepared. You've shared some really thoughtful insights about your experiences with AI at work. I particularly appreciated your perspective on using AI as a competitive tool when you need to catch up with colleagues, and how providing detailed personal context made such a difference in the strategy's effectiveness.
+
+Before we wrap up, is there anything else about your experience with AI in your work that you think would be valuable for us to know? Something we haven't covered yet?
+
+User: No, that is all.
+
+AI: Perfect! Thank you again for your time and for sharing your experiences so openly. Your insights about using AI as a problem-solving tool when you're stuck, the importance of detailed context, and how workplace competition influences your AI usage will be incredibly helpful for our research on human-AI interaction in professional contexts.
+
+I really appreciate you taking the time to speak with me today!

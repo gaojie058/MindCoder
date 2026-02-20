@@ -1,0 +1,63 @@
+Assistant: Hi there! I'm Claude from Anthropic's research team. Thank you so much for taking the time to speak with me today.
+
+We're conducting interviews to better understand how people are incorporating AI tools like Claude into their work routines. Your experiences and perspectives will help us gain valuable insights into human-AI interaction in professional settings.
+
+During our conversation, I'll ask questions about how you use AI in your work, your preferences, and your thoughts about working with these tools. There are no right or wrong answers – we're genuinely interested in your unique experiences. This should take about 10 minutes.
+
+I'll be taking notes during our chat, but rest assured that anything you share won't be personally attributed to you. The insights we gather will be used to improve our understanding of AI's role in work environments.
+
+Does that sound good? Do you have any questions before we begin?
+
+User: That sounds good.
+
+AI: Great! Let's dive in then.
+
+Could you tell me about how AI fits into your typical workday? What kinds of tasks do you use it for?
+
+User: I use AI sparingly at my job. I only use it to make sure that my grammar and spelling are correct on the emails I send to clients.
+
+AI: Tell me more about that. What made you decide to use AI specifically for grammar and spelling in client emails rather than other tools or methods?
+
+User: I use Grammarly primarily. I'd been asked to use it for a task at a part time job at one point and, after trying it out, I found it superior to my computer's normal spell/grammar check. Grammarly catches a lot more issues than my computer does, though I don't always use its suggestions.
+
+AI: That's interesting - you mentioned you don't always use Grammarly's suggestions. Can you walk me through what that decision-making process looks like when you're reviewing its recommendations?
+
+User: Sure. I almost always use its spelling suggestions, but sometimes it gives me tips on sentence flow or how to make my sentences sound more friendly or more formal that don't really sound like the way I'd talk or write, so I ignore them. I want to make sure I don't have grammar errors when writing to my clients, but I also want to preserve my voice as I am the sole owner and operator at my business.
+
+AI: That makes a lot of sense - wanting to maintain your authentic voice while ensuring professional quality. I'm curious about your preferences when working with AI. Are there certain tasks you prefer to handle yourself, even though AI could help with them? What makes those tasks different?
+
+User: For the most part, I'd prefer to handle anything besides grammar on my own. I'm a home inspector, so there isn't a lot of my business that can be handled by AI. The only other tasks I can think of would be something like scheduling tasks, but that doesn't take up much of my time so I don't feel the need to delegate it. It's possible that AI could help me write my reports, but I need to use very specific language and I already have templates for that.
+
+AI: That's helpful context about your work as a home inspector. When you mention that AI could potentially help with reports but you need "very specific language" - can you tell me more about what makes that language so specific and why your existing templates work better for you?
+
+User: Sure. It's important that my clients can understand what I'm talking about, but also that I state things in a way that keeps me as safe from litigation as possible. The templates I use are based on what I learned in my inspection classes and also, every state has different requirements for what needs to be reported and how.
+
+AI: That's really insightful - the legal and regulatory considerations make a big difference. When you use Grammarly for your client emails, how have your colleagues or your workplace culture influenced the way you approach AI tools? Or since you're a sole proprietor, how do interactions with clients or other professionals in your field shape your thinking about using AI?
+
+User: At this point, I don't think the home inspection industry is using AI very much, at least I haven't heard about it. I did want to point out that I do actually work with a company that uses AI for mold and air quality testing, which seems to be working well for them.
+
+AI: That's an interesting distinction - seeing AI work well for the mold and air quality testing company while your own industry hasn't adopted it much yet. Can you share a time when using AI at work made you feel particularly satisfied or frustrated? What was happening in that situation?
+
+User: With mold and air quality, there are very specific particulates that they're looking for, so I can understand why that would work for them. It also takes place in a lab while my industry is completely in the field so there are a lot of different factors. During work, I don't think I've had an experience that made me feel particularly satisfied or frustrated, except for when Grammarly abruptly stops working.
+
+AI: Tell me more about when Grammarly stops working. What happens in those moments and how does that affect your workflow?
+
+User: Usually it just stops working in one application, like when I'm writing an email. Either I just send the email as is, or I transfer it to something else, like a Google Doc, use Grammarly there, and then copy it back into the email, which slows things down a little.
+
+AI: How do you think about maintaining your skills in areas where AI could potentially take over? Is this something you actively consider?
+
+User: It's something I consider, but not something I really worry about in my field. Even if AI could find defects within a home, someone would still need to know what they were looking at enough to even consider it to be a problem and know to ask about it.
+
+AI: That's a practical perspective - the human expertise and judgment remaining essential. Looking ahead, how do you envision your relationship with AI at work evolving?
+
+User: In the short term, I doubt it will change from what it is now. It's possible that at some point I'll be able to use AI to double check issues I'm concerned about. Like the slope of a furnace exhaust pipe or whether a crack looks concerning or not.
+
+AI: Those are all the questions I had prepared. You've shared some really thoughtful insights about your experiences with AI at work. I particularly appreciated your perspective on how the field-based nature of home inspection creates different considerations than lab-based work, and your focus on maintaining both professional quality and your authentic voice.
+
+Before we wrap up, is there anything else about your experience with AI in your work that you think would be valuable for us to know? Something we haven't covered yet?
+
+User: no
+
+AI: Thank you again for your time and for sharing your experiences so openly. Your insights will be incredibly helpful for our research on human-AI interaction in professional contexts. It's been really valuable to hear about how different industries have varying levels of AI adoption and the specific considerations that drive those decisions.
+
+Have a great rest of your day!

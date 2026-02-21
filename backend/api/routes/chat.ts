@@ -1,6 +1,6 @@
 import express, { Request } from 'express';
 import multer from 'multer';
-import { handleOpenAIRequest } from '../utils/openaiHandler';
+import { handleOpenAIRequest, handleOpenAIRequestStream } from '../utils/openaiHandler';
 // import { handleOpenAIRequestCompletion } from '../utils/openaiHandler';
 
 const upload = multer();
@@ -114,6 +114,51 @@ chatRouter.post('/chat', upload.array('files'), async (req: Request, res) => {
     } catch (error: any) {
         console.error('Error in chat route:', error);
         res.status(500).json({ error: error.message });
+    }
+});
+
+// ── Streaming endpoint ──────────────────────────────────────────
+// POST /chat/stream — returns SSE text/event-stream
+// This avoids Vercel's 10s function timeout by keeping the connection alive.
+chatRouter.post('/chat/stream', upload.array('files'), async (req: Request, res) => {
+    try {
+        let prompt: string;
+
+        if (typeof req.body.message === 'string') {
+            try {
+                const messageObj = JSON.parse(req.body.message);
+                prompt = messageObj.content;
+            } catch (error) {
+                prompt = req.body.message;
+            }
+        } else {
+            prompt = req.body.message;
+        }
+
+        if (!prompt) {
+            throw new Error("Prompt is empty or undefined");
+        }
+
+        let fileContents: string[] = [];
+        if (req.files && Array.isArray(req.files)) {
+            req.files.forEach(file => {
+                const fileContent = (file as Express.Multer.File).buffer.toString('utf-8');
+                fileContents.push(fileContent);
+            });
+        }
+
+        const model = req.body.model || 'gpt-5-2025-08-07';
+        console.log("[stream] Using model:", model, "prompt length:", prompt.length);
+
+        await handleOpenAIRequestStream(prompt, fileContents, 0, model, res);
+    } catch (error: any) {
+        console.error('Error in chat/stream route:', error);
+        if (!res.headersSent) {
+            res.status(500).json({ error: error.message });
+        } else {
+            res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+            res.end();
+        }
     }
 });
 

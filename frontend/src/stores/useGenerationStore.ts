@@ -5,7 +5,7 @@ import { updateStoreData } from "@/stores/useCardStore";
 import { updateCodeStoreData } from "@/stores/useCodeStore";
 import { updateConceptStoreData } from "@/stores/useConceptStore";
 import useDisplayStore, { updateDisplayStoreData } from "@/stores/useDisplayStore";
-import { API_URL } from "@/api/api";
+import { API_URL, fetchStream } from "@/api/api";
 import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
 import useCardStore from "@/stores/useCardStore";
@@ -48,6 +48,21 @@ async function executeStepAndSave(step: string, taskType?: string) {
   useVersionStore.getState().saveVersion(step);
 }
 
+/**
+ * Helper: send formData via streaming SSE and return { message: fullText }.
+ * Falls back to regular axios POST if streaming fails with a network error.
+ */
+async function postWithStream(formData: FormData): Promise<{ message: string }> {
+  try {
+    const text = await fetchStream(formData);
+    return { message: text };
+  } catch (err: any) {
+    console.warn("Streaming failed, falling back to non-stream:", err?.message);
+    const response = await axios.post(API_URL, formData);
+    return response.data;
+  }
+}
+
 async function executeStep(step: string, taskType?: string) {
   if (step === "card") {
     const { uploadedFiles } = useAppStore.getState();
@@ -55,23 +70,22 @@ async function executeStep(step: string, taskType?: string) {
       for (let i = 0; i < uploadedFiles.length; i++) {
         const file = uploadedFiles[i];
         const formData = await packageData("card", undefined, [], file);
-        const response = await axios.post(API_URL, formData);
-        await updateStoreData(response.data, file.name, i === 0);
+        const data = await postWithStream(formData);
+        await updateStoreData(data, file.name, i === 0);
       }
     } else {
-      const response = await axios.post(API_URL, await packageData("card"));
-      await updateStoreData(response.data, undefined, true);
+      const data = await postWithStream(await packageData("card"));
+      await updateStoreData(data, undefined, true);
     }
   } else if (step === "code") {
-    const res = await axios.post(API_URL, await packageData("code"));
-    await updateCodeStoreData(res.data, true);
+    const data = await postWithStream(await packageData("code"));
+    await updateCodeStoreData(data, true);
   } else if (step === "concept") {
-    const res = await axios.post(API_URL, await packageData("concept"));
-    await updateConceptStoreData(res.data, true);
+    const data = await postWithStream(await packageData("concept"));
+    await updateConceptStoreData(data, true);
   } else if (step === "display") {
-    // Only generate report — graph is no longer needed (ThemeMap replaces it)
-    const reportRes = await axios.post(API_URL, await packageData("display", "report"));
-    await updateDisplayStoreData({ report: reportRes.data });
+    const data = await postWithStream(await packageData("display", "report"));
+    await updateDisplayStoreData({ report: data });
   }
 }
 
@@ -159,7 +173,6 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
       set({ regenStage: "done", regenRunning: false });
     } catch (err: any) {
       console.error("Regenerate step error:", err);
-      alert(`[MindCoder Debug] Regenerate "${stepName}" failed:\n${err?.message || err}`);
       set({ regenStage: "error", regenError: err?.message || "Regeneration failed", regenRunning: false });
     }
   },

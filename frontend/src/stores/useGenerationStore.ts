@@ -159,6 +159,7 @@ const useGenerationStore = create<GenerationStore>((set, get) => ({
       set({ regenStage: "done", regenRunning: false });
     } catch (err: any) {
       console.error("Regenerate step error:", err);
+      alert(`[MindCoder Debug] Regenerate "${stepName}" failed:\n${err?.message || err}`);
       set({ regenStage: "error", regenError: err?.message || "Regeneration failed", regenRunning: false });
     }
   },

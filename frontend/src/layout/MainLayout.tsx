@@ -167,9 +167,11 @@ export default function MainLayout({
   // Then code+concept run via runRemaining → shows "Generate Sub-themes & Themes" button spinning
   useEffect(() => {
     const { autoRun, setAutoRun } = useInfoStore.getState();
+    console.log("[AutoRun] Check:", { autoRun, alreadyTriggered: autoRunTriggered.current, stepName });
     if (autoRun && !autoRunTriggered.current && stepName === "card") {
       autoRunTriggered.current = true;
       setAutoRun(false);
+      console.log("[AutoRun] Triggering regenerateStep('card') then runRemaining()");
       const gen = useGenerationStore.getState();
       gen.regenerateStep("card").then(() => {
         useGenerationStore.getState().runRemaining();

@@ -29,6 +29,7 @@ function HomePage() {
   const [minCodes, setMinCodes] = useState(numberOfTopicClusters[0]);
   const [maxCodes, setMaxCodes] = useState(numberOfTopicClusters[1]);
   const [savedStep] = useState(() => sessionStorage.getItem("mindcoder-last-step"));
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const bgStage = useGenerationStore((s) => s.bgStage);
   const bgRunning = useGenerationStore((s) => s.bgRunning);
   const regenStage = useGenerationStore((s) => s.regenStage);
@@ -120,7 +121,6 @@ function HomePage() {
     setResearchQuestion(localResearchQuestion);
     setNumberOfTopicClusters([minCodes, maxCodes]);
     setAutoRun(true);
-    // Go directly to step 1 (Open Codes) — skip the progress page
     navigate(`/reconstruction/${projectName}/1/card`);
   };
 
@@ -134,62 +134,62 @@ function HomePage() {
     concept: "Step 3: Themes",
   };
 
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
     <div className="min-h-screen bg-[#FFFBF9] flex flex-col">
       {/* Header */}
       <div className="border-b border-gray-200">
-        <div className="flex items-center justify-between px-8 py-4 max-w-[1400px] mx-auto w-full">
-        <div className="flex items-center gap-4">
-          <img src={logo} className="h-10 object-contain" alt="MindCoder" />
+        <div className="flex items-center justify-between px-4 sm:px-8 py-3 sm:py-4 max-w-[1400px] mx-auto w-full">
+          <div className="flex items-center gap-4">
+            <img src={logo} className="h-8 sm:h-10 object-contain" alt="MindCoder" />
+          </div>
+          {savedStep && (
+            <button
+              onClick={() => {
+                window.location.hash = savedStep.replace(/^#/, "");
+              }}
+              className="px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-[#D39C83] text-white hover:bg-[#CB9180] font-zen text-xs sm:text-sm flex items-center gap-2"
+            >
+              Return to Analysis
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          )}
         </div>
-        {savedStep && (
-          <button
-            onClick={() => {
-              window.location.hash = savedStep.replace(/^#/, "");
-            }}
-            className="px-4 py-2 rounded-lg bg-[#D39C83] text-white hover:bg-[#CB9180] font-zen text-sm flex items-center gap-2"
-          >
-            Return to Analysis
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </button>
-        )}
-      </div>
       </div>
 
       {/* Generation status banner */}
       {genIsRunning && (
-        <div className="mx-auto max-w-[1400px] w-full px-6 pt-4 space-y-2">
+        <div className="mx-auto max-w-[1400px] w-full px-4 sm:px-6 pt-3 sm:pt-4 space-y-2">
           {bgRunning && (
-            <div className="flex items-center gap-3 bg-[#FFF3EE] border border-[#CB9180]/30 rounded-xl px-5 py-3">
+            <div className="flex items-center gap-3 bg-[#FFF3EE] border border-[#CB9180]/30 rounded-xl px-4 sm:px-5 py-2.5 sm:py-3">
               <div className="w-4 h-4 border-2 border-[#CB9180]/30 border-t-[#CB9180] rounded-full animate-spin shrink-0" />
-              <span className="font-zen text-sm text-[#CB9180] font-semibold">
+              <span className="font-zen text-xs sm:text-sm text-[#CB9180] font-semibold">
                 {stageLabels[bgStage]}
               </span>
-              <span className="text-xs text-gray-500">— Generate All Steps in background</span>
             </div>
           )}
           {regenRunning && (
-            <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200/50 rounded-xl px-5 py-3">
+            <div className="flex items-center gap-3 bg-indigo-50 border border-indigo-200/50 rounded-xl px-4 sm:px-5 py-2.5 sm:py-3">
               <div className="w-4 h-4 border-2 border-indigo-300 border-t-indigo-600 rounded-full animate-spin shrink-0" />
-              <span className="font-zen text-sm text-indigo-600 font-semibold">
+              <span className="font-zen text-xs sm:text-sm text-indigo-600 font-semibold">
                 {stageLabels[regenStage]}
               </span>
-              <span className="text-xs text-gray-500">— Regenerating in background</span>
             </div>
           )}
         </div>
       )}
 
-      <div className="flex-1 flex flex-col lg:flex-row gap-6 p-6 max-w-[1400px] mx-auto w-full">
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 sm:gap-6 p-4 sm:p-6 max-w-[1400px] mx-auto w-full">
         {/* Left: Upload + Run */}
-        <div className="flex-1 flex flex-col gap-6">
+        <div className="flex-1 flex flex-col gap-4 sm:gap-6">
           {/* Upload Area */}
-          <div className="bg-white rounded-2xl shadow-md p-8">
-            <h2 className="text-xl font-semibold font-zen mb-4">Upload Dataset</h2>
+          <div className="bg-white rounded-2xl shadow-md p-5 sm:p-8">
+            <h2 className="text-lg sm:text-xl font-semibold font-zen mb-3 sm:mb-4">Upload Dataset</h2>
             <div
-              className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-12 cursor-pointer transition-colors ${
+              className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 sm:p-12 cursor-pointer transition-colors ${
                 isDragging
                   ? "border-[#CB9180] bg-[#FFF3EE]"
                   : "border-gray-300 bg-[#FAFAFA] hover:border-[#CB9180] hover:bg-[#FFF3EE]"
@@ -199,12 +199,15 @@ function HomePage() {
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
             >
-              <svg className="w-12 h-12 text-[#CB9180] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 sm:w-12 sm:h-12 text-[#CB9180] mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
-              <p className="text-lg font-zen font-semibold text-gray-600">Drag & drop files here</p>
-              <p className="text-sm text-gray-400 mt-1">.txt or .docx files</p>
-              <button className="mt-4 px-6 py-2 bg-[#CB9180] text-white rounded-lg hover:bg-[#AA7667] font-zen">
+              <p className="text-base sm:text-lg font-zen font-semibold text-gray-600 text-center">
+                <span className="hidden sm:inline">Drag & drop files here</span>
+                <span className="sm:hidden">Tap to upload files</span>
+              </p>
+              <p className="text-xs sm:text-sm text-gray-400 mt-1">.txt or .docx files</p>
+              <button className="mt-3 sm:mt-4 px-5 sm:px-6 py-2 bg-[#CB9180] text-white rounded-lg hover:bg-[#AA7667] font-zen text-sm">
                 Browse Files
               </button>
               <input
@@ -219,23 +222,23 @@ function HomePage() {
 
             {/* Uploaded files list */}
             {uploadedFiles.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-3 sm:mt-4">
                 <p className="text-sm font-semibold text-gray-500 mb-2">{uploadedFiles.length} file(s) uploaded</p>
                 <ul className="space-y-1">
                   {uploadedFiles.map((file, i) => (
                     <li key={i} className="flex items-center justify-between text-sm bg-[#FFF3EE] px-3 py-2 rounded-lg">
                       <span className="truncate">{file.name}</span>
-                      <button className="text-red-400 hover:text-red-600 ml-2" onClick={(e) => { e.stopPropagation(); handleDeleteFile(i); }}>✕</button>
+                      <button className="text-red-400 hover:text-red-600 ml-2 p-1" onClick={(e) => { e.stopPropagation(); handleDeleteFile(i); }}>✕</button>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <div className="mt-4 flex gap-3">
+            <div className="mt-3 sm:mt-4">
               <button
                 onClick={handleLoadSample}
-                className="px-4 py-2 border border-[#CB9180] text-[#CB9180] rounded-lg hover:bg-[#FFF3EE] font-zen text-sm"
+                className="px-4 py-2 border border-[#CB9180] text-[#CB9180] rounded-lg hover:bg-[#FFF3EE] font-zen text-sm w-full sm:w-auto"
               >
                 ✨ Try with Sample Data
               </button>
@@ -243,27 +246,27 @@ function HomePage() {
           </div>
 
           {/* Research Questions */}
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-lg font-semibold font-zen mb-3">Research Questions</h2>
+          <div className="bg-white rounded-2xl shadow-md p-5 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold font-zen mb-2 sm:mb-3">Research Questions</h2>
             <textarea
               value={localResearchQuestion}
               onChange={(e) => setLocalResearchQuestion(e.target.value)}
               placeholder="Enter your research question(s) to guide the coding process..."
-              className="w-full border border-gray-300 rounded-lg p-3 min-h-[100px] resize-y outline-none focus:border-[#CB9180] font-zen text-sm"
+              className="w-full border border-gray-300 rounded-lg p-3 min-h-[80px] sm:min-h-[100px] resize-y outline-none focus:border-[#CB9180] font-zen text-sm"
             />
           </div>
 
-          {/* Run Mode */}
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-lg font-semibold font-zen mb-3">Run Steps</h2>
+          {/* Run Steps + Run Button */}
+          <div className="bg-white rounded-2xl shadow-md p-5 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold font-zen mb-2 sm:mb-3">Run Steps</h2>
             <div className="space-y-2 mb-4">
               {(["card", "code", "concept"] as const).map((step) => (
-                <label key={step} className="flex items-center gap-3 cursor-pointer">
+                <label key={step} className="flex items-center gap-3 cursor-pointer min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={selectedSteps.includes(step)}
                     onChange={() => toggleStep(step)}
-                    className="w-4 h-4 accent-[#CB9180]"
+                    className="w-5 h-5 accent-[#CB9180]"
                   />
                   <span className="font-zen text-sm">{stepLabels[step]}</span>
                 </label>
@@ -272,9 +275,9 @@ function HomePage() {
             <button
               onClick={handleRun}
               disabled={uploadedFiles.length === 0}
-              className={`w-full py-3 rounded-xl text-white font-zen font-semibold text-lg transition-colors ${
+              className={`w-full py-3.5 sm:py-3 rounded-xl text-white font-zen font-semibold text-base sm:text-lg transition-colors ${
                 uploadedFiles.length > 0
-                  ? "bg-[#D39C83] hover:bg-[#CB9180]"
+                  ? "bg-[#D39C83] hover:bg-[#CB9180] active:bg-[#AA7667]"
                   : "bg-gray-300 cursor-not-allowed"
               }`}
             >
@@ -283,81 +286,97 @@ function HomePage() {
           </div>
         </div>
 
-        {/* Right: Configuration Panel */}
-        <div className="lg:w-80 flex flex-col gap-6">
-          {/* Model Selection */}
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-lg font-semibold font-zen mb-3">Model</h2>
-            <select
-              value={model}
-              onChange={(e) => setModel(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#CB9180] font-zen text-sm"
+        {/* Right: Configuration Panel — collapsible on mobile */}
+        <div className="lg:w-80 flex flex-col gap-4 sm:gap-6">
+          {/* Advanced Settings Toggle (mobile only) */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            className="lg:hidden flex items-center justify-between w-full bg-white rounded-2xl shadow-md p-4 text-left"
+          >
+            <span className="font-zen font-semibold text-base text-gray-700">⚙️ Advanced Settings</span>
+            <svg
+              className={`w-5 h-5 text-gray-400 transition-transform ${showAdvanced ? 'rotate-180' : ''}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
             >
-              <option value="gpt-5-2025-08-07">GPT-5</option>
-              <option value="claude-sonnet">Claude Sonnet</option>
-            </select>
-          </div>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
 
-          {/* Number of Codes */}
-          <div className="bg-white rounded-2xl shadow-md p-6">
-            <h2 className="text-lg font-semibold font-zen mb-3">Number of Codes</h2>
-            <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <label className="text-xs text-gray-500">Min</label>
+          <div className={`flex flex-col gap-4 sm:gap-6 ${showAdvanced ? '' : 'hidden lg:flex'}`}>
+            {/* Model Selection */}
+            <div className="bg-white rounded-2xl shadow-md p-5 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold font-zen mb-2 sm:mb-3">Model</h2>
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] font-zen text-sm"
+              >
+                <option value="gpt-5-2025-08-07">GPT-5</option>
+                <option value="claude-sonnet">Claude Sonnet</option>
+              </select>
+            </div>
+
+            {/* Number of Codes */}
+            <div className="bg-white rounded-2xl shadow-md p-5 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold font-zen mb-2 sm:mb-3">Number of Codes</h2>
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <label className="text-xs text-gray-500">Min</label>
+                  <input
+                    type="number"
+                    value={minCodes}
+                    onChange={(e) => setMinCodes(Number(e.target.value))}
+                    min={1}
+                    className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] text-sm"
+                  />
+                </div>
+                <span className="text-gray-400 mt-4 text-lg">–</span>
+                <div className="flex-1">
+                  <label className="text-xs text-gray-500">Max</label>
+                  <input
+                    type="number"
+                    value={maxCodes}
+                    onChange={(e) => setMaxCodes(Number(e.target.value))}
+                    min={1}
+                    className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Coding Styles */}
+            <div className="bg-white rounded-2xl shadow-md p-5 sm:p-6 space-y-3 sm:space-y-4">
+              <h2 className="text-base sm:text-lg font-semibold font-zen mb-1">Coding Styles</h2>
+              <div>
+                <label className="text-xs text-gray-500 font-zen">Open Coding Style</label>
                 <input
-                  type="number"
-                  value={minCodes}
-                  onChange={(e) => setMinCodes(Number(e.target.value))}
-                  min={1}
-                  className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#CB9180] text-sm"
+                  type="text"
+                  value={clusteringStyle}
+                  onChange={(e) => setClusteringStyle(e.target.value)}
+                  placeholder="e.g., thematic, descriptive..."
+                  className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] text-sm mt-1"
                 />
               </div>
-              <span className="text-gray-400 mt-4">–</span>
-              <div className="flex-1">
-                <label className="text-xs text-gray-500">Max</label>
+              <div>
+                <label className="text-xs text-gray-500 font-zen">Sub-theme Style</label>
                 <input
-                  type="number"
-                  value={maxCodes}
-                  onChange={(e) => setMaxCodes(Number(e.target.value))}
-                  min={1}
-                  className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#CB9180] text-sm"
+                  type="text"
+                  value={codingStyle}
+                  onChange={(e) => setCodingStyle(e.target.value)}
+                  placeholder="e.g., axial coding..."
+                  className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] text-sm mt-1"
                 />
               </div>
-            </div>
-          </div>
-
-          {/* Coding Styles */}
-          <div className="bg-white rounded-2xl shadow-md p-6 space-y-4">
-            <h2 className="text-lg font-semibold font-zen mb-1">Coding Styles</h2>
-            <div>
-              <label className="text-xs text-gray-500 font-zen">Open Coding Style</label>
-              <input
-                type="text"
-                value={clusteringStyle}
-                onChange={(e) => setClusteringStyle(e.target.value)}
-                placeholder="e.g., thematic, descriptive..."
-                className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#CB9180] text-sm mt-1"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 font-zen">Sub-theme Style</label>
-              <input
-                type="text"
-                value={codingStyle}
-                onChange={(e) => setCodingStyle(e.target.value)}
-                placeholder="e.g., axial coding..."
-                className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#CB9180] text-sm mt-1"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-gray-500 font-zen">Theme Style</label>
-              <input
-                type="text"
-                value={conceptualizingStyle}
-                onChange={(e) => setConceptualizingStyle(e.target.value)}
-                placeholder="e.g., selective coding..."
-                className="w-full border border-gray-300 rounded-lg p-2 outline-none focus:border-[#CB9180] text-sm mt-1"
-              />
+              <div>
+                <label className="text-xs text-gray-500 font-zen">Theme Style</label>
+                <input
+                  type="text"
+                  value={conceptualizingStyle}
+                  onChange={(e) => setConceptualizingStyle(e.target.value)}
+                  placeholder="e.g., selective coding..."
+                  className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] text-sm mt-1"
+                />
+              </div>
             </div>
           </div>
         </div>

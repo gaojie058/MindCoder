@@ -1,3 +1,16 @@
 # macOS
 .DS_Store
 **/.DS_Store
+
+# Secrets / local env — never commit (esp. backend/.env with real API keys)
+.env
+.env.*
+**/.env
+**/.env.*
+# ...but the frontend's non-secret build config is intentionally tracked
+!frontend/.env
+!frontend/.env.production
+
+# Dependencies / build output
+node_modules/
+dist/

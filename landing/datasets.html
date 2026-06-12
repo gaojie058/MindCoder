@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qualitative Datasets — MindCoder</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=General+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --warm-white: #F5F2EC;
+    --ink: #1A1A1A;
+    --ink-light: #3D3D3D;
+    --ink-muted: #8C8C8C;
+    --ink-faint: #BCBCBC;
+    --terracotta: #C85A3A;
+    --terracotta-light: rgba(200, 90, 58, 0.08);
+    --sage: #5B7A5E;
+    --sage-light: rgba(91, 122, 94, 0.08);
+    --slate: #4A6178;
+    --slate-light: rgba(74, 97, 120, 0.08);
+    --border: rgba(26, 26, 26, 0.08);
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'General Sans', -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --max-w: 1100px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  .nav-wrap {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250, 248, 244, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav {
+    max-width: var(--max-w); margin: 0 auto; padding: 1.5rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo { font-family: var(--serif); font-size: 1.35rem; font-weight: 500; color: var(--ink); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-right { display: flex; align-items: center; gap: 2rem; }
+  .nav-right a { color: var(--ink-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+  .nav-right a:hover { color: var(--ink); }
+  .nav-right a.active { color: var(--ink); }
+  .nav-demo {
+    color: var(--terracotta) !important; border: 1.5px solid var(--terracotta);
+    padding: 0.45rem 1.2rem; border-radius: 100px; font-weight: 500 !important; transition: all 0.25s !important;
+  }
+  .nav-demo:hover { background: var(--terracotta); color: white !important; }
+
+  /* ── Page Layout ── */
+  .page-wrap {
+    max-width: var(--max-w); margin: 0 auto; padding: 6vh 2rem 10vh;
+  }
+  .page-wrap h1 {
+    font-family: var(--serif); font-size: 2.2rem; font-weight: 300;
+    line-height: 1.3; letter-spacing: -0.02em; margin-bottom: 1rem;
+  }
+  .page-wrap h1 em { font-style: italic; font-weight: 400; }
+  .page-wrap > .subtitle {
+    font-size: 1rem; color: var(--ink-light); line-height: 1.85; margin-bottom: 3rem; max-width: 700px;
+  }
+  .page-wrap p {
+    font-size: 0.93rem; color: var(--ink-light); line-height: 1.85; margin-bottom: 1rem; max-width: 700px;
+  }
+
+  /* ── Dataset Grid ── */
+  .dataset-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .dataset-card {
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.75rem 2rem;
+    transition: all 0.3s ease;
+    display: flex; flex-direction: column;
+  }
+  .dataset-card:hover {
+    border-color: rgba(26,26,26,0.15);
+    box-shadow: 0 8px 32px rgba(26,26,26,0.04);
+    transform: translateY(-2px);
+  }
+  .dataset-card h3 {
+    font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.4rem;
+    letter-spacing: -0.01em;
+  }
+  .dataset-card .meta {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--ink-muted);
+    margin-bottom: 0.75rem; letter-spacing: 0.02em;
+  }
+  .dataset-card .desc {
+    font-size: 0.88rem; color: var(--ink-light); line-height: 1.75;
+    margin-bottom: 1rem; flex: 1;
+  }
+  .dataset-card .tags {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem;
+  }
+  .dataset-card .tag {
+    font-family: var(--mono); font-size: 0.65rem; font-weight: 500;
+    padding: 0.2rem 0.55rem; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .tag-format { background: var(--slate-light); color: var(--slate); }
+  .tag-domain { background: var(--sage-light); color: var(--sage); }
+  .tag-source { background: var(--terracotta-light); color: var(--terracotta); }
+
+  .dl-link {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.85rem; font-weight: 500;
+    color: var(--terracotta); text-decoration: none;
+    border-bottom: 1px solid rgba(200,90,58,0.25); transition: border-color 0.2s;
+  }
+  .dl-link:hover { border-color: var(--terracotta); }
+
+  /* ── Tip ── */
+  .tip-box {
+    background: var(--sage-light); border-left: 3px solid var(--sage);
+    border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem;
+    margin-top: 2.5rem; max-width: 700px;
+  }
+  .tip-box p { color: var(--ink-light); margin-bottom: 0.5rem; }
+  .tip-box p:last-child { margin-bottom: 0; }
+  .tip-box strong { color: var(--sage); }
+
+  /* ── Footer ── */
+  .footer-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 2.5rem 2rem;
+    border-top: 1px solid var(--border); display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .footer-logo { font-family: var(--serif); font-size: 0.95rem; color: var(--ink-muted); }
+  .footer-copy { font-size: 0.78rem; color: var(--ink-faint); }
+
+  /* ── Responsive ── */
+  @media (max-width: 860px) {
+    .dataset-grid { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav-wrap">
+  <nav>
+    <a href="index.html" class="logo">MindCoder</a>
+    <div class="nav-right">
+      <a href="index.html#method">Method</a>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#updates">Updates</a>
+      <a href="guide.html">Guide</a>
+      <a href="datasets.html" class="active">Qualitative Datasets</a>
+      <a href="https://demo.mindcoder.ai/" class="nav-demo">Try Demo</a>
+    </div>
+  </nav>
+</div>
+
+<!-- Content -->
+<div class="page-wrap">
+  <h1><em>Qualitative</em> Datasets for Practice</h1>
+  <p class="subtitle">
+    Publicly available qualitative datasets perfect for learning MindCoder's workflow.
+    Download any of these, then upload the transcripts into a new project to practice coding.
+  </p>
+
+  <div class="dataset-grid">
+
+    <div class="dataset-card">
+      <h3>Anthropic Interviewer Dataset</h3>
+      <div class="meta">Hugging Face · Interview transcripts</div>
+      <div class="tags">
+        <span class="tag tag-domain">AI / Ethics</span>
+        <span class="tag tag-source">Hugging Face</span>
+      </div>
+      <p class="desc">
+        Interview data from Anthropic exploring perspectives on AI systems, safety, and alignment.
+        A contemporary dataset ideal for practicing coding around technology ethics and human-AI interaction themes.
+      </p>
+      <a href="https://huggingface.co/datasets/Anthropic/AnthropicInterviewer" class="dl-link" target="_blank">View on Hugging Face →</a>
+    </div>
+
+    <div class="dataset-card">
+      <h3>Scrum &amp; Software Quality</h3>
+      <div class="meta">39 interviews · PDF + Excel</div>
+      <div class="tags">
+        <span class="tag tag-domain">Software Engineering</span>
+        <span class="tag tag-format">PDF</span>
+        <span class="tag tag-source">Zenodo</span>
+      </div>
+      <p class="desc">
+        In-depth interviews with Scrum practitioners exploring how agile methodology affects software quality.
+        A rich dataset with clear themes around teamwork, process, and quality assurance.
+      </p>
+      <a href="https://zenodo.org/records/6624064" class="dl-link" target="_blank">Download from Zenodo →</a>
+    </div>
+
+    <div class="dataset-card">
+      <h3>Teaching with Quantitative Data</h3>
+      <div class="meta">Faculty interviews · UCSB</div>
+      <div class="tags">
+        <span class="tag tag-domain">Education</span>
+        <span class="tag tag-source">Dryad</span>
+      </div>
+      <p class="desc">
+        Interviews with Social Sciences faculty at UC Santa Barbara about incorporating quantitative data
+        into teaching. Great for exploring pedagogical themes and institutional dynamics.
+      </p>
+      <a href="https://datadryad.org/dataset/doi:10.25349/D9402J" class="dl-link" target="_blank">Download from Dryad →</a>
+    </div>
+
+    <div class="dataset-card">
+      <h3>Gaming Horizons Stakeholder Interviews</h3>
+      <div class="meta">20+ interviews · RTF</div>
+      <div class="tags">
+        <span class="tag tag-domain">Gaming / Ethics</span>
+        <span class="tag tag-format">RTF</span>
+        <span class="tag tag-source">Zenodo</span>
+      </div>
+      <p class="desc">
+        Anonymised interviews with gaming industry stakeholders covering ethics, design practices,
+        and the social impact of games. Diverse perspectives from developers, researchers, and policymakers.
+      </p>
+      <a href="https://zenodo.org/records/1163698" class="dl-link" target="_blank">Download from Zenodo →</a>
+    </div>
+
+    <div class="dataset-card">
+      <h3>Governing in an Era of Rapid Change</h3>
+      <div class="meta">Policy interviews · DOCX/PDF</div>
+      <div class="tags">
+        <span class="tag tag-domain">Policy / Governance</span>
+        <span class="tag tag-format">DOCX/PDF</span>
+        <span class="tag tag-source">Dryad</span>
+      </div>
+      <p class="desc">
+        Interviews exploring how governance structures adapt to rapid technological change.
+        Covers policy-making, regulation, and institutional responses to emerging technologies.
+      </p>
+      <a href="https://datadryad.org/dataset/doi:10.6078/D1NM58" class="dl-link" target="_blank">Download from Dryad →</a>
+    </div>
+
+    <div class="dataset-card">
+      <h3>Patient &amp; Staff Perceptions of Intradialytic Exercise</h3>
+      <div class="meta">Patients + staff + focus groups · DOC/DOCX</div>
+      <div class="tags">
+        <span class="tag tag-domain">Healthcare</span>
+        <span class="tag tag-format">DOC/DOCX</span>
+        <span class="tag tag-source">Dryad</span>
+      </div>
+      <p class="desc">
+        A healthcare qualitative study with interviews from patients and staff about exercise during dialysis.
+        Includes individual interviews and focus group transcripts — good for practicing multi-source analysis.
+      </p>
+      <a href="https://datadryad.org/dataset/doi:10.5061/dryad.1j3s0" class="dl-link" target="_blank">Download from Dryad →</a>
+    </div>
+
+    <div class="dataset-card">
+      <h3>Young Carers Across Europe — Delphi Study</h3>
+      <div class="meta">66 experts · 10 countries</div>
+      <div class="tags">
+        <span class="tag tag-domain">Social Work</span>
+        <span class="tag tag-source">Dryad</span>
+      </div>
+      <p class="desc">
+        A multi-country Delphi study with qualitative data from 66 experts across Europe discussing
+        the needs and support systems for young carers. Excellent for cross-cultural thematic analysis.
+      </p>
+      <a href="https://datadryad.org/dataset/doi:10.5061/dryad.18931zcxx" class="dl-link" target="_blank">Download from Dryad →</a>
+    </div>
+
+  </div>
+
+  <div class="tip-box">
+    <p><strong>How to use these datasets:</strong> Download the interview transcripts, then create a new project in
+    <a href="https://demo.mindcoder.ai/" style="color: var(--sage); border-bottom-color: var(--sage);">MindCoder</a>
+    and upload/paste the text. Start with a smaller subset (2–3 interviews) to learn the workflow before loading the full dataset.</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">MindCoder</div>
+    <div class="footer-copy">© 2026 MindCoder. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>

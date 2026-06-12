@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guide — MindCoder</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=General+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --warm-white: #F5F2EC;
+    --ink: #1A1A1A;
+    --ink-light: #3D3D3D;
+    --ink-muted: #8C8C8C;
+    --ink-faint: #BCBCBC;
+    --terracotta: #C85A3A;
+    --terracotta-light: rgba(200, 90, 58, 0.08);
+    --sage: #5B7A5E;
+    --sage-light: rgba(91, 122, 94, 0.08);
+    --slate: #4A6178;
+    --slate-light: rgba(74, 97, 120, 0.08);
+    --border: rgba(26, 26, 26, 0.08);
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'General Sans', -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --max-w: 1100px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  .nav-wrap {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250, 248, 244, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav {
+    max-width: var(--max-w); margin: 0 auto; padding: 1.5rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .logo { font-family: var(--serif); font-size: 1.35rem; font-weight: 500; color: var(--ink); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-right { display: flex; align-items: center; gap: 2rem; }
+  .nav-right a { color: var(--ink-muted); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+  .nav-right a:hover { color: var(--ink); }
+  .nav-right a.active { color: var(--ink); }
+  .nav-demo {
+    color: var(--terracotta) !important; border: 1.5px solid var(--terracotta);
+    padding: 0.45rem 1.2rem; border-radius: 100px; font-weight: 500 !important; transition: all 0.25s !important;
+  }
+  .nav-demo:hover { background: var(--terracotta); color: white !important; }
+
+  /* ── Guide Layout ── */
+  .guide-wrap {
+    max-width: var(--max-w); margin: 0 auto; padding: 6vh 2rem 10vh;
+    display: grid; grid-template-columns: 200px 1fr; gap: 4rem;
+  }
+
+  /* Sidebar TOC */
+  .guide-toc {
+    position: sticky; top: 100px; align-self: start;
+  }
+  .guide-toc h4 {
+    font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 1.25rem; font-weight: 500;
+  }
+  .guide-toc a {
+    display: block; font-size: 0.82rem; color: var(--ink-muted); text-decoration: none;
+    padding: 0.35rem 0; line-height: 1.5; transition: color 0.2s;
+  }
+  .guide-toc a:hover { color: var(--ink); }
+  .guide-toc a.sub { padding-left: 1rem; font-size: 0.78rem; }
+
+  /* Main Content */
+  .guide-content {}
+  .guide-content h1 {
+    font-family: var(--serif); font-size: 2.2rem; font-weight: 300;
+    line-height: 1.3; letter-spacing: -0.02em; margin-bottom: 1rem;
+  }
+  .guide-content h1 em { font-style: italic; font-weight: 400; }
+  .guide-content > .subtitle {
+    font-size: 1rem; color: var(--ink-light); line-height: 1.85; margin-bottom: 3rem; max-width: 600px;
+  }
+
+  .guide-content h2 {
+    font-family: var(--serif); font-size: 1.5rem; font-weight: 400;
+    margin-top: 4rem; margin-bottom: 1.25rem; padding-top: 2rem;
+    border-top: 1px solid var(--border); letter-spacing: -0.01em;
+  }
+  .guide-content h2:first-of-type { margin-top: 0; border-top: none; padding-top: 0; }
+
+  .guide-content h3 {
+    font-family: var(--sans); font-size: 1.05rem; font-weight: 600;
+    margin-top: 2rem; margin-bottom: 0.75rem; color: var(--ink);
+  }
+
+  .guide-content p {
+    font-size: 0.93rem; color: var(--ink-light); line-height: 1.85;
+    margin-bottom: 1rem; max-width: 640px;
+  }
+
+  .guide-content ul, .guide-content ol {
+    margin-bottom: 1.2rem; padding-left: 1.5rem; max-width: 640px;
+  }
+  .guide-content li {
+    font-size: 0.93rem; color: var(--ink-light); line-height: 1.85; margin-bottom: 0.4rem;
+  }
+  .guide-content li strong { color: var(--ink); }
+
+  .guide-content code {
+    font-family: var(--mono); font-size: 0.84rem; background: var(--warm-white);
+    padding: 0.15rem 0.45rem; border-radius: 4px; color: var(--terracotta);
+  }
+
+  .guide-content a { color: var(--terracotta); text-decoration: none; border-bottom: 1px solid rgba(200,90,58,0.25); transition: border-color 0.2s; }
+  .guide-content a:hover { border-color: var(--terracotta); }
+
+  /* Step cards */
+  .step-card {
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.75rem 2rem; margin-bottom: 1.25rem; max-width: 640px;
+  }
+  .step-card .step-num {
+    font-family: var(--mono); font-size: 0.7rem; color: var(--ink-faint);
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.6rem;
+  }
+  .step-card h3 { margin-top: 0; margin-bottom: 0.6rem; }
+  .step-card p { margin-bottom: 0.5rem; }
+  .step-card p:last-child { margin-bottom: 0; }
+
+  /* Dataset cards */
+  .dataset-card {
+    background: white; border: 1px solid var(--border); border-radius: 12px;
+    padding: 1.5rem 1.75rem; margin-bottom: 1rem; max-width: 640px;
+    transition: all 0.3s ease;
+  }
+  .dataset-card:hover {
+    border-color: rgba(26,26,26,0.15);
+    box-shadow: 0 8px 32px rgba(26,26,26,0.04);
+    transform: translateY(-1px);
+  }
+  .dataset-card h4 {
+    font-family: var(--serif); font-size: 1.05rem; font-weight: 400; margin-bottom: 0.4rem;
+  }
+  .dataset-card .meta {
+    font-family: var(--mono); font-size: 0.72rem; color: var(--ink-muted);
+    margin-bottom: 0.6rem; letter-spacing: 0.02em;
+  }
+  .dataset-card p { font-size: 0.88rem; margin-bottom: 0.5rem; }
+  .dataset-card .dl-link {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    font-size: 0.82rem; font-weight: 500;
+  }
+
+  /* Tip box */
+  .tip-box {
+    background: var(--sage-light); border-left: 3px solid var(--sage);
+    border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem;
+    margin-bottom: 1.2rem; max-width: 640px;
+  }
+  .tip-box p { color: var(--ink-light); margin-bottom: 0.5rem; }
+  .tip-box p:last-child { margin-bottom: 0; }
+  .tip-box strong { color: var(--sage); }
+
+  /* FAQ */
+  .faq-item {
+    border-bottom: 1px solid var(--border); padding: 1.25rem 0; max-width: 640px;
+  }
+  .faq-item summary {
+    font-size: 0.95rem; font-weight: 600; cursor: pointer; color: var(--ink);
+    list-style: none; display: flex; justify-content: space-between; align-items: center;
+  }
+  .faq-item summary::after { content: '+'; font-size: 1.2rem; color: var(--ink-muted); transition: transform 0.2s; }
+  .faq-item[open] summary::after { content: '−'; }
+  .faq-item .faq-body { padding-top: 0.75rem; }
+  .faq-item .faq-body p { font-size: 0.9rem; }
+
+  /* ── Footer ── */
+  .footer-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 2.5rem 2rem;
+    border-top: 1px solid var(--border); display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  .footer-logo { font-family: var(--serif); font-size: 0.95rem; color: var(--ink-muted); }
+  .footer-copy { font-size: 0.78rem; color: var(--ink-faint); }
+
+  /* ── Responsive ── */
+  @media (max-width: 860px) {
+    .guide-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    .guide-toc { position: static; }
+    .footer-inner { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav-wrap">
+  <nav>
+    <a href="index.html" class="logo">MindCoder</a>
+    <div class="nav-right">
+      <a href="index.html#method">Method</a>
+      <a href="index.html#approach">Approach</a>
+      <a href="index.html#updates">Updates</a>
+      <a href="guide.html" class="active">Guide</a>
+      <a href="datasets.html">Qualitative Datasets</a>
+      <a href="https://demo.mindcoder.ai/" class="nav-demo">Try Demo</a>
+    </div>
+  </nav>
+</div>
+
+<!-- Guide -->
+<div class="guide-wrap">
+
+  <!-- Sidebar TOC -->
+  <aside class="guide-toc">
+    <h4>On this page</h4>
+    <a href="#getting-started">Getting Started</a>
+    <a href="#workflow" class="sub">Step-by-step Workflow</a>
+    <a href="#datasets">Qualitative Datasets</a>
+    <a href="#tips">Tips & Best Practices</a>
+    <a href="#faq">FAQ</a>
+  </aside>
+
+  <!-- Main -->
+  <main class="guide-content">
+    <h1>The <em>Complete</em> Guide to MindCoder</h1>
+    <p class="subtitle">
+      Everything you need to go from raw interview data to meaningful themes — using AI-assisted qualitative coding.
+    </p>
+
+    <!-- Getting Started -->
+    <h2 id="getting-started">Getting Started</h2>
+
+    <h3>Accessing MindCoder</h3>
+    <p>
+      MindCoder is a web-based tool — no installation needed. Visit
+      <a href="https://demo.mindcoder.ai/">demo.mindcoder.ai</a> to get started immediately.
+      It works in any modern browser (Chrome, Firefox, Safari, Edge).
+    </p>
+
+    <h3>Creating a Project</h3>
+    <p>
+      When you open MindCoder, you'll be prompted for two fields:
+    </p>
+    <ul>
+      <li><strong>NickName</strong> — your identifier (like a username). This groups your projects together.</li>
+      <li><strong>ProjectName</strong> — a name for this specific analysis project.</li>
+    </ul>
+    <p>
+      Choose descriptive names — for example, NickName: <code>sarah</code>, ProjectName: <code>teacher-interviews-2026</code>.
+      You can have multiple projects under the same NickName.
+    </p>
+
+    <h3>Try the Demo Project</h3>
+    <div class="tip-box">
+      <p><strong>Quick start:</strong> To explore MindCoder with pre-loaded data, enter:</p>
+      <p>NickName: <code>demo</code> &nbsp;·&nbsp; ProjectName: <code>demo</code></p>
+      <p>This loads a sample interview transcript so you can try every feature without uploading your own data.</p>
+    </div>
+
+    <!-- Workflow -->
+    <h2 id="workflow">Step-by-step Workflow</h2>
+    <p>
+      MindCoder follows a progressive workflow that mirrors established qualitative analysis methodology.
+      Here's each step in detail:
+    </p>
+
+    <div class="step-card">
+      <div class="step-num">Step 01</div>
+      <h3>Upload or Paste Your Data</h3>
+      <p>
+        Start by adding your qualitative data to the project. You can either <strong>paste text directly</strong>
+        into the editor or <strong>upload files</strong> (plain text, PDF transcripts, etc.).
+      </p>
+      <p>
+        MindCoder works best with interview transcripts, but you can also use meeting notes, open-ended
+        survey responses, field notes, or any unstructured text data. Each document will be segmented
+        into manageable passages for coding.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 02</div>
+      <h3>Inductive Coding — AI Suggests, You Decide</h3>
+      <p>
+        Once your data is loaded, MindCoder's LLM reads through your text and <strong>suggests initial codes</strong>
+        for each passage. These are short, descriptive labels that capture what's being expressed.
+      </p>
+      <p>
+        For each suggestion, you can:
+      </p>
+      <ul>
+        <li><strong>Accept</strong> — the code is added to your codebook as-is</li>
+        <li><strong>Edit</strong> — modify the label or description to better fit your interpretation</li>
+        <li><strong>Reject</strong> — discard the suggestion if it doesn't capture something meaningful</li>
+        <li><strong>Split</strong> — break one code into two if the passage contains multiple ideas</li>
+      </ul>
+      <p>
+        Every action is tracked in MindCoder's audit trail, so you can always see how your coding evolved.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 03</div>
+      <h3>Review and Refine Codes</h3>
+      <p>
+        After your first pass, review the full list of codes. Look for:
+      </p>
+      <ul>
+        <li><strong>Redundant codes</strong> — merge codes that describe the same concept with different words</li>
+        <li><strong>Overly broad codes</strong> — split codes that try to capture too many different ideas</li>
+        <li><strong>Inconsistencies</strong> — ensure similar passages are coded consistently</li>
+      </ul>
+      <p>
+        This iterative refinement is where the real analytical thinking happens. MindCoder makes it easy to
+        revisit and update codes across your entire dataset.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 04</div>
+      <h3>Group Codes into Categories and Themes</h3>
+      <p>
+        Once you have a refined set of codes, start grouping related codes into <strong>categories</strong>.
+        Categories are mid-level abstractions — they cluster codes that share a common thread.
+      </p>
+      <p>
+        From categories, you can identify <strong>themes</strong>: the higher-order patterns and insights
+        that answer your research questions. This is the "Code-to-Theory" progression from
+        Saldaña's methodology.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">Step 05</div>
+      <h3>Export Your Results</h3>
+      <p>
+        When your analysis is complete, export your results for reporting or further analysis.
+        MindCoder supports exporting:
+      </p>
+      <ul>
+        <li>The full codebook with definitions and example passages</li>
+        <li>Code-to-category-to-theme hierarchy</li>
+        <li>The complete coding audit trail (for transparency and reproducibility)</li>
+        <li>Coded data segments for use in other QDA tools or reports</li>
+      </ul>
+    </div>
+
+    <!-- Datasets -->
+    <h2 id="datasets">Qualitative Datasets</h2>
+    <p>
+      Want to practice with real qualitative data? We've curated 7 publicly available datasets
+      perfect for learning MindCoder's workflow.
+    </p>
+    <p>
+      <a href="datasets.html" style="font-weight: 500;">Browse all sample datasets →</a>
+    </p>
+
+    <!-- Tips -->
+    <h2 id="tips">Tips &amp; Best Practices</h2>
+
+    <h3>Inductive vs. Deductive Coding</h3>
+    <p>
+      <strong>Inductive coding</strong> means letting codes emerge from the data — you don't start
+      with a predefined list. This is MindCoder's default mode and works best when you're exploring
+      a new topic or want to remain open to unexpected findings.
+    </p>
+    <p>
+      <strong>Deductive coding</strong> means starting with an existing framework or codebook and
+      applying it to your data. Use this when you have a theoretical framework or are replicating
+      a previous study. In MindCoder, you can import a codebook and let the AI apply it.
+    </p>
+    <div class="tip-box">
+      <p><strong>When to choose which:</strong> Start inductive when exploring. Switch to deductive
+      when you have a clear framework. Many researchers use a hybrid — start open, then refine
+      around emerging patterns.</p>
+    </div>
+
+    <h3>Writing Good Initial Codes</h3>
+    <ul>
+      <li><strong>Be specific</strong> — "frustrated with documentation" is better than "negative feeling"</li>
+      <li><strong>Use gerunds</strong> — "adapting to change," "seeking support" — they capture action and process</li>
+      <li><strong>Stay close to the data</strong> — in early rounds, use the participant's own language when possible</li>
+      <li><strong>One idea per code</strong> — if a code tries to capture two things, split it</li>
+    </ul>
+
+    <h3>Iterating on AI Suggestions</h3>
+    <p>
+      MindCoder's AI is a starting point, not a final answer. The best workflow is:
+    </p>
+    <ol>
+      <li><strong>First pass:</strong> Accept or reject quickly to get a rough codebook</li>
+      <li><strong>Second pass:</strong> Review the codebook for patterns, merge similar codes</li>
+      <li><strong>Third pass:</strong> Re-examine rejected passages — did you miss something?</li>
+      <li><strong>Ongoing:</strong> As themes crystallize, refine code definitions for consistency</li>
+    </ol>
+
+    <h3>When to Merge or Split Codes</h3>
+    <p>
+      <strong>Merge</strong> when two codes describe the same underlying concept (e.g., "feeling overwhelmed"
+      and "cognitive overload" might be the same idea in your context).
+    </p>
+    <p>
+      <strong>Split</strong> when one code is doing too much work — if a code appears in many passages
+      but those passages describe subtly different things, it probably needs to be broken apart.
+    </p>
+    <div class="tip-box">
+      <p><strong>Rule of thumb:</strong> If you can't write a clear, one-sentence definition for a code,
+      it's probably too broad and should be split.</p>
+    </div>
+
+    <!-- FAQ -->
+    <h2 id="faq">Frequently Asked Questions</h2>
+
+    <details class="faq-item">
+      <summary>Do I need an account to use MindCoder?</summary>
+      <div class="faq-body">
+        <p>No. MindCoder uses a NickName + ProjectName system instead of traditional accounts.
+        Just enter your chosen NickName and ProjectName to create or access a project. There's no
+        email verification or sign-up process.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>What data formats can I upload?</summary>
+      <div class="faq-body">
+        <p>You can paste text directly or upload plain text files. For PDFs and DOCXs, you may need to
+        extract the text first. MindCoder works with any text-based qualitative data — interviews,
+        focus groups, open-ended survey responses, field notes, etc.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>Is my data private?</summary>
+      <div class="faq-body">
+        <p>MindCoder processes your data through LLM APIs to generate code suggestions. Your data
+        is sent to the AI model during analysis. If you're working with sensitive data, please
+        review the privacy considerations for your institution's requirements.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>Which LLM does MindCoder use?</summary>
+      <div class="faq-body">
+        <p>MindCoder uses state-of-the-art large language models for code suggestions. The specific
+        model may be updated over time to provide the best results. The tool is designed so that
+        AI suggestions are always reviewed by the researcher — the model assists but doesn't decide.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>Can I use MindCoder for deductive coding?</summary>
+      <div class="faq-body">
+        <p>Yes. While MindCoder's default mode is inductive (letting codes emerge from data), you can
+        also import an existing codebook and have the AI apply those codes to your data. You can switch
+        between inductive and deductive approaches at any point in your analysis.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>How is MindCoder different from NVivo, ATLAS.ti, or MAXQDA?</summary>
+      <div class="faq-body">
+        <p>Traditional QDA software is designed for rigorous, formal analysis with detailed annotation
+        features. MindCoder complements these tools by focusing on the <em>informal</em> end of the
+        spectrum — quick initial coding, rapid sense-making, and AI-assisted exploration. It's ideal
+        for early-stage analysis or situations where a lighter-weight tool is needed.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>Can I collaborate with others on a project?</summary>
+      <div class="faq-body">
+        <p>MindCoder 2.0+ supports collaborative features. Multiple researchers can work on the same
+        project by sharing the NickName and ProjectName. The audit trail tracks all changes so you
+        can see who coded what and when.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary>What if I disagree with the AI's code suggestions?</summary>
+      <div class="faq-body">
+        <p>That's expected and encouraged! The AI suggestions are a starting point to save time.
+        Reject any code that doesn't fit, edit labels to match your interpretation, or add entirely
+        new codes manually. The researcher's judgment always takes priority.</p>
+      </div>
+    </details>
+
+  </main>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">MindCoder</div>
+    <div class="footer-copy">© 2026 MindCoder. All rights reserved.</div>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -54,16 +54,16 @@ const StepNavItem: React.FC<StepNavItemProps> = ({
       className={`px-4 py-2 rounded-xl flex gap-2 items-center font-zen font-semibold cursor-pointer transition-all
         ${
           step === currentStep
-            ? "border-[1.5px] border-[#CB9180] bg-white shadow-sm"
-            : "bg-gray-50 hover:bg-gray-100"
+            ? "border-[1.5px] border-primary bg-card shadow-sm"
+            : "border-[1.5px] border-transparent bg-muted/60 hover:bg-muted"
         }  `}
     >
-      <div className="w-8 h-8 bg-shallowbg flex items-center justify-center rounded-lg">
+      <div className="w-8 h-8 bg-primary-tint flex items-center justify-center rounded-lg">
         <img className="w-3/5" src={imgSrc} alt="Step Icon" />
       </div>
       <div
-        className={`text-sm font-zen font-semibold ${
-          step === currentStep ? "text-[#CB9180]" : "text-[#707070]"
+        className={`text-subhead font-zen font-semibold ${
+          step === currentStep ? "text-primary" : "text-muted-foreground"
         }`}
       >
         {content}

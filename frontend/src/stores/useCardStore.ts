@@ -405,6 +405,18 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
     // Process the parsed data to create card objects
     const processedCards = processJsonData(parsedData);
 
+    // A successful generation must yield at least one code. If the model
+    // returned only metadata (or an otherwise empty/unrecognized object),
+    // surface it as an error instead of silently storing nothing — otherwise
+    // the run reports "done" while the panel stays blank.
+    if (processedCards.length === 0) {
+      throw new Error(
+        "No codes were parsed from the model response (got " +
+          Object.keys(parsedData).filter((k) => k !== "metadata").length +
+          " non-metadata keys). The model likely returned malformed JSON or no Code entries."
+      );
+    }
+
     // Get current store state
     const currentState = useCardStore.getState();
     const currentCardData = currentState.cardData || [];
@@ -565,7 +577,12 @@ export const updateStoreData = async (jsonData: unknown, fileName?: string, shou
 
 
   } catch (error) {
+    // Do NOT swallow: a parse/processing failure here used to leave the
+    // generation reporting "done" with an empty panel (silent failure).
+    // Re-throw so the generation store sets its error state and the UI shows
+    // "⚠ Error — Retry" instead of a blank result.
     console.error('Error updating card store:', error);
+    throw error;
   }
 };
 

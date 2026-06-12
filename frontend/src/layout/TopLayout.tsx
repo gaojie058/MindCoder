@@ -2,6 +2,7 @@ import React from "react";
 import StepNav from "@/components/ui/StepNav";
 import { useNavigate, useParams } from "react-router-dom";
 import BackgroundGenButton from "@/components/ui/BackgroundGenButton";
+import Button from "@/components/ui/Button";
 
 const stepToName: Record<string, string> = {
   "0": "data",
@@ -25,17 +26,19 @@ const TopLayout: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center w-full border-b border-gray-200 shrink-0">
-      <div className="flex items-center gap-3 w-full max-w-[1400px] mx-auto px-8 py-4">
-        <button
+    <div className="material-bar sticky top-0 z-30 flex items-center w-full border-b border-border shrink-0">
+      <div className="flex items-center gap-3 w-full max-w-[1400px] mx-auto px-8 py-3">
+        <Button
+          variant="primary"
+          size="sm"
           onClick={handleBackToHome}
-          className="px-3 py-1.5 rounded-lg bg-[#CB9180] text-white hover:bg-[#AA7667] font-zen font-semibold text-xs cursor-pointer flex items-center gap-1.5 shrink-0"
+          className="font-zen shrink-0"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
           Settings
-        </button>
+        </Button>
         <StepNav />
 
         {/* Right-side: Background Gen button for analysis steps */}

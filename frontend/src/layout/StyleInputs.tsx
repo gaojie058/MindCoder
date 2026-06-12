@@ -474,43 +474,33 @@ const StyleInputs = React.forwardRef<
   const codeMemoRef = useRef(codeMemo || "");
   const conceptMemoRef = useRef(conceptMemo || "");
 
-  // Only sync once on initial load, avoid subsequent syncs
-  const [isInitialized, setIsInitialized] = useState(false);
-
+  // Keep the cached refs in sync with the store on every external change.
+  // The same store keys are also edited from the instructions panel at the
+  // bottom of the page (HumanActBar). These refs are what saveChangesToStore
+  // writes back, so if they went stale they would clobber an instruction
+  // entered there when the user clicks Regenerate. Typing in THIS component's
+  // own textareas only updates the refs (not the store), so this effect does
+  // not fire mid-edit; we also skip any textarea that is currently focused.
   useEffect(() => {
-    if (!isInitialized) {
-      // Only set values on initialization
-      clusteringValueRef.current = clusteringStyle || "";
-      codingValueRef.current = codingStyle || "";
-      conceptualizingValueRef.current = conceptualizingStyle || "";
-      topicMemoRef.current = topicMemo || "";
-      codeMemoRef.current = codeMemo || "";
-      conceptMemoRef.current = conceptMemo || "";
+    clusteringValueRef.current = clusteringStyle || "";
+    codingValueRef.current = codingStyle || "";
+    conceptualizingValueRef.current = conceptualizingStyle || "";
+    topicMemoRef.current = topicMemo || "";
+    codeMemoRef.current = codeMemo || "";
+    conceptMemoRef.current = conceptMemo || "";
 
-      // Update actual textarea elements
-      if (clusteringTextAreaRef.current) {
-        clusteringTextAreaRef.current.value = clusteringStyle || "";
+    const sync = (el: HTMLTextAreaElement | null, val: string) => {
+      if (el && el !== document.activeElement && el.value !== val) {
+        el.value = val;
       }
-      if (codingTextAreaRef.current) {
-        codingTextAreaRef.current.value = codingStyle || "";
-      }
-      if (conceptualizingTextAreaRef.current) {
-        conceptualizingTextAreaRef.current.value = conceptualizingStyle || "";
-      }
-      if (topicMemoTextAreaRef.current) {
-        topicMemoTextAreaRef.current.value = topicMemo || "";
-      }
-      if (codeMemoTextAreaRef.current) {
-        codeMemoTextAreaRef.current.value = codeMemo || "";
-      }
-      if (conceptMemoTextAreaRef.current) {
-        conceptMemoTextAreaRef.current.value = conceptMemo || "";
-      }
-
-      setIsInitialized(true);
-    }
+    };
+    sync(clusteringTextAreaRef.current, clusteringStyle || "");
+    sync(codingTextAreaRef.current, codingStyle || "");
+    sync(conceptualizingTextAreaRef.current, conceptualizingStyle || "");
+    sync(topicMemoTextAreaRef.current, topicMemo || "");
+    sync(codeMemoTextAreaRef.current, codeMemo || "");
+    sync(conceptMemoTextAreaRef.current, conceptMemo || "");
   }, [
-    isInitialized,
     clusteringStyle,
     codingStyle,
     conceptualizingStyle,

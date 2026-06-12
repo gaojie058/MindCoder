@@ -272,7 +272,10 @@ export const updateCodeStoreData = async (jsonData: any, regenerate: boolean = f
     }
 
   } catch (error) {
+    // Re-throw so a failed parse surfaces as a generation error instead of
+    // silently leaving the step "done" with an empty panel.
     console.error('Error when updating code store:', error);
+    throw error;
   }
 };
 

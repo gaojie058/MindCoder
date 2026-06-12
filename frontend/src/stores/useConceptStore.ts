@@ -295,7 +295,10 @@ export const updateConceptStoreData = async (jsonData: any, regenerate: boolean 
     }
 
   } catch (error) {
+    // Re-throw so a failed parse surfaces as a generation error instead of
+    // silently leaving the step "done" with an empty panel.
     console.error('Error when updating concept store:', error);
+    throw error;
   }
 };
 

@@ -14,18 +14,18 @@ export default function BackgroundGenButton() {
       onClick={runRemaining}
       disabled={disabled}
       title={bgError || undefined}
-      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-zen font-semibold transition-all ${
+      className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-footnote font-zen font-semibold transition-all duration-150 ease-out active:scale-[0.97] ${
         bgRunning
-          ? "bg-[#CB9180]/10 text-[#CB9180] cursor-wait"
+          ? "bg-primary/10 text-primary cursor-wait"
           : bgStage === "done"
-          ? "bg-green-50 text-green-600 hover:bg-green-100"
+          ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
           : bgStage === "error"
-          ? "bg-red-50 text-red-600 hover:bg-red-100"
-          : "bg-[#CB9180] text-white hover:bg-[#AA7667] cursor-pointer"
+          ? "bg-destructive/10 text-destructive hover:bg-destructive/15"
+          : "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover hover:shadow-md cursor-pointer"
       }`}
     >
       {bgRunning && (
-        <div className="w-3.5 h-3.5 border-2 border-[#CB9180]/30 border-t-[#CB9180] rounded-full animate-spin" />
+        <div className="w-3.5 h-3.5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
       )}
       {bgStage === "done" && !bgRunning && "✓ "}
       {stageLabels[bgStage]}

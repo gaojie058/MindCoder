@@ -10,6 +10,28 @@ import useInfoStore from "@/stores/useInfoStore";
 import useAppStore from "@/stores/useAppStore";
 import useCardStore from "@/stores/useCardStore";
 import useVersionStore from "@/stores/useVersionStore";
+import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
+
+// Each step's custom instruction lives under a different key in useAppStore.
+const STEP_STYLE_KEYS: Record<string, string> = {
+  card: "clusteringStyle",
+  code: "codingStyle",
+  concept: "conceptualizingStyle",
+};
+
+// Record the instruction used for a step into the prompt history. Called for
+// every generation path (background run, run-all, regenerate, initial card) so
+// a typed instruction is saved whenever the user clicks Generate, not only on
+// Regenerate. No-op for steps without an instruction (e.g. display) or when the
+// instruction is empty.
+function saveStepPromptToHistory(step: string) {
+  const styleKey = STEP_STYLE_KEYS[step];
+  if (!styleKey) return;
+  const prompt = (useAppStore.getState() as any)[styleKey];
+  if (typeof prompt === "string" && prompt.trim()) {
+    useLLMHistoryStore.getState().addLLMHistoryEntry(step, prompt.trim(), "Custom Prompt");
+  }
+}
 
 export type GenStage = "idle" | "card" | "code" | "concept" | "display" | "done" | "error";
 
@@ -43,6 +65,9 @@ interface GenerationStore {
 }
 
 async function executeStepAndSave(step: string, taskType?: string) {
+  // Record the instruction before running so it is captured even if the
+  // generation later fails (matches the previous Regenerate behavior).
+  saveStepPromptToHistory(step);
   await executeStep(step, taskType);
   // Auto-save version after each successful generation
   useVersionStore.getState().saveVersion(step);

@@ -16,7 +16,6 @@ import HistoryModal from "@/layout/HistoryModal";
 import LLMHistoryModal from "@/layout/LLMHistoryModal";
 import useDisplayStore from "@/stores/useDisplayStore";
 import useAppStore from "@/stores/useAppStore";
-import useLLMHistoryStore from "@/stores/useLLMHistoryStore";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { StyleInputsWithRef as StyleInputs } from "./StyleInputs";
 import useCardStore from "@/stores/useCardStore";
@@ -31,6 +30,7 @@ import { CardAreaProvider, EditorPanel, CodesPanel, useCardAreaContext } from "@
 import HumanActBar from "./HumanActBar";
 
 import InfoTooltip from "@/components/ui/InfoTooltip";
+import Button from "@/components/ui/Button";
 
 // Area label header
 function AreaLabel({ icon, title, tooltip, titleColor = "text-gray-600", tooltipVariant = "gray", className = "" }: { icon: string; title: string; tooltip: string; titleColor?: string; tooltipVariant?: "gray" | "amber"; className?: string }) {
@@ -51,24 +51,21 @@ function LeftPanel({ styleInputsRef, stepName }: { styleInputsRef: React.RefObje
     <div className={`relative flex flex-col h-full shrink-0 transition-all duration-300 ${collapsed ? 'w-10' : 'w-[280px]'}`}>
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-3 z-10 w-6 h-6 bg-[#CB9180] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#AA7667] shadow-md cursor-pointer"
+        className="absolute -right-3 top-3 z-10 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs hover:bg-primary-hover shadow-md cursor-pointer transition-colors"
         title={collapsed ? "Expand panel" : "Collapse panel"}
       >
         {collapsed ? '›' : '‹'}
       </button>
       {!collapsed && (
-        <div className="flex flex-col h-full rounded-xl border border-indigo-200/60 shadow-lg overflow-hidden bg-white">
+        <div className="flex flex-col h-full rounded-2xl border border-ai-border/60 shadow-md overflow-hidden bg-card">
           <AreaLabel
             icon="🤖"
             title="AI Agent"
             tooltip="AI analysis results and suggestions for the current step"
-            titleColor="text-indigo-600"
-            className="border-b border-indigo-100 bg-indigo-50/50"
+            titleColor="text-ai"
+            className="border-b border-ai-border/40 bg-ai-tint/60"
           />
-          <div
-            className="w-full overflow-y-auto scrollbar-thin flex-1"
-            style={{ scrollbarWidth: "thin", scrollbarColor: "#d1d5db #f9fafb" }}
-          >
+          <div className="w-full overflow-y-auto scrollbar-thin flex-1">
             <div className="p-3 pb-2">
               <StyleInputs
                 ref={styleInputsRef}
@@ -95,13 +92,13 @@ function CardAreaInnerLayout({ styleInputsRef }: { styleInputsRef: React.RefObje
         {/* Center — Document Editor (flex-1), hidden when codes expanded */}
         {!codesExpanded && (
           <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
-            <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
+            <div className="flex flex-col h-full rounded-2xl border border-primary/20 shadow-md overflow-hidden bg-card">
               <AreaLabel
                 icon="📊"
                 title="Data Editor"
                 tooltip="View, edit, and organize your coding data"
-                titleColor="text-[#CB9180]"
-                className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
+                titleColor="text-primary"
+                className="border-b border-primary/15 bg-primary/5"
               />
               <div className="flex-1 w-full overflow-hidden">
                 <EditorPanel />
@@ -111,13 +108,13 @@ function CardAreaInnerLayout({ styleInputsRef }: { styleInputsRef: React.RefObje
         )}
 
         {/* Right — Codes Panel (320px normal, flex-1 when expanded) */}
-        <div className={`${codesExpanded ? "flex-1" : "w-[320px]"} shrink-0 flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white`}>
+        <div className={`${codesExpanded ? "flex-1" : "w-[320px]"} shrink-0 flex flex-col h-full rounded-2xl border border-primary/20 shadow-md overflow-hidden bg-card`}>
           <AreaLabel
             icon="🏷️"
             title="Codes"
             tooltip="Open codes for the current file"
-            titleColor="text-[#CB9180]"
-            className="border-b border-[#CB9180]/20 bg-[#CB9180]/5"
+            titleColor="text-primary"
+            className="border-b border-primary/15 bg-primary/5"
           />
           <div className="flex-1 overflow-hidden">
             <CodesPanel />
@@ -231,22 +228,12 @@ export default function MainLayout({
   const regenRunning = useGenerationStore((s) => s.regenRunning);
   const globalIsRunning = bgRunning || regenRunning;
 
-  const savePromptToHistory = () => {
-    const { addLLMHistoryEntry } = useLLMHistoryStore.getState();
-    const { clusteringStyle, codingStyle, conceptualizingStyle } = useAppStore.getState();
-    if (stepName === "card" && clusteringStyle?.trim()) {
-      addLLMHistoryEntry("card", clusteringStyle.trim(), "Custom Prompt");
-    } else if (stepName === "code" && codingStyle?.trim()) {
-      addLLMHistoryEntry("code", codingStyle.trim(), "Custom Prompt");
-    } else if (stepName === "concept" && conceptualizingStyle?.trim()) {
-      addLLMHistoryEntry("concept", conceptualizingStyle.trim(), "Custom Prompt");
-    }
-  };
-
+  // Prompt-history saving is handled centrally in useGenerationStore
+  // (executeStepAndSave), so every Generate/Regenerate path records the
+  // instruction — not just these Regenerate buttons.
   const handleRegenerate = () => {
     if (!loading && !globalIsRunning) {
       saveChangesToStore();
-      savePromptToHistory();
       useGenerationStore.getState().regenerateStep(stepName);
     }
   };
@@ -254,7 +241,6 @@ export default function MainLayout({
   const handleRegenerateRest = () => {
     if (!loading && !globalIsRunning) {
       saveChangesToStore();
-      savePromptToHistory();
       useGenerationStore.getState().regenerateSubsequent(stepName);
     }
   };
@@ -365,24 +351,24 @@ export default function MainLayout({
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-80">
           <Alert
             variant="default"
-            className="bg-white border-[#CB9180] shadow-md"
+            className="bg-card border-primary shadow-lg rounded-2xl"
           >
-            <AlertTitle className="text-[#CB9180]">{alertTitle}</AlertTitle>
+            <AlertTitle className="text-primary">{alertTitle}</AlertTitle>
             <AlertDescription>{alertMessage}</AlertDescription>
           </Alert>
         </div>
       )}
       {showSuccessAlert && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-80">
-          <Alert className="bg-white border-[#CB9180] shadow-md">
-            <AlertTitle className="text-[#CB9180]">Success</AlertTitle>
+          <Alert className="bg-card border-primary shadow-lg rounded-2xl">
+            <AlertTitle className="text-primary">Success</AlertTitle>
             <AlertDescription>Version successfully added!</AlertDescription>
           </Alert>
         </div>
       )}
       {stepName !== "data" && <TopLayout />}
       {stepName === "data" && (
-        <div className="w-full flex justify-between items-center pt-2 px-10 pb-2 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div className="material-bar w-full flex justify-between items-center pt-2 px-10 pb-2 border-b border-border">
           <img src={frameLogo} alt="Frame Logo" className="w-[15%]" />
           <img src={toplogoright} alt="Top Right Logo" className="w-1/4" />
         </div>
@@ -407,7 +393,7 @@ export default function MainLayout({
 
             {/* Center — Step content (flex-1) */}
             <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
-              <div className="flex flex-col h-full rounded-xl border border-[#CB9180]/20 shadow-lg overflow-hidden bg-white">
+              <div className="flex flex-col h-full rounded-2xl border border-primary/20 shadow-md overflow-hidden bg-card">
                 <div className="flex-1 w-full overflow-hidden">
                   {children || <Outlet />}
                 </div>
@@ -419,7 +405,7 @@ export default function MainLayout({
 
       {stepToName[step] === "data" ? (
         <div
-          className={`flex-col w-full flex-1 mx-auto md:w-11/12 lg:w-5/6 my-3 2xl:my-5 xl:w-4/5 2xl:w-[65%] flex items-center justify-stretch shadow-lg rounded-xl overflow-hidden ${className}`}
+          className={`flex-col w-full flex-1 mx-auto md:w-11/12 lg:w-5/6 my-3 2xl:my-5 xl:w-4/5 2xl:w-[65%] flex items-center justify-stretch bg-card border border-border shadow-md rounded-2xl overflow-hidden ${className}`}
           {...props}
         >
           {children || <Outlet />}
@@ -428,7 +414,7 @@ export default function MainLayout({
         <div className="w-full flex justify-center flex-1 min-h-0 overflow-hidden">
           <div className="w-full max-w-[1400px] mx-auto px-8 pt-3 pb-4 h-full flex flex-col">
             <div
-              className={`flex-col w-full flex-1 flex items-center justify-stretch shadow-lg rounded-xl border border-[#CB9180]/20 overflow-hidden bg-white ${className}`}
+              className={`flex-col w-full flex-1 flex items-center justify-stretch shadow-md rounded-2xl border border-primary/20 overflow-hidden bg-card ${className}`}
               {...props}
             >
               {children || <Outlet />}
@@ -439,39 +425,27 @@ export default function MainLayout({
 
       {/* Bottom buttons for data and display pages */}
       {stepToName[step] === "data" && (
-        <div className="w-full mx-auto flex justify-between items-center p-6 border-t border-gray-300 md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%]">
+        <div className="w-full mx-auto flex justify-between items-center p-6 border-t border-border md:w-11/12 lg:w-5/6 xl:w-4/5 2xl:w-[65%]">
           {isCustomizePage ? (
             <div className="w-full flex justify-between">
-              <div className="flex gap-4">
-                <button
-                  onClick={handleCancel}
-                  className="px-4 py-2 bg-gray-400 text-white bg-[#C66B50] rounded-md hover:bg-[#AA7667] transition-colors"
-                >
+              <div className="flex gap-3">
+                <Button variant="secondary" onClick={handleCancel}>
                   Cancel
-                </button>
-                <button
-                  onClick={handleSaveCustomization}
-                  className="px-4 py-2 bg-[#CB9180] text-white rounded-md hover:bg-[#AA7667] transition-colors"
-                >
+                </Button>
+                <Button variant="primary" onClick={handleSaveCustomization}>
                   Save
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
             <div className="w-full flex justify-between">
-              <div className="flex gap-4">
-                <button
-                  onClick={handleResetCustomizations}
-                  className="px-4 py-2 bg-[#FFA500] text-white rounded-md hover:bg-[#FF8C00] transition-colors"
-                >
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={handleResetCustomizations}>
                   Reset Customizations
-                </button>
-                <button
-                  onClick={handleDeleteAllData}
-                  className="px-4 py-2 bg-[#f64141] text-white rounded-md hover:bg-red-600 transition-colors"
-                >
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteAllData}>
                   Delete All My Data
-                </button>
+                </Button>
               </div>
             </div>
           )}

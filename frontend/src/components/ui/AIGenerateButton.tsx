@@ -17,18 +17,18 @@ export default function AIGenerateButton({
     <button
       onClick={onClick}
       disabled={loading}
-      className={`ml-3 flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold
-        transition-all duration-200 cursor-pointer border
+      className={`ml-3 flex-shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-footnote font-semibold
+        transition-all duration-150 ease-out cursor-pointer border
         ${loading
-          ? "bg-purple-50 text-purple-400 border-purple-200 cursor-wait"
-          : "bg-[#EEF2FF] text-[#6366F1] border-[#C7D2FE] hover:bg-[#E0E7FF] hover:border-[#A5B4FC] active:scale-[0.97]"
+          ? "bg-ai-tint text-ai/60 border-ai-border cursor-wait"
+          : "bg-ai-tint text-ai border-ai-border hover:brightness-[0.97] active:scale-[0.97]"
         }
         disabled:opacity-70 ${className}`}
     >
       {loading ? (
-        <div className="w-3.5 h-3.5 border-2 border-purple-300 border-t-purple-500 rounded-full animate-spin" />
+        <div className="w-3.5 h-3.5 border-2 border-ai/30 border-t-ai rounded-full animate-spin" />
       ) : (
-        <span className="text-[#8F93F5]">✦</span>
+        <span className="text-ai">✦</span>
       )}
       {loading ? loadingLabel : label}
     </button>

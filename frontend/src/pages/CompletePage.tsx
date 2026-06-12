@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "@/assets/mindcoder.png";
 import completeLogo from "@/assets/complete.png";
+import Button from "@/components/ui/Button";
 
 function Complete() {
   const navigate = useNavigate();
@@ -23,9 +24,9 @@ function Complete() {
   console.log("step", step);
   
   return (
-    <div className="flex items-center justify-center w-screen h-screen">
-      <div className="flex flex-col md:flex-row items-center justify-center rounded-lg overflow-hidden gap-24 p-4">
-        <div className="flex justify-center items-center w-full md:w-1/2 bg-gray-200 p-4">
+    <div className="flex items-center justify-center w-screen h-screen bg-background">
+      <div className="flex flex-col md:flex-row items-center justify-center rounded-2xl overflow-hidden gap-24 p-4">
+        <div className="flex justify-center items-center w-full md:w-1/2 bg-muted rounded-2xl p-4">
           <img
             src={logo}
             className="max-h-[50vh] max-w-[50vw] object-contain"
@@ -38,20 +39,14 @@ function Complete() {
             className="max-h-[50vh] max-w-[50vw] object-contain"
             alt="complete logo"
           />
-          <div className="flex flex-row gap-3">
-            <button
-              className="mt-4 p-2 bg-[#C66B50] text-white rounded"
-              onClick={handleNavigateBack}
-            >
+          <div className="flex flex-row gap-3 mt-4">
+            <Button variant="secondary" onClick={handleNavigateBack}>
               Cancel
-            </button>
+            </Button>
 
-            <button
-              className="mt-4 p-2 bg-[#C66B50] text-white rounded"
-              onClick={handleNavigateToStep}
-            >
+            <Button variant="primary" onClick={handleNavigateToStep}>
               Next to Step Page
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -32,16 +32,16 @@ const debounceFilteCard = debounce((type, value, data, setFilteData) => {
       if (cardlist.active) {
         for (const card of cardlist.topics) {
           if (
-            card.id.toLowerCase().includes(value.toLowerCase()) || // 匹配 datapoint id
-            card.content.toLowerCase().includes(value.toLowerCase()) // 匹配 datapoint content
+            card.id.toLowerCase().includes(value.toLowerCase()) || // match datapoint id
+            card.content.toLowerCase().includes(value.toLowerCase()) // match datapoint content
           ) {
-            return true; // 如果找到匹配项则保留此卡片
+            return true; // keep this card if a match is found
           }
         }
       }
       return false;
     })
-    .sort((a, b) => Number(a.id) - Number(b.id)); // 根据 id 排序
+    .sort((a, b) => Number(a.id) - Number(b.id)); // sort by id
 
   setFilteData(filteCard);
 }, 300);
@@ -60,24 +60,24 @@ export default function SearchArea() {
     setValue(e.target.value);
   };
 
-  // 过滤
+  // filter
   useEffect(() => {
     debounceFilteCard("change", value, cardData, setFilteData);
   }, [value, cardData]);
 
-  // 展示dialog
+  // show dialog
   const revealDialog = (index: number) => {
     setActiveIndex(index);
     setIsHidden(false);
   };
 
-  // 隐藏dialog
+  // hide dialog
   const hideDialog = () => {
     setActiveIndex(-1);
     setIsHidden(true);
   };
 
-  // 处理点击外部关闭对话框
+  // close the dialog when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -124,7 +124,7 @@ export default function SearchArea() {
   const renderDialog = () => {
     if (isHidden) return null;
 
-    const dialogData = filteData[activeIndex]; // 使用过滤后的数据
+    const dialogData = filteData[activeIndex]; // use the filtered data
 
     return (
       <Dialog>
@@ -193,7 +193,7 @@ export default function SearchArea() {
         </div>
         <div ref={containerRef} className="flex-1 overflow-auto mt-4">
           {" "}
-          {/* 确保这个容器可以滚动 */}
+          {/* ensure this container is scrollable */}
           {filteData.map((cardList) => (
             <div
               key={cardList.id}

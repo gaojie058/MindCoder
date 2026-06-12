@@ -29,13 +29,13 @@ export default function AddCard({ hideDialog }: addCardProps) {
 
     const newInputs = trimmedValue ? [...inputs, trimmedValue] : inputs;
 
-    const newCardId = cardData.length + 1; // 新 card 的 ID 为已有 card 数量 + 1
+    const newCardId = cardData.length + 1; // new card ID = current card count + 1
     const existingDatapointCount = cardData.reduce(
       (count, card) => count + card.topics.length,
       0
     );
 
-    // 创建新的 datapoints
+    // create new datapoints
     const newDatapoints = newInputs.map((input, index) => ({
       id: (existingDatapointCount + index + 1).toString(),
       content: input,

@@ -46,7 +46,7 @@ export default function ColorSelector({ codeId, onColorChange }: Props) {
     setColor(newColor);
     setActive(9); // Custom color selection
     if (onColorChange) {
-      onColorChange(newColor); // 调用传递的回调函数
+      onColorChange(newColor); // invoke the provided callback
     }
   };
 
@@ -55,7 +55,7 @@ export default function ColorSelector({ codeId, onColorChange }: Props) {
     setColor(newColor);
     setActive(index);
     if (onColorChange) {
-      onColorChange(newColor); // 调用传递的回调函数
+      onColorChange(newColor); // invoke the provided callback
     }
   };
 

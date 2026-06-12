@@ -1,7 +1,6 @@
 import express, { Request } from 'express';
 import multer from 'multer';
-import { handleOpenAIRequest, handleOpenAIRequestStream } from '../utils/openaiHandler';
-// import { handleOpenAIRequestCompletion } from '../utils/openaiHandler';
+import { handleOpenAIRequest, handleOpenAIRequestStream } from '../providers';
 
 const upload = multer();
 const chatRouter = express.Router();
@@ -46,7 +45,7 @@ chatRouter.post('/chat', upload.array('files'), async (req: Request, res) => {
             });
         }
         // Parse model from request
-        const model = req.body.model || 'gpt-5-2025-08-07';
+        const model = req.body.model || 'deepseek-chat';
         console.log("Using model:", model);
 
         const result = await handleOpenAIRequest(prompt, fileContents, 1, model);
@@ -147,7 +146,7 @@ chatRouter.post('/chat/stream', upload.array('files'), async (req: Request, res)
             });
         }
 
-        const model = req.body.model || 'gpt-5-2025-08-07';
+        const model = req.body.model || 'deepseek-chat';
         console.log("[stream] Using model:", model, "prompt length:", prompt.length);
 
         await handleOpenAIRequestStream(prompt, fileContents, 0, model, res);

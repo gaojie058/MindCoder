@@ -5,7 +5,7 @@ import {infoStore} from '@/types'
 const useInfoStore = create<infoStore>((set)=>({
   nickname:'',
   projectname:'',
-  model: 'gpt-5-2025-08-07',
+  model: 'deepseek-chat',
   selectedSteps: ['card', 'code', 'concept'],
   autoRun: false,
   setNickname(value) {

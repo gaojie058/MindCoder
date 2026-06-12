@@ -157,14 +157,18 @@ const Visualize = () => {
         <div className="w-full px-6 py-2 flex items-center justify-between bg-[#FFF3EE] border-b border-[#CB9180]/10 flex-shrink-0">
           <div className="flex items-center gap-1 bg-white/60 rounded-lg p-0.5">
             {([
-              { key: "map", label: "🗺️ Map" },
-              { key: "report", label: "📊 Findings" },
-            ] as const).map(({ key, label }) => (
+              { key: "map", label: "🗺️ Map", disabled: false },
+              { key: "report", label: "📊 Findings (unavailable)", disabled: true },
+            ] as const).map(({ key, label, disabled }) => (
               <button
                 key={key}
-                onClick={() => setActiveTab(key as "report" | "map")}
+                onClick={() => !disabled && setActiveTab(key as "report" | "map")}
+                disabled={disabled}
+                title={disabled ? "Coming soon" : undefined}
                 className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
-                  activeTab === key
+                  disabled
+                    ? "text-[#B89A8E] cursor-not-allowed opacity-60"
+                    : activeTab === key
                     ? "bg-[#CB9180] text-white shadow-sm"
                     : "text-[#8B5E4B] hover:bg-[#CB9180]/10"
                 }`}

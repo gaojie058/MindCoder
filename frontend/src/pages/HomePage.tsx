@@ -275,13 +275,16 @@ function HomePage() {
             <button
               onClick={handleRun}
               disabled={uploadedFiles.length === 0}
-              className={`w-full py-3.5 sm:py-3 rounded-xl text-white font-zen font-semibold text-base sm:text-lg transition-colors ${
+              className={`group w-full py-3.5 sm:py-3 rounded-xl font-zen font-semibold text-base sm:text-lg transition-all duration-200 flex items-center justify-center gap-2 ${
                 uploadedFiles.length > 0
-                  ? "bg-[#D39C83] hover:bg-[#CB9180] active:bg-[#AA7667]"
-                  : "bg-gray-300 cursor-not-allowed"
+                  ? "text-white bg-gradient-to-r from-[#E0A98C] to-[#CB9180] shadow-md shadow-[#CB9180]/30 hover:shadow-lg hover:shadow-[#CB9180]/40 hover:-translate-y-0.5 active:translate-y-0 active:from-[#CB9180] active:to-[#AA7667]"
+                  : "text-[#B89A8E] bg-[#F5EDE8] border border-[#E7D8CF] cursor-not-allowed"
               }`}
             >
-              🚀 Run MindCoder
+              <span className={`text-xl transition-transform duration-200 ${uploadedFiles.length > 0 ? "group-hover:-translate-y-0.5 group-hover:rotate-12" : ""}`}>
+                🚀
+              </span>
+              {uploadedFiles.length > 0 ? "Run MindCoder" : "Upload data to run"}
             </button>
           </div>
         </div>
@@ -311,8 +314,11 @@ function HomePage() {
                 onChange={(e) => setModel(e.target.value)}
                 className="w-full border border-gray-300 rounded-lg p-2.5 sm:p-2 outline-none focus:border-[#CB9180] font-zen text-sm"
               >
-                <option value="gpt-5-2025-08-07">GPT-5</option>
-                <option value="claude-sonnet">Claude Sonnet</option>
+                <option value="deepseek-chat">DeepSeek V3</option>
+                <option value="deepseek-reasoner">DeepSeek R1</option>
+                <option value="kimi-k2-0711-preview" disabled>Kimi K2 (unavailable)</option>
+                <option value="gpt-5-2025-08-07" disabled>GPT-5 (unavailable)</option>
+                <option value="claude-sonnet" disabled>Claude Sonnet (unavailable)</option>
               </select>
             </div>
 

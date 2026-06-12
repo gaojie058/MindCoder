@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindCoder — Qualitative Analysis with LLMs</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=General+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #FAF8F4;
+    --warm-white: #F5F2EC;
+    --ink: #1A1A1A;
+    --ink-light: #3D3D3D;
+    --ink-muted: #8C8C8C;
+    --ink-faint: #BCBCBC;
+    --terracotta: #C85A3A;
+    --terracotta-light: rgba(200, 90, 58, 0.08);
+    --sage: #5B7A5E;
+    --sage-light: rgba(91, 122, 94, 0.08);
+    --slate: #4A6178;
+    --slate-light: rgba(74, 97, 120, 0.08);
+    --border: rgba(26, 26, 26, 0.08);
+    --serif: 'Newsreader', Georgia, serif;
+    --sans: 'General Sans', -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --max-w: 1100px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--cream);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Nav ── */
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(250, 248, 244, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 500;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .nav-right a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+
+  .nav-right a:hover { color: var(--ink); }
+
+  .nav-demo {
+    color: var(--terracotta) !important;
+    border: 1.5px solid var(--terracotta);
+    padding: 0.45rem 1.2rem;
+    border-radius: 100px;
+    font-weight: 500 !important;
+    transition: all 0.25s !important;
+  }
+
+  .nav-demo:hover {
+    background: var(--terracotta);
+    color: white !important;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 10vh 2rem 8vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .hero-text {
+    max-width: 540px;
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--terracotta);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(2.2rem, 3.5vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 1.75rem;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .hero-body {
+    font-size: 1rem;
+    color: var(--ink-light);
+    line-height: 1.85;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .hero-cta:hover {
+    background: var(--ink-light);
+    transform: translateY(-1px);
+  }
+
+  .hero-cta .arrow {
+    transition: transform 0.3s;
+    font-size: 1.1rem;
+  }
+
+  .hero-cta:hover .arrow { transform: translateX(3px); }
+
+  /* Hero visual — abstract diagram */
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-diagram {
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1;
+    position: relative;
+  }
+
+  .hero-diagram .ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+  }
+
+  .hero-diagram .ring-1 {
+    inset: 0;
+  }
+
+  .hero-diagram .ring-2 {
+    inset: 18%;
+    border-color: rgba(200, 90, 58, 0.15);
+  }
+
+  .hero-diagram .ring-3 {
+    inset: 36%;
+    border-color: rgba(91, 122, 94, 0.2);
+  }
+
+  .hero-diagram .ring-center {
+    position: absolute;
+    inset: 42%;
+    border-radius: 50%;
+    background: var(--terracotta-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+  }
+
+  .hero-diagram .node {
+    position: absolute;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--ink-muted);
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .node-data { top: -5%; left: 50%; transform: translateX(-50%); }
+  .node-codes { top: 50%; right: -12%; transform: translateY(-50%); }
+  .node-cats { bottom: -5%; left: 50%; transform: translateX(-50%); }
+  .node-themes { top: 50%; left: -12%; transform: translateY(-50%); }
+
+  /* ── Divider ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  /* ── Two-column section layout ── */
+  .section-2col {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 8vh 2rem;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 5rem;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-muted);
+    font-weight: 500;
+    padding-top: 0.3rem;
+  }
+
+  .section-body h2 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.45;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .section-body p {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    line-height: 1.85;
+    margin-bottom: 1.2rem;
+    max-width: 580px;
+  }
+
+  /* ── Method section ── */
+  .method-wrap {
+    background: var(--warm-white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .method-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 8vh 2rem;
+  }
+
+  .method-header {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 5rem;
+    margin-bottom: 5rem;
+  }
+
+  .method-header-text h2 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .method-header-text p {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    line-height: 1.85;
+    max-width: 540px;
+  }
+
+  /* Pipeline */
+  .pipeline {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  .pipeline::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, var(--ink-faint) 0, var(--ink-faint) 6px, transparent 6px, transparent 12px);
+  }
+
+  .pipe-stage { text-align: center; position: relative; }
+
+  .pipe-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .pipe-stage:nth-child(1) .pipe-icon { background: var(--terracotta-light); }
+  .pipe-stage:nth-child(2) .pipe-icon { background: var(--sage-light); }
+  .pipe-stage:nth-child(3) .pipe-icon { background: var(--slate-light); }
+  .pipe-stage:nth-child(4) .pipe-icon { background: rgba(180, 150, 100, 0.1); }
+
+  .pipe-stage h3 {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+    color: var(--ink);
+  }
+
+  .pipe-stage p {
+    font-size: 0.8rem;
+    color: var(--ink-muted);
+    line-height: 1.65;
+    max-width: 170px;
+    margin: 0 auto;
+  }
+
+  /* Example Card */
+  .method-example {
+    max-width: 700px;
+    margin: 4rem auto 0;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .example-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    background: rgba(250, 248, 244, 0.5);
+  }
+
+  .example-body {
+    padding: 1.5rem;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .example-row {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .example-row .tag {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    text-align: center;
+    white-space: nowrap;
+    margin-top: 0.15rem;
+  }
+
+  .tag-data { background: var(--terracotta-light); color: var(--terracotta); }
+  .tag-code { background: var(--sage-light); color: var(--sage); }
+  .tag-category { background: var(--slate-light); color: var(--slate); }
+  .tag-theme { background: rgba(180, 150, 100, 0.12); color: #8B7355; }
+
+  .example-row .content {
+    font-size: 0.88rem;
+    color: var(--ink-light);
+    line-height: 1.65;
+  }
+
+  .example-row .content em {
+    font-style: italic;
+    font-family: var(--serif);
+  }
+
+  .example-sep {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Approach Cards ── */
+  .approach-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 8vh 2rem;
+  }
+
+  .approach-header {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 5rem;
+    margin-bottom: 4rem;
+  }
+
+  .approach-header h2 {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+
+  .approach-header p {
+    font-size: 0.95rem;
+    color: var(--ink-light);
+    line-height: 1.85;
+    max-width: 540px;
+    padding-top: 0.3rem;
+  }
+
+  .approach-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .approach-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem 1.75rem;
+    transition: all 0.3s ease;
+    background: white;
+  }
+
+  .approach-card:hover {
+    border-color: rgba(26, 26, 26, 0.15);
+    box-shadow: 0 8px 32px rgba(26, 26, 26, 0.04);
+    transform: translateY(-2px);
+  }
+
+  .approach-num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    margin-bottom: 1.25rem;
+    letter-spacing: 0.05em;
+  }
+
+  .approach-card h3 {
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.01em;
+  }
+
+  .approach-card p {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    line-height: 1.75;
+  }
+
+  /* ── Updates ── */
+  .updates-wrap {
+    background: var(--warm-white);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .updates-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 8vh 2rem;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 5rem;
+  }
+
+  .update-list { display: grid; gap: 0; }
+
+  .update-item {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 2rem;
+    align-items: baseline;
+  }
+
+  .update-item:first-child { padding-top: 0; }
+
+  .update-date {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+
+  .update-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .update-desc {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    margin-top: 0.3rem;
+    line-height: 1.6;
+  }
+
+  /* ── CTA ── */
+  .cta {
+    padding: 10vh 2rem;
+    text-align: center;
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+
+  .cta h2 {
+    font-family: var(--serif);
+    font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+    font-weight: 300;
+    line-height: 1.35;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .cta p {
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+    margin-bottom: 2rem;
+  }
+
+  .cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.85rem 2.2rem;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+
+  .cta-link:hover {
+    background: var(--ink-light);
+    transform: translateY(-1px);
+  }
+
+  .cta-sub {
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    letter-spacing: 0.03em;
+  }
+
+  /* ── Footer ── */
+  .footer-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+  }
+
+  .footer-copy {
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+
+  /* ── Scroll Animations ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Mobile Nav Toggle ── */
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: var(--ink);
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 860px) {
+    .nav-toggle { display: block; }
+
+    .nav-right {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: rgba(250, 248, 244, 0.98);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      flex-direction: column;
+      padding: 1.5rem 2rem;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    }
+
+    .nav-right.open { display: flex; }
+
+    .nav-right a { font-size: 0.95rem; }
+
+    nav { position: relative; }
+
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 5vh 1.5rem 4vh;
+    }
+
+    .hero-visual { display: none; }
+
+    .hero h1 { font-size: 1.8rem; }
+    .hero-body { font-size: 0.92rem; }
+
+    .section-2col,
+    .method-header,
+    .approach-header,
+    .updates-inner {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .approach-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .pipeline {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2rem;
+    }
+
+    .pipeline::before { display: none; }
+
+    .pipe-icon { width: 64px; height: 64px; font-size: 1.4rem; }
+
+    .example-row {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .update-item {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+
+    .method-inner { padding: 5vh 1.5rem; }
+    .approach-inner { padding: 5vh 1.5rem; }
+    .cta { padding: 6vh 1.5rem; }
+    .cta h2 { font-size: 1.5rem; }
+
+    .footer-inner {
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+      padding: 1.5rem;
+    }
+
+    /* Team grid — stack on mobile */
+    .team-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<div class="nav-wrap">
+  <nav>
+    <a href="#" class="logo">MindCoder</a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-right').classList.toggle('open')" aria-label="Menu">☰</button>
+    <div class="nav-right">
+      <a href="#method">Method</a>
+      <a href="#approach">Approach</a>
+      <a href="#updates">Updates</a>
+      <a href="guide.html">Guide</a>
+      <a href="datasets.html">Qualitative Datasets</a>
+      <a href="https://demo.mindcoder.ai/" class="nav-demo">Try Demo</a>
+    </div>
+  </nav>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-label">Qualitative Analysis × LLM · v2.1</div>
+    <h1>Support flexible, <em>informal</em> qualitative analysis with large language models</h1>
+    <p class="hero-body">
+      MindCoder is a web-based tool that helps researchers quickly make sense of unstructured data — interview transcripts, meeting notes, open-ended survey responses. Rather than replacing the researcher, it augments the qualitative coding process with AI-powered suggestions, keeping human judgment at the center.
+    </p>
+    <a href="https://demo.mindcoder.ai/" class="hero-cta">
+      Open MindCoder 2.1 <span class="arrow">→</span>
+    </a>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-diagram">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+      <div class="ring-center">🧠</div>
+      <div class="node node-data">Raw Data</div>
+      <div class="node node-codes">Codes</div>
+      <div class="node node-cats">Sub-themes</div>
+      <div class="node node-themes">Themes</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Context / Problem -->
+<section class="section-2col fade-in">
+  <div class="section-label">The Problem</div>
+  <div class="section-body">
+    <h2>Qualitative coding is powerful but slow. Most tools assume a rigid, formal process.</h2>
+    <p>
+      In practice, researchers often need quick, lightweight coding — a fast pass over meeting notes, an initial sense of interview themes, or a rough categorization before committing to a full analysis. Traditional QDA tools aren't built for this informal mode of work.
+    </p>
+    <p>
+      MindCoder fills this gap. It supports the full spectrum from quick intuition to deep analysis, using LLMs to accelerate the parts that are tedious without compromising the parts that require thought.
+    </p>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Method -->
+<section class="method-wrap" id="method">
+  <div class="method-inner">
+    <div class="method-header fade-in">
+      <div class="section-label">The Method</div>
+      <div class="method-header-text">
+        <h2>From raw data to themes, one layer at a time</h2>
+        <p>
+          MindCoder follows the "Code-to-Theory" model proposed by Saldaña — a structured yet flexible approach that builds understanding progressively from ground-level data through increasingly abstract layers.
+        </p>
+      </div>
+    </div>
+
+    <!-- Pipeline Diagram -->
+    <div class="pipeline fade-in">
+      <div class="pipe-stage">
+        <div class="pipe-icon">📄</div>
+        <h3>Raw Data</h3>
+        <p>Interview transcripts, notes, open-ended responses</p>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-icon">🏷️</div>
+        <h3>Open Codes</h3>
+        <p>LLM suggests codes; researcher refines and validates</p>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-icon">📂</div>
+        <h3>Sub-themes</h3>
+        <p>Related codes grouped into meaningful clusters</p>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-icon">💡</div>
+        <h3>Themes</h3>
+        <p>Abstract patterns that answer research questions</p>
+      </div>
+    </div>
+
+    <!-- Concrete Example -->
+    <div class="method-example fade-in">
+      <div class="example-header">Example — Processing an Interview Excerpt</div>
+      <div class="example-body">
+        <div class="example-row">
+          <span class="tag tag-data">Data</span>
+          <span class="content"><em>"I used to love the creative parts of my job, but now I spend most of my time filling out forms and updating trackers. It feels like the bureaucracy has taken over..."</em></span>
+        </div>
+        <hr class="example-sep">
+        <div class="example-row">
+          <span class="tag tag-code">Open Codes</span>
+          <span class="content">loss of creative autonomy · administrative burden · role identity tension</span>
+        </div>
+        <hr class="example-sep">
+        <div class="example-row">
+          <span class="tag tag-category">Sub-theme</span>
+          <span class="content">Erosion of Professional Agency · Administrative Overload</span>
+        </div>
+        <hr class="example-sep">
+        <div class="example-row">
+          <span class="tag tag-theme">Theme</span>
+          <span class="content">Cognitive Overhead in Knowledge Work</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Approach -->
+<section id="approach">
+  <div class="approach-inner">
+    <div class="approach-header fade-in">
+      <div class="section-label">How It Works</div>
+      <div>
+        <h2>AI suggests, you decide</h2>
+        <p>MindCoder is designed around three principles that keep the researcher in control while letting AI handle the tedious parts.</p>
+      </div>
+    </div>
+    <div class="approach-grid fade-in">
+      <div class="approach-card">
+        <div class="approach-num">01</div>
+        <h3>Flexible entry points</h3>
+        <p>Start with a blank slate and let codes emerge (inductive), or bring an existing codebook and let MindCoder apply it (deductive). Switch between modes at any point.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-num">02</div>
+        <h3>Transparent suggestions</h3>
+        <p>Every AI-generated code comes with the source text it was derived from. Accept, edit, split, merge, or reject — every decision is logged and traceable.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-num">03</div>
+        <h3>Iterative refinement</h3>
+        <p>Do a quick first pass to get a rough sense, then return for deeper analysis. MindCoder supports the natural, non-linear way researchers actually work with qualitative data.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Updates -->
+<section class="updates-wrap" id="updates">
+  <div class="updates-inner fade-in">
+    <div class="section-label">Updates</div>
+    <div class="update-list">
+      <div class="update-item">
+        <div class="update-date">Feb 12, 2026</div>
+        <div>
+          <div class="update-title">MindCoder 2.1 is online</div>
+          <div class="update-desc">New trajectory design for tracking coding journeys, and a coding audit trail for full transparency and reproducibility.</div>
+        </div>
+      </div>
+      <div class="update-item">
+        <div class="update-date">Apr 2, 2025</div>
+        <div>
+          <div class="update-title">MindCoder 2.0 is online</div>
+          <div class="update-desc">Redesigned interface with improved coding workflows and collaborative features.</div>
+        </div>
+      </div>
+      <div class="update-item">
+        <div class="update-date">Dec 17, 2024</div>
+        <div>
+          <div class="update-title">New features preview</div>
+          <div class="update-desc">Upcoming v2 capabilities including project sharing and enhanced LLM support.</div>
+        </div>
+      </div>
+      <div class="update-item">
+        <div class="update-date">Sep 13, 2024</div>
+        <div>
+          <div class="update-title">MindCoder 1.0 released</div>
+          <div class="update-desc">Introducing flexible qualitative analysis with large language models.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Try MindCoder on your own data</h2>
+  <p>No account needed — start with a demo project.</p>
+  <a href="https://demo.mindcoder.ai/" class="cta-link">Launch MindCoder 2.1 →</a>
+  <div class="cta-sub">NickName: demo · ProjectName: demo</div>
+</section>
+
+<!-- Team -->
+<section class="updates-wrap" id="team">
+  <div class="updates-inner fade-in">
+    <div class="section-label">Team</div>
+    <div class="team-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;">
+      <div class="approach-card" style="text-align: center; padding: 2rem 1.5rem;">
+        <h3 style="font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.35rem;">Jie "Sophia" Gao</h3>
+        <p style="font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 0.75rem;">
+          <a href="mailto:jgao77@jh.edu" style="color: var(--ink-muted); text-decoration: none; border-bottom: 1px solid var(--border);">jgao77@jh.edu</a>
+        </p>
+        <a href="https://gaojie058.github.io" style="font-size: 0.82rem; color: var(--terracotta); text-decoration: none; border-bottom: 1px solid rgba(200,90,58,0.25);" target="_blank">Homepage →</a>
+      </div>
+      <div class="approach-card" style="text-align: center; padding: 2rem 1.5rem;">
+        <h3 style="font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.35rem;">Zhiyao Shu</h3>
+        <p style="font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 0.75rem;">&nbsp;</p>
+        <a href="https://upsilonv0.vercel.app/" style="font-size: 0.82rem; color: var(--terracotta); text-decoration: none; border-bottom: 1px solid rgba(200,90,58,0.25);" target="_blank">Homepage →</a>
+      </div>
+      <div class="approach-card" style="text-align: center; padding: 2rem 1.5rem;">
+        <h3 style="font-family: var(--serif); font-size: 1.1rem; font-weight: 400; margin-bottom: 0.35rem;">Shunyi Yeo</h3>
+        <p style="font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 0.75rem;">&nbsp;</p>
+        <a href="https://www.linkedin.com/in/yeo-shun-yi/" style="font-size: 0.82rem; color: var(--terracotta); text-decoration: none; border-bottom: 1px solid rgba(200,90,58,0.25);" target="_blank">LinkedIn →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">MindCoder</div>
+    <div style="margin: 0.75rem 0;">
+      <a href="https://docs.google.com/document/d/1KK9UWc9NpSOZ3IL8RSSmvbqHXDd2CYiQ60IVEdiN_p0/edit?usp=sharing" target="_blank" style="font-size: 0.85rem; color: var(--terracotta); text-decoration: none; border-bottom: 1px solid rgba(200,90,58,0.25);">💬 Provide Feedback →</a>
+    </div>
+    <div class="footer-copy">© 2026 MindCoder. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- Scroll Animation -->
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>

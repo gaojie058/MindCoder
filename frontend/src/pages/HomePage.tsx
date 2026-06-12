@@ -5,6 +5,7 @@ import useAppStore from "@/stores/useAppStore";
 import useGenerationStore, { stageLabels } from "@/stores/useGenerationStore";
 import { useNavigate } from "react-router-dom";
 import mammoth from "mammoth";
+import { convertTrajectoryToText } from "@/utils/trajectoryToText";
 
 function HomePage() {
   const {
@@ -40,6 +41,7 @@ function HomePage() {
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "text/plain",
+    "application/json",
   ];
 
   const convertDocxToText = async (file: File): Promise<string> => {
@@ -64,9 +66,13 @@ function HomePage() {
 
   const handleFiles = async (files: FileList) => {
     const fileArray = Array.from(files);
-    const validFiles = fileArray.filter((file) => allowedFileTypes.includes(file.type));
+    const validFiles = fileArray.filter(
+      (file) =>
+        allowedFileTypes.includes(file.type) ||
+        /\.(txt|doc|docx|json|jsonl)$/i.test(file.name)
+    );
     if (validFiles.length < fileArray.length) {
-      alert("Please upload only .docx or .txt format files");
+      alert("Please upload only .txt, .docx, or .json format files");
     }
     const processedFiles = await Promise.all(
       validFiles.map(async (file) => {
@@ -77,6 +83,17 @@ function HomePage() {
           const textContent = await convertDocxToText(file);
           const textBlob = new Blob([textContent], { type: "text/plain" });
           return new File([textBlob], `${file.name}.txt`, { type: "text/plain" });
+        }
+        // Trajectory JSON/JSONL → readable transcript for the coding pipeline.
+        if (file.type === "application/json" || /\.(json|jsonl)$/i.test(file.name)) {
+          const rawText = await file.text();
+          const transcript = convertTrajectoryToText(rawText);
+          if (transcript) {
+            const textBlob = new Blob([transcript], { type: "text/plain" });
+            const stem = file.name.replace(/\.(json|jsonl)$/i, "");
+            return new File([textBlob], `${stem}.txt`, { type: "text/plain" });
+          }
+          // Not a recognizable trajectory — keep the raw JSON as plain text.
         }
         return file;
       })
@@ -213,7 +230,7 @@ function HomePage() {
               <input
                 type="file"
                 multiple
-                accept=".txt,.doc,.docx"
+                accept=".txt,.doc,.docx,.json,.jsonl"
                 style={{ display: "none" }}
                 ref={fileInputRef}
                 onChange={(e) => e.target.files && handleFiles(e.target.files)}

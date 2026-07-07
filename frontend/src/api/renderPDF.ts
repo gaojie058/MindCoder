@@ -12,6 +12,11 @@ import useEditStore from "@/stores/useEditStore"
 import useInfoStore from "@/stores/useInfoStore"
 
 // https://github.com/bpampuch/pdfmake/issues/2654
+// Noto Sans SC covers CJK glyphs (it also ships Latin), so we register it as a
+// second family and switch the document's default font to it whenever the
+// report contains CJK text (see `hasCJK` usage in renderPDF). Noto has no
+// true italic weight, so italics fall back to the regular/bold files.
+const NOTO_SC = "https://cdn.jsdelivr.net/npm/@expo-google-fonts/noto-sans-sc@0.2.3";
 (<any>pdfMake).fonts = {
   Roboto: {
     normal: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf",
@@ -19,6 +24,18 @@ import useInfoStore from "@/stores/useInfoStore"
     italics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf",
     bolditalics: "https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf",
   },
+  NotoSansSC: {
+    normal: `${NOTO_SC}/NotoSansSC_400Regular.ttf`,
+    bold: `${NOTO_SC}/NotoSansSC_700Bold.ttf`,
+    italics: `${NOTO_SC}/NotoSansSC_400Regular.ttf`,
+    bolditalics: `${NOTO_SC}/NotoSansSC_700Bold.ttf`,
+  },
+}
+
+// Matches CJK ideographs plus common CJK punctuation / kana ranges.
+const CJK_RE = /[\u2E80-\u2FDF\u3000-\u30FF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uFF00-\uFFEF]/;
+function hasCJK(str: string): boolean {
+  return typeof str === 'string' && CJK_RE.test(str);
 }
 
 // ── Brand palette (redesign v2) ──
@@ -53,11 +70,11 @@ function san(str: string): string {
     .replace(/[\u200B-\u200F\u2028\u2029\uFEFF]/g, '')
     .replace(/[\u2500-\u27BF]/g, '')
     .replace(/[\uFE00-\uFE0F]/g, '')
-    .replace(/\u3010/g, '[').replace(/\u3011/g, ']')        // 【→[ 】→]
-    .replace(/\u300C/g, '[').replace(/\u300D/g, ']')      // 「→[ 」→]
-    .replace(/\u300E/g, '[').replace(/\u300F/g, ']')      // 『→[ 』→]
-    .replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))  // fullwidth → ASCII
-    .replace(/[^\x20-\x7E\n\r\t]/g, '');  // strip any remaining non-ASCII
+    .replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xFEE0))  // fullwidth ASCII forms -> ASCII
+    // Keep CJK and other printable Unicode; only drop control characters.
+    // The old code stripped every non-ASCII char here, which silently
+    // deleted all Chinese/Japanese/Korean text from the report.
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, '');
 }
 
 // Bold text inside [brackets], clean {group} tags
@@ -595,6 +612,18 @@ export default async function renderPDF(report: any, _conceptArr: concept[]): Pr
   // Ensure coverage data is ready
   await ensureCoverage();
 
+  const content: Content[] = [
+    ...buildCoverPage(),
+    ...buildCodebook(),
+    ...buildProcessPage(),
+  ];
+
+  // Roboto (Latin-only) can't render CJK glyphs, so switch the whole document
+  // to Noto Sans SC when the report actually contains CJK text. This keeps
+  // English reports on Roboto (no extra font download) and only pulls the
+  // larger CJK font when it's needed.
+  const font = hasCJK(JSON.stringify(content)) ? 'NotoSansSC' : 'Roboto';
+
   const docDefinition: TDocumentDefinitions = {
     pageSize: 'A4',
     pageOrientation: 'portrait',
@@ -602,17 +631,13 @@ export default async function renderPDF(report: any, _conceptArr: concept[]): Pr
     pageMargins: [50, 45, 50, 45],
 
     defaultStyle: {
-      font: 'Roboto',
+      font,
       fontSize: 9,
       color: B.text,
       lineHeight: 1.3,
     },
 
-    content: [
-      ...buildCoverPage(),
-      ...buildCodebook(),
-      ...buildProcessPage(),
-    ],
+    content,
   };
 
   // Actually generate the PDF and return base64 data

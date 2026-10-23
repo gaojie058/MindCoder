@@ -2,7 +2,7 @@
 
 > AI-assisted qualitative coding that keeps human judgment at the center.
 
-**[Website](https://mindcoder.ai)** · **[Live demo](https://demo.mindcoder.ai)**
+**[Website](https://quali-agents.github.io/)** · **[Live demo](https://demo.mindcoder.ai)**
 
 ---
 
@@ -21,7 +21,7 @@ This is a monorepo with three independently deployed parts:
 
 | Path        | What it is                    | Stack                                  | Deployed to |
 |-------------|-------------------------------|----------------------------------------|-------------|
-| `landing/`  | Marketing / docs landing page | Static HTML                            | GitHub Pages → `mindcoder.ai` |
+| `landing/`  | Marketing / docs landing page | Static HTML                            | GitHub Pages → `quali-agents.github.io` |
 | `frontend/` | The application UI            | React + Vite + TypeScript              | Vercel → `demo.mindcoder.ai` |
 | `backend/`  | Chat / coding API             | Node + TypeScript (Vercel serverless)  | Vercel |
 
@@ -74,9 +74,7 @@ Set `VITE_USE_LOCAL_API=false` to point the UI at the deployed backend.
 
 ## Deployment
 
-- **`landing/`** is published by `.github/workflows/pages.yml` whenever its files
-  change on `main`. In repo **Settings → Pages**, set *Source* to **GitHub Actions**.
-  The custom domain is carried by `landing/CNAME`.
+- **Website** is maintained and deployed from [quali-agents/quali-agents.github.io](https://github.com/quali-agents/quali-agents.github.io). Edit that repository's HTML files to update https://quali-agents.github.io/. The `landing/` directory here is the original source snapshot.
 - **`frontend/`** and **`backend/`** are each a Vercel project whose *Root
   Directory* is set to the respective folder. `backend/vercel.json` routes all
   requests to the `api/index.ts` serverless function.

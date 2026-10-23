@@ -2,7 +2,7 @@
 
 > AI-assisted qualitative coding that keeps human judgment at the center.
 
-**[Website](https://quali-agents.github.io/)** · **[Live demo](https://demo.mindcoder.ai)**
+**[Website](https://quali-agents.github.io/)** · **[Live demo](https://mind-coder-frontend.vercel.app)**
 
 ---
 
@@ -22,7 +22,7 @@ This is a monorepo with three independently deployed parts:
 | Path        | What it is                    | Stack                                  | Deployed to |
 |-------------|-------------------------------|----------------------------------------|-------------|
 | `landing/`  | Marketing / docs landing page | Static HTML                            | GitHub Pages → `quali-agents.github.io` |
-| `frontend/` | The application UI            | React + Vite + TypeScript              | Vercel → `demo.mindcoder.ai` |
+| `frontend/` | The application UI            | React + Vite + TypeScript              | Vercel → `mind-coder-frontend.vercel.app` |
 | `backend/`  | Chat / coding API             | Node + TypeScript (Vercel serverless)  | Vercel |
 
 The backend is provider-agnostic and supports **OpenAI, Anthropic, DeepSeek,

@@ -102,9 +102,6 @@ const Visualize = () => {
 
   // Graph is no longer generated (ThemeMap replaces it), so only check report
   const { report } = useDisplayStore();
-  if (!report) {
-    return <div>Loading...</div>;
-  }
 
   // Get data from concept store
   function filterConceptData() {

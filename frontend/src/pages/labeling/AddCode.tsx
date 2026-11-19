@@ -1,3 +1,4 @@
+import { CodeList } from "@/components/analysis/HierarchyCards";
 import savelogo from "@/assets/icon/save.png";
 import Input from "@/components/ui/Input";
 import AlertInfo from "@/lib/AlertInfo";
@@ -13,7 +14,7 @@ import AIGenerateButton from "@/components/ui/AIGenerateButton";
 
 type AddCodeProps = {
   setShow: (show: boolean) => void;
-  onCardToggle: (card: card) => void;
+  onCardToggle?: (card: card) => void;
 };
 
 export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
@@ -26,15 +27,9 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
     new Set()
   );
 
-  const [unselectedCards, setUnselectedCards] = useState<card[]>([]);
   const [loadingName, setLoadingName] = useState(false);
   const [loadingDef, setLoadingDef] = useState(false);
   const { generateName } = useGenerateButton();
-
-  useEffect(() => {
-    const unselected = cardData.filter((card) => !selectedCardIds.has(card.id));
-    setUnselectedCards(unselected);
-  }, [selectedCardIds, cardData]);
 
   const handleChange = (value: string) => setValue(value);
 
@@ -95,7 +90,7 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
     setDefinition("");
     setTempColor("#E3C8C0");
     setSelectedCardIds(new Set());
-    onCardToggle(null);
+    onCardToggle?.(null);
   };
 
   const handleCancel = () => {
@@ -119,15 +114,15 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
 
     const selectedCard = cardData.find((card) => card.id === cardId);
     if (selectedCard) {
-      onCardToggle(selectedCard);
+      onCardToggle?.(selectedCard);
     }
   };
 
   useEffect(() => {
     return () => {
-      onCardToggle(null);
+      onCardToggle?.(null);
     };
-  }, []); 
+  }, [onCardToggle]);
 
   return (
     <div
@@ -185,6 +180,7 @@ export default function AddCode({ setShow, onCardToggle }: AddCodeProps) {
           placeholder="Select open codes..."
         />
       </div>
+      <div className="px-3 pb-4"><CodeList cards={cardData.filter(item => selectedCardIds.has(item.id))} color={tempColor} /></div>
     </div>
   );
 }

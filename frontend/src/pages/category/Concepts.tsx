@@ -1,3 +1,4 @@
+import { SubthemeList } from "@/components/analysis/HierarchyCards";
 import { useState, useEffect } from "react";
 import AIBadge from "@/components/ui/AIBadge";
 import logoTrashGrey from "@/assets/icon/trash-grey.png";
@@ -6,7 +7,6 @@ import ColorSelector from "./ConceptColorSelector";
 import savelogo from "@/assets/icon/save.png";
 import AIGenerateButton from "@/components/ui/AIGenerateButton";
 import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
 import useConceptStore from "@/stores/useConceptStore";
 import useCodeStore from "@/stores/useCodeStore";
 import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
@@ -26,7 +26,6 @@ function getContrastingTextColor(hexColor: string): string {
 export default function Concept({
   name,
   definition,
-  setDefinition,
   codes,
   id,
   color,
@@ -34,11 +33,11 @@ export default function Concept({
   onDrawerToggle,
   onTempCodeToggle,
 }: concept & {
-  onDrawerToggle: (
+  onDrawerToggle?: (
     open: boolean,
     selectedCodesData: Record<string, code[]>
   ) => void;
-  onTempCodeToggle: (
+  onTempCodeToggle?: (
     codeId: string,
     conceptId: string,
     selected: boolean
@@ -66,6 +65,11 @@ export default function Concept({
   const [selectedCodes, setSelectedCodes] = useState<string[]>(
     codes ? Object.keys(codes) : []
   );
+
+  useEffect(() => {
+    setValue(name);
+    setSelectedCodes(Object.keys(codes || {}));
+  }, [name, codes]);
 
   // Temp states when editing
   const [tempCodes, setTempCodes] = useState<string[]>([]);
@@ -158,7 +162,7 @@ export default function Concept({
 
     useCodeStore.setState({ codeData: updateCodeData });
 
-    onDrawerToggle(false, {
+    onDrawerToggle?.(false, {
       [id]: Object.values(
         updatedConcept.find((conceptItem) => conceptItem.id === id)?.codes || {}
       ).flat(),
@@ -166,7 +170,7 @@ export default function Concept({
 
     setSelectedCodes([...tempCodes]);
     setTempCodes([]);
-    // setDrawerOpen(null);
+    setDrawerOpen(null);
   };
 
   // Drawer open in different mode
@@ -178,7 +182,7 @@ export default function Concept({
 
     if (drawerOpen === mode) {
       setDrawerOpen(null);
-      onDrawerToggle(false, {});
+      onDrawerToggle?.(false, {});
     } else {
       if (mode === "edit") {
         setTempCodes([...selectedCodes]);
@@ -195,7 +199,7 @@ export default function Concept({
         return acc;
       }, {} as Record<string, code[]>);
       console.log("Final selected Codes Data:", selectedCodesData);
-      onDrawerToggle(true, { [id]: Object.values(selectedCodesData).flat() });
+      onDrawerToggle?.(true, { [id]: Object.values(selectedCodesData).flat() });
     }
   };
 
@@ -207,7 +211,7 @@ export default function Concept({
       const updatTempCodes = prevTempCodes.includes(codeId)
         ? prevTempCodes.filter((id) => id !== codeId)
         : [...prevTempCodes, codeId];
-      onTempCodeToggle(id, codeId, updatTempCodes.includes(codeId));
+      onTempCodeToggle?.(id, codeId, updatTempCodes.includes(codeId));
       return updatTempCodes;
     });
   };
@@ -217,7 +221,7 @@ export default function Concept({
     const updatedConcepts = conceptData.filter((concept) => concept.id !== id);
     useConceptStore.setState({ conceptData: updatedConcepts });
     setDrawerOpen(null);
-    onDrawerToggle(false, {});
+    onDrawerToggle?.(false, {});
   };
 
   // useEffect(() => {
@@ -238,7 +242,7 @@ export default function Concept({
     setLocalDefinition(definition);
     setValue(name);
     setDrawerOpen(null);
-    onDrawerToggle(false, {});
+    onDrawerToggle?.(false, {});
   };
 
   const handleAIGenerateConcept = async () => {
@@ -273,7 +277,7 @@ export default function Concept({
 
   return (
     <div
-      className="rounded-xl flex flex-col shadow-md cursor-pointer"
+      className="rounded-xl flex flex-col shadow-md cursor-pointer min-w-0"
       style={{
         backgroundColor: drawerOpen === "edit" ? tempColor : color,
         color: getContrastingTextColor(
@@ -291,42 +295,39 @@ export default function Concept({
       >
         <div className="text-[#707070] rounded-xl flex w-full items-center font-zen font-semibold">
           {drawerOpen === "edit" ? (
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between gap-2 w-full">
               <div className="text-[#707070] font-zen font-semibold">Edit</div>
               <div className="flex items-center gap-4">
                 <div
                   className="flex items-center gap-1 p-2 bg-[#FFF3EE] rounded-md cursor-pointer text-sm"
                   onClick={handleCancel}
-                >
-                  Cancel
-                </div>
+                >Cancel</div>
                 <div
                   className="flex items-center gap-1 p-2 bg-[#FFF3EE] rounded-md cursor-pointer text-sm"
                   onClick={handleSave}
                 >
-                  <img src={savelogo} className="w-5 h-5" />
-                  Save changes
-                </div>
+                  <img src={savelogo} className="w-5 h-5" />Save changes</div>
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between w-full">
-              <div className="text-[#707070] font-zen font-semibold max-w-full flex-shrink">
+            <div className="flex items-center justify-between gap-2 w-full">
+              <h2 className="text-[#707070] font-zen font-semibold min-w-0 break-words">
+                <span className="block text-[10px] uppercase tracking-wider mb-1">Theme {id}</span>
                 {value}
-              </div>
-              <div className="flex gap-3 items-center whitespace-nowrap">
+              </h2>
+              <div className="flex gap-2 items-center whitespace-nowrap shrink-0">
                 {isGPT ? (
                   <AIBadge />
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold">✏️ Edited</span>
                 )}
-                <button onClick={deleteConcept}>
+                <button type="button" aria-label={`Delete ${name}`} onClick={deleteConcept}>
                   <img
                     src={logoTrashGrey}
                     className="h-auto w-auto max-h-[20px] max-w-[20px] cursor-pointer"
                   />
                 </button>
-                <button
+                <button type="button" aria-label={`Edit ${name}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleDrawer("edit");
@@ -363,7 +364,7 @@ export default function Concept({
                 </div>
                 <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-4 p-1 mx-auto bg-white ">
                   <textarea
-                    className=" rounded-lg text-ellipsis p-1  min-h-[60px] flex-grow outline-none font-semibold border border-gray"
+                    className=" rounded-lg text-ellipsis p-1 min-w-0 min-h-[60px] flex-grow outline-none font-semibold border border-gray"
                     value={localDefinition}
                     placeholder="Enter definition"
                     onChange={handleTextAreaChange}
@@ -384,25 +385,28 @@ export default function Concept({
           <div>
             <div className="w-full">
               <div className="p-4 mb-2 cursor-pointer">
-                <div className="text-[#707070] text-sm font-semibold rounded-md mb-2">
-                  Rationale
-                </div>
+                <div className="text-[#707070] text-sm font-semibold rounded-md mb-2">Rationale</div>
                 <div className="font-zen cursor-pointer">{definition}</div>
               </div>
               <div className="text-[#707070] text-sm px-4 pb-4 font-semibold rounded-md">
-                <MultiSelectDropdown
+                {drawerOpen === "edit" && (<MultiSelectDropdown
                   label="Sub-themes"
                   options={codeData.map((code) => ({ id: code.id, label: code.name }))}
                   selected={drawerOpen === "edit" ? tempCodes : selectedCodes}
                   onChange={(id) => drawerOpen === "edit" && toggleCodeSelection(id)}
                   disabled={drawerOpen !== "edit"}
                   placeholder="Select sub-themes..."
-                />
+                />)}
               </div>
             </div>
           </div>
         </div>
       )}
+      <div className="bg-[#FFFBF9] rounded-b-xl px-3 pb-4" onClick={event => event.stopPropagation()}>
+        <SubthemeList subthemes={drawerOpen === "edit"
+            ? codeData.filter(item => tempCodes.includes(item.id))
+            : Object.values(codes || {}).flat()} color={color} themeNumber={id} />
+      </div>
     </div>
   );
 }

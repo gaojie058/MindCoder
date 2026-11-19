@@ -361,7 +361,7 @@ def build_findings_detail(data: dict) -> list:
 
 
 def build_codebook(data: dict) -> list:
-    """Codebook: theme map + detailed codebook."""
+    """Read vertically: theme, its subthemes, then each subtheme's codes."""
     themes = data.get('themes', [])
     if not themes:
         return []
@@ -372,89 +372,11 @@ def build_codebook(data: dict) -> list:
         ST['muted_italic']))
     els.append(Spacer(1, 3*mm))
 
-    # ── Theme Map Table ──
-    header = [
-        Paragraph('<b>OPEN CODES</b>', ParagraphStyle('th', fontName=FONT_B, fontSize=7, textColor=TEXT_MUTED)),
-        Paragraph('', ST['muted']),
-        Paragraph('<b>SUB-THEMES</b>', ParagraphStyle('th', fontName=FONT_B, fontSize=7, textColor=TEXT_MUTED)),
-        Paragraph('', ST['muted']),
-        Paragraph('<b>THEMES</b>', ParagraphStyle('th', fontName=FONT_B, fontSize=7, textColor=TEXT_MUTED)),
-    ]
-    rows = [header]
-
-    for ti, theme in enumerate(themes):
-        color = PALETTE[ti % len(PALETTE)]
-        subs = theme.get('subthemes', [])
-
-        # Open codes grouped by sub-theme
-        oc_parts = []
-        for sub in subs:
-            oc_parts.append(Paragraph(f'<font size="6" color="#6B6B6B"><b>{_san(sub["name"])}</b></font>',
-                ST['muted']))
-            for oc in sub.get('openCodes', []):
-                badge = _badge_text(oc.get('isAI', True))
-                count = oc.get('segmentCount', 0)
-                oc_parts.append(Paragraph(
-                    f'{badge} <font size="7">{_san(oc["name"])}</font> '
-                    f'<font size="6" color="#6B6B6B">({count})</font>',
-                    ParagraphStyle('oc', fontName=FONT, fontSize=7, textColor=TEXT_DARK, leading=10, spaceAfter=1)))
-
-        # Sub-themes
-        st_parts = []
-        for sub in subs:
-            badge = _badge_text(sub.get('isAI', True))
-            st_parts.append(Paragraph(
-                f'{badge} <font size="8"><b>{_san(sub["name"])}</b></font>',
-                ParagraphStyle('st', fontName=FONT_B, fontSize=8, textColor=TEXT_DARK, leading=11, spaceAfter=2)))
-
-        # Theme
-        badge = _badge_text(theme.get('isAI', True))
-        th_parts = [Paragraph(
-            f'{badge} <font size="9"><b>{_san(theme["name"])}</b></font>',
-            ParagraphStyle('thm', fontName=FONT_B, fontSize=9, textColor=TEXT_DARK, leading=12, spaceAfter=2))]
-        if theme.get('definition'):
-            th_parts.append(Paragraph(f'<i><font size="7" color="#6B6B6B">{_san(theme["definition"])}</font></i>',
-                ST['muted_italic']))
-
-        arrow_style = ParagraphStyle('arrow', fontName=FONT, fontSize=9, textColor=TEXT_MUTED, alignment=TA_CENTER)
-        rows.append([
-            oc_parts or Paragraph('', ST['muted']),
-            Paragraph('→', arrow_style),
-            st_parts or Paragraph('', ST['muted']),
-            Paragraph('→', arrow_style),
-            th_parts,
-        ])
-
-    map_table = Table(rows, colWidths=[CONTENT_W*0.38, 12, CONTENT_W*0.24, 12, CONTENT_W*0.24])
-    style_cmds = [
-        ('BACKGROUND', (0,0), (-1,0), BG_CALLOUT),
-        ('LINEBELOW', (0,0), (-1,0), 0.5, DIVIDER),
-        ('VALIGN', (0,0), (-1,-1), 'TOP'),
-        ('TOPPADDING', (0,0), (-1,-1), 4),
-        ('BOTTOMPADDING', (0,0), (-1,-1), 4),
-        ('LEFTPADDING', (0,0), (-1,-1), 4),
-        ('RIGHTPADDING', (0,0), (-1,-1), 4),
-    ]
-    # Add row separators and sub-theme/theme fills
-    for ri in range(1, len(rows)):
-        style_cmds.append(('LINEBELOW', (0, ri), (-1, ri), 0.3, DIVIDER))
-        color = PALETTE[(ri-1) % len(PALETTE)]
-        style_cmds.append(('BACKGROUND', (2, ri), (2, ri), _hex_lighten(color, 0.6)))
-        style_cmds.append(('BACKGROUND', (4, ri), (4, ri), _hex_lighten(color, 0.4)))
-
-    map_table.setStyle(TableStyle(style_cmds))
-    els.append(map_table)
-    els.append(Spacer(1, 6*mm))
-
-    # ── Detailed Codebook ──
-    els.append(_hr())
-    els.append(Paragraph('Primary Codebook', ST['h2']))
-
     for ti, theme in enumerate(themes):
         # Theme header bar
         t_header = Table(
             [[Paragraph(f'{_badge_text(theme.get("isAI", True))} '
-                f'<font color="white"><b>{_san(theme["name"])}</b></font>',
+                f'<font color="white"><b>Theme {ti + 1}: {_san(theme["name"])}</b></font>',
                 ParagraphStyle('th_h', fontName=FONT_B, fontSize=9, textColor=WHITE, leading=12))]],
             colWidths=[CONTENT_W]
         )
@@ -470,10 +392,10 @@ def build_codebook(data: dict) -> list:
         if theme.get('definition'):
             els.append(Paragraph(f'<i>{_san(theme["definition"])}</i>', ST['muted_italic']))
 
-        for sub in theme.get('subthemes', []):
+        for si, sub in enumerate(theme.get('subthemes', [])):
             # Sub-theme row
             st_row = Table(
-                [[Paragraph(f'{_badge_text(sub.get("isAI", True))} <b>{_san(sub["name"])}</b>',
+                [[Paragraph(f'{_badge_text(sub.get("isAI", True))} <b>Subtheme {ti + 1}.{si + 1}: {_san(sub["name"])}</b>',
                     ParagraphStyle('st_r', fontName=FONT_B, fontSize=8, textColor=TEXT_DARK, leading=11))]],
                 colWidths=[CONTENT_W]
             )
@@ -490,6 +412,7 @@ def build_codebook(data: dict) -> list:
                     ParagraphStyle('sd', fontName=FONT_I, fontSize=7, textColor=TEXT_MUTED,
                         leftIndent=10, spaceAfter=1*mm)))
 
+            els.append(Paragraph('Codes', ParagraphStyle('codes_label', parent=ST['muted'], leftIndent=14, spaceBefore=3, spaceAfter=2)))
             # Open codes
             for oi, oc in enumerate(sub.get('openCodes', [])):
                 bg = WHITE if oi % 2 == 0 else BG_CALLOUT

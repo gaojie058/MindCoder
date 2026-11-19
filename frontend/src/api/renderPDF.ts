@@ -349,7 +349,7 @@ function buildFindingsDetail(report: any): Content[] {
 }
 
 // ══════════════════════════════════════════════════════════════
-//  Codebook — Theme Map table
+//  Codebook — vertical theme hierarchy
 // ══════════════════════════════════════════════════════════════
 const PALETTE = ["#E3C8C0","#FFE2D4","#C9ECCF","#C9ECE6","#D5ECF9","#DDDDF3","#F9D5F8","#F9D5D5"];
 function lighten(hex: string, a = 0.3) {
@@ -365,76 +365,13 @@ function buildCodebook(): Content[] {
   result.push({ text: 'Codebook', fontSize: 16, bold: true, color: B.amber, margin: [0, 0, 0, 6] });
   result.push({ text: 'Hierarchical structure of themes, sub-themes, and open codes.', fontSize: 8, color: B.muted, italics: true, margin: [0, 0, 0, 8] });
 
-  // Theme Map table: 3 columns
-  const tBody: any[][] = [[
-    { text: 'OPEN CODES', fontSize: 7, bold: true, color: B.muted, fillColor: B.bgCallout, margin: [4,3,4,3] },
-    { text: '', fillColor: B.bgCallout, margin: [0,0,0,0] },
-    { text: 'SUB-THEMES', fontSize: 7, bold: true, color: B.muted, fillColor: B.bgCallout, margin: [4,3,4,3] },
-    { text: '', fillColor: B.bgCallout, margin: [0,0,0,0] },
-    { text: 'THEMES', fontSize: 7, bold: true, color: B.muted, fillColor: B.bgCallout, margin: [4,3,4,3] },
-  ]];
-
   conceptData.forEach((concept, ci) => {
-    const color = PALETTE[ci % PALETTE.length];
-    const codes = Object.values(concept.codes).flat();
-
-    // Open codes grouped by sub-theme
-    const ocStack: any[] = [];
-    codes.forEach(code => {
-      const cards = Object.values(code.data || {}).flat();
-      if (!cards.length) return;
-      ocStack.push({ text: san(code.name), fontSize: 6, bold: true, color: B.muted, margin: [0, ocStack.length ? 3 : 0, 0, 1] });
-      cards.forEach(card => {
-        ocStack.push({ text: [
-          card.isGPT !== false ? aiBadge() : humanBadge(),
-          { text: ` ${san(card.name)}`, fontSize: 7 },
-          { text: ` (${(card.topics||[]).length})`, fontSize: 6, color: B.muted },
-        ], margin: [3, 1, 0, 1] });
-      });
-    });
-
-    const stStack = codes.map(code => ({
-      text: [
-        code.isGPT !== false ? aiBadge() : humanBadge(),
-        { text: ` ${san(code.name)}`, fontSize: 8, bold: true },
-      ],
-      margin: [0, 2, 0, 2],
-    }));
-
-    const thStack = [
-      { text: [
-        concept.isGPT !== false ? aiBadge() : humanBadge(),
-        { text: ` ${san(concept.name)}`, fontSize: 9, bold: true },
-      ], margin: [0, 0, 0, 2] },
-      ...(concept.definition ? [{ text: san(concept.definition), fontSize: 7, color: B.muted, italics: true }] : []),
-    ];
-
-    tBody.push([
-      { stack: ocStack, margin: [4,4,4,4] },
-      { text: '→', fontSize: 9, color: B.divider, alignment: 'center', margin: [0,4,0,0] },
-      { stack: stStack, margin: [4,4,4,4], fillColor: lighten(color, 0.6) },
-      { text: '→', fontSize: 9, color: B.divider, alignment: 'center', margin: [0,4,0,0] },
-      { stack: thStack, margin: [4,4,4,4], fillColor: lighten(color, 0.4) },
-    ]);
-  });
-
-  result.push({
-    table: { headerRows: 1, widths: ['*', 12, '*', 12, '*'], body: tBody },
-    layout: { hLineWidth: (i: number) => i <= 1 ? 0.5 : 0.3, vLineWidth: () => 0, hLineColor: () => B.divider, paddingLeft: () => 1, paddingRight: () => 1 },
-    margin: [0, 0, 0, 10],
-  });
-
-  // Detailed codebook: full theme → sub-theme → open codes with data segments
-  result.push(hr());
-  result.push({ text: 'Primary Codebook', fontSize: 12, bold: true, color: B.amber, margin: [0, 6, 0, 6] });
-
-  conceptData.forEach((concept, ci) => {
-    const _color = PALETTE[ci % PALETTE.length];
+    const color = concept.color || PALETTE[ci % PALETTE.length];
     // Theme header
     result.push({
       table: { widths: ['*'], body: [[{
-        text: [concept.isGPT !== false ? { text: '[AI] ', fontSize: 7, bold: true, color: B.white } : { text: '[Human] ', fontSize: 7, bold: true, color: B.white }, { text: san(concept.name), fontSize: 9, bold: true }],
-        fillColor: B.amber, color: B.white, margin: [8, 5, 8, 5],
+        text: [concept.isGPT !== false ? { text: '[AI] ', fontSize: 7, bold: true, color: B.amber } : { text: '[Human] ', fontSize: 7, bold: true, color: '#2563EB' }, { text: `Theme ${ci + 1}: ${san(concept.name)}`, fontSize: 10, bold: true }],
+        fillColor: lighten(color, 0.1), color: B.text, margin: [8, 5, 8, 5],
       }]] },
       layout: 'noBorders',
       margin: [0, ci > 0 ? 10 : 4, 0, 2],
@@ -445,22 +382,23 @@ function buildCodebook(): Content[] {
     }
 
     const codes = Object.values(concept.codes).flat();
-    codes.forEach(code => {
+    codes.forEach((code, si) => {
       // Sub-theme
       result.push({
         table: { widths: ['*'], body: [[{
-          text: [code.isGPT !== false ? { text: '[AI] ', fontSize: 6, bold: true, color: B.amber } : { text: '[Human] ', fontSize: 6, bold: true, color: '#2563EB' }, { text: san(code.name), fontSize: 8, bold: true }],
-          fillColor: B.amberLight, margin: [10, 3, 8, 3],
+          text: [code.isGPT !== false ? { text: '[AI] ', fontSize: 6, bold: true, color: B.amber } : { text: '[Human] ', fontSize: 6, bold: true, color: '#2563EB' }, { text: `Subtheme ${ci + 1}.${si + 1}: ${san(code.name)}`, fontSize: 9, bold: true }],
+          fillColor: lighten(code.color || color, 0.3), margin: [10, 3, 8, 3],
         }]] },
         layout: 'noBorders',
-        margin: [0, 2, 0, 1],
+        margin: [12, 4, 0, 1],
       });
 
       if (code.definition) {
         result.push({ text: san(code.definition), fontSize: 7, italics: true, color: B.muted, margin: [12, 1, 8, 3] });
       }
 
-      // Open codes
+      // Codes remain directly below their owning subtheme.
+      result.push({ text: 'Codes', bold: true, fontSize: 7, color: B.muted, margin: [24, 4, 0, 2] });
       const cards = Object.values(code.data || {}).flat();
       cards.forEach((card, idx) => {
         if (card.active === false) return;
@@ -478,9 +416,10 @@ function buildCodebook(): Content[] {
                 text: `"${san(t.content)}"`, fontSize: 6, italics: true, color: B.muted, margin: [4, 0, 0, 1],
               })),
             ],
-            fillColor: bg, margin: [14, 3, 8, 3],
+            fillColor: bg, margin: [8, 3, 8, 3],
           }]] },
           layout: 'noBorders',
+          margin: [24, 0, 0, 2],
         });
       });
     });

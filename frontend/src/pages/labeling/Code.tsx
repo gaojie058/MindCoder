@@ -1,3 +1,4 @@
+import { CodeList } from "@/components/analysis/HierarchyCards";
 import { useState, useRef, useEffect } from "react";
 import AIBadge from "@/components/ui/AIBadge";
 import logoTrashGrey from "@/assets/icon/trash-grey.png";
@@ -6,7 +7,6 @@ import ColorSelector from "./ColorSelector";
 import savelogo from "@/assets/icon/save.png";
 import AIGenerateButton from "@/components/ui/AIGenerateButton";
 import Input from "@/components/ui/Input";
-import Button from "@/components/ui/Button";
 import useCodeStore from "@/stores/useCodeStore";
 import useCardStore from "@/stores/useCardStore";
 import MultiSelectDropdown from "@/components/ui/MultiSelectDropdown";
@@ -33,13 +33,12 @@ export default function Code({
   definition,
   onDrawerToggle,
   onTempCardToggle,
-  setDefinition,
 }: code & {
-  onDrawerToggle: (
+  onDrawerToggle?: (
     open: boolean,
     selectedCardsData: Record<string, card[]>
   ) => void;
-  onTempCardToggle: (codeId: string, cardId: string, selected: boolean) => void;
+  onTempCardToggle?: (codeId: string, cardId: string, selected: boolean) => void;
   setDefinition?: (definition: string) => void;
 }) {
   const { codeData } = useCodeStore();
@@ -56,6 +55,11 @@ export default function Code({
   useEffect(() => {
     setLocalDefinition(definition);
   }, [definition]);
+
+  useEffect(() => {
+    setValue(name);
+    setSelectedCards(Object.keys(data || {}));
+  }, [name, data]);
 
   // Temp states when editing
   const [tempCards, setTempCards] = useState<string[]>([]);
@@ -133,7 +137,7 @@ export default function Code({
     useCardStore.setState({ cardData: updatedCardData });
 
     // Update drawer data without duplicating cards
-    onDrawerToggle(false, {
+    onDrawerToggle?.(false, {
       [id]: Object.values(
         updatedCodes.find((codeItem) => codeItem.id === id)?.data || {}
       ).flat(),
@@ -141,6 +145,7 @@ export default function Code({
 
     setSelectedCards([...tempCards]); // Ensure tempCards are used
     setTempCards([]); // Clear temporary cards
+    setDrawerOpen(null);
     // console.log("code data after update", updatedCodes);
   };
 
@@ -153,7 +158,7 @@ export default function Code({
     if (drawerOpen === mode) {
       setDrawerOpen(null);
       // setSelectedCards([]);
-      onDrawerToggle(false, {});
+      onDrawerToggle?.(false, {});
     } else {
       if (mode === "edit") {
         setTempCards([...selectedCards]);
@@ -169,7 +174,7 @@ export default function Code({
         return acc;
       }, {} as Record<string, card[]>);
       // console.log("Final selected cards data", selectedCardsData);
-      onDrawerToggle(true, { [id]: Object.values(selectedCardsData).flat() });
+      onDrawerToggle?.(true, { [id]: Object.values(selectedCardsData).flat() });
     }
   };
 
@@ -181,7 +186,7 @@ export default function Code({
         ? prevTempCards.filter((id) => id !== cardId)
         : [...prevTempCards, cardId];
 
-      onTempCardToggle(id, cardId, updatedTempCards.includes(cardId));
+      onTempCardToggle?.(id, cardId, updatedTempCards.includes(cardId));
 
       return updatedTempCards;
     });
@@ -198,7 +203,7 @@ export default function Code({
 
     useCodeStore.setState({ codeData: updatedCodes });
     setDrawerOpen(null);
-    onDrawerToggle(false, {});
+    onDrawerToggle?.(false, {});
   };
 
   // Cancel editing
@@ -208,7 +213,7 @@ export default function Code({
     setLocalDefinition(definition);
     setValue(name);
     setDrawerOpen(null);
-    onDrawerToggle(false, {});
+    onDrawerToggle?.(false, {});
   };
 
   const handleAIGenerate = async () => {
@@ -236,7 +241,7 @@ export default function Code({
   return (
     <div
       ref={codeRef}
-      className="rounded-xl flex flex-col shadow-md cursor-pointer"
+      className="rounded-xl flex flex-col shadow-md cursor-pointer min-w-0"
       style={{
         backgroundColor: drawerOpen === "edit" ? tempColor : color,
         color: getContrastingTextColor(
@@ -254,42 +259,39 @@ export default function Code({
       >
         <div className="text-[#707070] rounded-xl flex w-full items-center font-zen font-semibold">
           {drawerOpen === "edit" ? (
-            <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between gap-2 w-full">
               <div className="text-[#707070] font-zen font-semibold">Edit</div>
               <div className="flex items-center gap-4">
                 <div
                   className="flex items-center gap-1 p-2 bg-[#FFF3EE] rounded-md cursor-pointer text-sm"
                   onClick={handleCancel}
-                >
-                  Cancel
-                </div>
+                >Cancel</div>
                 <div
                   className="flex items-center gap-1 p-2 bg-[#FFF3EE] rounded-md cursor-pointer text-sm"
                   onClick={handleSave}
                 >
-                  <img src={savelogo} className="w-5 h-5" />
-                  Save changes
-                </div>
+                  <img src={savelogo} className="w-5 h-5" />Save changes</div>
               </div>
             </div>
           ) : (
-            <div className="flex flex-row items-center justify-between w-full">
-              <div className="text-[#707070] font-zen font-semibold max-w-full flex-shrink">
+            <div className="flex flex-row items-center justify-between gap-2 w-full">
+              <h3 className="text-[#707070] font-zen font-semibold min-w-0 break-words">
+                <span className="block text-[10px] uppercase tracking-wider mb-1">Subtheme {id}</span>
                 {value}
-              </div>
-              <div className="flex gap-4 items-center whitespace-nowrap">
+              </h3>
+              <div className="flex gap-2 items-center whitespace-nowrap shrink-0">
                 {isGPT ? (
                   <AIBadge />
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 text-amber-600 text-xs font-semibold">✏️ Edited</span>
                 )}
-                <button onClick={deleteCode}>
+                <button type="button" aria-label={`Delete ${name}`} onClick={deleteCode}>
                   <img
                     src={logoTrashGrey}
                     className="h-auto w-auto max-h-[20px] max-w-[20px] cursor-pointer"
                   />
                 </button>
-                <button
+                <button type="button" aria-label={`Edit ${name}`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleToggleDrawer("edit");
@@ -327,7 +329,7 @@ export default function Code({
                 </div>
                 <div className="w-[96%] flex items-center border border-gray-300 rounded-lg shadow-sm mb-4 p-1 mx-auto bg-white ">
                   <textarea
-                    className=" rounded-lg text-ellipsis p-1  min-h-[60px] flex-grow outline-none font-semibold border border-gray"
+                    className=" rounded-lg text-ellipsis p-1 min-w-0 min-h-[60px] flex-grow outline-none font-semibold border border-gray"
                     value={localDefinition}
                     placeholder="Enter definition"
                     onChange={handleTextAreaChange}
@@ -345,25 +347,28 @@ export default function Code({
           <div>
             <div className="w-full">
               <div className="p-4 mb-2 cursor-pointer">
-                <div className="text-[#707070] text-sm font-semibold rounded-md mb-2">
-                  Rationale
-                </div>
+                <div className="text-[#707070] text-sm font-semibold rounded-md mb-2">Rationale</div>
                 <div className="font-zen cursor-pointer">{localDefinition}</div>
               </div>
               <div className="text-[#707070] text-sm p-4 font-semibold rounded-md">
-                <MultiSelectDropdown
+                {drawerOpen === "edit" && (<MultiSelectDropdown
                   label="Open Codes"
                   options={cardData.map((card) => ({ id: card.id, label: `#${card.id} ${card.name}` }))}
                   selected={drawerOpen === "edit" ? tempCards : selectedCards}
                   onChange={(id) => drawerOpen === "edit" && toggleCardSelection(id)}
                   disabled={drawerOpen !== "edit"}
                   placeholder="Select open codes..."
-                />
+                />)}
               </div>
             </div>
           </div>
         </div>
       )}
+      <div className="bg-[#FFFBF9] rounded-b-xl px-3 pb-4" onClick={event => event.stopPropagation()}>
+        <CodeList cards={drawerOpen === "edit"
+            ? cardData.filter(item => tempCards.includes(item.id))
+            : Object.values(data || {}).flat()} color={color} />
+      </div>
     </div>
   );
 }

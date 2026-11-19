@@ -1,3 +1,4 @@
+import { SubthemeList } from "@/components/analysis/HierarchyCards";
 import savelogo from "@/assets/icon/save.png";
 import Input from "@/components/ui/Input";
 import AlertInfo from "@/lib/AlertInfo";
@@ -13,7 +14,7 @@ import AIGenerateButton from "@/components/ui/AIGenerateButton";
 
 type addConceptProps = {
   setShow: (show: boolean) => void;
-  onCodeToggle: (code: code) => void;
+  onCodeToggle?: (code: code) => void;
 };
 
 export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
@@ -26,15 +27,6 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
   const [loadingName, setLoadingName] = useState(false);
   const [loadingDef, setLoadingDef] = useState(false);
   const { generateName } = useGenerateButton();
-
-  const [unselectedCodes, setUnselectedCodes] = useState<code[]>([]);
-
-  useEffect(() => {
-    const unselected = codeData.filter(
-      (concept) => !selectedCodes.has(concept.id)
-    );
-    setUnselectedCodes(unselected);
-  }, [selectedCodes, codeData]);
 
   const handleChange = (value: string) => setValue(value);
 
@@ -77,7 +69,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
     setValue("");
     setTempColor("#E3C8C0");
     setselectedCodes(new Set());
-    onCodeToggle(null);
+    onCodeToggle?.(null);
   };
 
   const handleCancel = () => {
@@ -115,15 +107,15 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
 
     const selectedCodes = codeData.filter((code) => code.id === cardId);
     if (selectedCodes) {
-      onCodeToggle(selectedCodes[0]);
+      onCodeToggle?.(selectedCodes[0]);
     }
   };
 
   useEffect(() => {
     return () => {
-      onCodeToggle(null);
+      onCodeToggle?.(null);
     };
-  }, []);
+  }, [onCodeToggle]);
 
   return (
     <div
@@ -183,6 +175,7 @@ export default function AddConcept({ setShow, onCodeToggle }: addConceptProps) {
           placeholder="Select sub-themes..."
         />
       </div>
+      <div className="px-3 pb-4"><SubthemeList subthemes={codeData.filter(item => selectedCodes.has(item.id))} color={tempColor} /></div>
     </div>
   );
 }
